@@ -18,16 +18,16 @@ A layer for extras and more bling for your image
 
 You can add this to your Containerfile to copy anything from this image over:
 
-    COPY --from=ghcr.io/ublue-os/bling:latest /usr/bin/ublue-nix-installer /
-    COPY --from=ghcr.io/ublue-os/bling:latest /usr/bin/ublue-nix-uninstaller /
+    COPY --from=ghcr.io/ublue-os/bling:latest /files/usr/bin/ublue-nix-installer /
+    COPY --from=ghcr.io/ublue-os/bling:latest /files/usr/bin/ublue-nix-uninstaller /
 
 To use all fonts:
 
-    COPY --from=ublue-os/bling:latest /usr/share/fonts /path/to/fonts
+    COPY --from=ghcr.io/ublue-os/bling:latest /files/usr/share/fonts /path/to/fonts
 
 To use only Inter do:
 
-    COPY --from=ublue-os/bling:latest /usr/share/fonts/inter /path/to/fonts/inter
+    COPY --from=ghcr.io/ublue-os/bling:latest /files/usr/share/fonts/inter /path/to/fonts/inter
 
 We also want to package all these modifications as RPM packages for easier installation. `(TO BE DONE)`
 
