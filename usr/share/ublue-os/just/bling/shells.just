@@ -1,6 +1,2 @@
-fish:
+change-root-shell:
   sudo lchsh -i
-
-zsh:
-  sudo lchsh -i
-
