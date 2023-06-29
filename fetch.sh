@@ -21,6 +21,3 @@ wget -O /tmp/ubuntu.zip 'https://assets.ubuntu.com/v1/0cef8205-ubuntu-font-famil
 unzip /tmp/ubuntu.zip -d "/tmp/ubuntu"
 rm -rf /tmp/ubuntu/__MACOSX
 mv /tmp/ubuntu/* "$FILES_ROOT/usr/share/fonts"
-
-# git clone --depth 1 'https://github.com/ryanoasis/nerd-fonts' /tmp/nerdfonts
-# mv /tmp/nerdfonts/patched-fonts/* "$FILES_ROOT/usr/share/fonts"
