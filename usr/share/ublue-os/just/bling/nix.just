@@ -1,9 +1,12 @@
+# run the ublue nix installer by dnkmmr
 nix-me-up:
   ublue-nix-install
 
+# run the ublue nix uninstaller by dnkmmr
 nix-me-down:
   ublue-nix-uninstall
 
+# enable flakes and install fleek
 fleek-me-up:
   #!/bin/sh
   if grep -q "experimental-features = nix-command flakes" ~/.config/nix/nix.conf; then
@@ -23,6 +26,7 @@ fleek-me-up:
   echo "Running fleek installer..."
   curl -fsSL https://getfleek.dev/installer | bash
 
+# install devbox
 devbox:
   echo 'Setting phasers to kill. Installing nix.'
   ublue-nix-install
@@ -30,6 +34,7 @@ devbox:
   curl -fsSL https://get.jetpack.io/devbox | bash
   echo 'You MUST reboot to continue'
 
+# install global devbox profile with fleek's high bling setting
 devbox-global:
   echo 'Installing devbox global profile.'
   devbox global pull https://devbox.getfleek.dev/high
