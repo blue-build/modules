@@ -4,6 +4,25 @@ nix-me-up:
 nix-me-down:
   ublue-nix-uninstall
 
+fleek-me-up:
+  #!/bin/sh
+  if grep -q "experimental-features = nix-command flakes" ~/.config/nix/nix.conf; then
+    echo "Flakes enabled, all good!"
+  else
+    echo "Fleek requires Nix flakes to be enabled."
+    read -p "Do you want to automatically enable flakes in ~/.config/nix/nix.conf? (y/n)? " choice
+    if [[ $choice =~ ^[Yy]$ ]]; then
+        mkdir -p ~/.config/nix
+        echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+        echo "Flakes enabled."
+    else
+        echo "Ok, quitting..."
+        exit 0
+    fi
+  fi
+  echo "Running fleek installer..."
+  curl -fsSL https://getfleek.dev/installer | bash
+
 devbox:
   echo 'Setting phasers to kill. Installing nix.'
   ublue-nix-install
