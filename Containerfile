@@ -5,7 +5,6 @@ RUN dnf update -y && dnf install --disablerepo='*' --enablerepo='fedora,updates'
 RUN mkdir -p /tmp/ublue-os/files/{etc,usr} && mkdir /tmp/ublue-os/rpms
 
 COPY usr /tmp/ublue-os/files/usr
-COPY etc /tmp/ublue-os/files/etc
 ADD fetch.sh /tmp/fetch.sh
 
 RUN chmod +x /tmp/fetch.sh && \
