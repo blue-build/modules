@@ -1,3 +1,9 @@
+nix-me-up:
+  ublue-nix-install
+
+nix-me-down:
+  ublue-nix-uninstall
+
 devbox:
   echo 'Setting phasers to kill. Installing nix.'
   ublue-nix-install
