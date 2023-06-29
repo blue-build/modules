@@ -36,3 +36,23 @@ We also want to package all these modifications as RPM packages for easier insta
 These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
 
     cosign verify --key cosign.pub ghcr.io/ublue-os/bling
+
+# See what is in this image
+
+## Raw commands
+
+NOTE: This makes it so you need to extract everything from the base image!
+
+```sh
+    podman save ghcr.io/ublue-os/bling:latest -o bling.tar
+    tar xf bling.tar && rm bling.tar
+    tar xf *.tar
+```
+
+This should extract the image in a way that you can see everything in it!
+
+## Using [Dive](https://github.com/wagoodman/dive)
+
+This method allows you to inspect the image through a TUI
+
+    dive ghcr.io/ublue-os/bling:latest
