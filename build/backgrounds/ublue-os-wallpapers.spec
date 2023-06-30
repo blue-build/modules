@@ -4,7 +4,7 @@ Version:	0.1
 Release:	1%{?dist}
 Summary:	Wallpapers for Ublue OS
 License:	Apache-2.0
-URL:		https://github.com/tulilirockz/ublue-os-wallpapers
+URL:		https://github.com/ublue-os/bling
 BuildArch:	noarch
 Source0:	%{NAME}.tar.gz 
 
