@@ -17,12 +17,12 @@ Collection of wallpapers for the Universal Blue operating systems
 %build
 
 %install
-mkdir -p -m0755 %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
-tar xzf %{SOURCE0} -C %{buildroot}%{_datadir}/backgrounds --directory ./%{VENDOR} --strip-components=1
+mkdir -p -m0755 %{buildroot}%{_datadir}/wallpapers/%{VENDOR}
+tar xzf %{SOURCE0} -C %{buildroot}%{_datadir}/wallpapers --directory ./%{VENDOR} --strip-components=1
  
 %files
 %license LICENSE
-%attr(0755,root,root) %{_datadir}/backgrounds/%{VENDOR}/*
+%attr(0755,root,root) %{_datadir}/wallpapers/%{VENDOR}/*
 %exclude %{_datadir}/backgrounds/%{VENDOR}/LICENSE
 
 %changelog
