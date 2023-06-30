@@ -22,7 +22,7 @@ tar xzf %{SOURCE0} -C %{buildroot}%{_datadir}/backgrounds --directory ./%{VENDOR
  
 %files
 %license LICENSE
-%attr(0644,root,root) %{_datadir}/backgrounds/%{VENDOR}/*
+%attr(0755,root,root) %{_datadir}/backgrounds/%{VENDOR}/*
 %exclude %{_datadir}/backgrounds/%{VENDOR}/LICENSE
 
 %changelog

@@ -20,6 +20,7 @@ mv "/tmp/inter/Inter Desktop/" "$FILES_ROOT/usr/share/fonts"
 wget -O /tmp/ubuntu.zip 'https://assets.ubuntu.com/v1/0cef8205-ubuntu-font-family-0.83.zip'
 unzip /tmp/ubuntu.zip -d "/tmp/ubuntu"
 rm -rf /tmp/ubuntu/__MACOSX
+chmod 755 /tmp/ubuntu/*
 mv /tmp/ubuntu/* "$FILES_ROOT/usr/share/fonts"
 
 wget -O /tmp/intelmono.zip 'https://github.com/intel/intel-one-mono/releases/latest/download/ttf.zip'
