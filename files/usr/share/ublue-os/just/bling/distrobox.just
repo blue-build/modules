@@ -1,5 +1,3 @@
-default: distrobox-boxkit
-
 update-distrobox-git:
   echo 'Installing latest git snapshot of Distrobox'
   curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --next --prefix ~/.local
