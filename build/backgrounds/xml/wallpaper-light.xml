@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Wallpaper Light</name>
+    <filename>/usr/share/backgrounds/ublue-os/2D/wallpaper-light.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#B0CFF9FF</pcolor>
+    <scolor>#D9E7FDFF</scolor>
+  </wallpaper>
+</wallpapers>

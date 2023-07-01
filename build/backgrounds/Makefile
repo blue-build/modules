@@ -4,9 +4,12 @@ RPMBUILD := $(UBLUE_ROOT)/rpmbuild
 
 all: build-rpm
 
-tarball:
-	mkdir -p $(SOURCE_DIR) $(UBLUE_ROOT)/$(TARGET) $(RPMBUILD)/SOURCES
-	cp -r ./src/* LICENSE $(UBLUE_ROOT)/$(TARGET)
+clean:
+	rm -rf $(RPMBUILD)
+
+tarball: clean
+	mkdir -p $(UBLUE_ROOT)/$(TARGET) $(RPMBUILD)/SOURCES xml
+	cp -r src xml LICENSE $(UBLUE_ROOT)/$(TARGET)
 	tar czf $(RPMBUILD)/SOURCES/$(TARGET).tar.gz -C $(UBLUE_ROOT)/$(TARGET) .
 	
 build-rpm: tarball
@@ -17,5 +20,6 @@ build-rpm: tarball
     	--define '%_tmppath %{_topdir}/tmp' \
     	$(UBLUE_ROOT)/$(TARGET).spec
 
-clean: $(SOURCE_DIR) $(RPMBUILD)
-	rm -rf $^
+xml-files:
+	mkdir -p xml
+	sh gen-xml-files.sh

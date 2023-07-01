@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>3d 1 Pride</name>
+    <filename>/usr/share/backgrounds/ublue-os/3D-1/3D-1-pride.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#5B5B93FF</pcolor>
+    <scolor>#625E93FF</scolor>
+  </wallpaper>
+</wallpapers>
