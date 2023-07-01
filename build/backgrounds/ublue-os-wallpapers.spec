@@ -23,7 +23,7 @@ tar xzf %{SOURCE0} -C %{buildroot}%{_datadir}/wallpapers --directory ./%{VENDOR}
 %files
 %license LICENSE
 %attr(0755,root,root) %{_datadir}/wallpapers/%{VENDOR}/*
-%exclude %{_datadir}/backgrounds/%{VENDOR}/LICENSE
+%exclude %{_datadir}/wallpapers/%{VENDOR}/LICENSE
 
 %changelog
 %autochangelog
