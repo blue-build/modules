@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>3d 2 Lightblue</name>
+    <filename>/usr/share/backgrounds/ublue-os/3D-2/3D-2-lightblue.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#365E81FF</pcolor>
+    <scolor>#3C6183FF</scolor>
+  </wallpaper>
+</wallpapers>

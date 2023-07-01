@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>3d 1 Cyan</name>
+    <filename>/usr/share/backgrounds/ublue-os/3D-1/3D-1-cyan.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#64AC96FF</pcolor>
+    <scolor>#64AC96FF</scolor>
+  </wallpaper>
+</wallpapers>
