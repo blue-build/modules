@@ -17,13 +17,22 @@ Collection of wallpapers for the Universal Blue operating systems
 %build
 
 %install
-mkdir -p -m0755 %{buildroot}%{_datadir}/wallpapers/%{VENDOR}
-tar xzf %{SOURCE0} -C %{buildroot}%{_datadir}/wallpapers --directory ./%{VENDOR} --strip-components=1
- 
+mkdir -p -m0755 \
+    %{buildroot}%{_datadir}/backgrounds/%{VENDOR} \
+    %{buildroot}/tmp \
+    %{buildroot}%{_datadir}/gnome-background-properties
+tar xzf %{SOURCE0} -C %{buildroot}/tmp --directory . --strip-components=1
+mv %{buildroot}/tmp/src/* %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
+mv %{buildroot}/tmp/xml/* %{buildroot}%{_datadir}/gnome-background-properties
+mv %{buildroot}/tmp/LICENSE %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
+cd %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
+rm -rf %{buildroot}/tmp
+
 %files
 %license LICENSE
-%attr(0755,root,root) %{_datadir}/wallpapers/%{VENDOR}/*
-%exclude %{_datadir}/wallpapers/%{VENDOR}/LICENSE
+%attr(0755,root,root) %{_datadir}/backgrounds/%{VENDOR}/*
+%attr(0755,root,root) %{_datadir}/gnome-background-properties/*.xml
+%exclude %{_datadir}/background/%{VENDOR}/LICENSE
 
 %changelog
 %autochangelog
