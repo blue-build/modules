@@ -15,5 +15,6 @@ RUN cd /tmp/ublue-os/build/backgrounds && make && cp /tmp/ublue-os/rpmbuild/RPMS
 
 FROM scratch
 
+COPY --from=ghcr.io/ublue-os/ublue-update:latest /rpms/ublue-update.noarch.rpm /rpms
 COPY --from=builder /tmp/ublue-os/files /files
 COPY --from=builder /tmp/ublue-os/rpms /rpms
