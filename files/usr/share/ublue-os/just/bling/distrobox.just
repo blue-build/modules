@@ -16,16 +16,7 @@ distrobox-archlinux: (create-distrobox "Arch Linux" "archlinux-toolbox:latest" "
 distrobox-centos: (create-distrobox "Centos Stream" "centos-toolbox:stream9" "centos")
 
 distrobox-rocky: (create-distrobox "Rocky Linux" "rockylinux-toolbox:latest" "rocky")
-
-distrobox-debian: (create-distrobox "Debian" "debian-toolbox:unstable" "debian")
-
-distrobox-opensuse: (create-distrobox "openSUSE" "opensuse-toolbox:tumbleweed" "opensuse")
  
-distrobox-ubuntu: (create-distrobox "Ubuntu" "ubuntu-toolbox" "ubuntu")
-
-distrobox-boxkit:
-  echo 'Creating Boxkit distrobox...'
-  distrobox create -i ghcr.io/ublue-os/boxkit -n boxkit -Y
 
 distrobox-gamebox:
   echo 'Creating Arch-based Gaming distrobox...'
