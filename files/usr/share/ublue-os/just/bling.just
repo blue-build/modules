@@ -1,6 +1,6 @@
-set allow-duplicate-recipes
-
 !include /usr/share/ublue-os/just/bling/distrobox.just
 !include /usr/share/ublue-os/just/bling/gaming.just
 !include /usr/share/ublue-os/just/bling/nix.just
 !include /usr/share/ublue-os/just/bling/shells.just
+
+set allow-duplicate-recipes
