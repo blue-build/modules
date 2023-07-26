@@ -34,5 +34,8 @@ rm -rf %{buildroot}/tmp
 %attr(0755,root,root) %{_datadir}/gnome-background-properties/*.xml
 %exclude %{_datadir}/background/%{VENDOR}/LICENSE
 
+%post
+ln -sf %{_datadir}/backgrounds/%{VENDOR} %{_datadir}/wallpapers/%{VENDOR}
+
 %changelog
 %autochangelog
