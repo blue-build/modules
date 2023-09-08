@@ -1,8 +1,8 @@
-# run the ublue nix installer by dnkmmr
+# run the ublue nix installer from determinate systems https://github.com/DeterminateSystems/nix-installer
 nix-me-up:
   ublue-nix-install
 
-# run the ublue nix uninstaller by dnkmmr
+# run the ublue nix uninstaller from determinate systems https://github.com/DeterminateSystems/nix-installer
 nix-me-down:
   ublue-nix-uninstall
 
