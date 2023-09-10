@@ -1,3 +1,3 @@
 # Modules for Startingpoint
 
-This directory includes all the different modules for Startingpoint. Refer to the README files inside each module's corresponding directory for in-depth documentation.
+Here's documentation for every default module for [Startingpoint](https://github.com/ublue-os/startingpoint/). Source code is inside the [bling](https://github.com/ublue-os/bling/) repository, intended for hosting more static and shared parts of custom images.
