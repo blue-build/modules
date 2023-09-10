@@ -20,7 +20,8 @@ Collection of wallpapers for the Universal Blue operating systems
 mkdir -p -m0755 \
     %{buildroot}%{_datadir}/backgrounds/%{VENDOR} \
     %{buildroot}/tmp \
-    %{buildroot}%{_datadir}/gnome-background-properties
+    %{buildroot}%{_datadir}/gnome-background-properties \
+    %{buildroot}%{_datadir}/wallpapers/${VENDOR}
 tar xzf %{SOURCE0} -C %{buildroot}/tmp --directory . --strip-components=1
 mv %{buildroot}/tmp/src/* %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
 mv %{buildroot}/tmp/xml/* %{buildroot}%{_datadir}/gnome-background-properties
@@ -35,6 +36,7 @@ rm -rf %{buildroot}/tmp
 %exclude %{_datadir}/background/%{VENDOR}/LICENSE
 
 %post
+mkdir -p %{_datadir}/wallpapers/${VENDOR}
 ln -sf %{_datadir}/backgrounds/%{VENDOR} %{_datadir}/wallpapers/%{VENDOR}
 
 %changelog
