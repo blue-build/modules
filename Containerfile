@@ -18,3 +18,4 @@ FROM scratch
 COPY --from=builder /tmp/ublue-os/files /files
 COPY --from=builder /tmp/ublue-os/rpms /rpms
 COPY --from=ghcr.io/ublue-os/ublue-update:latest /rpms/ublue-update.noarch.rpm /rpms
+COPY modules /modules
