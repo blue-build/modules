@@ -2,11 +2,11 @@
 
 The `bling` module allows you to easily declare which general parts of `ublue-os/bling` to pull in to your custom image. It requires the `rpms` and `files` directories from the `bling` container to already exist inside `/tmp/bling/` (pulled inside the Containerfile by default).
 
-The blingbling to pull in is declared under `install:`, and the code for installing them is all in simple named scripts under the `installers/` directory. The basic code for the `bling` module is very similar to the code of the `script` module.
+The bling to pull in is declared under `install:`, and the code for installing them is all in simple named scripts under the `installers/` directory. The basic code for the `bling` module is very similar to the code of the `script` module.
 
 ## Example configuration:
 
-```yml
+```yaml
 type: bling # configure what to pull in from ublue-os/bling
 install:
     - fonts # selection of common good free fonts

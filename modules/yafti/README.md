@@ -8,7 +8,7 @@ The main `yafti` configuration file, `yafti.yml`, is in `/usr/share/ublue-os/fir
 
 ## Example configuration:
 
-```yml
+```yaml
 type: yafti
 custom-flatpaks:
     - Celluloid: io.github.celluloid_player.Celluloid
