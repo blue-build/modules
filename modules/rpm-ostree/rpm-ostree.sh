@@ -51,7 +51,7 @@ elif [[ ${#INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo "Installing: ${INSTALL_STR[*]}"
     rpm-ostree install $INSTALL_STR
-elif [[ ${#INSTALL[@]} -gt 0 ]]; then
+elif [[ ${#REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_STR[*]}"
     rpm-ostree override remove $REMOVE_STR
