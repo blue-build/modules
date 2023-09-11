@@ -10,7 +10,7 @@ The `files` module simplifies the process of copying files to the image during t
 ```yaml
 type: files
 files:
-  usr: /usr
+  - usr: /usr
 ```
 
 In the example above, `usr` represents the directory located inside the `config/files` in the repository, while `/usr` designates the corresponding destination within the image.

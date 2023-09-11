@@ -5,10 +5,10 @@ The scripts, which are run from the `config/scripts` directory, are declared und
 
 ## Example Configuration
 
-```yml
+```yaml
 type: script
 scripts:
-    - signing.sh 
+    - signing.sh
 ```
 
 ## Creating a Script
