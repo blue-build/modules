@@ -6,7 +6,7 @@ A layer for extras and more bling for your image
 
 # Contains
 
-- Default modules for [Startingpoint}(https://github.com/ublue-os/startingpoint/)
+- Default modules for [Startingpoint](https://github.com/ublue-os/startingpoint/)
 - A nix installer
 - Multiple fonts
 - Devpod
