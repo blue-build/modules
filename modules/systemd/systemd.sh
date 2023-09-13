@@ -22,13 +22,13 @@ if [[ ${#DISABLED[@]} -gt 0 ]]; then
     done
 fi
 if [[ ${#USER_ENABLED[@]} -gt 0 ]]; then
-    for unit in "${ENABLED[@]}"; do
+    for unit in "${USER_ENABLED[@]}"; do
         unit=$(printf "$unit")
         systemctl --user enable $unit
     done
 fi
 if [[ ${#USER_DISABLED[@]} -gt 0 ]]; then
-    for unit in "${DISABLED[@]}"; do
+    for unit in "${USER_DISABLED[@]}"; do
         unit=$(printf "$unit")
         systemctl --user disable $unit
     done
