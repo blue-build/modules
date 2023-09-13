@@ -7,14 +7,14 @@ The `systemd` module streamlines the management of systemd units during image bu
 ```yaml
 type: systemd
 system:
-  enable:
+  enabled:
     - example.service
-  disable:
+  disabled:
     - example.target
 user:
-  enable:
+  enabled:
     - example.timer
-  disable:
+  disabled:
     - example.service
 ```
 
