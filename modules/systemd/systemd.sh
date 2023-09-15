@@ -24,12 +24,12 @@ fi
 if [[ ${#USER_DISABLED[@]} -gt 0 ]]; then
     for unit in "${USER_DISABLED[@]}"; do
         unit=$(printf "$unit")
-        systemctl --user disable $unit
+        systemctl --global disable $unit
     done
 fi
 if [[ ${#USER_ENABLED[@]} -gt 0 ]]; then
     for unit in "${USER_ENABLED[@]}"; do
         unit=$(printf "$unit")
-        systemctl --user enable $unit
+        systemctl --global enable $unit
     done
 fi
