@@ -17,4 +17,5 @@ install:
     # - ublue-update # https://github.com/ublue-os/ublue-update
     # - dconf-update-service # a service unit that updates the dconf db on boot
     # - devpod # https://devpod.sh/ as an rpm
+    # - gnome-vrr # enables gnome-vrr for your image 
 ```
