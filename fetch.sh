@@ -25,3 +25,9 @@ install -c -m 0755 /tmp/kubens "$FILES_ROOT/usr/bin"
 
 export DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 wget -O /tmp/ublue-os/rpms/dive.rpm "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.rpm"
+
+wget -O /tmp/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+wget -O /tmp/kubectl.sha256 "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+cd /tmp
+echo "$(cat /tmp/kubectl.sha256)  kubectl" | sha256sum --check
+install -c -m 0755 /tmp/kubectl "$FILES_ROOT/usr/bin"
