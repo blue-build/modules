@@ -18,12 +18,13 @@ if rpm -q ublue-os-update-services > /dev/null; then
 fi
 
 # Change the conflicting update policy for rpm-ostreed
-RPM_OSTREE_CONFIG="/usr/etc/rpm-ostreed.conf"
+RPM_OSTREE_CONFIG="/etc/rpm-ostreed.conf"
 
-if [[ -f $RPM_OSTREE_CONFIG ]]; then
-    if [[ "$(get_config_value AutomaticUpdatePolicy $RPM_OSTREE_CONFIG)" == "stage" ]]; then
-        set_config_value AutomaticUpdatePolicy none $RPM_OSTREE_CONFIG
+if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
+    if [[ "$(get_config_value AutomaticUpdatePolicy "'"$RPM_OSTREE_CONFIG"'")" == "stage" ]]; then
+        set_config_value AutomaticUpdatePolicy none "$RPM_OSTREE_CONFIG"
     fi
 fi
+systemctl disable rpm-ostreed-automatic.timer
 
 rpm-ostree install "$BLING_DIRECTORY"/rpms/ublue-update*.rpm
