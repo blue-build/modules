@@ -4,12 +4,12 @@
 set -oue pipefail
 
 get_config_value() {
-    sed -n '/^'"$1"'=/{s/'"$1"'=//;p}'
+    sed -n '/^'"$1"'=/{s/'"$1"'=//;p}' "$2"
 }
 
 set_config_value() {
-    CURRENT=$(get_config_value $1 $3)
-    sed -i 's/'"$1"'='"$CURRENT"'/'"$1"'='"$2"'/g' $3
+    CURRENT=$(get_config_value "$1" "$3")
+    sed -i 's/'"$1"'='"$CURRENT"'/'"$1"'='"$2"'/g' "$3"
 }
 
 # Check if ublue-os-update-services rpm is installed, these services conflict with ublue-update
@@ -21,8 +21,8 @@ fi
 RPM_OSTREE_CONFIG="/etc/rpm-ostreed.conf"
 
 if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
-    if [[ "$(get_config_value AutomaticUpdatePolicy "'"$RPM_OSTREE_CONFIG"'")" == "stage" ]]; then
-        set_config_value AutomaticUpdatePolicy none "$RPM_OSTREE_CONFIG"
+    if [[ $(get_config_value "AutomaticUpdatePolicy" "$RPM_OSTREE_CONFIG") == "stage" ]]; then
+        set_config_value "AutomaticUpdatePolicy" "none" "$RPM_OSTREE_CONFIG"
     fi
 fi
 systemctl disable rpm-ostreed-automatic.timer
