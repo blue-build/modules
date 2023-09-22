@@ -1,3 +1,5 @@
+# vim: set ft=make :
+
 # run the ublue nix installer from determinate systems https://github.com/DeterminateSystems/nix-installer
 nix-me-up:
   ublue-nix-install

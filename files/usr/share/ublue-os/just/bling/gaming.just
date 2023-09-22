@@ -1,3 +1,5 @@
+# vim: set ft=make :
+
 setup-gaming:
   echo 'Setting up gaming experience ... lock and load.'
   distrobox create -i ghcr.io/ublue-os/bazzite-arch gamebox
