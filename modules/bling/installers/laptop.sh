@@ -1,3 +1,5 @@
+set -euo pipefail
+
 wget "https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo" \
     -O "/etc/yum.repos.d/_copr_ublue-os_staging.repo"
 rpm-ostree remove power-profiles-daemon --install fprintd tlp tlp-rdw
