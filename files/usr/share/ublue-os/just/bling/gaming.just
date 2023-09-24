@@ -2,7 +2,7 @@
 
 setup-gaming:
   echo 'Setting up gaming experience ... lock and load.'
-  distrobox create -i ghcr.io/ublue-os/bazzite-arch gamebox
+  distrobox create --nvidia -i ghcr.io/ublue-os/bazzite-arch gamebox
   flatpak install -y --user \\
   com.discordapp.Discord \\
   com.feaneron.Boatswain \\
