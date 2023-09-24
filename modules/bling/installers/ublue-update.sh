@@ -17,4 +17,4 @@ if [[ -f $RPM_OSTREE_CONFIG ]]; then
     fi
 fi
 
-rpm-ostree install "$BLING_DIRECTORY"/rpms/ublue-update*.rpm
+rpm-ostree install ublue-update
