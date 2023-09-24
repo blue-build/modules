@@ -27,4 +27,4 @@ if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
 fi
 systemctl disable rpm-ostreed-automatic.timer
 
-rpm-ostree install "$BLING_DIRECTORY"/rpms/ublue-update*.rpm
+rpm-ostree install ublue-update
