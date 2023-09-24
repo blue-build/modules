@@ -1,6 +1,16 @@
 name: build-testing
 on:
   push:
+    branches: ['testing']
+    branches-ignore: ['main']
+  pull_request:
+    branches: ['testing']
+    branches-ignore: ['main'] 
+  merge_group: 
+    branches: ['testing']
+    branches-ignore: ['main'] 
+  schedule:
+    - cron: '0 5 * * *'  # 5 am everyday
   workflow_dispatch:  
 env:
     IMAGE_NAME: bling-testing

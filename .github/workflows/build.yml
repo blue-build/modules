@@ -1,10 +1,14 @@
 name: build-stable
 on:
   pull_request:
-  merge_group:  
+    branches: ['main']
+    branches-ignore: ['testing'] 
+  merge_group: 
+    branches: ['main']
+    branches-ignore: ['testing'] 
   schedule:
     - cron: '0 5 * * *'  # 5 am everyday
-  workflow_dispatch:  
+  workflow_dispatch: 
 env:
     IMAGE_NAME: bling
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
