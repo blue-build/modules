@@ -6,7 +6,7 @@ set -oue pipefail
 wget "https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo" \
     -O "/etc/yum.repos.d/_copr_ublue-os_staging.repo"
 if rpm -qa | grep power-profiles-daemon ; then
-    rpm-ostree remove power-profiles-daemon --install=fprintd --install=tlp --install=tlp-rdw
+    rpm-ostree override remove power-profiles-daemon --install=fprintd --install=tlp --install=tlp-rdw
 else
     rpm-ostree install fprintd tlp tlp-rdw
 fi
