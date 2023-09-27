@@ -56,9 +56,9 @@ download() {
 
         fi
 
-        cd $NERD_FONTS_DIR
-
     done
+
+    cd $NERD_FONTS_DIR
 
 }
 
