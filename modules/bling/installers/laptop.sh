@@ -12,5 +12,8 @@ else
 fi
 systemctl enable tlp
 systemctl enable fprintd
+mkdir -p /usr/etc/tlp.d
+cp "$BLING_DIRECTORY"/files/laptop/usr/etc/tlp.d/* /usr/etc/tlp.d/
+cp "$BLING_DIRECTORY"/files/laptop/usr/share/ublue-os/just/* /usr/share/ublue-os/just/
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os_staging.repo
 
