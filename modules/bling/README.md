@@ -19,5 +19,5 @@ install:
     # - devpod # https://devpod.sh/ as an rpm
     # - gnome-vrr # enables gnome-vrr for your image 
     # - container-tools # installs container-related tools onto /usr/bin: kind, kubectx, docker-compose and kubens 
-    # - laptop # installs TLP and configures your system for laptop usage # depends on "files: - laptop: /usr" to work!
+    # - laptop # installs TLP and configures your system for laptop usage # Make sure to include the '- laptop: / usr' in the "file" module.
 ```
