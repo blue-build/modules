@@ -7,16 +7,16 @@ Use it to install [nerd-fonts](https://www.nerdfonts.com/font-downloads) or [goo
 ```yaml
 
 - type: fonts
-    fonts:
-      nerd-fonts:
-        - FiraCode # don't add "Nerd Font" suffix.
-        - Hack
-        - SourceCodePro
-        - Terminus
-        - JetBrainsMono
-        - NerdFontsSymbolsOnly
-      google-fonts:
-        - Roboto
-        - Open Sans
+  fonts:
+    nerd-fonts:
+      - FiraCode # don't add "Nerd Font" suffix.
+      - Hack
+      - SourceCodePro
+      - Terminus
+      - JetBrainsMono
+      - NerdFontsSymbolsOnly
+    google-fonts:
+      - Roboto
+      - Open Sans
 
 ```
