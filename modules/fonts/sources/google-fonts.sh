@@ -16,6 +16,7 @@ if [ ${#FONTS[@]} -gt 0 ]; then
 
         font="$(echo "$font" | sed -e 's|^[[:blank:]]||g' | tr -d '\n')"
 
+        rm -rf "$DIR_PRINCIPAL/$font"
         bash "$FONTS_MODULE_SCRIPTS_DIR"/download.sh "$font" "$FORMAT" "$URL${font// /%20}" "$DIR_PRINCIPAL/$font" 
 
     done
