@@ -4,7 +4,7 @@ The `bling` module allows you to easily declare which general parts of `ublue-os
 
 The bling to pull in is declared under `install:`, and the code for installing them is all in simple named scripts under the `installers/` directory. The basic code for the `bling` module is very similar to the code of the `script` module.
 
-## Example configuration:
+## Example configuration
 
 ```yaml
 type: bling # configure what to pull in from ublue-os/bling
