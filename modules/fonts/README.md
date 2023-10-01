@@ -1,11 +1,10 @@
-# `fonts` installation module
+# `fonts` module for startingpoint
 
-Use it to install [nerd-fonts](https://www.nerdfonts.com/font-downloads) or [google-fonts](https://fonts.google.com/). This module will run each build always downloading the latest version from properly configured fonts.
+The `fonts` module can be used to install [nerd-fonts](https://www.nerdfonts.com/) or [google-fonts](https://fonts.google.com/). This module will always download the latest version and properly configure fonts.
 
-## Configuration example
+## Example configuration
 
 ```yaml
-
 - type: fonts
   fonts:
     nerd-fonts:
@@ -18,5 +17,4 @@ Use it to install [nerd-fonts](https://www.nerdfonts.com/font-downloads) or [goo
     google-fonts:
       - Roboto
       - Open Sans
-
 ```
