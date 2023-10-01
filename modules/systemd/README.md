@@ -2,7 +2,7 @@
 
 The `systemd` module streamlines the management of systemd units during image building. Units are divided into `system` and `user` categories, with `system` units managed directly using `systemctl` and `user` units using `systemctl --user`. You can specify which units to enable or disable under each category.
 
-## Example Configuration:
+## Example Configuration
 
 ```yaml
 type: systemd

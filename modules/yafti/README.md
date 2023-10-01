@@ -6,7 +6,7 @@ Optionally, a list of Flatpak names and IDs can be included under `custom-flatpa
 
 The main `yafti` configuration file, `yafti.yml`, is in `/usr/share/ublue-os/firstboot/yafti.yml` and can be edited for a more custom first-boot experience.
 
-## Example configuration:
+## Example configuration
 
 ```yaml
 type: yafti
