@@ -9,7 +9,6 @@ The bling to pull in is declared under `install:`, and the code for installing t
 ```yaml
 type: bling # configure what to pull in from ublue-os/bling
 install:
-    - fonts # selection of common good free fonts
     - justfiles # add "!include /usr/share/ublue-os/just/100-bling.just"
                 # in your custom.just (added by default) or local justfile
     - nix-installer # these are the silverblue nix installer scripts from dnkmmr69420
