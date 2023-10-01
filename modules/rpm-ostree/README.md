@@ -13,7 +13,8 @@ Additionally, the `rpm-ostree` module supports a temporary (waiting for `rpm-ost
 ```yaml
 type: rpm-ostree
 repos:
-  - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo
+  - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo # when including COPR repos, use the %OS_VERSION% magic string
+  - https://pkgs.tailscale.com/stable/fedora/tailscale.repo
 install:
   - python3-pip
   - libadwaita
