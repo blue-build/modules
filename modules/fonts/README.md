@@ -1,4 +1,4 @@
-# `fonts` module for startingpoint
+# `fonts` Module for Startingpoint
 
 The `fonts` module can be used to install [nerd-fonts](https://www.nerdfonts.com/) or [google-fonts](https://fonts.google.com/). This module will always download the latest version and properly configure fonts.
 
