@@ -18,7 +18,7 @@ if [ ${#FONTS[@]} -gt 0 ]; then
 
         font="$(echo "$font" | sed -e 's|^[[:blank:]]||g' | tr -d '\n')"
         
-        bash ../download.sh "$font" "$COMPACT_FORMAT" "$URL$font.$COMPACT_FORMAT" "$DIR_PRINCIPAL/$font"
+        bash "$(dirname "$0")"/../download.sh "$font" "$COMPACT_FORMAT" "$URL$font.$COMPACT_FORMAT" "$DIR_PRINCIPAL/$font"
 
     done
 
