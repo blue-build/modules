@@ -3,4 +3,4 @@
 # Tell build process to exit if there are any errors.
 set -oue pipefail
 
-cp -r "$BLING_DIRECTORY"/files/usr/share/fonts/* "/usr/share/fonts"
+echo "!!!!! The bling font installer has been deprecated in favor of the fonts module. This error-free message will be removed in a future version. !!!!! "
