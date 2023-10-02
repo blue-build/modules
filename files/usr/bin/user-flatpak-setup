@@ -19,8 +19,8 @@ flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flath
 
 # Lists of flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
-INSTALL_LIST=$(cat /etc/flatpak/user-install)
-REMOVE_LIST=$(cat /etc/flatpak/user-remove)
+INSTALL_LIST=$(cat /etc/flatpak/user/install)
+REMOVE_LIST=$(cat /etc/flatpak/user/remove)
 
 # Install flatpaks in list
 if [[ -n $INSTALL_LIST ]]; then

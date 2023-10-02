@@ -8,10 +8,10 @@ cp -r "$BLING_DIRECTORY"/files/usr/bin/user-flatpak-setup /usr/bin/user-flatpak-
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
-SYS_INSTALL_LIST=/usr/etc/flatpak/system-install
-SYS_REMOVE_LIST=/usr/etc/flatpak/system-remove
-USER_INSTALL_LIST=/usr/etc/flatpak/user-install
-USER_REMOVE_LIST=/usr/etc/flatpak/user-remove
+SYS_INSTALL_LIST=/usr/etc/flatpak/system/install
+SYS_REMOVE_LIST=/usr/etc/flatpak/system/remove
+USER_INSTALL_LIST=/usr/etc/flatpak/user/install
+USER_REMOVE_LIST=/usr/etc/flatpak/user/remove
 
 echo "Enabling flatpaks module"
 systemctl enable system-flatpak-setup.service

@@ -26,8 +26,8 @@ flatpak remote-modify flathub --enable --system --title="Flathub (System)"
 
 # Lists of flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
-INSTALL_LIST=$(cat /etc/flatpak/system-install)
-REMOVE_LIST=$(cat /etc/flatpak/system-remove)
+INSTALL_LIST=$(cat /etc/flatpak/system/install)
+REMOVE_LIST=$(cat /etc/flatpak/system/remove)
 
 # Install flatpaks in list
 if [[ -n $INSTALL_LIST ]]; then
