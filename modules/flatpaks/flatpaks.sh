@@ -3,6 +3,11 @@
 # Tell build process to exit if there are any errors.
 set -oue pipefail
 
+export FLATPAKS_MODULE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+cp -r "$FLATPAKS_MODULE_DIR"/files/bin/* /usr/bin/
+cp -r "$FLATPAKS_MODULE_DIR"/files/systemd/* /usr/lib/systemd/
+
 SYS_INSTALL_LIST=/usr/etc/flatpak/system-install
 SYS_REMOVE_LIST=/usr/etc/flatpak/system-remove
 USER_INSTALL_LIST=/usr/etc/flatpak/user-install
