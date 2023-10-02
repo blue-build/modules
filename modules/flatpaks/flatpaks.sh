@@ -3,10 +3,10 @@
 # Tell build process to exit if there are any errors.
 set -oue pipefail
 
-export FLATPAKS_MODULE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
-cp -r "$FLATPAKS_MODULE_DIR"/files/bin/* /usr/bin/
-cp -r "$FLATPAKS_MODULE_DIR"/files/systemd/* /usr/lib/systemd/
+cp -r "$BLING_DIRECTORY"/files/usr/bin/system-flatpak-setup /usr/bin/system-flatpak-setup
+cp -r "$BLING_DIRECTORY"/files/usr/bin/user-flatpak-setup /usr/bin/user-flatpak-setup
+cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
+cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
 SYS_INSTALL_LIST=/usr/etc/flatpak/system-install
 SYS_REMOVE_LIST=/usr/etc/flatpak/system-remove
