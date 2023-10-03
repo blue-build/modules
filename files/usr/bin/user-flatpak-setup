@@ -11,11 +11,23 @@ if [[ -f $VER_FILE && $VER = $VER_RAN ]]; then
   exit 0
 fi
 
-# Setup Flathub
+# Remove Fedora's flatpak repo, if it exists
 if grep -qz 'fedora' <<< $(flatpak remotes); then
   flatpak remote-delete --user fedora --force
 fi
-flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+
+REPO_INFO="/etc/flatpak/user/repo-info.yml"
+REPO_URL=$(yq '.repo-url' $REPO_INFO)
+REPO_NAME=$(yq '.repo-name' $REPO_INFO)
+REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
+
+# Set up per-user Flatpak repository
+flatpak remote-add --if-not-exists --user $REPO_NAME $REPO_URL
+
+# Change repository title to configured title, if not null
+if [[ ! $REPO_TITLE == "null" ]]; then
+    flatpak remote-modify --user $REPO_NAME --title="$REPO_TITLE"
+fi
 
 # Lists of flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
@@ -26,7 +38,7 @@ REMOVE_LIST=$(cat /etc/flatpak/user/remove)
 if [[ -n $INSTALL_LIST ]]; then
   for flatpak in $INSTALL_LIST; do
     if grep -qvz $flatpak <<< $FLATPAK_LIST; then
-      flatpak install --user --noninteractive flathub $flatpak
+      flatpak install --user --noninteractive $REPO_NAME $flatpak
     fi
   done
 fi

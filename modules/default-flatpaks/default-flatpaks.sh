@@ -10,8 +10,11 @@ cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /
 
 SYS_INSTALL_LIST=/usr/etc/flatpak/system/install
 SYS_REMOVE_LIST=/usr/etc/flatpak/system/remove
+SYS_REPO_INFO=/usr/etc/flatpak/system/repo-info.yml
+
 USER_INSTALL_LIST=/usr/etc/flatpak/user/install
 USER_REMOVE_LIST=/usr/etc/flatpak/user/remove
+USER_REPO_INFO=/usr/etc/flatpak/user/repo-info.yml
 
 echo "Enabling flatpaks module"
 systemctl enable system-flatpak-setup.service
@@ -20,8 +23,31 @@ mkdir -p /usr/etc/flatpak
 
 get_yaml_array SYSTEM_INSTALL '.system.install[]' "$1"
 get_yaml_array SYSTEM_REMOVE '.system.remove[]' "$1"
+
+REPO_URL=$(echo "$1" | yq -I=0 '.system.repo-url')
+REPO_NAME=$(echo "$1" | yq -I=0 '.system.repo-name')
+REPO_TITLE=$(echo "$1" | yq -I=0 '.system.repo-title')
+
+touch $SYS_REPO_INFO
+cat > $SYS_REPO_INFO <<EOF
+repo-url: "$REPO_URL"
+repo-name: "$REPO_NAME"
+repo-title: "$REPO_TITLE"
+EOF
+
 get_yaml_array USER_INSTALL '.user.install[]' "$1"
 get_yaml_array USER_REMOVE '.user.remove[]' "$1"
+
+REPO_URL=$(echo "$1" | yq -I=0 '.user.repo-url')
+REPO_NAME=$(echo "$1" | yq -I=0 '.user.repo-name')
+REPO_TITLE=$(echo "$1" | yq -I=0 '.user.repo-title')
+
+touch $USER_REPO_INFO
+cat > $USER_REPO_INFO <<EOF
+repo-url: "$REPO_URL"
+repo-name: "$REPO_NAME"
+repo-title: "$REPO_TITLE"
+EOF
 
 echo "Creating system Flatpak install list"
 if [[ ${#SYSTEM_INSTALL[@]} -gt 0 ]]; then
