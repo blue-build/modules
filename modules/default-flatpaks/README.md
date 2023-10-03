@@ -17,10 +17,7 @@ Flatpak setup can be run again by removing `/etc/ublue-os/system-flatpak-configu
     remove:
     - org.gnome.eog
   user:
+    # A flatpak repo can also be added without having to install flatpaks
     repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
     repo-name: flathub
-    install:
-    - org.gnome.Epiphany
-    remove:
-    - org.mozilla.firefox
 ```
