@@ -24,7 +24,9 @@ REPO_NAME=$(yq '.repo-name' $REPO_INFO)
 REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 
 # Set up system-wide Flatpak repository
-flatpak remote-add --if-not-exists --system $REPO_NAME $REPO_URL
+if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
+    flatpak remote-add --if-not-exists --system $REPO_NAME $REPO_URL
+fi
 
 # If configured remote is flathub, enable it here.
 # Flathub is already installed on Fedora, but not enabled by default,
