@@ -9,11 +9,16 @@ Flatpak setup can be run again by removing `/etc/ublue-os/system-flatpak-configu
 ```yaml
 - type: default-flatpaks
   system:
+    repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    repo-name: flathub
+    repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
     install:
     - org.gnome.Loupe
     remove:
     - org.gnome.eog
   user:
+    repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    repo-name: flathub
     install:
     - org.gnome.Epiphany
     remove:
