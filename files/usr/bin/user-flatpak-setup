@@ -14,6 +14,7 @@ fi
 # Remove Fedora's flatpak repo, if it exists
 if grep -qz 'fedora' <<< $(flatpak remotes); then
   flatpak remote-delete --user fedora --force
+  flatpak remote-delete --user fedora-testing --force
 fi
 
 REPO_INFO="/etc/flatpak/user/repo-info.yml"

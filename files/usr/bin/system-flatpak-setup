@@ -16,6 +16,7 @@ if grep -qz 'fedora' <<< $(flatpak remotes); then
   /usr/lib/fedora-third-party/fedora-third-party-opt-out
   /usr/bin/fedora-third-party disable
   flatpak remote-delete fedora --force
+  flatpak remote-delete fedora-testing --force
 fi
 
 REPO_INFO="/etc/flatpak/system/repo-info.yml"
