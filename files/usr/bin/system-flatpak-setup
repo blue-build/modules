@@ -26,6 +26,7 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 
 # Set up system-wide Flatpak repository
 if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
+    echo "Adding system-wide remote $REPO_NAME from $REPO_URL"
     flatpak remote-add --if-not-exists --system $REPO_NAME $REPO_URL
 fi
 
@@ -38,6 +39,7 @@ fi
 
 # Change repository title to configured title, if not null
 if [[ ! $REPO_TITLE == "null" ]]; then
+    echo "Setting title $REPO_TITLE for remote $REPO_NAME"
     flatpak remote-modify --system $REPO_NAME --title="$REPO_TITLE"
 fi
 
