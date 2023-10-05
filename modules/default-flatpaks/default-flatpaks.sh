@@ -8,79 +8,57 @@ cp -r "$BLING_DIRECTORY"/files/usr/bin/user-flatpak-setup /usr/bin/user-flatpak-
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
-SYS_INSTALL_LIST=/usr/etc/flatpak/system/install
-SYS_REMOVE_LIST=/usr/etc/flatpak/system/remove
-SYS_REPO_INFO=/usr/etc/flatpak/system/repo-info.yml
-
-USER_INSTALL_LIST=/usr/etc/flatpak/user/install
-USER_REMOVE_LIST=/usr/etc/flatpak/user/remove
-USER_REPO_INFO=/usr/etc/flatpak/user/repo-info.yml
-
 echo "Enabling flatpaks module"
 systemctl enable system-flatpak-setup.service
 systemctl enable --global user-flatpak-setup.service
-mkdir -p /usr/etc/flatpak
+mkdir -p /usr/etc/flatpak/{system,user}
 
-get_yaml_array SYSTEM_INSTALL '.system.install[]' "$1"
-get_yaml_array SYSTEM_REMOVE '.system.remove[]' "$1"
+# $1, $repo_location
+configure_flatpak_repo () {
+    repo_info="/usr/etc/flatpak/$2/repo-info.yml"
+    echo "Configuring $2 repo in $repo_info"
+    repo_url=$(echo "$1" | yq -I=0 ".$2.repo-url")
+    repo_name=$(echo "$1" | yq -I=0 ".$2.repo-name")
+    repo_title=$(echo "$1" | yq -I=0 ".$2.repo-title")
 
-REPO_URL=$(echo "$1" | yq -I=0 '.system.repo-url')
-REPO_NAME=$(echo "$1" | yq -I=0 '.system.repo-name')
-REPO_TITLE=$(echo "$1" | yq -I=0 '.system.repo-title')
-
-touch $SYS_REPO_INFO
-cat > $SYS_REPO_INFO <<EOF
-repo-url: "$REPO_URL"
-repo-name: "$REPO_NAME"
-repo-title: "$REPO_TITLE"
+    touch $repo_info
+    # EOF breaks if the contents are indented,
+    # so the below lines are intentionally un-indented
+    cat > $repo_info <<EOF
+repo-url: "$repo_url"
+repo-name: "$repo_name"
+repo-title: "$repo_title"
 EOF
+}
 
-get_yaml_array USER_INSTALL '.user.install[]' "$1"
-get_yaml_array USER_REMOVE '.user.remove[]' "$1"
+# $1, $repo_location
+configure_lists () {
+    install_list="/usr/etc/flatpak/$2/install"
+    remove_list="/usr/etc/flatpak/$2/remove"
+    get_yaml_array INSTALL ".$2.install[]" "$1"
+    get_yaml_array REMOVE ".$2.remove[]" "$1"
 
-REPO_URL=$(echo "$1" | yq -I=0 '.user.repo-url')
-REPO_NAME=$(echo "$1" | yq -I=0 '.user.repo-name')
-REPO_TITLE=$(echo "$1" | yq -I=0 '.user.repo-title')
+    echo "Creating $2 Flatpak install list at $install_list"
+    if [[ ${#INSTALL[@]} -gt 0 ]]; then
+        touch $install_list
+        for flatpak in "${INSTALL[@]}"; do
+            echo "Adding to system flatpak installs: $(printf ${flatpak})"
+            echo $flatpak >> $install_list
+        done
+    fi
 
-touch $USER_REPO_INFO
-cat > $USER_REPO_INFO <<EOF
-repo-url: "$REPO_URL"
-repo-name: "$REPO_NAME"
-repo-title: "$REPO_TITLE"
-EOF
+    echo "Creating $2 Flatpak removals list $remove_list"
+    if [[ ${#REMOVE[@]} -gt 0 ]]; then
+        touch $remove_list
+        for flatpak in "${REMOVE[@]}"; do
+            echo "Adding to system flatpak removals: $(printf ${flatpak})"
+            echo $flatpak >> $remove_list
+        done
+    fi
+}
 
-echo "Creating system Flatpak install list"
-if [[ ${#SYSTEM_INSTALL[@]} -gt 0 ]]; then
-    touch $SYS_INSTALL_LIST
-    for flatpak in "${SYSTEM_INSTALL[@]}"; do
-        echo "Adding to system flatpak installs: $(printf ${flatpak})"
-        echo $flatpak >> $SYS_INSTALL_LIST
-    done
-fi
+configure_flatpak_repo "$1" "system"
+configure_flatpak_repo "$1" "user"
 
-echo "Creating system Flatpak removals list"
-if [[ ${#SYSTEM_REMOVE[@]} -gt 0 ]]; then
-    touch $SYS_REMOVE_LIST
-    for flatpak in "${SYSTEM_REMOVE[@]}"; do
-        echo "Adding to system flatpak removals: $(printf ${flatpak})"
-        echo $flatpak >> $SYS_REMOVE_LIST
-    done
-fi
-
-echo "Creating user Flatpak install list"
-if [[ ${#USER_INSTALL[@]} -gt 0 ]]; then
-    touch $USER_INSTALL_LIST
-    for flatpak in "${USER_INSTALL[@]}"; do
-        echo "Adding to user flatpak installs: $(printf ${flatpak})"
-        echo $flatpak >> $USER_INSTALL_LIST
-    done
-fi
-
-echo "Creating user Flatpak removals list"
-if [[ ${#USER_REMOVE[@]} -gt 0 ]]; then
-    touch $USER_REMOVE_LIST
-    for flatpak in "${USER_REMOVE[@]}"; do
-        echo "Adding to user flatpak removals: $(printf ${flatpak})"
-        echo $flatpak >> $USER_REMOVE_LIST
-    done
-fi
+configure_lists "$1" "system"
+configure_lists "$1" "user"
