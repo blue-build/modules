@@ -42,7 +42,7 @@ configure_lists () {
     if [[ ${#INSTALL[@]} -gt 0 ]]; then
         touch $install_list
         for flatpak in "${INSTALL[@]}"; do
-            echo "Adding to system flatpak installs: $(printf ${flatpak})"
+            echo "Adding to $2 flatpak installs: $(printf ${flatpak})"
             echo $flatpak >> $install_list
         done
     fi
@@ -51,7 +51,7 @@ configure_lists () {
     if [[ ${#REMOVE[@]} -gt 0 ]]; then
         touch $remove_list
         for flatpak in "${REMOVE[@]}"; do
-            echo "Adding to system flatpak removals: $(printf ${flatpak})"
+            echo "Adding to $2 flatpak removals: $(printf ${flatpak})"
             echo $flatpak >> $remove_list
         done
     fi
