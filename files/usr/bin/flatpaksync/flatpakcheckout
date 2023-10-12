@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source $HOME/.config/flatpaksync/env
+
 CHECKOUT_DIR=/tmp/sync
 
 rm -rf $CHECKOUT_DIR
