@@ -1,5 +1,5 @@
 [Unit]
-Description=Serviço de sincronia de flatpak
+Description=Flatpak synchronization service
 ConditionPathExists=%h/.config/flatpaksync/env
 ConditionPathExists=%h/.config/flatpaks.user.installed
 

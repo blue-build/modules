@@ -1,5 +1,5 @@
 [Unit]
-Description=Monitorar o diretório ~/.var/app
+Description=Service monitoring the ~/.var/app directory
 
 [Path]
 PathChanged=%h/.var/app
