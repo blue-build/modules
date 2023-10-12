@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+CHECKOUT_DIR=/tmp/sync
+
+git clone "$GIST_REPO" $CHECKOUT_DIR || exit 0
+
+flatpak list --app --columns=app --user > $CHECKOUT_DIR/flatpak.list
+
+cd $CHECKOUT_DIR || exit 0
+
+git add . && git commit -m "." && git push
+
+rm -rf $CHECKOUT_DIR
