@@ -19,4 +19,5 @@ install:
     # - gnome-vrr # enables gnome-vrr for your image 
     # - container-tools # installs container-related tools onto /usr/bin: kind, kubectx, docker-compose and kubens 
     # - laptop # installs TLP and configures your system for laptop usage
+    # - flatpaksync # allows synchronization of user-installed flatpaks. For more information, see the <bling-repo>/modules/bling/flatpaksync.md
 ```
