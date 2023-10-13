@@ -11,7 +11,7 @@ mkdir -p "$DEST"
 DOWNLOAD=$(ls "$DEST" | wc -l)
 FILE="$NAME.$FORMAT"
 
-if [[ $DOWNLOAD -eq 0 ]]; then
+if [[ $DOWNLOAD -eq 0 ]] && [[ -n $NAME ]]; then
 
     echo "Downloading $FILE"
 
