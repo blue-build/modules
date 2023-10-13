@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-export BLING_FILES_DIRECTORY="/tmp/bling/files"
+BLING_FILES_DIRECTORY="/tmp/bling/files"
 SYSTEMD_USER_JOBS_DIR="/usr/lib/systemd/user/"
 
 mkdir -p $SYSTEMD_USER_JOBS_DIR
