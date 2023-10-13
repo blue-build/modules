@@ -7,7 +7,7 @@ To activate it, simply follow the example below:
 ## Example configuration
 
 ```yaml
-- type: flatpak-sync
+- type: flatpaksync
   enable: true
 ```
 
