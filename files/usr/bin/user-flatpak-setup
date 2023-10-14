@@ -52,6 +52,8 @@ if [[ -n $REMOVE_LIST ]]; then
   flatpak remove --user --noninteractive $flatpak ${REMOVE_LIST[@]}
 fi
 
+notify-send "Flatpak Installer" "Finished installing user flatpaks" --app-name="Flatpak Installer" -u NORMAL
+
 # Prevent future executions
 echo "Writing state file"
 mkdir -p $HOME/.config/ublue-os/

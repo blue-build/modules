@@ -70,6 +70,8 @@ if [[ -n $REMOVE_LIST ]]; then
   flatpak remove --system --noninteractive ${REMOVE_LIST[@]}
 fi
 
+notify-send "Flatpak Installer" "Finished installing system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+
 # Prevent future executions
 echo "Writing state file"
 mkdir -p /etc/ublue-os
