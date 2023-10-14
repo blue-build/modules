@@ -13,6 +13,7 @@ fi
 
 # Opt out of and remove Fedora's flatpak repo
 if grep -qz 'fedora' <<< $(flatpak remotes); then
+  /usr/bin/gnome-software --quit
   /usr/lib/fedora-third-party/fedora-third-party-opt-out
   /usr/bin/fedora-third-party disable
   flatpak remote-delete fedora --force
