@@ -50,7 +50,10 @@ REMOVE_LIST=$(cat /etc/flatpak/system/remove)
 
 # Install flatpaks in list
 if [[ -n $INSTALL_LIST ]]; then
-    flatpak install --system --noninteractive $REPO_NAME ${INSTALL_LIST[@]}
+    if ! flatpak install --system --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
+        # Exit on error
+        exit 1
+    fi
 fi
 
 # Remove flatpaks in list
