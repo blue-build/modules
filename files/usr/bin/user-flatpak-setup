@@ -24,14 +24,14 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 
 # Set up per-user Flatpak repository
 if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
-    echo "Adding remote $REPO_NAME from $REPO_URL"
-    flatpak remote-add --if-not-exists --user $REPO_NAME $REPO_URL
+  echo "Adding remote $REPO_NAME from $REPO_URL"
+  flatpak remote-add --if-not-exists --user $REPO_NAME $REPO_URL
 fi
 
 # Change repository title to configured title, if not null
 if [[ ! $REPO_TITLE == "null" ]]; then
-    echo "Setting title $REPO_TITLE for remote $REPO_NAME"
-    flatpak remote-modify --user $REPO_NAME --title="$REPO_TITLE"
+  echo "Setting title $REPO_TITLE for remote $REPO_NAME"
+  flatpak remote-modify --user $REPO_NAME --title="$REPO_TITLE"
 fi
 
 # Lists of flatpaks
@@ -41,15 +41,15 @@ REMOVE_LIST=$(cat /etc/flatpak/user/remove)
 
 # Install flatpaks in list
 if [[ -n $INSTALL_LIST ]]; then
-    if ! flatpak install --user --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
-        # Exit on error
-        exit 1
-    fi
+  if ! flatpak install --user --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
+    # Exit on error
+    exit 1
+  fi
 fi
 
 # Remove flatpaks in list
 if [[ -n $REMOVE_LIST ]]; then
-    flatpak remove --user --noninteractive $flatpak ${REMOVE_LIST[@]}
+  flatpak remove --user --noninteractive $flatpak ${REMOVE_LIST[@]}
 fi
 
 # Prevent future executions
