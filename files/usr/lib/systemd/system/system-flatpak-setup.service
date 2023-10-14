@@ -1,6 +1,5 @@
 [Unit]
 Description=Manage system flatpaks
-Documentation=https://github.com/ublue-os/endlish-oesque/issues/10
 Wants=network-online.target
 After=network-online.target
 
