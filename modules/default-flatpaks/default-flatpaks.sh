@@ -13,60 +13,62 @@ systemctl enable system-flatpak-setup.service
 systemctl enable --global user-flatpak-setup.service
 mkdir -p /usr/etc/flatpak/{system,user}
 
-# $1, $repo_location
 configure_flatpak_repo () {
-    repo_info="/usr/etc/flatpak/$2/repo-info.yml"
-    # If repo_info already exists, don't re-create it
-    if [[ ! -f $repo_info ]]; then
-        echo "Configuring $2 repo in $repo_info"
-        repo_url=$(echo "$1" | yq -I=0 ".$2.repo-url")
-        repo_name=$(echo "$1" | yq -I=0 ".$2.repo-name")
-        repo_title=$(echo "$1" | yq -I=0 ".$2.repo-title")
+    CONFIG_FILE=$1
+    INSTALL_LEVEL=$2
+    REPO_INFO="/usr/etc/flatpak/$INSTALL_LEVEL/repo-info.yml"
+    # If REPO_INFO already exists, don't re-create it
+    if [[ ! -f $REPO_INFO ]]; then
+        echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
+        REPO_URL=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-url")
+        REPO_NAME=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-name")
+        REPO_TITLE=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-title")
 
         # Use Flathub as default repo
-        if [[ $repo_url == "null" ]]; then
-            repo_url=https://dl.flathub.org/repo/flathub.flatpakrepo
+        if [[ $REPO_URL == "null" ]]; then
+            REPO_URL=https://dl.flathub.org/repo/flathub.flatpakrepo
         fi
 
         # If repo-name isn't configured, use flathub as fallback
         # Checked separately from URL to allow custom naming
-        if [[ $repo_name == "null" ]]; then
-            repo_name="flathub"
+        if [[ $REPO_NAME == "null" ]]; then
+            REPO_NAME="flathub"
         fi
 
-        touch $repo_info
+        touch $REPO_INFO
         # EOF breaks if the contents are indented,
         # so the below lines are intentionally un-indented
-        cat > $repo_info <<EOF
-repo-url: "$repo_url"
-repo-name: "$repo_name"
-repo-title: "$repo_title"
+        cat > $REPO_INFO <<EOF
+repo-url: "$REPO_URL"
+repo-name: "$REPO_NAME"
+repo-title: "$REPO_TITLE"
 EOF
     fi
 }
 
-# $1, $repo_location
 configure_lists () {
-    install_list="/usr/etc/flatpak/$2/install"
-    remove_list="/usr/etc/flatpak/$2/remove"
-    get_yaml_array INSTALL ".$2.install[]" "$1"
-    get_yaml_array REMOVE ".$2.remove[]" "$1"
+    CONFIG_FILE=$1
+    INSTALL_LEVEL=$2
+    INSTALL_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/install"
+    REMOVE_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/remove"
+    get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
+    get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
-    echo "Creating $2 Flatpak install list at $install_list"
+    echo "Creating $INSTALL_LEVEL Flatpak install list at $INSTALL_LIST"
     if [[ ${#INSTALL[@]} -gt 0 ]]; then
-        touch $install_list
+        touch $INSTALL_LIST
         for flatpak in "${INSTALL[@]}"; do
-            echo "Adding to $2 flatpak installs: $(printf ${flatpak})"
-            echo $flatpak >> $install_list
+            echo "Adding to $INSTALL_LEVEL flatpak installs: $(printf ${flatpak})"
+            echo $flatpak >> $INSTALL_LIST
         done
     fi
 
-    echo "Creating $2 Flatpak removals list $remove_list"
+    echo "Creating $INSTALL_LEVEL Flatpak removals list $REMOVE_LIST"
     if [[ ${#REMOVE[@]} -gt 0 ]]; then
-        touch $remove_list
+        touch $REMOVE_LIST
         for flatpak in "${REMOVE[@]}"; do
-            echo "Adding to $2 flatpak removals: $(printf ${flatpak})"
-            echo $flatpak >> $remove_list
+            echo "Adding to $INSTALL_LEVEL flatpak removals: $(printf ${flatpak})"
+            echo $flatpak >> $REMOVE_LIST
         done
     fi
 }
