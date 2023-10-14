@@ -16,19 +16,22 @@ mkdir -p /usr/etc/flatpak/{system,user}
 # $1, $repo_location
 configure_flatpak_repo () {
     repo_info="/usr/etc/flatpak/$2/repo-info.yml"
-    echo "Configuring $2 repo in $repo_info"
-    repo_url=$(echo "$1" | yq -I=0 ".$2.repo-url")
-    repo_name=$(echo "$1" | yq -I=0 ".$2.repo-name")
-    repo_title=$(echo "$1" | yq -I=0 ".$2.repo-title")
+    # If repo_info already exists, don't re-create it
+    if [[ ! -f $repo_info ]]; then
+        echo "Configuring $2 repo in $repo_info"
+        repo_url=$(echo "$1" | yq -I=0 ".$2.repo-url")
+        repo_name=$(echo "$1" | yq -I=0 ".$2.repo-name")
+        repo_title=$(echo "$1" | yq -I=0 ".$2.repo-title")
 
-    touch $repo_info
-    # EOF breaks if the contents are indented,
-    # so the below lines are intentionally un-indented
-    cat > $repo_info <<EOF
+        touch $repo_info
+        # EOF breaks if the contents are indented,
+        # so the below lines are intentionally un-indented
+        cat > $repo_info <<EOF
 repo-url: "$repo_url"
 repo-name: "$repo_name"
 repo-title: "$repo_title"
 EOF
+    fi
 }
 
 # $1, $repo_location
