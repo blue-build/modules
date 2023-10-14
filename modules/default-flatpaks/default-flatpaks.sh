@@ -8,11 +8,6 @@ cp -r "$BLING_DIRECTORY"/files/usr/bin/user-flatpak-setup /usr/bin/user-flatpak-
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
-echo "Enabling flatpaks module"
-systemctl enable system-flatpak-setup.service
-systemctl enable --global user-flatpak-setup.service
-mkdir -p /usr/etc/flatpak/{system,user}
-
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
@@ -73,14 +68,19 @@ configure_lists () {
     fi
 }
 
+echo "Enabling flatpaks module"
+mkdir -p /usr/etc/flatpak/{system,user}
+
 # Check that `system` is present before configuring
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
+    systemctl enable -f system-flatpak-setup.service
     configure_flatpak_repo "$1" "system"
     configure_lists "$1" "system"
 fi
 
 # Check that `user` is present before configuring
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
+    systemctl enable -f --global user-flatpak-setup.service
     configure_flatpak_repo "$1" "user"
     configure_lists "$1" "user"
 fi
