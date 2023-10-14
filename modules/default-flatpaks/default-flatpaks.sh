@@ -23,6 +23,17 @@ configure_flatpak_repo () {
         repo_name=$(echo "$1" | yq -I=0 ".$2.repo-name")
         repo_title=$(echo "$1" | yq -I=0 ".$2.repo-title")
 
+        # Use Flathub as default repo
+        if [[ $repo_url == "null" ]]; then
+            repo_url=https://dl.flathub.org/repo/flathub.flatpakrepo
+        fi
+
+        # If repo-name isn't configured, use flathub as fallback
+        # Checked separately from URL to allow custom naming
+        if [[ $repo_name == "null" ]]; then
+            repo_name="flathub"
+        fi
+
         touch $repo_info
         # EOF breaks if the contents are indented,
         # so the below lines are intentionally un-indented

@@ -2,6 +2,8 @@
 
 The `default-flatpaks` module removes the Fedora Flatpaks remote that comes pre-installed by Fedora, and can be used to install flatpaks from a configurable remote on first boot. Flatpaks can either be installed system-wide or per-user, though per-user flatpaks will be installed for every user on a system. Previously-installed flatpaks can also be removed.
 
+If no Flatpak remote is specified, the module will default to using Flathub.
+
 The module uses the following scripts to handle flatpak setup:
 
 - `/usr/bin/system-flatpak-setup`
