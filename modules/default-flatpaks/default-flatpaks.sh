@@ -73,8 +73,14 @@ configure_lists () {
     fi
 }
 
-configure_flatpak_repo "$1" "system"
-configure_flatpak_repo "$1" "user"
+# Check that `system` is present before configuring
+if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
+    configure_flatpak_repo "$1" "system"
+    configure_lists "$1" "system"
+fi
 
-configure_lists "$1" "system"
-configure_lists "$1" "user"
+# Check that `user` is present before configuring
+if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
+    configure_flatpak_repo "$1" "user"
+    configure_lists "$1" "user"
+fi
