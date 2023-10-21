@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure Flatpaks for current user
+Requires=xdg-desktop-autostart.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/user-flatpak-setup
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=0
+
+[Install]
+WantedBy=default.target
