@@ -23,18 +23,18 @@ This module stores the Flatpak remote configuration and Flatpak install/remove l
 ## Example configuration
 
 ```yaml
-- type: default-flatpaks
-  system:
-    # If no repo information is specified, Flathub will be used by default
-    repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-    repo-name: flathub
-    repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
-    install:
-    - org.gnome.Loupe
-    remove:
-    - org.gnome.eog
-  # A flatpak repo can also be added without having to install flatpaks,
-  # as long as one of the repo- fields is present
-  user:
-    repo-name: flathub
+type: default-flatpaks
+system:
+  # If no repo information is specified, Flathub will be used by default
+  repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  repo-name: flathub
+  repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+  install:
+  - org.gnome.Loupe
+  remove:
+  - org.gnome.eog
+# A flatpak repo can also be added without having to install flatpaks,
+# as long as one of the repo- fields is present
+user:
+  repo-name: flathub
 ```
