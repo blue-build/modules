@@ -30,9 +30,9 @@ system:
   repo-name: flathub
   repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
   install:
-  - org.gnome.Loupe
+    - org.gnome.Loupe
   remove:
-  - org.gnome.eog
+    - org.gnome.eog
 # A flatpak repo can also be added without having to install flatpaks,
 # as long as one of the repo- fields is present
 user:
