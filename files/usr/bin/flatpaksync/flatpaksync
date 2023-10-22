@@ -4,7 +4,7 @@ CHECKOUT_DIR=/tmp/sync
 
 rm -rf $CHECKOUT_DIR
 
-git clone "$GIST_REPO" $CHECKOUT_DIR || exit 0
+git clone "$GIT_REPO" $CHECKOUT_DIR || exit 0
 
 flatpak list --app --columns=app --user > $CHECKOUT_DIR/flatpak.list
 

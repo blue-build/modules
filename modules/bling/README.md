@@ -30,7 +30,7 @@ The `flatpaksync` submodule can be used to synchronize user-installed flatpaks i
 Once the submodule is activated, users can create a file `$HOME/.config/flatpaksync/env` informing the repository that will be used to synchronize their apps in the POSIX standard:
 
 ```bash
-GIST_REPO=<YOUR_REPO>
+GIT_REPO=<YOUR_REPO>
 ```
 
 If the user has not yet installed their flatpaks, has already done the step above and has a `flatpak.list` file in the repository, simply use the `flatpakcheckout` binary to perform the installation and start the synchronization.
