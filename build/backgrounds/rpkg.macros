@@ -1,0 +1,7 @@
+function backgrounds_version {
+    if [ "$GITHUB_REF_NAME" = "" ]; then
+        echo "1.0.0+$(git rev-parse --short HEAD)"
+    else
+        echo "$GITHUB_REF_NAME" 
+    fi
+}

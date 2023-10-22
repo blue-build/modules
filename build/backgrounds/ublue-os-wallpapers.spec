@@ -1,20 +1,21 @@
 Name:		ublue-os-wallpapers
 Vendor:		ublue-os
-Version:	0.1
+Version:	{{{ backgrounds_version }}}	
 Release:	1%{?dist}
-Summary:	Wallpapers for Ublue OS
+Summary:	Wallpapers for Universal Blue OSes 
 License:	Apache-2.0
-URL:		https://github.com/ublue-os/bling
+URL:		https://github.com/%{vendor}/%{name}
 BuildArch:	noarch
-Source0:	%{NAME}.tar.gz 
+VCS:           {{{ git_dir_vcs }}}
+Source:        {{{ git_dir_pack }}}
+
+%global sub_name %{lua:t=string.gsub(rpm.expand("%{NAME}"), "^ublue%-", ""); print(t)}
 
 %description
 Collection of wallpapers for the Universal Blue operating systems
 
 %prep
-%setup -q -c
-
-%build
+{{{ git_dir_setup_macro }}}
 
 %install
 mkdir -p -m0755 \
