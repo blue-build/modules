@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+source $HOME/.config/flatpaksync/env
+
+CHECKOUT_DIR=/tmp/sync
+
+rm -rf $CHECKOUT_DIR
+
+if [[ -n "${GIT_REPO}" ]]; then
+
+    git clone "$GIT_REPO" $CHECKOUT_DIR || exit 0
+
+    while IFS=$'\n' read -r app; do
+
+        flatpak install --user --noninteractive "$app" -y || HAS_FAILED="yes"
+
+    done <$CHECKOUT_DIR/flatpak.list
+
+    if [[ -z "${HAS_FAILED}" ]]; then
+
+        touch "$HOME"/.config/flatpaks.user.installed
+
+    fi
+
+else
+
+    echo "Repository not specified. Please enter it in $HOME/.config/flatpaksync/env in the POSIX pattern: GIT_REPO=<YOUR_REPO>"
+
+fi
