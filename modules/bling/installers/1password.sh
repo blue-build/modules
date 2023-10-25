@@ -1,17 +1,17 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -ouex pipefail
 
 #### Variables
 
 # Can be "beta" or "stable"
-RELEASE_CHANNEL="beta"
+RELEASE_CHANNEL="${ONEPASSWORD_RELEASE_CHANNEL:-stable}"
 
 # Must be over 1000
-GID_ONEPASSWORD="1500"
+GID_ONEPASSWORD="${GID_ONEPASSWORD:-1500}"
 
 # Must be over 1000
-GID_ONEPASSWORDCLI="1600"
+GID_ONEPASSWORDCLI="${GID_ONEPASSWORDCLI:-1600}"
 
 echo "Installing 1Password"
 
@@ -30,7 +30,7 @@ mkdir -p /var/opt # -p just in case it exists
 # Setup repo
 cat << EOF > /etc/yum.repos.d/1password.repo
 [1password]
-name=1Password Stable Channel
+name=1Password ${RELEASE_CHANNEL^} Channel
 baseurl=https://downloads.1password.com/linux/rpm/${RELEASE_CHANNEL}/\$basearch
 enabled=1
 gpgcheck=1
@@ -94,7 +94,7 @@ chgrp "${GID_ONEPASSWORD}" "${BROWSER_SUPPORT_PATH}"
 chmod g+s "${BROWSER_SUPPORT_PATH}"
 
 # onepassword-cli also needs its own group and setgid, like the other helpers.
-chgrp ${GID_ONEPASSWORDCLI} /usr/bin/op
+chgrp "${GID_ONEPASSWORDCLI}" /usr/bin/op
 chmod g+s /usr/bin/op
 
 # Dynamically create the required groups via sysusers.d
