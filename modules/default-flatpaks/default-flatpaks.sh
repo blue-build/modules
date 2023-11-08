@@ -14,6 +14,7 @@ configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
     REPO_INFO="/usr/etc/flatpak/$INSTALL_LEVEL/repo-info.yml"
+    get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
     # If REPO_INFO already exists, don't re-create it
     if [[ ! -f $REPO_INFO ]]; then
         echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
@@ -22,13 +23,15 @@ configure_flatpak_repo () {
         REPO_TITLE=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-title")
 
         # Use Flathub as default repo
-        if [[ $REPO_URL == "null" ]]; then
+        # Doesn't set repo info if install list is empty
+        if [[ $REPO_URL == "null" && ${#INSTALL[@]} -gt 0 ]]; then
             REPO_URL=https://dl.flathub.org/repo/flathub.flatpakrepo
         fi
 
         # If repo-name isn't configured, use flathub as fallback
         # Checked separately from URL to allow custom naming
-        if [[ $REPO_NAME == "null" ]]; then
+        # Doesn't set repo name if install list is empty
+        if [[ $REPO_NAME == "null" && ${#INSTALL[@]} -gt 0 ]]; then
             REPO_NAME="flathub"
         fi
 
@@ -72,17 +75,17 @@ configure_lists () {
 
 echo "Enabling flatpaks module"
 mkdir -p /usr/etc/flatpak/{system,user}
+systemctl enable -f system-flatpak-setup.service
+systemctl enable -f --global user-flatpak-setup.service
 
 # Check that `system` is present before configuring
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
-    systemctl enable -f system-flatpak-setup.service
     configure_flatpak_repo "$1" "system"
     configure_lists "$1" "system"
 fi
 
 # Check that `user` is present before configuring
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
-    systemctl enable -f --global user-flatpak-setup.service
     configure_flatpak_repo "$1" "user"
     configure_lists "$1" "user"
 fi
