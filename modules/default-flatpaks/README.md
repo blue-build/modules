@@ -20,7 +20,7 @@ Flatpak setup can be run again by removing `/etc/ublue-os/system-flatpak-configu
 
 This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/flatpak/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
 
-## Example configuration
+## Example configurations
 
 ```yaml
 type: default-flatpaks
@@ -37,4 +37,17 @@ system:
 # as long as one of the repo- fields is present
 user:
   repo-name: flathub
+```
+
+```yaml
+# Assuming that the above example is called first in a recipe,
+# a subsequent usage might look like this:
+type: default-flatpaks
+system:
+  install:
+    - org.kde.kdenlive
+user:
+  # repo-name will overwrite the previously-configured repo-name for the user remote
+  repo-name: flathub-user
+  repo-title: "Flathub (User)
 ```
