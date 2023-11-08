@@ -19,6 +19,7 @@ configure_flatpak_repo () {
 
     # Checks pre-configured repo info, if exists
     if [[ -f $REPO_INFO ]]; then
+        echo "Existing $INSTALL_LEVEL configuration found:"
         cat $REPO_INFO
         CONFIG_URL=$(yq ".repo-url" "$REPO_INFO")
         CONFIG_NAME=$(yq ".repo-name" "$REPO_INFO")
