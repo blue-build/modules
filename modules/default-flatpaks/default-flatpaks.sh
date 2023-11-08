@@ -15,38 +15,63 @@ configure_flatpak_repo () {
     INSTALL_LEVEL=$2
     REPO_INFO="/usr/etc/flatpak/$INSTALL_LEVEL/repo-info.yml"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
-    # If REPO_INFO already exists, don't re-create it
-    if [[ ! -f $REPO_INFO ]]; then
-        echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
-        REPO_URL=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-url")
-        REPO_NAME=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-name")
-        REPO_TITLE=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-title")
 
-        # Use Flathub as default repo
-        # Doesn't set repo info if install list is empty
-        if [[ $REPO_URL == "null" && ${#INSTALL[@]} -gt 0 ]]; then
-            REPO_URL=https://dl.flathub.org/repo/flathub.flatpakrepo
-        fi
 
-        # If repo-name isn't configured, use flathub as fallback
-        # Checked separately from URL to allow custom naming
-        # Doesn't set repo name if install list is empty
-        if [[ $REPO_NAME == "null" && ${#INSTALL[@]} -gt 0 ]]; then
+    # Checks pre-configured repo info, if exists
+    if [[ -f $REPO_INFO ]]; then
+        cat $REPO_INFO
+        CONFIG_URL=$(yq ".repo-url" "$REPO_INFO")
+        CONFIG_NAME=$(yq ".repo-name" "$REPO_INFO")
+        CONFIG_TITLE=$(yq ".repo-title" "$REPO_INFO")
+    else
+        CONFIG_URL="null"
+        CONFIG_NAME="null"
+        CONFIG_TITLE="null"
+    fi
+
+    echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
+    REPO_URL=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-url")
+    REPO_NAME=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-name")
+    REPO_TITLE=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-title")
+
+    # If repo-name isn't configured, use flathub as fallback
+    # Checked separately from URL to allow custom naming
+    if [[ $REPO_NAME == "null" && $CONFIG_NAME == "null" ]]; then
+        if [[ ${#INSTALL[@]} -gt 0 ]]; then
             REPO_NAME="flathub"
         fi
+    # Re-use existing config, if no new configuration was added
+    elif [[ $REPO_NAME == "null" && ! $CONFIG_NAME == "null" ]]; then
+        REPO_NAME=$CONFIG_NAME
+    fi
 
-        touch $REPO_INFO
-        # EOF breaks if the contents are indented,
-        # so the below lines are intentionally un-indented
-        cat > $REPO_INFO <<EOF
+    # Re-use existing config, if no new configuration was added
+    if [[ $REPO_TITLE == "null" && ! $CONFIG_TITLE == "null" ]]; then
+        REPO_TITLE=$CONFIG_TITLE
+    fi
+
+    if [[ $REPO_URL == "null" && $CONFIG_URL == "null" ]]; then
+        # If repo name is configured, or if there are Flatpaks to be installed,
+        # set Flathub as repo URL
+        if [[ ! $REPO_NAME == "null" || ${#INSTALL[@]} -gt 0 ]]; then
+            REPO_URL=https://dl.flathub.org/repo/flathub.flatpakrepo
+        fi
+    # Re-use existing config, if no new configuration was added
+    elif [[ $REPO_URL == "null" && ! $CONFIG_URL == "null" ]]; then
+        REPO_URL=$CONFIG_URL
+    fi
+
+    touch $REPO_INFO
+    # EOF breaks if the contents are indented,
+    # so the below lines are intentionally un-indented
+    cat > $REPO_INFO <<EOF
 repo-url: "$REPO_URL"
 repo-name: "$REPO_NAME"
 repo-title: "$REPO_TITLE"
 EOF
 
-        # Show results of repo configuration
-        cat $REPO_INFO
-    fi
+    # Show results of repo configuration
+    cat $REPO_INFO
 }
 
 configure_lists () {
