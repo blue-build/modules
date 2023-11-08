@@ -43,6 +43,9 @@ repo-url: "$REPO_URL"
 repo-name: "$REPO_NAME"
 repo-title: "$REPO_TITLE"
 EOF
+
+        # Show results of repo configuration
+        cat $REPO_INFO
     fi
 }
 
