@@ -1,6 +1,7 @@
 [Unit]
 Description=Configure Flatpaks for current user
-Requires=xdg-desktop-autostart.target
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 Type=simple
