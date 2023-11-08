@@ -44,6 +44,8 @@ user:
 # a subsequent usage might look like this:
 type: default-flatpaks
 system:
+  # If the repo-* fields are omitted, the configured repo will
+  # use the previous configuration. Otherwise, it defaults to Flathub.
   install:
     - org.kde.kdenlive
 user:
