@@ -6,10 +6,8 @@ wget -O /tmp/intelmono.zip 'https://github.com/intel/intel-one-mono/releases/lat
 unzip /tmp/intelmono.zip -d "/tmp/intelmono"
 mv /tmp/intelmono/ttf "$FILES_ROOT/usr/share/fonts/intel-one-mono"
 
-# wget -O /tmp/ublue-os/rpms/devpod.rpm "https://github.com/loft-sh/devpod/releases/latest/download/DevPod_linux_x86_64.rpm"
-
-# wget -O /tmp/devpod "https://github.com/loft-sh/devpod/releases/latest/download/devpod-linux-amd64"
-# install -c -m 0755 /tmp/devpod "$FILES_ROOT/usr/bin"
+wget -O /tmp/devpod "https://github.com/loft-sh/devpod/releases/download/v0.3.7/devpod-linux-amd64"
+install -c -m 0755 /tmp/devpod "$FILES_ROOT/usr/bin"
 
 wget -O /tmp/docker-compose 'https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64' 
 install -c -m 0755 /tmp/docker-compose "$FILES_ROOT/usr/bin"
