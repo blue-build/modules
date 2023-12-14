@@ -34,22 +34,30 @@ if [[ ! $REPO_TITLE == "null" ]]; then
   flatpak remote-modify --user $REPO_NAME --title="$REPO_TITLE"
 fi
 
-# Lists of flatpaks
+# Installed flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
-INSTALL_LIST=$(cat /etc/flatpak/user/install)
-REMOVE_LIST=$(cat /etc/flatpak/user/remove)
+
+# Flatpak list files
+INSTALL_LIST_FILE=$(cat /etc/flatpak/user/install)
+REMOVE_LIST_FILE=$(cat /etc/flatpak/user/remove)
 
 # Install flatpaks in list
-if [[ -n $INSTALL_LIST ]]; then
-  if ! flatpak install --user --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
-    # Exit on error
-    exit 1
+if [[ -f $INSTALL_LIST_FILE ]]; then
+  INSTALL_LIST=$(echo $FLATPAK_LIST | grep -vf - $INSTALL_LIST_FILE)
+  if [[ -n $INSTALL_LIST ]]; then
+    if ! flatpak install --user --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
+      # Exit on error
+      exit 1
+    fi
   fi
 fi
 
 # Remove flatpaks in list
-if [[ -n $REMOVE_LIST ]]; then
-  flatpak remove --user --noninteractive $flatpak ${REMOVE_LIST[@]}
+if [[ -f $REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(echo $FLATPAK_LIST | grep -f - $REMOVE_LIST_FILE)
+  if [[ -n $REMOVE_LIST ]]; then
+    flatpak remove --user --noninteractive ${REMOVE_LIST[@]}
+  fi
 fi
 
 notify-send "Flatpak Installer" "Finished installing user flatpaks" --app-name="Flatpak Installer" -u NORMAL
