@@ -1,18 +1,7 @@
 #!/usr/bin/env bash
 
-# Script Version
-VER=1
-VER_FILE="/etc/ublue-os/system-flatpak-configured"
-VER_RAN=$(cat $VER_FILE)
-
-# Run script if updated
-if [[ -f $VER_FILE && $VER = $VER_RAN ]]; then
-  echo "Flatpak setup v$VER has already ran. Exiting..."
-  exit 0
-fi
-
 # Opt out of and remove Fedora's flatpak repo
-if grep -qz 'fedora' <<< $(flatpak remotes); then
+if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
   /usr/bin/gnome-software --quit
   /usr/lib/fedora-third-party/fedora-third-party-opt-out
   /usr/bin/fedora-third-party disable
@@ -21,11 +10,11 @@ if grep -qz 'fedora' <<< $(flatpak remotes); then
 
   # Remove flatpak apps from origin fedora
   FEDORA_FLATPAKS=$(flatpak list --app --columns=application,origin | grep -w 'fedora' | awk '{print $1}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS[@]}"
 
   # Remove flatpak runtimes from origin fedora
   FEDORA_FLATPAKS=$(flatpak list --runtime --columns=application,arch,branch,origin | grep -w 'fedora' | awk '{print $1"/"$2"/"$3}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS[@]}"
 fi
 
 REPO_INFO="/etc/flatpak/system/repo-info.yml"
@@ -36,43 +25,50 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 # Set up system-wide Flatpak repository
 if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
   echo "Adding system-wide remote $REPO_NAME from $REPO_URL"
-  flatpak remote-add --if-not-exists --system $REPO_NAME $REPO_URL
+  flatpak remote-add --if-not-exists --system "$REPO_NAME" "$REPO_URL"
 fi
 
 # If configured remote is flathub, enable it here.
 # Flathub is already installed on Fedora, but not enabled by default,
 # so the above command won't add it again
 if [[ $REPO_NAME == "flathub" ]]; then
-  flatpak remote-modify --system $REPO_NAME --enable
+  flatpak remote-modify --system "$REPO_NAME" --enable
 fi
 
 # Change repository title to configured title, if not null
 if [[ ! $REPO_TITLE == "null" ]]; then
   echo "Setting title $REPO_TITLE for remote $REPO_NAME"
-  flatpak remote-modify --system $REPO_NAME --title="$REPO_TITLE"
+  flatpak remote-modify --system "$REPO_NAME" --title="$REPO_TITLE"
 fi
 
-# Lists of flatpaks
+# Installed flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
-INSTALL_LIST=$(cat /etc/flatpak/system/install)
-REMOVE_LIST=$(cat /etc/flatpak/system/remove)
+
+# Flatpak list files
+INSTALL_LIST_FILE="/etc/flatpak/system/install"
+REMOVE_LIST_FILE="/etc/flatpak/system/remove"
 
 # Install flatpaks in list
-if [[ -n $INSTALL_LIST ]]; then
-  if ! flatpak install --system --noninteractive $REPO_NAME ${INSTALL_LIST[@]}; then
-    # Exit on error
-    exit 1
+if [[ -f $INSTALL_LIST_FILE ]]; then
+  if [[ -n $FLATPAK_LIST ]]; then
+    INSTALL_LIST=$(echo "$FLATPAK_LIST" | grep -o -vf "$INSTALL_LIST_FILE")
+  else
+    INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
+  fi
+  if [[ -n $INSTALL_LIST ]]; then
+    if ! flatpak install --system --noninteractive "$REPO_NAME" "${INSTALL_LIST[@]}"; then
+      # Exit on error
+      exit 1
+    fi  
   fi
 fi
 
 # Remove flatpaks in list
-if [[ -n $REMOVE_LIST ]]; then
-  flatpak remove --system --noninteractive ${REMOVE_LIST[@]}
+if [[ -f $REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f "$REMOVE_LIST_FILE")
+  if [[ -n $REMOVE_LIST ]]; then
+    flatpak uninstall --system --noninteractive "${REMOVE_LIST[@]}"
+  fi
 fi
 
 notify-send "Flatpak Installer" "Finished installing system flatpaks" --app-name="Flatpak Installer" -u NORMAL
-
-# Prevent future executions
-echo "Writing state file"
-mkdir -p /etc/ublue-os
-echo $VER > $VER_FILE
