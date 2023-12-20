@@ -49,7 +49,7 @@ fi
 if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
   if [[ -n $REMOVE_LIST ]]; then
-    flatpak uninstall --user --noninteractive "$flatpak" ${REMOVE_LIST[@]}
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
   fi  
 fi
 
