@@ -30,7 +30,7 @@ system:
   install:
     - org.gnome.Loupe
   remove:
-    - org.gnome.eog # When you have the same package name in both install & remove, remove will take the advantage
+    - org.gnome.eog
 # A flatpak repo can also be added without having to install flatpaks,
 # as long as one of the repo- fields is present
 user:
