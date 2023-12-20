@@ -9,7 +9,7 @@ The module uses the following scripts to handle flatpak setup:
 - `/usr/bin/system-flatpak-setup`
 - `/usr/bin/user-flatpak-setup`
 
-The scripts are run on every boot and login by these services:
+The scripts are run on every boot by these services:
 
 - `/usr/lib/systemd/system/system-flatpak-setup.service`
 - `/usr/lib/systemd/user/user-flatpak-setup-service`
