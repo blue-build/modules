@@ -56,10 +56,8 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
     INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
   fi
   if [[ -n $INSTALL_LIST ]]; then
-    if ! flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}; then
-      # Exit on error
-      exit 1
-    fi  
+    flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    notify-send "Flatpak Installer" "Finished install of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
   fi
 fi
 
@@ -68,7 +66,8 @@ if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
   if [[ -n $REMOVE_LIST ]]; then
     flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+    notify-send "Flatpak Installer" "Finished uninstall of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
   fi
 fi
 
-notify-send "Flatpak Installer" "Finished installing system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+
