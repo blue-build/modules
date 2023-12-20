@@ -10,11 +10,11 @@ if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
 
   # Remove flatpak apps from origin fedora
   FEDORA_FLATPAKS=$(flatpak list --app --columns=application,origin | grep -w 'fedora' | awk '{print $1}')
-  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS[@]}"
+  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
 
   # Remove flatpak runtimes from origin fedora
   FEDORA_FLATPAKS=$(flatpak list --runtime --columns=application,arch,branch,origin | grep -w 'fedora' | awk '{print $1"/"$2"/"$3}')
-  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS[@]}"
+  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
 fi
 
 REPO_INFO="/etc/flatpak/system/repo-info.yml"
@@ -56,7 +56,7 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
     INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
   fi
   if [[ -n $INSTALL_LIST ]]; then
-    if ! flatpak install --system --noninteractive "$REPO_NAME" "${INSTALL_LIST[@]}"; then
+    if ! flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}; then
       # Exit on error
       exit 1
     fi  
@@ -67,7 +67,7 @@ fi
 if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
   if [[ -n $REMOVE_LIST ]]; then
-    flatpak uninstall --system --noninteractive "${REMOVE_LIST[@]}"
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
   fi
 fi
 
