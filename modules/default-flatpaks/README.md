@@ -24,9 +24,7 @@ This module also supports disabling & enabling notifications.
 
 ```yaml
 type: default-flatpaks
-notifications:
-  # Send notification after install/uninstall is finished (true/false)
-  notify: true
+notify: true   # Send notification after install/uninstall is finished (true/false)
 system:
   # If no repo information is specified, Flathub will be used by default
   repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
