@@ -18,22 +18,15 @@ The scripts are run on every boot by these services:
 
 This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/flatpak/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
 
-This module also supports disabling & enabling notifications. Currently, it enables notifications by default.
-
-If you want to configure notifications, you have to configure them in post-install (either with a just command or a classic terminal command):
-
-Disable notifications:
-
-`echo '0' | sudo tee /etc/flatpak/notifications`
-
-Enable notifications:
-
-`echo '1' | sudo tee /etc/flatpak/notifications`
+This module also supports disabling & enabling notifications.
 
 ## Example configurations
 
 ```yaml
 type: default-flatpaks
+notifications:
+  # Send notification after install/uninstall is finished (true/false)
+  notify: true
 system:
   # If no repo information is specified, Flathub will be used by default
   repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
