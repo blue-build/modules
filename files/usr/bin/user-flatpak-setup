@@ -23,6 +23,9 @@ if [[ ! $REPO_TITLE == "null" ]]; then
   echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
 fi
 
+# Notifications config
+NOTIFICATIONS=$(cat /etc/flatpak/notifications)
+
 # Installed flatpaks
 FLATPAK_LIST=$(flatpak list --columns=application)
 
@@ -39,7 +42,9 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
   fi
   if [[ -n $INSTALL_LIST ]]; then
     flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
-    notify-send "Flatpak Installer" "Finished install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
+    if [[ $NOTIFICATIONS == "true" ]]; then
+      notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    fi  
   fi
 fi
 
@@ -48,6 +53,8 @@ if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
   if [[ -n $REMOVE_LIST ]]; then
     flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
-    notify-send "Flatpak Installer" "Finished uninstall of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
+    if [[ $NOTIFICATIONS == "true" ]]; then    
+      notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+    fi  
   fi  
 fi

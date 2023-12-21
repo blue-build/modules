@@ -118,3 +118,8 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
     configure_lists "$1" "user"
 fi
+
+echo "Configuring default-flatpaks notifications"
+NOTIFICATIONS=$(yq ".notify" "$CONFIG_FILE")
+NOTIFICATIONS_CONFIG_FILE="/usr/etc/flatpak/notifications"
+echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
