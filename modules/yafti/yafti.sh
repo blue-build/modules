@@ -4,7 +4,9 @@
 set -oue pipefail
 
 FIRSTBOOT_DATA="/usr/share/ublue-os/firstboot"
-FIRSTBOOT_LINK="/usr/etc/profile.d/ublue-firstboot.sh"
+FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
+PROFILED_DIR="/usr/etc/profile.d"
+FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
 echo "Installing python3-pip and libadwaita"
 rpm-ostree install python3-pip libadwaita
@@ -12,11 +14,17 @@ rpm-ostree install python3-pip libadwaita
 echo "Installing and enabling yafti"
 pip install --prefix=/usr yafti
 
-# Create symlink to our profile script, which creates the per-user "autorun yafti" links.
-mkdir -p "$(dirname "${FIRSTBOOT_LINK}")"
-ln -s "${FIRSTBOOT_DATA}/launcher/login-profile.sh" "${FIRSTBOOT_LINK}"
+# If the profile.d directory doesn't exist, create it
+if [ ! -d "${PROFILED_DIR}" ]; then
+    mkdir -p "${PROFILED_DIR}"
+fi
 
-YAFTI_FILE="$FIRSTBOOT_DATA/yafti.yml"
+# Create symlink to our profile script, which creates the per-user "autorun yafti" links.
+if [ -f "${FIRSTBOOT_SCRIPT}" ]; then
+    ln -sf "${FIRSTBOOT_SCRIPT}" "${FIRSTBOOT_LINK}"
+fi
+
+YAFTI_FILE="${FIRSTBOOT_DATA}/yafti.yml"
 
 get_yaml_array FLATPAKS '.custom-flatpaks[]' "$1"
 if [[ ${#FLATPAKS[@]} -gt 0 ]]; then
