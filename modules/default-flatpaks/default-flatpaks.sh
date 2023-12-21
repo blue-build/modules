@@ -122,4 +122,4 @@ fi
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(yq ".notify" "$CONFIG_FILE")
 NOTIFICATIONS_CONFIG_FILE="/usr/etc/flatpak/notifications"
-echo ""$NOTIFICATIONS"" > "$NOTIFICATIONS_CONFIG_FILE"
+echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
