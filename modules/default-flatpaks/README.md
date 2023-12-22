@@ -34,7 +34,6 @@ system:
   repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
   install:
     - org.gnome.Loupe
-    - org.winehq.Wine//stable-23.08 # This is an example of flatpak which has multiple versions in selection (flatpak//version)
   remove:
     - org.gnome.eog
 # A flatpak repo can also be added without having to install flatpaks,
