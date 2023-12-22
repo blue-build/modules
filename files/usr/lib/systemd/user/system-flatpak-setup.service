@@ -1,11 +1,11 @@
 [Unit]
-Description=Configure Flatpaks for current user
+Description=Configure Flatpaks for the system
 Wants=network-online.target
-After=system-flatpak-setup.service
+After=system-flatpak-presetup.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/user-flatpak-setup
+ExecStart=/usr/bin/system-flatpak-setup
 Restart=on-failure
 RestartSec=30
 StartLimitInterval=0
