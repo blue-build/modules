@@ -120,6 +120,6 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
 fi
 
 echo "Configuring default-flatpaks notifications"
-NOTIFICATIONS=$(yq ".notify" "$CONFIG_FILE")
+NOTIFICATIONS=$(yq ".notify" "$1")
 NOTIFICATIONS_CONFIG_FILE="/usr/etc/flatpak/notifications"
 echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
