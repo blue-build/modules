@@ -20,7 +20,7 @@ The scripts are run on every boot by these services:
 
 This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/flatpak/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
 
-This module also supports disabling & enabling notifications indicating success of install/uninstall of flatpaks.
+This module also supports disabling & enabling notifications.
 
 ## Example configurations
 
