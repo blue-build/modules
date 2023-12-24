@@ -1,6 +1,6 @@
 # `systemd` Module for Startingpoint
 
-The `systemd` module streamlines the management of systemd units during image building. Units are divided into `system` and `user` categories, with `system` units managed directly using `systemctl` and `user` units using `systemctl --user`. You can specify which units to enable, disable or mask under each category. To unmask the service, simply remove it from the mask list.
+The `systemd` module streamlines the management of systemd units during image building. Units are divided into `system` and `user` categories, with `system` units managed directly using `systemctl` and `user` units using `systemctl --user`. You can specify which units to enable, disable or mask under each category. To unmask the unit, simply remove it from the mask list.
 
 ## Example Configuration
 
