@@ -26,12 +26,12 @@ In this example:
 
 ### System Units
 - `example.service`: Enabled (runs on system boot)
-- `example.target`: Disabled (does not run on system boot, unless other service strictly requires it)
+- `example.target`: Disabled (does not run on system boot, unless other unit strictly requires it)
 - `example.service`: Masked (does not run on system boot, on any circumstances)
 
 ### User Units
 - `example.timer`: Enabled (runs for the user)
-- `example.service`: Disabled (does not run for the user, unless other service strictly requires it)
+- `example.service`: Disabled (does not run for the user, unless other unit strictly requires it)
 - `example.service`: Masked (does not run for the user, on any circumstances)
 
 This configuration achieves the same results as the following commands:
