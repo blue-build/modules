@@ -1,10 +1,10 @@
-# `kmods-installer` Module for Startingpoint
+# `akmods` Module for Startingpoint
 
-The `kmods-installer` is a tool used for managing and installing kernel modules. It simplifies the installation of kernel modules, improving the capabilities of your system.
+The `akmods` is a tool used for managing and installing kernel modules. It simplifies the installation of kernel modules, improving the capabilities of your system.
 
 List of all available kernel modules & versions/tags are here: https://github.com/ublue-os/akmods
 
-To use `kmods-installer` module, specify the akmods tag in Containerfile
+To use `akmods` module, specify the akmods tag in Containerfile
 (line already exists at the 2nd last paragraph, you just need to adjust it):
 
 `# Starting with Fedora 39, the main image does not contain kmods
@@ -14,7 +14,7 @@ After that, specify kernel modules you wish to install in the `install:` section
 
 ## Example configuration
 ```yaml
-type: kmods-installer
+type: akmods
 
 install:
     - openrazer
