@@ -5,9 +5,11 @@ set -oue pipefail
 
 get_yaml_array ENABLED '.system.enabled[]' "$1"
 get_yaml_array DISABLED '.system.disabled[]' "$1"
+get_yaml_array UNMASKED '.system.unmasked[]' "$1"
 get_yaml_array MASKED '.system.masked[]' "$1"
 get_yaml_array USER_ENABLED '.user.enabled[]' "$1"
 get_yaml_array USER_DISABLED '.user.disabled[]' "$1"
+get_yaml_array USER_UNMASKED '.user.unmasked[]' "$1"
 get_yaml_array USER_MASKED '.user.masked[]' "$1"
 
 
@@ -21,6 +23,12 @@ if [[ ${#DISABLED[@]} -gt 0 ]]; then
     for unit in "${DISABLED[@]}"; do
         unit=$(printf "$unit")
         systemctl disable $unit
+    done
+fi
+if [[ ${#UNMASKED[@]} -gt 0 ]]; then
+    for unit in "${UNMASKED[@]}"; do
+        unit=$(printf "$unit")
+        systemctl unmask $unit
     done
 fi
 if [[ ${#MASKED[@]} -gt 0 ]]; then
@@ -39,6 +47,12 @@ if [[ ${#USER_DISABLED[@]} -gt 0 ]]; then
     for unit in "${USER_DISABLED[@]}"; do
         unit=$(printf "$unit")
         systemctl --global disable $unit
+    done
+fi
+if [[ ${#USER_UNMASKED[@]} -gt 0 ]]; then
+    for unit in "${USER_UNMASKED[@]}"; do
+        unit=$(printf "$unit")
+        systemctl --global unmask $unit
     done
 fi
 if [[ ${#USER_MASKED[@]} -gt 0 ]]; then
