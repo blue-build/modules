@@ -1,16 +1,25 @@
+> [!WARNING]  
+> Only Universal Blue images as a base are officially supported. For other images, you'll likely need to do some more setup.
+
+> [!WARNING]  
+> Universal Blue builds with Fedora 38 & below are not supported.
+
+> [!WARNING]  
+> Custom kernels are not supported.
+
+> [!IMPORTANT]  
+> Use `-nvidia`, `-surface`, `-asus` etc. Universal Blue tagged images as a base if you want those akmods.
+
 # `akmods` Module for Startingpoint
 
 The `akmods` is a tool used for managing and installing kernel modules. It simplifies the installation of kernel modules, improving the capabilities of your system.
 
-List of all available kernel modules & versions/tags are here: https://github.com/ublue-os/akmods
+List of all available kernel modules & versions/tags are here:
+https://github.com/ublue-os/akmods
 
-To use `akmods` module, specify the akmods tag in Containerfile
-(line already exists at the 2nd last paragraph, you just need to adjust it):
+Ublue-os-akmods-addons & ublue-os-nvidia-addons are already included as necessary, so they are not needed to install.
 
-`# Starting with Fedora 39, the main image does not contain kmods
-COPY --from=ghcr.io/ublue-os/akmods:SPECIFY-YOUR-TAG-HERE /rpms /tmp/rpms`
-
-After that, specify kernel modules you wish to install in the `install:` section of your recipe/configuration file.
+To use `akmods` module, specify the kernel modules you wish to install in the `install:` section of your recipe/configuration file.
 
 ## Example configuration
 ```yaml
@@ -22,10 +31,12 @@ install:
     - v4l2loopback
     - winesync
 ```
+ 
+By default, `akmods` module is installing the `main` akmods for `latest` version of Fedora.
 
-## Notes
+If you want to install akmods for `older version of Fedora`, change this Containerfile content:
 
-It should be used for Fedora 39 & above only.
-For Nvidia, use Universal Blue base Nvidia images + akmod builds with regular tag.
-Only Universal Blue base images are officially supported.
-Custom kernels are not supported.
+```
+# Change this if you want different version of akmods. Only use main akmod tag.
+COPY --from=ghcr.io/ublue-os/akmods:main-39 /rpms /tmp/rpms
+```
