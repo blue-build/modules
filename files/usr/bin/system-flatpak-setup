@@ -7,7 +7,7 @@ REPO_NAME=$(yq '.repo-name' $REPO_INFO)
 NOTIFICATIONS=$(cat /etc/flatpak/notifications)
 
 # Installed flatpaks
-FLATPAK_LIST=$(flatpak list --columns=application)
+FLATPAK_LIST=$(flatpak list --system --columns=application)
 
 # Flatpak list files
 INSTALL_LIST_FILE="/etc/flatpak/system/install"
