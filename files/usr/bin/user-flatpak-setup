@@ -27,7 +27,7 @@ fi
 NOTIFICATIONS=$(cat /etc/flatpak/notifications)
 
 # Installed flatpaks
-FLATPAK_LIST=$(flatpak list --columns=application)
+FLATPAK_LIST=$(flatpak list --user --columns=application)
 
 # Flatpak list files
 INSTALL_LIST_FILE="/etc/flatpak/user/install"
