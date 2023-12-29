@@ -34,7 +34,10 @@ system:
   repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
   install:
     - org.gnome.Loupe
-    - org.winehq.Wine//stable-23.08 # This is an example of flatpak which has multiple versions in selection (flatpak//version)
+    - one.ablaze.floorp//lightning # This is an example of flatpak which has multiple branches in selection (flatpak//branch).
+                                   # Flatpak runtimes are not supported (like org.winehq.Wine//stable-23.08).
+                                   # Only normal flatpak applications are (like Floorp Lightning web browser in this example).
+                                   # Multiple install of same flatpaks with different branches is not supported.
   remove:
     - org.gnome.eog
 # A flatpak repo can also be added without having to install flatpaks,
