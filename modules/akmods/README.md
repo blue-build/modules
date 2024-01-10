@@ -24,7 +24,6 @@ To use `akmods` module, specify the kernel modules you wish to install in the `i
 ## Example configuration
 ```yaml
 type: akmods
-
 install:
     - openrazer
     - openrgb
