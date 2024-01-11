@@ -8,7 +8,7 @@
 > Custom kernels are not supported.
 
 > [!IMPORTANT]  
-> Be sure to use `-nvidia`, `-surface` or `-asus` Universal Blue tagged image as a base if you want to use akmods.
+> Be sure to use `-main`, `-nvidia`, `-surface` or `-asus` Universal Blue tagged image as a base if you want to use akmods.
 
 # `akmods` Module for Startingpoint
 
