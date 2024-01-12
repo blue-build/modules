@@ -1,5 +1,5 @@
 > [!WARNING]  
-> Only Universal Blue images as a base are officially supported. For other images, you'll likely need to do some more setup.
+> Only Universal Blue images as a base are officially supported.
 
 > [!WARNING]  
 > Universal Blue builds with Fedora 38 & below are not supported.
