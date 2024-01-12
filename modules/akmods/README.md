@@ -7,9 +7,6 @@
 > [!WARNING]  
 > Custom kernels are not supported.
 
-> [!IMPORTANT]  
-> Be sure to use `-main`, `-nvidia`, `framework`, `-surface(-nvidia)` or `-asus(-nvidia)` Universal Blue tagged image as a base if you want to use akmods.
-
 # `akmods` Module for Startingpoint
 
 The `akmods` is a tool used for managing and installing kernel modules. It simplifies the installation of kernel modules, improving the capabilities of your system.
