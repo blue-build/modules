@@ -8,7 +8,7 @@
 > Custom kernels are not supported.
 
 > [!IMPORTANT]  
-> Be sure to use `-main`, `-nvidia`, `-surface(-nvidia)` or `-asus(-nvidia)` Universal Blue tagged image as a base if you want to use akmods.
+> Be sure to use `-main`, `-nvidia`, `framework`, `-surface(-nvidia)` or `-asus(-nvidia)` Universal Blue tagged image as a base if you want to use akmods.
 
 # `akmods` Module for Startingpoint
 
@@ -32,7 +32,7 @@ install:
 ```
  
 By default, `akmods` module is installing the `main` akmods for `latest` version of Fedora.
-`main` akmods are also compatible with `-nvidia` images. 
+`main` akmods are also compatible with `-nvidia` & `-framework` images. 
 
 If you want to install akmods for `surface(-nvidia)` or `asus(-nvidia)` images, or for `older version of Fedora`, change this Containerfile content:
 
