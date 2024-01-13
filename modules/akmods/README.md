@@ -29,7 +29,7 @@ install:
 ```
  
 By default, `akmods` module is installing the `main` akmods for `latest` version of Fedora.
-`main` akmods are also compatible with `-nvidia` & `-framework` images. 
+`main` akmods are also compatible with other images except `surface(-nvidia)` & `asus(-nvidia)`.
 
 If you want to install akmods for `surface(-nvidia)` or `asus(-nvidia)` images, or for `older version of Fedora`, change this Containerfile content:
 
