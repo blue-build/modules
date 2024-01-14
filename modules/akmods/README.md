@@ -32,6 +32,7 @@ By default, the `akmods` module installs the `main` akmods for `latest` version 
 `main` akmods are also compatible with other images except `surface(-nvidia)` & `asus(-nvidia)`.
 
 If you want to install akmods for `surface(-nvidia)` or `asus(-nvidia)` images, or for `older version of Fedora`, change this part in the Containerfile:
+See available tags here: https://github.com/ublue-os/akmods/#how-its-organized
 
 ```
 # Change this if you want different version/tag of akmods.
