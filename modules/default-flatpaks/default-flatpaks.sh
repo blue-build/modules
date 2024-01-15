@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Tell build process to exit if there are any errors.
-set -oue pipefail
+set -euo pipefail
 
 BLING_DIRECTORY="${BLING_DIRECTORY:-"/tmp/bling"}"
 

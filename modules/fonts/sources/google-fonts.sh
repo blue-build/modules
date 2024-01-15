@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -oue pipefail
+set -euo pipefail
 
 mapfile -t FONTS <<< "$@"
 URL="https://fonts.google.com/download?family="

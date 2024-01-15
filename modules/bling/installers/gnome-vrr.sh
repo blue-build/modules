@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Tell build process to exit if there are any errors.
-set -oue pipefail
+set -euo pipefail
 
 wget -O "/etc/yum.repos.d/_copr_kylegospo-gnome-vrr.repo" "https://copr.fedorainfracloud.org/coprs/kylegospo/gnome-vrr/repo/fedora-${OS_VERSION}/kylegospo-gnome-vrr-fedora-${OS_VERSION}.repo"
 
