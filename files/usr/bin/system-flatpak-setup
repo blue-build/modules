@@ -52,11 +52,11 @@ INSTALL_LIST_FILE="/etc/flatpak/system/install"
 REMOVE_LIST_FILE="/etc/flatpak/system/remove"
 
 function notify-send-install {
-user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
-uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
-xdg_runtime_path="/run/user/$uid"
-display_var=$(printenv DISPLAY)
-sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+     user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
+     uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+     xdg_runtime_path="/run/user/$uid"
+     display_var=$(printenv DISPLAY)
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-uninstall {
