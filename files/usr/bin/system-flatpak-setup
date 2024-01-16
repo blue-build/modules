@@ -64,7 +64,8 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
       user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
       uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
       xdg_runtime_path="/run/user/$uid"
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY=:0 notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+      display_var=$(printenv DISPLAY)
+      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
     fi
   fi
 fi
@@ -77,8 +78,9 @@ if [[ -f $REMOVE_LIST_FILE ]]; then
     if [[ $NOTIFICATIONS == "true" ]]; then
       user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
       uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
-      xdg_runtime_path="/run/user/$uid"    
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY=:0 notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+      xdg_runtime_path="/run/user/$uid"
+      display_var=$(printenv DISPLAY)      
+      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
     fi
   fi
 fi
