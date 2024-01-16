@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Tell build process to exit if there are any errors.
-set -oue pipefail
+set -euo pipefail
 
 install -c -m 0755 "$BLING_DIRECTORY/files/usr/bin/docker-compose" "/usr/bin/docker-compose"
 install -c -m 0755 "$BLING_DIRECTORY/files/usr/bin/kind" "/usr/bin/kind"

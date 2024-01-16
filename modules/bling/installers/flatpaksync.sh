@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -oue pipefail
+set -euo pipefail
 
 SYSTEMD_USER_JOBS_DIR="/usr/lib/systemd/user/"
 
