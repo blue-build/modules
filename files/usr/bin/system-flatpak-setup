@@ -1,7 +1,45 @@
 #!/usr/bin/env bash
 
+# Opt out of and remove Fedora's flatpak repo
+if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
+  /usr/bin/gnome-software --quit
+  /usr/lib/fedora-third-party/fedora-third-party-opt-out
+  /usr/bin/fedora-third-party disable
+  flatpak remote-delete fedora --force
+  flatpak remote-delete fedora-testing --force
+
+  # Remove flatpak apps from origin fedora
+  FEDORA_FLATPAKS=$(flatpak list --app --columns=application,origin | grep -w 'fedora' | awk '{print $1}')
+  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+
+  # Remove flatpak runtimes from origin fedora
+  FEDORA_FLATPAKS=$(flatpak list --runtime --columns=application,arch,branch,origin | grep -w 'fedora' | awk '{print $1"/"$2"/"$3}')
+  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+fi
+
 REPO_INFO="/etc/flatpak/system/repo-info.yml"
+REPO_URL=$(yq '.repo-url' $REPO_INFO)
 REPO_NAME=$(yq '.repo-name' $REPO_INFO)
+REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
+
+# Set up system-wide Flatpak repository
+if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
+  flatpak remote-add --if-not-exists --system "$REPO_NAME" "$REPO_URL"
+  echo "Adding system-wide remote $REPO_NAME from $REPO_URL"  
+fi
+
+# If configured remote is flathub, enable it here.
+# Flathub is already installed on Fedora, but not enabled by default,
+# so the above command won't add it again
+if [[ $REPO_NAME == "flathub" ]]; then
+  flatpak remote-modify --system "$REPO_NAME" --enable
+fi
+
+# Change repository title to configured title, if not null
+if [[ ! $REPO_TITLE == "null" ]]; then
+  flatpak remote-modify --system "$REPO_NAME" --title="$REPO_TITLE"
+  echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
+fi
 
 # Notifications config
 NOTIFICATIONS=$(cat /etc/flatpak/notifications)
@@ -13,6 +51,22 @@ FLATPAK_LIST=$(flatpak list --system --columns=application)
 INSTALL_LIST_FILE="/etc/flatpak/system/install"
 REMOVE_LIST_FILE="/etc/flatpak/system/remove"
 
+function notify-send-install {
+     user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
+     uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+     xdg_runtime_path="/run/user/$uid"
+     display_var=$(printenv DISPLAY)
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+}
+
+function notify-send-uninstall {
+      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
+      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+      xdg_runtime_path="/run/user/$uid"
+      display_var=$(printenv DISPLAY)      
+      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+}
+
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]]; then
   if [[ -n $FLATPAK_LIST ]]; then
@@ -23,7 +77,7 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
   if [[ -n $INSTALL_LIST ]]; then
     flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
     if [[ $NOTIFICATIONS == "true" ]]; then
-      notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+      notify-send-install
     fi
   fi
 fi
@@ -34,7 +88,7 @@ if [[ -f $REMOVE_LIST_FILE ]]; then
   if [[ -n $REMOVE_LIST ]]; then
     flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
     if [[ $NOTIFICATIONS == "true" ]]; then
-      notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+      notify-send-uninstall
     fi
   fi
 fi

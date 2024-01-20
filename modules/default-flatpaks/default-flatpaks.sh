@@ -5,11 +5,9 @@ set -euo pipefail
 
 BLING_DIRECTORY="${BLING_DIRECTORY:-"/tmp/bling"}"
 
-cp -r "$BLING_DIRECTORY"/files/usr/bin/system-flatpak-presetup /usr/bin/system-flatpak-presetup
 cp -r "$BLING_DIRECTORY"/files/usr/bin/system-flatpak-setup /usr/bin/system-flatpak-setup
 cp -r "$BLING_DIRECTORY"/files/usr/bin/user-flatpak-setup /usr/bin/user-flatpak-setup
-cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-presetup.service /usr/lib/systemd/system/system-flatpak-presetup.service
-cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/system-flatpak-setup.service /usr/lib/systemd/user/system-flatpak-setup.service
+cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/system/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$BLING_DIRECTORY"/files/usr/lib/systemd/user/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
 configure_flatpak_repo () {
@@ -106,8 +104,7 @@ configure_lists () {
 
 echo "Enabling flatpaks module"
 mkdir -p /usr/etc/flatpak/{system,user}
-systemctl enable -f system-flatpak-presetup.service
-systemctl enable -f --global system-flatpak-setup.service
+systemctl enable -f system-flatpak-setup.service
 systemctl enable -f --global user-flatpak-setup.service
 
 # Check that `system` is present before configuring
