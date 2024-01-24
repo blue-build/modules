@@ -10,7 +10,7 @@ function DISABLE_MULTIMEDIA_REPO {
 }
 
 function SET_HIGHER_PRIORITY_AKMODS_REPO {
-echo "priority=90" >> /etc/yum.repos.d/_copr_ublue-os-akmods.repo
+  echo "priority=90" >> /etc/yum.repos.d/_copr_ublue-os-akmods.repo
 }
 
 get_yaml_array INSTALL '.install[]' "$1"
