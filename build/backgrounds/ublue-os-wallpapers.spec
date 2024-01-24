@@ -25,7 +25,7 @@ mkdir -p -m0755 \
 tar xzf %{SOURCE0} -C %{buildroot}/tmp --directory . --strip-components=1
 mv %{buildroot}/tmp/src/* %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
 mv %{buildroot}/tmp/xml/* %{buildroot}%{_datadir}/gnome-background-properties
-mv %{buildroot}/tmp/LICENSE %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
+mv %{buildroot}/tmp/LICENSE_APACHE %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
 cd %{buildroot}%{_datadir}/backgrounds/%{VENDOR}
 rm -rf %{buildroot}/tmp
 
