@@ -13,7 +13,6 @@ install:
     # - ublue-update # https://github.com/ublue-os/ublue-update
     # - 1password # install 1Password (stable) and `op` CLI tool
     # - dconf-update-service # a service unit that updates the dconf db on boot
-    # - devpod # https://devpod.sh/ as an rpm
     # - gnome-vrr # enables gnome-vrr for your image
     # - laptop # installs TLP and configures your system for laptop usage
     # - flatpaksync # allows synchronization of user-installed flatpaks, see separate documentation section
