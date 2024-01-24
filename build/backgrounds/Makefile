@@ -9,7 +9,7 @@ clean:
 
 tarball: clean
 	mkdir -p $(UBLUE_ROOT)/$(TARGET) $(RPMBUILD)/SOURCES xml
-	cp -r src xml LICENSE $(UBLUE_ROOT)/$(TARGET)
+	cp -r src xml LICENSE_APACHE $(UBLUE_ROOT)/$(TARGET)
 	tar czf $(RPMBUILD)/SOURCES/$(TARGET).tar.gz -C $(UBLUE_ROOT)/$(TARGET) .
 	
 build-rpm: tarball
