@@ -4,10 +4,6 @@ RUN dnf update -y && dnf install --disablerepo='*' --enablerepo='fedora,updates'
 
 RUN mkdir -p /tmp/ublue-os/{rpms,build}
 COPY build /tmp/ublue-os/build
-ADD fetch.sh /tmp/fetch.sh
-
-RUN chmod +x /tmp/fetch.sh && \
-	/tmp/fetch.sh
 
 # TODO: Eventually make this more flexible to include more projects
 RUN cd /tmp/ublue-os/build/backgrounds && make && cp /tmp/ublue-os/rpmbuild/RPMS/noarch/*.rpm /tmp/ublue-os/rpms
