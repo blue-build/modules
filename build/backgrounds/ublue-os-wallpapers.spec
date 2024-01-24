@@ -33,7 +33,7 @@ rm -rf %{buildroot}/tmp
 %license LICENSE_CCBYSA
 %attr(0755,root,root) %{_datadir}/backgrounds/%{VENDOR}/*
 %attr(0755,root,root) %{_datadir}/gnome-background-properties/*.xml
-%exclude %{_datadir}/background/%{VENDOR}/LICENSE
+%exclude %{_datadir}/background/%{VENDOR}/LICENSE_CCBYSA
 
 %post
 mkdir -p %{_datadir}/wallpapers/${VENDOR}
