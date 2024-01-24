@@ -3,7 +3,14 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
+MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
+
 FIRSTBOOT_DATA="/usr/share/ublue-os/firstboot"
+
+# doesn't overwrite user's yafti.yml
+cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" 
+cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA/launcher/"
+
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
 PROFILED_DIR="/usr/etc/profile.d"
 FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
