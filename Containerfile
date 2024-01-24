@@ -6,7 +6,7 @@ RUN mkdir -p /tmp/ublue-os/{rpms,build}
 COPY build /tmp/ublue-os/build
 
 # TODO: Eventually make this more flexible to include more projects
-RUN cd /tmp/ublue-os/build/backgrounds && make && cp /tmp/ublue-os/rpmbuild/RPMS/noarch/*.rpm /tmp/ublue-os/rpms
+# RUN cd /tmp/ublue-os/build/backgrounds && make && cp /tmp/ublue-os/rpmbuild/RPMS/noarch/*.rpm /tmp/ublue-os/rpms
 
 FROM scratch
 
