@@ -1,6 +1,6 @@
 # [`bling`](https://github.com/ublue-os/bling) Module for Startingpoint
 
-The `bling` module allows you to easily declare which general parts of `ublue-os/bling` to pull in to your custom image. It requires the `rpms` and `files` directories from the `bling` container to already exist inside `/tmp/bling/` (pulled inside the Containerfile by default).
+The `bling` module can be used to pull in small "bling" into your image, stuff that doesn't necessitate being configured at build time.
 
 The bling to pull in is declared under `install:`, and the code for installing them is all in simple named scripts under the `installers/` directory. The basic code for the `bling` module is very similar to the code of the `script` module.
 
@@ -20,7 +20,7 @@ install:
 ```
 ## Submodule documentation
 
-### `flatpaksync`
+### `flatpaksync` (unmaintained)
 
 The `flatpaksync` submodule can be used to synchronize a list of user Flatpaks with a git repository.
 
