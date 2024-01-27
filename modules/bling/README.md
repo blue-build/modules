@@ -1,6 +1,6 @@
 # [`bling`](https://github.com/ublue-os/bling) Module for Startingpoint
 
-The `bling` module allows you to easily declare which general parts of `ublue-os/bling` to pull in to your custom image. It requires the `rpms` and `files` directories from the `bling` container to already exist inside `/tmp/bling/` (pulled inside the Containerfile by default).
+The `bling` module can be used to pull in small "bling" into your image, stuff that doesn't necessitate being configured at build time.
 
 The bling to pull in is declared under `install:`, and the code for installing them is all in simple named scripts under the `installers/` directory. The basic code for the `bling` module is very similar to the code of the `script` module.
 
@@ -9,22 +9,16 @@ The bling to pull in is declared under `install:`, and the code for installing t
 ```yaml
 type: bling # configure what to pull in from ublue-os/bling
 install:
-    - justfiles # add "!include /usr/share/ublue-os/just/100-bling.just"
-                # in your custom.just (added by default) or local justfile
-    - nix-installer # shell shortcuts for determinate system's nix installers
-    - ublue-os-wallpapers
     # - ublue-update # https://github.com/ublue-os/ublue-update
     # - 1password # install 1Password (stable) and `op` CLI tool
     # - dconf-update-service # a service unit that updates the dconf db on boot
-    # - devpod # https://devpod.sh/ as an rpm
     # - gnome-vrr # enables gnome-vrr for your image
-    # - container-tools # installs container-related tools onto /usr/bin: kind, kubectx, docker-compose and kubens
     # - laptop # installs TLP and configures your system for laptop usage
     # - flatpaksync # allows synchronization of user-installed flatpaks, see separate documentation section
 ```
 ## Submodule documentation
 
-### `flatpaksync`
+### `flatpaksync` (unmaintained)
 
 The `flatpaksync` submodule can be used to synchronize a list of user Flatpaks with a git repository.
 

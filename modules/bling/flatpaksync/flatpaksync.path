@@ -1,0 +1,10 @@
+[Unit]
+Description=Service monitoring the ~/.var/app directory
+
+[Path]
+PathChanged=%h/.var/app
+PathChanged=%h/.config/flatpaks.user.installed
+Unit=flatpaksync.service
+
+[Install]
+WantedBy=default.target
