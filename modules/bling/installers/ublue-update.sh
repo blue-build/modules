@@ -26,5 +26,6 @@ if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
     fi
 fi
 systemctl disable rpm-ostreed-automatic.timer
-
+# topgrade is REQUIRED by ublue-update to install
+pip install topgrade
 rpm-ostree install ublue-update
