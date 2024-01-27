@@ -9,7 +9,6 @@ The bling to pull in is declared under `install:`, and the code for installing t
 ```yaml
 type: bling # configure what to pull in from ublue-os/bling
 install:
-    - ublue-os-wallpapers
     # - ublue-update # https://github.com/ublue-os/ublue-update
     # - 1password # install 1Password (stable) and `op` CLI tool
     # - dconf-update-service # a service unit that updates the dconf db on boot
