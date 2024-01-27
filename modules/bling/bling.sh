@@ -9,8 +9,6 @@ wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
 
 get_yaml_array INSTALL '.install[]' "$1"
 
-export BLING_DIRECTORY="/tmp/bling"
-
 cd "/tmp/modules/bling/installers"
 
 # Make every bling installer executable
