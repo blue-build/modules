@@ -1,4 +1,5 @@
 FROM scratch
 
-RUN mkdir /rpms /files
+COPY empty /rpms
+COPY empty /files
 COPY modules /modules
