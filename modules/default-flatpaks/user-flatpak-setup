@@ -40,8 +40,11 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
   else
     INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
   fi
-  if [[ -n $INSTALL_LIST ]]; then
+  if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
     flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+  elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    notify-send "Flatpak Installer" "Installation of some user flatpaks started" --app-name="Flatpak Installer" -u NORMAL
+    flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
     if [[ $NOTIFICATIONS == "true" ]]; then
       notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
     fi  
@@ -51,8 +54,11 @@ fi
 # Remove flatpaks in list
 if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
-  if [[ -n $REMOVE_LIST ]]; then
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
     flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    notify-send "Flatpak Installer" "Uninstallation of some user flatpaks started" --app-name="Flatpak Installer" -u NORMAL  
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
     if [[ $NOTIFICATIONS == "true" ]]; then    
       notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
     fi  

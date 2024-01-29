@@ -51,12 +51,28 @@ FLATPAK_LIST=$(flatpak list --system --columns=application)
 INSTALL_LIST_FILE="/etc/flatpak/system/install"
 REMOVE_LIST_FILE="/etc/flatpak/system/remove"
 
+function notify-send-pre-install {
+     user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
+     uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+     xdg_runtime_path="/run/user/$uid"
+     display_var=$(printenv DISPLAY)
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Installation of some system flatpaks started" --app-name="Flatpak Installer" -u NORMAL
+}
+
 function notify-send-install {
      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
      xdg_runtime_path="/run/user/$uid"
      display_var=$(printenv DISPLAY)
      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+}
+
+function notify-send-pre-uninstall {
+      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
+      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+      xdg_runtime_path="/run/user/$uid"
+      display_var=$(printenv DISPLAY)      
+      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Uninstallation of some system flatpaks started" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-uninstall {
@@ -74,7 +90,10 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
   else
     INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
   fi
-  if [[ -n $INSTALL_LIST ]]; then
+  if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+  elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    notify-send-pre-install
     flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
     if [[ $NOTIFICATIONS == "true" ]]; then
       notify-send-install
@@ -85,7 +104,10 @@ fi
 # Remove flatpaks in list
 if [[ -f $REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
-  if [[ -n $REMOVE_LIST ]]; then
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    notify-send-pre-uninstall
     flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
     if [[ $NOTIFICATIONS == "true" ]]; then
       notify-send-uninstall
