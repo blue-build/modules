@@ -95,9 +95,7 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
     notify-send-pre-install
     flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
-    if [[ $NOTIFICATIONS == "true" ]]; then
-      notify-send-install
-    fi
+    notify-send-install
   fi
 fi
 
@@ -109,8 +107,6 @@ if [[ -f $REMOVE_LIST_FILE ]]; then
   elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
     notify-send-pre-uninstall
     flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
-    if [[ $NOTIFICATIONS == "true" ]]; then
-      notify-send-uninstall
-    fi
+    notify-send-uninstall
   fi
 fi
