@@ -56,7 +56,7 @@ function notify-send-pre-install {
      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
      xdg_runtime_path="/run/user/$uid"
      display_var=$(printenv DISPLAY)
-     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started install of listed system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started install of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-install {
@@ -72,7 +72,7 @@ function notify-send-pre-uninstall {
       uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
       xdg_runtime_path="/run/user/$uid"
       display_var=$(printenv DISPLAY)      
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started uninstall of listed system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started uninstall of some system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-uninstall {
