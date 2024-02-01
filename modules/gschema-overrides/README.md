@@ -21,6 +21,7 @@ To use it, you need to include your gschema.override file(s) in this location:
 Then you need to include it in recipe file, like in example configuration.
 
 It is highly recommended to use `z0-` prefix or higher (`zz-` is the highest possible) before your gschema.override name, to ensure that your changes are going to be applied.
+
 Also don't forget to rename your file too with this or similar prefix in `/usr/share/glib-2.0/schemas`.
 
 ## Example configuration
