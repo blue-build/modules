@@ -20,7 +20,7 @@ To use it, you need to include your gschema.override file(s) in this location:
 
 Then you need to include it in recipe file, like in example configuration.
 
-It is highly recommended to use `z0-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
+It is highly recommended to use `z1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
 Also don't forget to rename your file too with this prefix in `/usr/share/glib-2.0/schemas`.
 
@@ -29,8 +29,8 @@ Also don't forget to rename your file too with this prefix in `/usr/share/glib-2
 ```yaml
 type: gschema-overrides
 include:
-  - z0-myoverride.gschema.override
-  - z0-myoverride2.gschema.override
+  - z1-myoverride.gschema.override
+  - z1-myoverride2.gschema.override
 ```
 
 For more information on best practices for editing `gschema.override` files & potentially combining them with `dconf`, here's some documentation:
