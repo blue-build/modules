@@ -7,6 +7,7 @@ get_yaml_array INCLUDE '.include[]' "$1"
 schema_test_location="/tmp/bluebuild-schema-test"
 schema_location="/usr/share/glib-2.0/schemas"
 gschema_extension=false
+most_preferred_override=$(find "$schema_location" -type f -name "*.gschema.override" | tail -n1 | xargs -I {} basename {})
 
 echo "Installing gschema-overrides module"
 
@@ -28,6 +29,9 @@ if [[ ${#INCLUDE[@]} -gt 0 ]]; then
     fi  
   done
 fi
+
+printf "Most preferred gschema-override is:\n" "%s\n" "$most_preferred_override"
+echo "If your gschema-override is not listed as most preferred, you should adjust filename prefix"
 
 # Apply gschema-override when all conditions above are satisfied
 if [[ ${#INCLUDE[@]} -gt 0 ]] && $gschema_extension; then
