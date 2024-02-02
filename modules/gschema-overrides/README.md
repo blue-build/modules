@@ -15,7 +15,7 @@ Temporary test location is:
 
 `/tmp/bluebuild-schema-test`
 
-# Usage
+## Usage
 
 To use this module, you need to include your gschema.override file(s) in this location:
 
@@ -36,7 +36,7 @@ include:
   - z1-myoverride2.gschema.override
 ```
 
-# Editing gschema.override files
+## Editing gschema.override files
 
 Gschema.override files use `gsettings` keyfile format for settings output.
 
@@ -65,18 +65,18 @@ tap-to-click=true
 
   `dconf watch /`
 
-  When you change some setting toggle or option when this command is active,<br />
-  you will notice that command will output the key for the changed setting,<br />
+  When you change some setting toggle or option when this command is active,   
+  you will notice that command will output the key for the changed setting,   
   which you can use & write into gschema.override file in the format shown in example above.
 
 - To gather current & available settings on booted system, you can use this command:
   
   `gsettings list-recursively`
   
-  You should use this command everytime when you want to apply some setting override,<br />
+  You should use this command everytime when you want to apply some setting override,   
   to ensure that it's listed as available.
 
-**Gschema.override files don't support relocatable schemas & locking settings.**<br />
+**Gschema.override files don't support relocatable schemas & locking settings.**   
 For that functionality, you should use `dconf-update-service` module.
 
 Relocatable schemas are rare, so most users won't run into this scenario.
