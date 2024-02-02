@@ -15,15 +15,15 @@ Temporary test location is:
 
 `/tmp/bluebuild-schema-test`
 
-To use it, you need to include your gschema.override file(s) in this location:
+To use this module, you need to include your gschema.override file(s) in this location:
 
 `/usr/share/glib-2.0/schemas`
 
-Then you need to include it in recipe file, like in example configuration.
+Then you need to include those file(s) in recipe file, like in example configuration.
 
 It is highly recommended to use `z1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
-Also don't forget to rename your file too with this prefix in `/usr/share/glib-2.0/schemas`.
+Also don't forget to rename your file(s) too with this prefix in `/usr/share/glib-2.0/schemas`.
 
 ## Example configuration
 
