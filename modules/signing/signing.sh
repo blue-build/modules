@@ -13,7 +13,7 @@ if ! [ -d "$CONTAINER_DIR"]; then
     mkdir -p "$CONTAINER_DIR"
 fi
 
-if ! [ -d $CONTAINER_DIR/registries.d]; then
+if ! [ -d $CONTAINER_DIR/registries.d ]; then
    mkdir -p "$CONTAINER_DIR/registries.d"
 fi
 
