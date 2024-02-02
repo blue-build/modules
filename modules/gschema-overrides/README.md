@@ -73,11 +73,13 @@ tap-to-click=true
   
   `gsettings list-recursively`
   
-  You should use this command everytime when you want to apply some setting,<br />
-  to be sure that it's listed
+  You should use this command everytime when you want to apply some setting override,<br />
+  to ensure that it's listed as available.
 
 **Gschema.override files don't support relocatable schemas & locking settings.**<br />
 For that functionality, you should use `dconf-update-service` module.
+
+Relocatable schemas are rare, so most users won't run into this scenario.
 
 ### Example of relocatable schemas
 ```
