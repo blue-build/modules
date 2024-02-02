@@ -1,6 +1,7 @@
 # `gschema-overrides` module for BlueBuild
 
-The `gschema-overrides` module can be used for including system-setting overrides for Gnome/GTK-based desktop environments.
+The `gschema-overrides` module can be used for including system-setting overrides for GTK-based desktop environments.
+GTK-based desktop environments include Gnome, Cinnamon, MATE, Budgie & such.
 This module is similar to using `dconf` configuration, but is better because it doesn't require a systemd service & supports build-time troubleshooting.
 
 What does this module do?
