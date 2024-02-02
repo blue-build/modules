@@ -9,7 +9,7 @@ MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
 echo "Setting up container signing in policy.json and cosign.yaml for $IMAGE_NAME"
 echo "Registry to write: $IMAGE_REGISTRY"
 
-if ! [ -d "$CONTAINER_DIR"]; then
+if ! [ -d "$CONTAINER_DIR" ]; then
     mkdir -p "$CONTAINER_DIR"
 fi
 
@@ -17,11 +17,11 @@ if ! [ -d $CONTAINER_DIR/registries.d ]; then
    mkdir -p "$CONTAINER_DIR/registries.d"
 fi
 
-if ! [ -d "/usr/etc/pki/containers"]; then
+if ! [ -d "/usr/etc/pki/containers" ]; then
     mkdir -p "/usr/etc/pki/containers"
 fi
 
-if ! [ -f "$CONTAINER_DIR/policy.json"]; then
+if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
     cp "$MODULE_DIRECTORY/signing/policy.json" "$CONTAINER_DIR/policy.json"
 fi
 
@@ -46,7 +46,7 @@ yq -i -o=j '.transports.docker |=
 
 # Sets image-info.json used by ublue-update for auto-rebase workaround for offline ISOs and auto image signing.
 IMAGE_REF="ostree-image-signed:docker://$IMAGE_REGISTRY/$IMAGE_NAME"
-printf '{\n"image-ref": "'"$IMAGE_REF"'",\n"image-tag": "latest"\n}' > /usr/share/ublue-os/image-info.json
+printf '{\n"image-ref": "%s",\n"image-tag": "latest"\n}' "$IMAGE_REF" > /usr/share/ublue-os/image-info.json
 
 
 mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
