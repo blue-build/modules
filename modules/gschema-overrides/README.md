@@ -1,7 +1,7 @@
-# `gschema-overrides` module for startingpoint
+# `gschema-overrides` module for BlueBuild
 
-`Gschema-overrides` startingpoint module is used for including your system-setting overrides.
-If you heard about `dconf`, this is similar to it, but it's a much better & cleaner method of doing it.
+The `gschema-overrides` module can be used for including system-setting overrides for Gnome-based desktop environments.
+This module is similar to using `dconf` configuration, but is better because it doesn't require a systemd service & supports build-time troubleshooting.
 
 What does this module do?
 
