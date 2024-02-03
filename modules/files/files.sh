@@ -6,9 +6,9 @@ set -euo pipefail
 get_yaml_array FILES '.files[]' "$1"
 
 cd "$CONFIG_DIRECTORY/files"
+shopt -s dotglob
 
 if [[ ${#FILES[@]} -gt 0 ]]; then
-    shopt -s dotglob
     echo "Adding files to image"
     for pair in "${FILES[@]}"; do
         FILE="$PWD/$(echo $pair | yq 'to_entries | .[0].key')"
@@ -26,10 +26,11 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp $FILE $DEST
-            shopt -u dotglob
         else
             echo "File or Directory $FILE Does Not Exist in $CONFIG_DIRECTORY/files"
             exit 1
         fi
     done
 fi
+
+shopt -u dotglob
