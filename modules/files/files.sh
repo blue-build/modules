@@ -19,6 +19,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp -r "$FILE"/* $DEST
+            rm "$DEST"/.gitkeep
         elif [ -f "$FILE" ]; then
             DEST_DIR=$(dirname "$DEST")
             if [ ! -d "$DEST_DIR" ]; then
@@ -26,6 +27,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp $FILE $DEST
+            rm "$DEST"/.gitkeep
         else
             echo "File or Directory $FILE Does Not Exist in $CONFIG_DIRECTORY/files"
             exit 1
