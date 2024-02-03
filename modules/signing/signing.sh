@@ -26,7 +26,7 @@ if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
 fi
 
 if ! [ -f "/usr/share/ublue-os/image-info.json" ]; then
-    cp "$MODULE_DIRECTORY/signing/image-info.json" "usr/share/ublue-os/image-info.json"
+    cp "$MODULE_DIRECTORY/signing/image-info.json" "/usr/share/ublue-os/image-info.json"
 fi
 
 
