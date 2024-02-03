@@ -25,11 +25,15 @@ if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
     cp "$MODULE_DIRECTORY/signing/policy.json" "$CONTAINER_DIR/policy.json"
 fi
 
+if ! [ -f "/usr/share/ublue-os/image-info.json" ]; then
+    cp "$MODULE_DIRECTORY/signing/image-info.json" "usr/share/ublue-os/image-info.json"
+fi
 
-mv /usr/share/ublue-os/cosign.pub "$CONTAINER_DIR/$IMAGE_NAME".pub
 
-# Edits the container policy inplace
-FILE=/usr/etc/containers/policy.json
+mv "/usr/share/ublue-os/cosign.pub" "$CONTAINER_DIR/$IMAGE_NAME".pub
+
+POLICY_FILE="$CONTAINER_DIR/policy.json"
+IMAGE_INFO="/usr/share/ublue-os/image-info.json"
 
 yq -i -o=j '.transports.docker |=
     {"'"$IMAGE_REGISTRY"'/'"$IMAGE_NAME"'": [
@@ -42,12 +46,11 @@ yq -i -o=j '.transports.docker |=
             }
         ]
     }
-+ .' "$FILE"
++ .' "$POLICY_FILE"
 
-# Sets image-info.json used by ublue-update for auto-rebase workaround for offline ISOs and auto image signing.
 IMAGE_REF="ostree-image-signed:docker://$IMAGE_REGISTRY/$IMAGE_NAME"
-printf '{\n"image-ref": "%s",\n"image-tag": "latest"\n}' "$IMAGE_REF" > /usr/share/ublue-os/image-info.json
-
+# Sets image-info.json used by ublue-update for auto-rebase workaround. Used by both bazzite and bluefin
+yq -i -o=j '.image-ref="'"$IMAGE_REF"'" | .fedora-version="'"$OS_VERSION"'"' "$IMAGE_INFO"
 
 mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
 sed -i "s ghcr.io/IMAGENAME $IMAGE_REGISTRY g" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
