@@ -1,4 +1,5 @@
 name: rpm-ostree
+shortdesc: The rpm-ostree module offers pseudo-declarative package and repository management using rpm-ostree.
 description: |
   The [`rpm-ostree`](https://coreos.github.io/rpm-ostree/) module offers pseudo-declarative package and repository management using `rpm-ostree`.
 
