@@ -1,7 +1,8 @@
 # `akmods`
 
-> [!WARNING]  
-> Only Universal Blue based images are officially supported. Universal Blue builds with Fedora 38 & below are not supported. Custom kernels are not supported.
+:::caution
+Only Universal Blue based images are officially supported. Universal Blue builds with Fedora 38 & below are not supported. Custom kernels are not supported.
+:::
 
 The [`akmods`](https://github.com/ublue-os/akmods) module is a tool used for managing and installing kernel modules built by Universal Blue. It simplifies the installation of kernel modules, improving the capabilities of your system.
 
