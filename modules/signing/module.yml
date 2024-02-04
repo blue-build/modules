@@ -1,7 +1,5 @@
 name: signing
 shortdesc: The signing module is used to install the required signing policies for cosign image verification with rpm-ostree and bootc. 
-description: |
-  The `signing` module is used to install the required signing policies for cosign image verification with [`rpm-ostree`](https://github.com/coreos/rpm-ostree) and [`bootc`](https://github.com/containers/bootc). This module is the successor to the `signing.sh` script that previously existed in the template. This module also allows for basing off of non-Universal-Blue Fedora base images.
-
+readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/signing/README.md
 example: |
   type: signing # this sets up the proper policy & signing files for signed images to work fully
