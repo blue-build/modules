@@ -1,6 +1,6 @@
 name: bling
 shortdesc: The bling module can be used to pull in small "bling" into your image.
-readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/bling/README.md
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/bling/README.md
 example: |
   type: bling
   install:

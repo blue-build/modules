@@ -1,6 +1,6 @@
 name: systemd
 shortdesc: The systemd module streamlines the management of systemd units during image building.
-readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/systemd/README.md
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/systemd/README.md
 example: |
   type: systemd
   system:

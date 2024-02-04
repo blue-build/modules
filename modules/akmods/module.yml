@@ -1,6 +1,6 @@
 name: akmods
 shortdesc: The akmods module is a tool used for managing and installing kernel modules built by Universal Blue.
-readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/akmods/README.md
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/akmods/README.md
 example: |
   type: akmods
   install:
