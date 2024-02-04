@@ -1,0 +1,38 @@
+name: default-flatpaks
+shortdesc: The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
+readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/default-flatpaks/README.md
+example: |
+  modules: # configured multiple times to highlight how options are overridden
+    - type: default-flatpaks
+      notify: true # Send notification after install/uninstall is finished (true/false)
+      system:
+        # If no repo information is specified, Flathub will be used by default
+        repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        repo-name: flathub
+        repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+        install:
+          - org.gnome.Loupe
+          - one.ablaze.floorp//lightning # This is an example of flatpak which has multiple branches in selection (flatpak//branch).
+                                         # Flatpak runtimes are not supported (like org.winehq.Wine//stable-23.08).
+                                         # Only normal flatpak applications are (like Floorp Lightning web browser in this example).
+                                         # Multiple install of same flatpaks with different branches is not supported.
+        remove:
+          - org.gnome.eog
+      # A flatpak repo can also be added without having to install flatpaks,
+      # as long as one of the repo- fields is present
+      user:
+        repo-name: flathub
+
+    # Assuming that the above example is configured first in a recipe,
+    # a subsequent usage might look like this:  
+    - type: default-flatpaks
+      system:
+        # If the repo-* fields are omitted on the subsequent usage,
+        # the module will use the previously configured repo.
+        # Otherwise, it will overwrite the repo configuration.
+        install:
+          - org.kde.kdenlive # this Flatpak is appended to the insta llist
+      user:
+        # repo-name will overwrite the previously-configured repo-name for the user remote
+        repo-name: flathub-user
+        repo-title: "Flathub (User)

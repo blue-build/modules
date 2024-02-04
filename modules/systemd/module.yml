@@ -1,0 +1,23 @@
+name: systemd
+shortdesc: The systemd module streamlines the management of systemd units during image building.
+readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/systemd/README.md
+example: |
+  type: systemd
+  system:
+    enabled:
+      - example.service # Enabled (runs on system boot)
+    disabled:
+      - example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
+    masked:
+      - example.service # Masked (does not run on system boot, under any circumstances)
+    unmasked:
+      - example.service # Unmasked (runs on system boot, even if previously masked)    
+  user:
+    enabled:
+      - example.timer # Enabled (runs for the user)
+    disabled:
+      - example.service # Disabled (does not run for the user, unless other unit strictly requires it)
+    masked:
+      - example.service # Masked (does not run for the user, under any circumstances) 
+    unmasked:
+      - example.service # Unmasked (runs for the user, even if previously masked)

@@ -1,0 +1,7 @@
+name: script
+shortdesc: The script module can be used to run arbitrary scripts at image build time.
+readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/script/README.md
+example: |
+  type: script
+  scripts:
+    - myscript.sh # will run config/scripts/myscript.sh

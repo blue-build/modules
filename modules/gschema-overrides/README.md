@@ -1,4 +1,4 @@
-# `gschema-overrides` module for BlueBuild
+# `gschema-overrides`
 
 The `gschema-overrides` module can be used for including system-setting overrides for GTK-based desktop environments.
 GTK-based desktop environments include Gnome, Cinnamon, MATE, Budgie & such.
@@ -27,16 +27,7 @@ It is highly recommended to use `z1-` prefix before your gschema.override name, 
 
 Also don't forget to rename your file(s) too with this prefix in `/usr/share/glib-2.0/schemas`.
 
-### Example configuration
-
-```yaml
-type: gschema-overrides
-include:
-  - z1-myoverride.gschema.override
-  - z1-myoverride2.gschema.override
-```
-
-## Editing gschema.override files
+## Creating gschema.override files
 
 Gschema.override files use `gsettings` keyfile format for settings output.
 
@@ -82,12 +73,13 @@ For that functionality, you should use `dconf-update-service` module.
 Relocatable schemas are rare, so most users won't run into this scenario.
 
 ### Example of relocatable schemas
-```
 gsettings format:
+```
 [org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/Utilities/]
 [org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/]
-
+```
 dconf format:
+```
 [org/gnome/desktop/app-folders/folders/Utilities]
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 ```

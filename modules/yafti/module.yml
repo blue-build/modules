@@ -1,0 +1,8 @@
+name: yafti
+shortdesc: The yafti module can be used to install yafti and set it up to run on first boot.
+readme: https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/yafti/README.md
+example: |
+  type: yafti
+  custom-flatpaks:
+      - Celluloid: io.github.celluloid_player.Celluloid
+      - Krita: org.kde.krita
