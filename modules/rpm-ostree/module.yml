@@ -19,6 +19,7 @@ description: |
   error: Could not depsolve transaction; 1 problem detected:
   Problem: conflicting requests
   ```
+
 example: |
   type: rpm-ostree
   repos:

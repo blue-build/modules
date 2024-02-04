@@ -1,3 +1,13 @@
 [
-    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/rpm-ostree/module.yml"
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/akmods/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/bling/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/default-flatpaks/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/files/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/fonts/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/gschema-overrides/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/rpm-ostree/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/script/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/signing/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/systemd/module.yml",
+    "https://raw.githubusercontent.com/ublue-os/bling/moduleyml/modules/yafti/module.yml"
 ]
