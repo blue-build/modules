@@ -4,6 +4,7 @@ set -euo pipefail
 
 get_yaml_array INCLUDE '.include[]' "$1"
 
+schema_include_location="/tmp/config/gschema-overrides"
 schema_test_location="/tmp/bluebuild-schema-test"
 schema_location="/usr/share/glib-2.0/schemas"
 gschema_extension=false
@@ -39,11 +40,15 @@ if [[ ${#INCLUDE[@]} -gt 0 ]] && $gschema_extension; then
   mkdir -p "$schema_test_location" "$schema_location"
   find "$schema_location" -type f ! -name "*.gschema.override" -exec cp {} "$schema_test_location" \;
   for file in "${INCLUDE[@]}"; do
-    file_path="${schema_location}/${file//$'\n'/}"
+    file_path="${schema_include_location}/${file//$'\n'/}"
     cp "$file_path" "$schema_test_location"
   done
   echo "Running error-checking test for your gschema-overrides. If test fails, build also fails."
   glib-compile-schemas --strict "$schema_test_location"
   echo "Compiling gschema to include your changes with gschema-override"
+  for file in "${INCLUDE[@]}"; do
+    file_path="${schema_test_location}/${file//$'\n'/}"
+    cp "$file_path" "$schema_location"
+  done  
   glib-compile-schemas "$schema_location" &>/dev/null
 fi
