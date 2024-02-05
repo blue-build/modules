@@ -2,7 +2,7 @@
 
 The `default-flatpaks` module can be used to install or uninstall Flatpaks from a configurable remote on every boot. It skips that operation if no changes are detected. This module first removes the Fedora Flatpaks remote and Flatpaks that come pre-installed in Fedora. A Flatpak remote is configured the first time the module is used, but it can be re-configured in subsequent usages of the module. If no Flatpak remote is specified, the module will default to using Flathub.
 
-Flatpaks can either be installed system-wide or per-user. Per-user Flatpaks will be installed separetly for every user on a system. Previously-installed flatpaks can also be removed.
+Flatpaks can either be installed system-wide or per-user. Per-user Flatpaks will be installed separately for every user on a system. Previously-installed flatpaks can also be removed.
 
 The module uses the following scripts to handle flatpak setup:
 
@@ -14,8 +14,8 @@ The scripts are run on every boot by these services:
 - `/usr/lib/systemd/system/system-flatpak-setup.service`
 - `/usr/lib/systemd/user/user-flatpak-setup-service`
 
-`system-flatpak-setup` uninstalls Fedora flatpaks, replaces Fedora repos with your repo choice, checks the Flatpak install/remove lists created by the module & performs the install/uninstall operation according to that. `user-flatpak-setup` does the same things for user Flatpaks.
+`system-flatpak-setup` uninstalls Fedora flatpaks, replaces Fedora repos with your repo choice, checks the Flatpak install/remove lists created by the module & performs the install/uninstall operation according to that. `user-flatpak-setup` does the same thing for user Flatpaks.
 
-This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/flatpak/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
+This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/bluebuild/default-flatpaks/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
 
 This module also supports disabling & enabling notifications.

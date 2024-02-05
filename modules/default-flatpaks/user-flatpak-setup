@@ -6,7 +6,7 @@ if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
   flatpak remote-delete --user fedora-testing --force
 fi
 
-REPO_INFO="/etc/flatpak/user/repo-info.yml"
+REPO_INFO="/etc/bluebuild/default-flatpaks/user/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
 REPO_NAME=$(yq '.repo-name' $REPO_INFO)
 REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
@@ -24,14 +24,14 @@ if [[ ! $REPO_TITLE == "null" ]]; then
 fi
 
 # Notifications config
-NOTIFICATIONS=$(cat /etc/flatpak/notifications)
+NOTIFICATIONS=$(cat /etc/bluebuild/default-flatpaks/notifications)
 
 # Installed flatpaks
 FLATPAK_LIST=$(flatpak list --user --columns=application)
 
 # Flatpak list files
-INSTALL_LIST_FILE="/etc/flatpak/user/install"
-REMOVE_LIST_FILE="/etc/flatpak/user/remove"
+INSTALL_LIST_FILE="/etc/bluebuild/default-flatpaks/user/install"
+REMOVE_LIST_FILE="/etc/bluebuild/default-flatpaks/user/remove"
 
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]]; then

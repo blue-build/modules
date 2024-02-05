@@ -13,7 +13,7 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.service /usr/lib/s
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    REPO_INFO="/usr/etc/flatpak/$INSTALL_LEVEL/repo-info.yml"
+    REPO_INFO="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
@@ -78,8 +78,8 @@ EOF
 configure_lists () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    INSTALL_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/install"
-    REMOVE_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/remove"
+    INSTALL_LIST="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
+    REMOVE_LIST="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
     get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
@@ -103,7 +103,7 @@ configure_lists () {
 }
 
 echo "Enabling flatpaks module"
-mkdir -p /usr/etc/flatpak/{system,user}
+mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
 systemctl enable -f system-flatpak-setup.service
 systemctl enable -f --global user-flatpak-setup.service
 
@@ -121,5 +121,5 @@ fi
 
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
-NOTIFICATIONS_CONFIG_FILE="/usr/etc/flatpak/notifications"
+NOTIFICATIONS_CONFIG_FILE="/usr/etc/bluebuild/default-flatpaks/notifications"
 echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
