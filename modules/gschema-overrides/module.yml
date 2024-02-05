@@ -4,4 +4,4 @@ readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/gschema-ov
 example: |
   type: gschema-overrides
   include:
-    - z1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/z1-myoverride.gschema.override
+    - zz1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/zz1-myoverride.gschema.override

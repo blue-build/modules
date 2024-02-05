@@ -24,7 +24,7 @@ To use this module, you need to include your gschema.override file(s) in this lo
 
 Then you need to include those file(s) in recipe file, like in example configuration.
 
-It is highly recommended to use `z1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
+It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
 Also don't forget to rename your file(s) too with this prefix in `config/gschema-overrides`.
 
