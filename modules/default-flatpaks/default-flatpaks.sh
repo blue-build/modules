@@ -13,7 +13,7 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.service /usr/lib/s
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    REPO_INFO="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
+    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
@@ -78,8 +78,8 @@ EOF
 configure_lists () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    INSTALL_LIST="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
-    REMOVE_LIST="/usr/etc/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
+    INSTALL_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
+    REMOVE_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
     get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
@@ -88,6 +88,7 @@ configure_lists () {
         touch $INSTALL_LIST
         for flatpak in "${INSTALL[@]}"; do
             echo "Adding to $INSTALL_LEVEL flatpak installs: $(printf ${flatpak})"
+            echo 
             echo $flatpak >> $INSTALL_LIST
         done
     fi
@@ -103,23 +104,95 @@ configure_lists () {
 }
 
 echo "Enabling flatpaks module"
-mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
+mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
 systemctl enable -f system-flatpak-setup.service
 systemctl enable -f --global user-flatpak-setup.service
 
-# Check that `system` is present before configuring
+# Check that `system` is present before configuring. Also document list files with additional information.
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     configure_flatpak_repo "$1" "system"
+    system_install_list_doc="/usr/share/bluebuild/default-flatpaks/system/install"
+    system_remove_list_doc="/usr/share/bluebuild/default-flatpaks/system/remove"
+    echo -e "# This file utilizes maintainer's configuration for \`system flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
+# Flatpak ID format is used for inserting desired \`system flatpaks install\` entry\n" > "$system_install_list_doc"
+    echo -e "# This file utilizes maintainer's configuration for \`system flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
+# Flatpak ID format is used for inserting desired \`system flatpaks removal\` entry\n" > "$system_remove_list_doc"
     configure_lists "$1" "system"
 fi
 
-# Check that `user` is present before configuring
+# Check that `user` is present before configuring. Also document list files with additional information.
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
+    user_install_list_doc="/usr/share/bluebuild/default-flatpaks/user/install"
+    user_remove_list_doc="/usr/share/bluebuild/default-flatpaks/user/remove"
+    echo -e "# This file utilizes maintainer's configuration for \`user flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
+# Flatpak ID format is used for inserting desired \`user flatpaks install\` entry\n" > "$user_install_list_doc"
+    echo -e "# This file utilizes maintainer's configuration for \`user flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
+# Flatpak ID format is used for inserting desired \`user flatpaks removal\` entry\n" > "$user_remove_list_doc"    
     configure_lists "$1" "user"
 fi
 
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
-NOTIFICATIONS_CONFIG_FILE="/usr/etc/bluebuild/default-flatpaks/notifications"
-echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
+NOTIFICATIONS_CONFIG_FILE="/usr/share/bluebuild/default-flatpaks/notifications"
+echo -e "# This file utilizes maintainer's configuration for \`notifications\` used by \`default-flatpaks\` BlueBuild module.
+# Possible values: true, false\n" > "$NOTIFICATIONS_CONFIG_FILE"
+echo "$NOTIFICATIONS" >> "$NOTIFICATIONS_CONFIG_FILE"
+
+echo "Writing live-user modification files"
+
+USER_INSTALL_SYSTEM_LIST="/usr/etc/bluebuild/default-flatpaks/system/install"
+echo "# This file utilizes user's configuration for \`system flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/system/install).
+# Specify the ID of \`system flatpaks\` in the list you want to install.
+# Duplicated entries won't be used if located in maintainer's configuration.
+# Flatpak runtimes are not supported.
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# org.gnome.Maps
+# org.gnome.TextEditor
+# org.telegram.desktop" > "$USER_INSTALL_SYSTEM_LIST"
+
+USER_REMOVE_SYSTEM_LIST="/usr/etc/bluebuild/default-flatpaks/system/remove"
+echo "# This file utilizes user's configuration for \`system flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/system/remove).
+# Specify the ID of \`system flatpaks\` in the list you want to install.
+# Duplicated entries won't be used if located in maintainer's configuration.
+# Flatpak runtimes are not supported.
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# org.gnome.Maps
+# org.gnome.TextEditor
+# org.telegram.desktop" > "$USER_REMOVE_SYSTEM_LIST"
+
+USER_INSTALL_USER_LIST="/usr/etc/bluebuild/default-flatpaks/user/install"
+echo "# This file utilizes user's configuration for \`user flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/user/install).
+# Specify the ID of \`user flatpaks\` in the list you want to install.
+# Duplicated entries won't be used if located in maintainer's configuration.
+# Flatpak runtimes are not supported.
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# org.gnome.Maps
+# org.gnome.TextEditor
+# org.telegram.desktop" > "$USER_INSTALL_USER_LIST"
+
+USER_REMOVE_USER_LIST="/usr/etc/bluebuild/default-flatpaks/user/remove"
+echo "# This file utilizes user's configuration for \`user flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/user/remove).
+# Specify the ID of \`user flatpaks\` in the list you want to remove.
+# Duplicated entries won't be used if located in maintainer's configuration.
+# Flatpak runtimes are not supported.
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# org.gnome.Maps
+# org.gnome.TextEditor
+# org.telegram.desktop" > "$USER_REMOVE_USER_LIST"
+
+USER_NOTIFICATIONS_CONFIG_FILE="/usr/etc/bluebuild/default-flatpaks/notifications"
+echo "# This file utilizes user's configuration for \`notifications\` used by \`default-flatpaks\` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/notifications).
+# Possible values: true, false
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# false" > "$USER_NOTIFICATIONS_CONFIG_FILE"

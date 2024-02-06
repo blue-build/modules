@@ -16,6 +16,18 @@ The scripts are run on every boot by these services:
 
 `system-flatpak-setup` uninstalls Fedora flatpaks, replaces Fedora repos with your repo choice, checks the Flatpak install/remove lists created by the module & performs the install/uninstall operation according to that. `user-flatpak-setup` does the same thing for user Flatpaks.
 
-This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/etc/bluebuild/default-flatpaks/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
+This module stores the Flatpak remote configuration and Flatpak install/remove lists in `/usr/share/bluebuild/default-flatpaks/`. There are two subdirectories, `user` and `system` corresponding with the install level of the Flatpaks and repositories. Each directory has text files containing the IDs of flatpaks to `install` and `remove`, plus a `repo-info.yml` containing the details of the Flatpak repository.
 
 This module also supports disabling & enabling notifications.
+
+## Live-user modification
+
+If live-user is not satisfied with default-flatpaks modifications done within the OS, he can do modifications located in this directory:
+
+`/etc/bluebuild/default-flatpaks/`
+
+User can install or uninstall flatpaks, along with option to configure notifications.
+
+Folder structure is same as mentioned in example, with `system` & `user` folders,  
+`install` & `remove` files containing explanation on how those should be modified & what they do  
+`notifications` file also contains this explanation for turning notifications on or off.
