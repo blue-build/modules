@@ -88,7 +88,6 @@ configure_lists () {
         touch $INSTALL_LIST
         for flatpak in "${INSTALL[@]}"; do
             echo "Adding to $INSTALL_LEVEL flatpak installs: $(printf ${flatpak})"
-            echo 
             echo $flatpak >> $INSTALL_LIST
         done
     fi
