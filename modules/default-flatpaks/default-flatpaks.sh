@@ -140,6 +140,10 @@ echo "$NOTIFICATIONS" >> "$NOTIFICATIONS_CONFIG_FILE"
 
 echo "Writing live-user modification files"
 
+mkdir -p /usr/etc/bluebuild/default-flatpaks
+mkdir -p /usr/etc/bluebuild/default-flatpaks/system
+mkdir -p /usr/etc/bluebuild/default-flatpaks/user
+
 USER_INSTALL_SYSTEM_LIST="/usr/etc/bluebuild/default-flatpaks/system/install"
 echo "# This file utilizes user's configuration for \`system flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
 # If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/system/install).
