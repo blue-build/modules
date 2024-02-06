@@ -114,9 +114,9 @@ if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     system_install_list_doc="/usr/share/bluebuild/default-flatpaks/system/install"
     system_remove_list_doc="/usr/share/bluebuild/default-flatpaks/system/remove"
     echo -e "# This file utilizes maintainer's configuration for \`system flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
-# Flatpak ID format is used for inserting desired \`system flatpaks install\` entry\n" > "$system_install_list_doc"
+# Flatpak ID format is used for inserting desired \`system flatpaks install\` entry.\n" > "$system_install_list_doc"
     echo -e "# This file utilizes maintainer's configuration for \`system flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
-# Flatpak ID format is used for inserting desired \`system flatpaks removal\` entry\n" > "$system_remove_list_doc"
+# Flatpak ID format is used for inserting desired \`system flatpaks removal\` entry.\n" > "$system_remove_list_doc"
     configure_lists "$1" "system"
 fi
 
@@ -126,9 +126,9 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     user_install_list_doc="/usr/share/bluebuild/default-flatpaks/user/install"
     user_remove_list_doc="/usr/share/bluebuild/default-flatpaks/user/remove"
     echo -e "# This file utilizes maintainer's configuration for \`user flatpaks install\` used by \`default-flatpaks\` BlueBuild module.
-# Flatpak ID format is used for inserting desired \`user flatpaks install\` entry\n" > "$user_install_list_doc"
+# Flatpak ID format is used for inserting desired \`user flatpaks install\` entry.\n" > "$user_install_list_doc"
     echo -e "# This file utilizes maintainer's configuration for \`user flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
-# Flatpak ID format is used for inserting desired \`user flatpaks removal\` entry\n" > "$user_remove_list_doc"    
+# Flatpak ID format is used for inserting desired \`user flatpaks removal\` entry.\n" > "$user_remove_list_doc"    
     configure_lists "$1" "user"
 fi
 
