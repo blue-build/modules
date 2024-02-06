@@ -46,8 +46,13 @@ REMOVE_LIST_FILE="/usr/share/bluebuild/default-flatpaks/user/remove"
 USER_INSTALL_LIST_FILE="/etc/bluebuild/default-flatpaks/user/install"
 USER_REMOVE_LIST_FILE="/etc/bluebuild/default-flatpaks/user/remove"
 # Ignore words starting with # symbol, whitelines & duplicate entries for flatpak list files.
-COMBINED_INSTALL_LIST=$(cat "$INSTALL_LIST_FILE" "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
-COMBINED_REMOVE_LIST=$(cat "$REMOVE_LIST_FILE" "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+COMBINED_INSTALL_PRELIST=$(cat "$INSTALL_LIST_FILE" "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+COMBINED_REMOVE_PRELIST=$(cat "$REMOVE_LIST_FILE" "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+# Avoid install/remove loop scenario when you have duplicate entry in install & remove list at the same time
+# (from user's side, as maintainer's-side will be handled by the module itself in the future)
+# cat doesn't work, because this is not a file
+COMBINED_INSTALL_LIST=$(sort -u <(cat "$COMBINED_INSTALL_PRELIST" "$USER_REMOVE_LIST_FILE")) #(exclude duplicates from "$USER_REMOVE_LIST_FILE")
+COMBINED_REMOVE_LIST=$(sort -u <(cat "$COMBINED_REMOVE_PRELIST" "$USER_INSTALL_LIST_FILE")) #(exclude duplicates from "$USER_INSTALL_LIST_FILE")
 
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
