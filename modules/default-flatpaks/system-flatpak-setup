@@ -68,9 +68,11 @@ COMBINED_INSTALL_PRELIST=$(cat "$INSTALL_LIST_FILE" "$USER_INSTALL_LIST_FILE" | 
 COMBINED_REMOVE_PRELIST=$(cat "$REMOVE_LIST_FILE" "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 # Avoid install/remove loop scenario when you have duplicate entry in install & remove list at the same time
 # (from user's side, as maintainer's-side will be handled by the module itself in the future)
-# cat doesn't work, because this is not a file
-COMBINED_INSTALL_LIST=$(sort -u <(cat "$COMBINED_INSTALL_PRELIST" "$COMBINED_REMOVE_PRELIST")) #(exclude duplicates from "$COMBINED_REMOVE_PRELIST")
-COMBINED_REMOVE_LIST=$(sort -u <(cat "$COMBINED_REMOVE_PRELIST" "$COMBINED_INSTALL_PRELIST")) #(exclude duplicates from "$COMBINED_INSTALL_PRELIST")
+############################# Work in progress, for section below ####################################
+# It's needed to exclude duplicates from "$COMBINED_REMOVE_PRELIST", which match "$COMBINED_INSTALL_PRELIST"
+COMBINED_INSTALL_LIST=$(sort -u <(cat "$COMBINED_INSTALL_PRELIST" "$COMBINED_REMOVE_PRELIST"))
+# It's needed to exclude duplicates from "$COMBINED_INSTALL_PRELIST", which match "$COMBINED_REMOVE_PRELIST"
+COMBINED_REMOVE_LIST=$(sort -u <(cat "$COMBINED_REMOVE_PRELIST" "$COMBINED_INSTALL_PRELIST"))
 
 function notify-send-pre-install {
      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
