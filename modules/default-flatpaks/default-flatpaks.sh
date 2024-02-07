@@ -159,7 +159,7 @@ echo "# This file utilizes user's configuration for \`system flatpaks install\` 
 USER_REMOVE_SYSTEM_LIST="/usr/etc/bluebuild/default-flatpaks/system/remove"
 echo "# This file utilizes user's configuration for \`system flatpaks removal\` used by \`default-flatpaks\` BlueBuild module.
 # If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/system/remove).
-# Specify the ID of \`system flatpaks\` in the list you want to install.
+# Specify the ID of \`system flatpaks\` in the list you want to remove.
 # Duplicated entries won't be used if located in maintainer's configuration.
 # Flatpak runtimes are not supported.
 # Here's an example on how to edit this file (ignore # symbol):
