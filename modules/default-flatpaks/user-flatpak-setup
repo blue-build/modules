@@ -45,7 +45,7 @@ INSTALL_LIST_FILE="/usr/share/bluebuild/default-flatpaks/user/install"
 REMOVE_LIST_FILE="/usr/share/bluebuild/default-flatpaks/user/remove"
 USER_INSTALL_LIST_FILE="/etc/bluebuild/default-flatpaks/user/install"
 USER_REMOVE_LIST_FILE="/etc/bluebuild/default-flatpaks/user/remove"
-# This accounts for the scenario when user sets the same package in install list that is in maintainer's remove list & vice-versa
+# Prefer user's install + remove list over maintainer's, in case when same flatpak ID is present in maintainer's install list + user's remove list & vice-versa
 # Also ignores words starting with # symbol, whitelines & duplicate entries
 MAINTAINER_INSTALL_LIST=$(comm -23 <(sort "$INSTALL_LIST_FILE") <(sort "$USER_REMOVE_LIST_FILE") | grep -v -E '^#|^$' | awk '!seen[$0]++')
 MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INSTALL_LIST_FILE") | grep -v -E '^#|^$' | awk '!seen[$0]++')
