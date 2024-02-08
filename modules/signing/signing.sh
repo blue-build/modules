@@ -30,7 +30,7 @@ if ! [ -f "/usr/share/ublue-os/image-info.json" ]; then
 fi
 
 
-mv "/usr/share/ublue-os/cosign.pub" "$CONTAINER_DIR/$IMAGE_NAME".pub
+cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_NAME.pub"
 
 POLICY_FILE="$CONTAINER_DIR/policy.json"
 IMAGE_INFO="/usr/share/ublue-os/image-info.json"
