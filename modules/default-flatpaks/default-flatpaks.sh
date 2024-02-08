@@ -140,7 +140,6 @@ echo "$NOTIFICATIONS" >> "$NOTIFICATIONS_CONFIG_FILE"
 
 echo "Writing live-user modification files"
 
-mkdir -p /usr/etc/bluebuild/default-flatpaks
 mkdir -p /usr/etc/bluebuild/default-flatpaks/system
 mkdir -p /usr/etc/bluebuild/default-flatpaks/user
 
