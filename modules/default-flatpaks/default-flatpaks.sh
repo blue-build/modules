@@ -125,7 +125,7 @@ fi
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
 CONFIG_NOTIFICATIONS="/usr/share/bluebuild/default-flatpaks/notifications"
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/notifications "$NOTIFICATIONS_CONFIG_FILE"
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/notifications "$CONFIG_NOTIFICATIONS"
 echo "$NOTIFICATIONS" >> "$CONFIG_NOTIFICATIONS"
 
 echo "Copying user modification template files"
