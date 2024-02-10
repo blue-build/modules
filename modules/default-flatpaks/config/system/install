@@ -1,3 +1,2 @@
-# This file utilizes maintainer's configuration for `system flatpaks install` used by `default-flatpaks` BlueBuild module.
-# Flatpak ID format is used for inserting desired `system flatpaks install` entry.
-
+# This file contains the image's default configuration for `system flatpaks install` used by the `default-flatpaks` BlueBuild module.
+# This list uses the Flatpak ID format, with one ID per line.

@@ -1,3 +1,3 @@
-# This file utilizes maintainer's configuration for `notifications` used by `default-flatpaks` BlueBuild module.
+# This file contains the image's default configuration for `notifications` used by the the `default-flatpaks` module.
 # Possible values: true, false
 
