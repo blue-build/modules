@@ -20,14 +20,14 @@ This module stores the Flatpak remote configuration and Flatpak install/remove l
 
 This module also supports disabling & enabling notifications.
 
-## Live-user modification
+## Local modification
 
-If live-user is not satisfied with default-flatpaks modifications done within the OS, he can do modifications located in this directory:
+If a local user is not satisfied with default Flatpak installations and removals in the image, it is possible to make modifications to the configuration located within this directory:
 
 `/etc/bluebuild/default-flatpaks/`
 
-User can install or uninstall flatpaks, along with option to configure notifications.
+Through the configuration in that folder it is possible to install or uninstall Flatpaks and configure notifications.
 
-Folder structure is same as mentioned in example, with `system` & `user` folders,  
-`install` & `remove` files containing explanation on how those should be modified & what they do  
-`notifications` file also contains this explanation for turning notifications on or off.
+Folder structure is the same as talked about above, with `system` & `user` folders,  
+`install` & `remove` files containing explanation on how those should be modified & what they do. 
+The `notifications` file also contains this explanation for turning notifications on or off.
