@@ -1,0 +1,6 @@
+# This file utilizes user's configuration for `notifications` used by `default-flatpaks` BlueBuild module.
+# If this file is not modified, maintainer's configuration will be used instead (located in /usr/share/bluebuild/default-flatpaks/notifications).
+# Possible values: true, false
+# Here's an example on how to edit this file (ignore # symbol):
+#
+# false

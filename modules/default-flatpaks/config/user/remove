@@ -1,0 +1,3 @@
+# This file utilizes maintainer's configuration for `user flatpaks removal` used by `default-flatpaks` BlueBuild module.
+# Flatpak ID format is used for inserting desired `user flatpaks removal` entry.
+
