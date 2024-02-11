@@ -17,7 +17,7 @@ if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
   flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
 fi
 
-REPO_INFO="/etc/flatpak/system/repo-info.yml"
+REPO_INFO="/usr/share/bluebuild/default-flatpaks/system/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
 REPO_NAME=$(yq '.repo-name' $REPO_INFO)
 REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
@@ -42,14 +42,34 @@ if [[ ! $REPO_TITLE == "null" ]]; then
 fi
 
 # Notifications config
-NOTIFICATIONS=$(cat /etc/flatpak/notifications)
+NOTIFICATIONS_FILE="/usr/share/bluebuild/default-flatpaks/notifications"
+USER_NOTIFICATIONS_FILE="/etc/bluebuild/default-flatpaks/notifications"
+# Ignore words starting with # symbol, whitelines & duplicate entries for notifications config
+MAINTAINER_NOTIFICATIONS=$(cat "$NOTIFICATIONS_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+USER_NOTIFICATIONS=$(cat "$USER_NOTIFICATIONS_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+
+# If user modified notifications config, utilize user's configuration, otherwise maintainer's
+if [[ -n $USER_NOTIFICATIONS ]]; then
+  NOTIFICATIONS="$USER_NOTIFICATIONS"
+else
+  NOTIFICATIONS="$MAINTAINER_NOTIFICATIONS"
+fi  
 
 # Installed flatpaks
 FLATPAK_LIST=$(flatpak list --system --columns=application)
 
 # Flatpak list files
-INSTALL_LIST_FILE="/etc/flatpak/system/install"
-REMOVE_LIST_FILE="/etc/flatpak/system/remove"
+INSTALL_LIST_FILE="/usr/share/bluebuild/default-flatpaks/system/install"
+REMOVE_LIST_FILE="/usr/share/bluebuild/default-flatpaks/system/remove"
+USER_INSTALL_LIST_FILE="/etc/bluebuild/default-flatpaks/system/install"
+USER_REMOVE_LIST_FILE="/etc/bluebuild/default-flatpaks/system/remove"
+# Prefer user's install + remove list over maintainer's, in case when same flatpak ID is present in maintainer's install list + user's remove list & vice-versa
+# Also ignores words starting with # symbol, whitelines & duplicate entries
+MAINTAINER_INSTALL_LIST=$(comm -23 <(sort "$INSTALL_LIST_FILE") <(sort "$USER_REMOVE_LIST_FILE") | grep -v -E '^#|^$' | awk '!seen[$0]++')
+MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INSTALL_LIST_FILE") | grep -v -E '^#|^$' | awk '!seen[$0]++')
+# Combine maintainer & user list. Ignore words starting with # symbol, whitelines & duplicate entries
+COMBINED_INSTALL_LIST=$(cat <(echo "$MAINTAINER_INSTALL_LIST") "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
+COMBINED_REMOVE_LIST=$(cat <(echo "$MAINTAINER_REMOVE_LIST") "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 
 function notify-send-pre-install {
      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
@@ -84,11 +104,11 @@ function notify-send-uninstall {
 }
 
 # Install flatpaks in list
-if [[ -f $INSTALL_LIST_FILE ]]; then
+if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
   if [[ -n $FLATPAK_LIST ]]; then
-    INSTALL_LIST=$(echo "$FLATPAK_LIST" | grep -vf - "$INSTALL_LIST_FILE")
+    INSTALL_LIST=$(comm -23 <(echo "$COMBINED_INSTALL_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
   else
-    INSTALL_LIST=$(cat $INSTALL_LIST_FILE)
+    INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
     flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
@@ -100,8 +120,8 @@ if [[ -f $INSTALL_LIST_FILE ]]; then
 fi
 
 # Remove flatpaks in list
-if [[ -f $REMOVE_LIST_FILE ]]; then
-  REMOVE_LIST=$(echo "$FLATPAK_LIST" | grep -o -f - "$REMOVE_LIST_FILE")
+if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
   if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
     flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
   elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
