@@ -36,4 +36,4 @@ Problem: package "version_of_akmod" from @commandline requires "version_of_kerne
 ```
 
 Just wait for the base image build to resolve & akmods module will start working again.
-If this issue happens for prolonged period of time, report it to the upstream repo if not already reported or worked on.
+If this issue happens for a prolonged period of time, report it to the upstream repo if not already reported or worked on.
