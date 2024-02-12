@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Tell build process to exit if there are any errors.
-set -oue pipefail
+set -eou pipefail
 
 CONTAINER_DIR="/usr/etc/containers"
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
