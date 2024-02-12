@@ -24,3 +24,16 @@ COPY --from=ghcr.io/ublue-os/akmods:main-39 /rpms /tmp/rpms
 ```
 
 See available tags here: https://github.com/ublue-os/akmods/#how-its-organized
+
+## Known issues
+
+When the upstream base image is failing to build for some time, you will probably notice that this module fails too with this error:
+```
+Resolving dependencies...done
+error: Could not depsolve transaction; 1 problem detected:
+Problem: package "version_of_akmod" from @commandline requires "version_of_kernel", but none of the providers can be installed
+- conflicting requests
+```
+
+Just wait for the base image build to resolve & akmods module will start working again.
+If this issue happens for prolonged period of time, report it to the upstream repo if not already reported or worked on.
