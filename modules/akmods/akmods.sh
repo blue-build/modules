@@ -15,6 +15,7 @@ function SET_HIGHER_PRIORITY_AKMODS_REPO {
 }
 
 get_yaml_array INSTALL '.install[]' "$1"
+SURFACE=$(rpm -qa --queryformat '%{NAME}\n' | awk '$0 == "kernel-surface"')
 
 INSTALL_PATH=("${INSTALL[@]/#/\/tmp/rpms/kmods/*}")
 INSTALL_PATH=("${INSTALL_PATH[@]/%/*.rpm}")
@@ -23,7 +24,7 @@ INSTALL_STR=$(echo "${INSTALL_PATH[*]}" | tr -d '\n')
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
   echo "Installing akmods"
   echo "Installing: $(echo "${INSTALL[*]}" | tr -d '\n')"
-  if [[ "$BASE_IMAGE" =~ "surface" ]]; then
+  if [[ -n "$SURFACE" ]]; then
     SET_HIGHER_PRIORITY_AKMODS_REPO
     ENABLE_MULTIMEDIA_REPO
     rpm-ostree install kernel-surface-devel-matched $INSTALL_STR
