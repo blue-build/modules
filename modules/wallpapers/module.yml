@@ -1,0 +1,20 @@
+name: wallpaper
+shortdesc: The `wallpaper` module can be used for including & setting wallpapers into desktop environments.
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/wallpapers/README.md
+example: |
+  type: wallpapers
+  #
+  # Gnome-compatible options only
+  default:
+    wallpaper:
+      - my-default-wallpaper.jpg
+    wallpaper-light-dark:
+      - my-default-wallpaper-bb-light.jpg + my-default-wallpaper-bb-dark.jpg
+  scaling:
+    zoom: all                           
+    centered:                           
+      - my-default-wallpaper.jpg        
+    scaled:                 
+      - my-wallpaper.jpg       
+    stretched:
+      - my-default-wallpaper-bb-light.jpg + my-default-wallpaper-bb-dark.jpg
