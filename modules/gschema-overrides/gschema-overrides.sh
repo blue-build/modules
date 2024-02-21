@@ -20,7 +20,7 @@ fi
 # Abort build if included file does not have .gschema.override extension
 if [[ ${#INCLUDE[@]} -gt 0 ]]; then
   for file in "${INCLUDE[@]}"; do
-    if [[ $file == *.gschema.override ]]; then
+    if [[ "$file" == *.gschema.override ]]; then
       gschema_extension=true
     else  
       echo "Module failed because included files in module don't have .gschema.override extension."
