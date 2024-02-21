@@ -3,6 +3,8 @@ shortdesc: The akmods module is a tool used for managing and installing kernel m
 readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/akmods/README.md
 example: |
   type: akmods
+  base: asus # if not specified, classic main base is used by default
+  nvidia-driver: 545 # if not specified, nvidia driver is not installed by default
   install:
     - openrazer
     - openrgb
