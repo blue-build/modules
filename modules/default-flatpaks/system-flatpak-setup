@@ -56,7 +56,7 @@ else
 fi  
 
 # Installed flatpaks
-FLATPAK_LIST=$(flatpak list --system --columns=application)
+FLATPAK_LIST=$(flatpak list --system --app --columns=application)
 
 # Flatpak list files
 INSTALL_LIST_FILE="/usr/share/bluebuild/default-flatpaks/system/install"
