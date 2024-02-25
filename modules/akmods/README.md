@@ -13,7 +13,7 @@ Ublue-os-akmods-addons & ublue-os-nvidia-addons are already included when necess
 
 To use the `akmods` module, specify the kernel modules you wish to install in the `install:` section of your recipe/configuration file.
 
-By default, the `akmods` module installs the `main` akmods for the `latest` version of Fedora.
+By default, the `akmods` module installs the `main` version of akmods.
 `main` akmods are also compatible with other images, except `surface(-nvidia)` & `asus(-nvidia)`.
 
 If you want to install akmods for `surface(-nvidia)` or `asus(-nvidia)` images, change `base` entry in the recipe file.
