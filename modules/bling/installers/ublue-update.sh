@@ -32,6 +32,13 @@ if ! rpm -q python3-pip > /dev/null; then
     rpm-ostree install python3-pip
 fi
 
+# Fetch ublue COPR
+REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
+wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
+
 # topgrade is REQUIRED by ublue-update to install
 pip install --prefix=/usr topgrade
 rpm-ostree install ublue-update
+
+# Remove ublue COPR
+rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo

@@ -1,6 +1,6 @@
 name: rpm-ostree
 shortdesc: The rpm-ostree module offers pseudo-declarative package and repository management using rpm-ostree.
-readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/rpm-ostree/README.md
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/rpm-ostree/README.md
 example: |
   type: rpm-ostree
   repos:
