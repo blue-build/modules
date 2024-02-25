@@ -4,7 +4,7 @@ readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods
 example: |
   type: akmods
   base: asus # if not specified, classic main base is used by default
-  nvidia-driver: 545 # if not specified, nvidia driver is not installed by default
+  nvidia-driver: 550 # if not specified, nvidia driver is not installed by default
   install:
     - openrazer
     - openrgb
