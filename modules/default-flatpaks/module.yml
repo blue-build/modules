@@ -1,6 +1,6 @@
 name: default-flatpaks
 shortdesc: The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
-readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/default-flatpaks/README.md
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/default-flatpaks/README.md
 example: |
   modules: # configured multiple times to highlight how options are overridden
     - type: default-flatpaks
