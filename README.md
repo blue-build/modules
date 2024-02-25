@@ -1,40 +1,23 @@
-# bling
+# BlueBuild Modules &nbsp; [![build-ublue](https://github.com/blue-build/modules/actions/workflows/build.yml/badge.svg)](https://github.com/blue-build/modules/actions/workflows/build.yml)
 
-[![build-ublue](https://github.com/ublue-os/bling/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/bling/actions/workflows/build.yml)
+This repository contains the default official module repository for [BlueBuild](https://blue-build.org/). See [./modules/](./modules/) for the module source code. See the [website](https://blue-build.org/reference/module/) for module documentation. See [How to make a custom module](https://blue-build.org/how-to/making-modules/) and [Contributing](https://blue-build.org/learn/contributing/) for help with making custom modules and contributing.
 
-This repository containes modules to use in recipe.yml. See list of modules in [./modules](./modules/)
+## Style guidelines for official modules
 
-## Usage
+These are general guidelines for writing official modules and their documentation to follow to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
 
-You can add this to your Containerfile to copy the modules from this image over:
-```dockerfile
-COPY --from=ghcr.io/ublue-os/bling:latest /modules /tmp/modules/
-```
+### Bash
 
-## Verification
+- Echo what you're doing on each step and on errors to help debugging.
+- Don't echo blocks using "===", that is reserved for the code launching the modules.
+- Use `snake_case` for functions and variables changed by the code.
+- Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
 
-These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
-```sh
-cosign verify --key cosign.pub ghcr.io/ublue-os/bling
-```
+### `module.yml` (not implemented) (will replace READMEs)
 
-## See what is in this image
+Each public module should also include a `module.yml` with the following keys: (TODO, not planned yet).
 
-### Raw commands
+#### `description:`
 
-NOTE: This makes it so you need to extract everything from the base image!
-
-```sh
-podman save ghcr.io/ublue-os/bling:latest -o bling.tar
-tar xf bling.tar && rm bling.tar
-tar xf *.tar
-```
-
-This should extract the image in a way that you can see everything in it!
-
-### Using [Dive](https://github.com/wagoodman/dive)
-
-This method allows you to inspect the image through a TUI
-```sh
-dive ghcr.io/ublue-os/bling:latest
-```
+- At the start of each paragraph, refer to the module using its name or with "the module", not "it" or "the script"
+- Use passive grammar when talking about the user, ie. "should be used", "can be configured", preferring references to what the module does, ie. "This module downloads the answer to the question of life, the universe and everything..."
