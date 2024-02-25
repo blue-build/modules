@@ -3,7 +3,7 @@ shortdesc: The akmods module is a tool used for managing and installing kernel m
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods/README.md
 example: |
   type: akmods
-  base: asus # if not specified, classic main base is used by default
+  base: asus # if not specified, classic "main" base is used by default
   nvidia-driver: 550 # if not specified, nvidia driver is not installed by default
   install:
     - openrazer
