@@ -3,6 +3,7 @@ shortdesc: The akmods module is a tool used for managing and installing kernel m
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods/README.md
 example: |
   type: akmods
+  base: asus # if not specified, classic "main" base is used by default
   install:
     - openrazer
     - openrgb
