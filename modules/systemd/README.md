@@ -1,6 +1,6 @@
 # `systemd`
 
-The `systemd` module streamlines the inclusion & management of systemd units during image building. Units are divided into `system` and `user` categories, with `system` units managed directly using `systemctl` and `user` units using `systemctl --global`. You can specify which units to enable/disable or unmask/mask under each category.
+The `systemd` module streamlines the management of systemd units during image building. Units are divided into `system` and `user` categories, with `system` units managed directly using `systemctl` and `user` units using `systemctl --global`. You can specify which units to enable/disable or unmask/mask under each category.
 
 You can also include your systemd units to be copied into system directories into these locations,  
 depending if your unit is `system` or `user` based:  
