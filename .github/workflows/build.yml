@@ -6,15 +6,15 @@ on:
     paths-ignore: # don't rebuild if only documentation has changed
       - "**.md"
   pull_request:
-    branches: ['main']
-  merge_group: 
-    branches: ['main']
+    branches: ["main"]
+  merge_group:
+    branches: ["main"]
   schedule:
-    - cron: '0 5 * * *'  # 5 am everyday
-  workflow_dispatch: 
+    - cron: "0 5 * * *" # 5 am everyday
+  workflow_dispatch:
 env:
-    IMAGE_NAME: bling
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_NAME: modules
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
   push-ghcr:
@@ -24,7 +24,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    steps: 
+    steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
