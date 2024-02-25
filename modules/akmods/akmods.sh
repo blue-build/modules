@@ -70,8 +70,8 @@ INSTALL_STR=$(echo "${INSTALL_PATH[*]}" | tr -d '\n')
 # Errors out if unsupported Nvidia driver version is specified in recipe.
 # Needs to be updated whenever new Nvidia driver releases for check to work properly
 if [[ -n "${NVIDIA_VERSION}" ]]; then
-  if [[ ! "${NVIDIA_VERSION}" == "545" ]] && [[ ! "${NVIDIA_VERSION}" == "470" ]]; then
-    echo "You provided unsupported Nvidia akmod version in nvidia-version recipe entry, only v545 & v470 are supported."
+  if [[ ! "${NVIDIA_VERSION}" == "550" ]] && [[ ! "${NVIDIA_VERSION}" == "470" ]]; then
+    echo "You provided unsupported Nvidia akmod version in nvidia-version recipe entry, only v550 & v470 are supported."
     exit 1
   fi
 fi  
