@@ -1,0 +1,16 @@
+name: rebuild-website
+on:
+  push:
+    branches:
+      - main
+    paths: # only rebuild when related files change
+      - "**/module.yml"
+      - modules.json
+      - README.md
+
+jobs:
+  rebuild-website:
+    name: Trigger build hook for website on Netlify
+    runs-on: ubuntu-22.04
+    steps: 
+      - run: curl -X POST -d {} https://api.netlify.com/build_hooks/65bf6b0dd164b64659beafd5

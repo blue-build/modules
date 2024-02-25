@@ -26,6 +26,12 @@ if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
     fi
 fi
 systemctl disable rpm-ostreed-automatic.timer
+
+# Install python3-pip if it's not already installed
+if ! rpm -q python3-pip > /dev/null; then
+    rpm-ostree install python3-pip
+fi
+
 # topgrade is REQUIRED by ublue-update to install
 pip install --prefix=/usr topgrade
 rpm-ostree install ublue-update

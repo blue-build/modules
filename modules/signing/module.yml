@@ -1,0 +1,5 @@
+name: signing
+shortdesc: The signing module is used to install the required signing policies for cosign image verification with rpm-ostree and bootc. 
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/signing/README.md
+example: |
+  type: signing # this sets up the proper policy & signing files for signed images to work fully

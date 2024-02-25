@@ -6,6 +6,7 @@ set -euo pipefail
 get_yaml_array FILES '.files[]' "$1"
 
 cd "$CONFIG_DIRECTORY/files"
+shopt -s dotglob
 
 if [[ ${#FILES[@]} -gt 0 ]]; then
     echo "Adding files to image"
@@ -17,17 +18,21 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
                 mkdir -p "$DEST"
             fi
             echo "Copying $FILE to $DEST"
-            cp -r "$FILE"/* $DEST
+            cp -rf "$FILE"/* $DEST
+            rm -f "$DEST"/.gitkeep
         elif [ -f "$FILE" ]; then
             DEST_DIR=$(dirname "$DEST")
             if [ ! -d "$DEST_DIR" ]; then
                 mkdir -p "$DEST_DIR"
             fi
             echo "Copying $FILE to $DEST"
-            cp $FILE $DEST
+            cp -f $FILE $DEST
+            rm -f "$DEST"/.gitkeep
         else
             echo "File or Directory $FILE Does Not Exist in $CONFIG_DIRECTORY/files"
             exit 1
         fi
     done
 fi
+
+shopt -u dotglob

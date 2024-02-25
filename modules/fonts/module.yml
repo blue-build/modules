@@ -1,0 +1,16 @@
+name: fonts
+shortdesc: The `fonts` module can be used to install fonts from Nerd Fonts or Google Fonts.
+readme: https://raw.githubusercontent.com/ublue-os/bling/main/modules/fonts/README.md
+example: |
+  type: fonts
+  fonts:
+    nerd-fonts:
+      - FiraCode # don't add "Nerd Font" suffix.
+      - Hack
+      - SourceCodePro
+      - Terminus
+      - JetBrainsMono
+      - NerdFontsSymbolsOnly
+    google-fonts:
+      - Roboto
+      - Open Sans

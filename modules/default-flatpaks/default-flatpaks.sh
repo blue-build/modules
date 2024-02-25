@@ -13,7 +13,7 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.service /usr/lib/s
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    REPO_INFO="/usr/etc/flatpak/$INSTALL_LEVEL/repo-info.yml"
+    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
@@ -78,14 +78,13 @@ EOF
 configure_lists () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    INSTALL_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/install"
-    REMOVE_LIST="/usr/etc/flatpak/$INSTALL_LEVEL/remove"
+    INSTALL_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
+    REMOVE_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
     get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
     get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
     echo "Creating $INSTALL_LEVEL Flatpak install list at $INSTALL_LIST"
     if [[ ${#INSTALL[@]} -gt 0 ]]; then
-        touch $INSTALL_LIST
         for flatpak in "${INSTALL[@]}"; do
             echo "Adding to $INSTALL_LEVEL flatpak installs: $(printf ${flatpak})"
             echo $flatpak >> $INSTALL_LIST
@@ -94,7 +93,6 @@ configure_lists () {
 
     echo "Creating $INSTALL_LEVEL Flatpak removals list $REMOVE_LIST"
     if [[ ${#REMOVE[@]} -gt 0 ]]; then
-        touch $REMOVE_LIST
         for flatpak in "${REMOVE[@]}"; do
             echo "Adding to $INSTALL_LEVEL flatpak removals: $(printf ${flatpak})"
             echo $flatpak >> $REMOVE_LIST
@@ -103,23 +101,37 @@ configure_lists () {
 }
 
 echo "Enabling flatpaks module"
-mkdir -p /usr/etc/flatpak/{system,user}
+mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
+mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
 systemctl enable -f system-flatpak-setup.service
 systemctl enable -f --global user-flatpak-setup.service
 
-# Check that `system` is present before configuring
+# Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     configure_flatpak_repo "$1" "system"
+    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
+    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
     configure_lists "$1" "system"
 fi
 
-# Check that `user` is present before configuring
+# Check that `user` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
+    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
+    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
     configure_lists "$1" "user"
 fi
 
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
-NOTIFICATIONS_CONFIG_FILE="/usr/etc/flatpak/notifications"
-echo "$NOTIFICATIONS" > "$NOTIFICATIONS_CONFIG_FILE"
+CONFIG_NOTIFICATIONS="/usr/share/bluebuild/default-flatpaks/notifications"
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/notifications "$CONFIG_NOTIFICATIONS"
+echo "$NOTIFICATIONS" >> "$CONFIG_NOTIFICATIONS"
+
+echo "Copying user modification template files"
+
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/install /usr/etc/bluebuild/default-flatpaks/system/install
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/remove /usr/etc/bluebuild/default-flatpaks/system/remove
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/install /usr/etc/bluebuild/default-flatpaks/user/install
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/remove /usr/etc/bluebuild/default-flatpaks/user/remove
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/notifications /usr/etc/bluebuild/default-flatpaks/notifications
