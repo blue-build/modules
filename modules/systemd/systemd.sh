@@ -11,10 +11,14 @@ USER_UNIT_DIR="/usr/lib/systemd/user"
 
 shopt -s dotglob
 if [[ -d "$SYSTEM_UNIT_INCLUDE" ]]; then
+  if [[ -n $(find "$SYSTEM_UNIT_INCLUDE" -type f) ]]; then
   cp -r "$SYSTEM_UNIT_INCLUDE"/* "$SYSTEM_UNIT_DIR"
+  fi
 fi
 if [[ -d "$USER_UNIT_INCLUDE" ]]; then
-  cp -r "$USER_UNIT_INCLUDE"/* "$USER_UNIT_DIR"
+  if [[ -n $(find "$USER_UNIT_INCLUDE" -type f) ]]; then
+    cp -r "$USER_UNIT_INCLUDE"/* "$USER_UNIT_DIR"
+  fi  
 fi  
 shopt -u dotglob
 
