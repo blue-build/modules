@@ -94,6 +94,7 @@ extract_wallpaper() {
 
 # File & folder location variables
 
+MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
 wallpapers_module_dir="$MODULE_DIRECTORY"/wallpapers
 wallpaper_include_dir="$CONFIG_DIRECTORY"/wallpapers
 wallpaper_destination="/usr/share/backgrounds/bluebuild"
