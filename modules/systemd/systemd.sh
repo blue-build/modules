@@ -9,7 +9,6 @@ USER_UNIT_INCLUDE="$CONFIG_DIRECTORY"/systemd/user
 SYSTEM_UNIT_DIR="/usr/lib/systemd/system"
 USER_UNIT_DIR="/usr/lib/systemd/user"
 
-shopt -s dotglob
 if [[ -d "$SYSTEM_UNIT_INCLUDE" ]]; then
   if [[ -n $(find "$SYSTEM_UNIT_INCLUDE" -type f) ]]; then
     cp -r "$SYSTEM_UNIT_INCLUDE"/* "$SYSTEM_UNIT_DIR"
@@ -20,7 +19,6 @@ if [[ -d "$USER_UNIT_INCLUDE" ]]; then
     cp -r "$USER_UNIT_INCLUDE"/* "$USER_UNIT_DIR"
   fi  
 fi  
-shopt -u dotglob
 
 # Systemd units configuration (enable, disable, unmask & mask)
 get_yaml_array ENABLED '.system.enabled[]' "$1"
