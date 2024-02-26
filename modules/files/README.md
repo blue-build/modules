@@ -1,1 +1,1 @@
-### The documentation for the `files` module exists in the [blue-build/cli](https://github.com/blue-build/cli/blob/main/templates/modules/files/) repository.
+### The documentation for the `files` module exists in the [blue-build/cli]([https://github.com/blue-build/cli/blob/main/templates/modules/files/](https://github.com/blue-build/cli/tree/main/template/templates/modules/files)https://github.com/blue-build/cli/tree/main/template/templates/modules/files) repository.
