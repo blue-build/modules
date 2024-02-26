@@ -11,11 +11,13 @@ USER_UNIT_DIR="/usr/lib/systemd/user"
 
 if [[ -d "$SYSTEM_UNIT_INCLUDE" ]]; then
   if [[ -n $(find "$SYSTEM_UNIT_INCLUDE" -type f) ]]; then
+    echo "Copying 'system' systemd units to system directory"
     cp -r "$SYSTEM_UNIT_INCLUDE"/* "$SYSTEM_UNIT_DIR"
   fi
 fi
 if [[ -d "$USER_UNIT_INCLUDE" ]]; then
   if [[ -n $(find "$USER_UNIT_INCLUDE" -type f) ]]; then
+    echo "Copying 'user' systemd units to system directory"  
     cp -r "$USER_UNIT_INCLUDE"/* "$USER_UNIT_DIR"
   fi  
 fi  
