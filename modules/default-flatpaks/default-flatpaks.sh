@@ -10,6 +10,12 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup /usr/bin/user-flat
 cp -r "$MODULE_DIRECTORY"/default-flatpaks/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
 
+# If yq is not installed, then install it, as it's a needed dependency for this module
+if ! command -v yq > /dev/null; then
+  wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+  chmod +x /usr/bin/yq
+fi  
+
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
