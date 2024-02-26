@@ -3,6 +3,24 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
+# Copy included systemd unit files to system
+SYSTEM_UNIT_INCLUDE="$CONFIG_DIRECTORY"/systemd/system
+USER_UNIT_INCLUDE="$CONFIG_DIRECTORY"/systemd/user
+SYSTEM_UNIT_DIR="/usr/lib/systemd/system"
+USER_UNIT_DIR="/usr/lib/systemd/user"
+
+if [[ -d "$SYSTEM_UNIT_INCLUDE" ]]; then
+  if [[ -n $(find "$SYSTEM_UNIT_INCLUDE" -type f) ]]; then
+    cp -r "$SYSTEM_UNIT_INCLUDE"/* "$SYSTEM_UNIT_DIR"
+  fi
+fi
+if [[ -d "$USER_UNIT_INCLUDE" ]]; then
+  if [[ -n $(find "$USER_UNIT_INCLUDE" -type f) ]]; then
+    cp -r "$USER_UNIT_INCLUDE"/* "$USER_UNIT_DIR"
+  fi  
+fi  
+
+# Systemd units configuration (enable, disable, unmask & mask)
 get_yaml_array ENABLED '.system.enabled[]' "$1"
 get_yaml_array DISABLED '.system.disabled[]' "$1"
 get_yaml_array UNMASKED '.system.unmasked[]' "$1"
@@ -11,7 +29,6 @@ get_yaml_array USER_ENABLED '.user.enabled[]' "$1"
 get_yaml_array USER_DISABLED '.user.disabled[]' "$1"
 get_yaml_array USER_UNMASKED '.user.unmasked[]' "$1"
 get_yaml_array USER_MASKED '.user.masked[]' "$1"
-
 
 if [[ ${#ENABLED[@]} -gt 0 ]]; then
     for unit in "${ENABLED[@]}"; do
