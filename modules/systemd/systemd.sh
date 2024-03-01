@@ -17,13 +17,13 @@ USER_CONF_D_DIR="/usr/lib/systemd/user.conf.d"
 
 if [[ -d "${SYSTEM_UNIT_INCLUDE}" ]]; then
   if [[ -n $(find "${SYSTEM_UNIT_INCLUDE}" -type f) ]]; then
-    echo "Copying 'system' systemd units to system directory"
+    echo "Copying 'system systemd units' to system directory"
     cp -r "${SYSTEM_UNIT_INCLUDE}/*" "${SYSTEM_UNIT_DIR}"
   fi
 fi
 if [[ -d "${USER_UNIT_INCLUDE}" ]]; then
   if [[ -n $(find "${USER_UNIT_INCLUDE}" -type f) ]]; then
-    echo "Copying 'user' systemd units to system directory"  
+    echo "Copying 'user systemd units' to system directory"  
     cp -r "${USER_UNIT_INCLUDE}/*" "${USER_UNIT_DIR}"
   fi  
 fi  
@@ -41,7 +41,7 @@ if [[ -d "${SYSTEM_CONF_D_INCLUDE}" ]]; then
 fi
 if [[ -d "${USER_CONF_D_INCLUDE}" ]]; then
   if [[ -n $(find "${USER_CONF_D_INCLUDE}" -type f) ]]; then
-    echo "Copying 'user.conf.d config' systemd units to system directory"
+    echo "Copying 'user.conf.d config' to system directory"
     cp -r "${USER_CONF_D_INCLUDE}/*" "${USER_CONF_D_DIR}"
   fi
 fi
