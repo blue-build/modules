@@ -31,21 +31,21 @@ if [[ -d "${ZRAM_GENERATOR_INCLUDE}" ]]; then
   if [[ -n $(find "${ZRAM_GENERATOR_INCLUDE}" -type f) ]]; then
     echo "Copying 'zram-generator config' to system directory"
     mkdir -p "${ZRAM_GENERATOR_DIR}"
-    cp -r "${ZRAM_GENERATOR_INCLUDE}"/* "${ZRAM_GENERATOR_DIR}"
+    cp -r "${ZRAM_GENERATOR_INCLUDE}"/*.conf "${ZRAM_GENERATOR_DIR}"
   fi
 fi
 if [[ -d "${SYSTEM_CONF_D_INCLUDE}" ]]; then
   if [[ -n $(find "${SYSTEM_CONF_D_INCLUDE}" -type f) ]]; then
     echo "Copying 'system.conf.d config' to system directory"
     mkdir -p "${SYSTEM_CONF_D_DIR}"
-    cp -r "${SYSTEM_CONF_D_INCLUDE}"/* "${SYSTEM_CONF_D_DIR}"
+    cp -r "${SYSTEM_CONF_D_INCLUDE}"/*.conf "${SYSTEM_CONF_D_DIR}"
   fi
 fi
 if [[ -d "${USER_CONF_D_INCLUDE}" ]]; then
   if [[ -n $(find "${USER_CONF_D_INCLUDE}" -type f) ]]; then
     echo "Copying 'user.conf.d config' to system directory"
     mkdir -p "${USER_CONF_D_DIR}"
-    cp -r "${USER_CONF_D_INCLUDE}"/* "${USER_CONF_D_DIR}"
+    cp -r "${USER_CONF_D_INCLUDE}"/*.conf "${USER_CONF_D_DIR}"
   fi
 fi
 
