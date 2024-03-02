@@ -1,4 +1,4 @@
-name: build-stable
+name: publish-modules
 on:
   push:
     paths-ignore: # don't rebuild if only documentation has changed
