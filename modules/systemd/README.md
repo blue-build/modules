@@ -45,7 +45,7 @@ If you use ulimit to apply certain settings, config files can apply those too, i
 
 List of all available options & what they do are outlined in "Supported systemd configs" section.
 
-Take a note that literal system.conf & user.conf files exist, but this module places them in `.d` suffixed folder, as an officially supported drop-in.  
+Take a note that literal system.conf & user.conf files exist, but this module places your configs in `.d` suffixed folder, as an officially supported drop-in.  
 So don't edit those 2 files, as they are used by Linux distribution.
 
 Config file can be named however you please, but it must have .conf extension.
