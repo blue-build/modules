@@ -20,6 +20,7 @@ Every public module should have a `module.yml` ([reference](https://blue-build.o
 For the documentation of the module in `README.md`, the following guidelines apply:
 - At the start of each _paragraph_, refer to the module using its name or with "the module", not "it" or "the script".
 - Use passive grammar when talking about the user, i.e. "should be used", "can be configured", preferring references to what the module does, i.e. "This module downloads the answer to the ultimate question of life, the universe and everything..." instead of what the user does, i.e. "A user can configure this module to download 42".
+- When talking about directories, postfix the file path with a slash, i.e. `/path/to/system/folder/` or `config/folder-in-user-repo/`. When not talking about directories, do not postfix the file path with a slash, i.e. `/path/to/system/file`.
 
 For the short module description (`shortdesc:`), the following guidelines apply:
 - The description should start with a phrase like "The glorb module reticulates splines" or "The tree module can be used to plant trees".
