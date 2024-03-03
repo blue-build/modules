@@ -1,16 +1,10 @@
-name: build-stable
+name: publish-modules
 on:
   push:
-    branches:
-      - main
     paths-ignore: # don't rebuild if only documentation has changed
       - "**.md"
   pull_request:
-    branches: ["main"]
   merge_group:
-    branches: ["main"]
-  schedule:
-    - cron: "0 5 * * *" # 5 am everyday
   workflow_dispatch:
 env:
   IMAGE_NAME: modules
@@ -38,10 +32,12 @@ jobs:
           # Only perform the follow code when the action is spawned from a Pull Request
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             alias_tags+=("pr-${{ github.event.number }}")
-          else
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
             # The following is run when the timer is triggered or a merge/push to main
             echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
-            alias_tags+=("latest")
+            alias_tags+=("latest" "main")
+          else
+            alias_tags+=("${{ github.ref_name }}")
           fi
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
