@@ -5,8 +5,8 @@ on:
       - main
     paths: # only rebuild when related files change
       - "**/module.yml"
-      - /modules.json
-      - **/README.md
+      - "/modules.json"
+      - "**/README.md"
 
 jobs:
   rebuild-website:
