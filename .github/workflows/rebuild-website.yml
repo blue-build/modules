@@ -11,6 +11,7 @@ on:
 jobs:
   rebuild-website:
     name: Trigger build hook for website on Netlify
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    if: github.repository == 'blue-build/modules'
     steps: 
       - run: curl -X POST -d {} https://api.netlify.com/build_hooks/65bf6b0dd164b64659beafd5
