@@ -24,7 +24,7 @@ extract_default_wallpaper_light() {
     # Extract default light theme wallpaper from light/dark recipe input.
     # It always assumes that light wallpaper is set as 1st in light.jpg + dark.jpg recipe format.
     if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
-      readarray -t "$1" < <(awk -F '_\\+_' '{printf "%s", $1}' <<< "${DEFAULT_WALLPAPER_LIGHT_DARK}")
+      readarray -t "$1" < <(awk -F '_\\+_' '{printf "%s", $1}' <<< "$DEFAULT_WALLPAPER_LIGHT_DARK")
     fi  
 }
 
@@ -32,7 +32,7 @@ extract_default_wallpaper_dark() {
     # Extract default dark theme wallpaper from light/dark recipe input.
     # It always assumes that dark wallpaper is set as 2nd in light.jpg + dark.jpg recipe format.
     if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
-      readarray -t "$1" < <(awk -F '_\\+_' '{printf "%s", $NF}' <<< "${DEFAULT_WALLPAPER_LIGHT_DARK}")
+      readarray -t "$1" < <(awk -F '_\\+_' '{printf "%s", $NF}' <<< "$DEFAULT_WALLPAPER_LIGHT_DARK")
     fi  
 }
 
@@ -40,10 +40,10 @@ extract_wallpaper_light_dark() {
     # Extract included light/dark wallpapers from default light/dark wallpapers which are inputted into recipe file.
     # Exclude default light/dark wallpaper from the list.
     # Also don't include ./ prefix in files & include filenames only for `find` command.
-    if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]] && [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then    
-      readarray -t "$1" < <(find "${wallpaper_light_dark_dir}" -type f ! -name "${DEFAULT_WALLPAPER_LIGHT}" ! -name  "${DEFAULT_WALLPAPER_DARK}" -exec basename {} \;)
-    elif [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
-      readarray -t "$1" < <(find "${wallpaper_light_dark_dir}" -type f -exec basename {} \;)
+    if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]] && [[ -n $(find "$wallpaper_light_dark_dir" -type f) ]]; then    
+      readarray -t "$1" < <(find "$wallpaper_light_dark_dir" -type f ! -name "$DEFAULT_WALLPAPER_LIGHT" ! -name  "$DEFAULT_WALLPAPER_DARK" -exec basename {} \;)
+    elif [[ -n $(find "$wallpaper_light_dark_dir" -type f) ]]; then
+      readarray -t "$1" < <(find "$wallpaper_light_dark_dir" -type f -exec basename {} \;)
     else
       # Avoid unbound variable if value should be empty
       readarray -t "$1" <<< ""
@@ -76,14 +76,14 @@ extract_wallpaper() {
     # Extract regular included wallpaper.
     # Exclude directory for light/dark wallpapers inclusion.
     # Exclude default wallpaper from the list.
-    if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then            
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f ! -path "${wallpaper_light_dark_dir}/*" ! -name "${DEFAULT_WALLPAPER}" -exec basename {} \;)
-    elif  [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -z $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -not -name "${DEFAULT_WALLPAPER}" -exec basename {} \;)
-    elif  [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -not -path "${wallpaper_light_dark_dir}/*" -exec basename {} \;)
-    elif  [[ -z $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -exec basename {} \;)
+    if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -n $(find "$wallpaper_light_dark_dir" -type f) ]]; then            
+      readarray -t "$1" < <(find "$wallpaper_include_dir" -type f ! -path "$wallpaper_light_dark_dir/*" ! -name "$DEFAULT_WALLPAPER" -exec basename {} \;)
+    elif  [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -z $(find "$wallpaper_light_dark_dir" -type f) ]]; then
+      readarray -t "$1" < <(find "$wallpaper_include_dir" -type f -not -name "$DEFAULT_WALLPAPER" -exec basename {} \;)
+    elif  [[ -n $(find "$wallpaper_light_dark_dir" -type f) ]]; then
+      readarray -t "$1" < <(find "$wallpaper_include_dir" -type f -not -path "$wallpaper_light_dark_dir/*" -exec basename {} \;)
+    elif  [[ -z $(find "$wallpaper_light_dark_dir" -type f) ]]; then
+      readarray -t "$1" < <(find "$wallpaper_include_dir" -type f -exec basename {} \;)
     else
       # Avoid unbound variable if value should be empty
       readarray -t "$1" <<< ""
@@ -95,17 +95,17 @@ extract_wallpaper() {
 # File & folder location variables
 
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
-wallpapers_module_dir="${MODULE_DIRECTORY}/wallpapers"
-wallpaper_include_dir="${CONFIG_DIRECTORY}/wallpapers"
+wallpapers_module_dir="$MODULE_DIRECTORY"/wallpapers
+wallpaper_include_dir="$CONFIG_DIRECTORY"/wallpapers
 wallpaper_destination="/usr/share/backgrounds/bluebuild"
 # Gnome file & folder locations
-wallpaper_light_dark_dir="${wallpaper_include_dir}/gnome-light-dark"
-xml_default_template="${wallpapers_module_dir}/template.xml"
-xml_modified_template="${wallpapers_module_dir}/bluebuild-template.xml"
+wallpaper_light_dark_dir="$wallpaper_include_dir"/gnome-light-dark
+xml_default_template="$wallpapers_module_dir"/template.xml
+xml_modified_template="$wallpapers_module_dir"/bluebuild-template.xml
 xml_destination="/usr/share/gnome-background-properties"
-gschema_override="${wallpapers_module_dir}/zz2-bluebuild-wallpapers.gschema.override"
+gschema_override="$wallpapers_module_dir"/zz2-bluebuild-wallpapers.gschema.override
 gschema_override_test_dir="/tmp/bluebuild-schema-test-wallpapers"
-gschema_override_test="${gschema_override_test_dir}/zz2-bluebuild-wallpapers.gschema.override"
+gschema_override_test="$gschema_override_test_dir"/zz2-bluebuild-wallpapers.gschema.override
 gschema_override_destination="/usr/share/glib-2.0/schemas"
 
 # Wallpaper variables (for Gnome)
@@ -154,7 +154,7 @@ done
 ############################### INSTALLATION CHECKS ###################################
 
 # Fail if no wallpapers are detected in `config/wallpapers` directory.
-if [ ! -d "${wallpaper_include_dir}" ] || [[ ! $(find "${wallpaper_include_dir}" -type f) ]]; then
+if [ ! -d "$wallpaper_include_dir" ] || [[ ! $(find "$wallpaper_include_dir" -type f) ]]; then
   echo "Module failed because wallpapers aren't included in config/wallpapers directory"
   exit 1
 fi
@@ -171,11 +171,11 @@ fi
 
 # Fail if default light+dark wallpaper does not contain '-bb-light' or '-bb-dark' suffix.
 if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
-  if [[ ! "${DEFAULT_WALLPAPER_LIGHT}" =~ "-bb-light" ]]; then
+  if [[ ! "$DEFAULT_WALLPAPER_LIGHT" =~ "-bb-light" ]]; then
     echo "Module failed because default light wallpaper does not contain '-bb-light' suffix"
     exit 1
   fi
-  if [[ ! "${DEFAULT_WALLPAPER_DARK}" =~ "-bb-dark" ]]; then
+  if [[ ! "$DEFAULT_WALLPAPER_DARK" =~ "-bb-dark" ]]; then
     echo "Module failed because default dark wallpaper does not contain '-bb-dark' suffix"
     exit 1
   fi
@@ -184,7 +184,7 @@ fi
 # Stop the script after copying wallpapers if non-Gnome DE is detected
 gnome_section () {
 gnome_detection=$(find /usr/bin -type f -name "gnome-session" -exec basename {} \;)
-if [[ ! "${gnome_detection}" == "gnome-session" ]]; then
+if [[ ! $gnome_detection == "gnome-session" ]]; then
   echo "Wallpapers module installed successfully!"
   exit 0
 fi
@@ -196,9 +196,9 @@ echo "Installing wallpapers module"
 
 echo "Copying wallpapers into system backgrounds directory"
 # If file-names & wallpaper folders have whitespaces, convert them to _ character.
-find "${wallpaper_include_dir}" -depth -name "* *" -execdir bash -c 'mv "$0" "${0// /_}"' {} \;
-mkdir -p "${wallpaper_destination}"
-find "${wallpaper_include_dir}" -type f -exec cp {} "${wallpaper_destination}" \;
+find "$wallpaper_include_dir" -depth -name "* *" -execdir bash -c 'mv "$0" "${0// /_}"' {} \;
+mkdir -p "$wallpaper_destination"
+find "$wallpaper_include_dir" -type f -exec cp {} "$wallpaper_destination" \;
 
 ############################### GNOME-SPECIFIC CODE ###################################
 ####################################################################################
@@ -213,12 +213,12 @@ gnome_section
 if [[ ${#WALLPAPER[@]} -gt 0 ]]; then
 echo "Writing XMLs for included wallpapers to appear in Gnome settings"
   for wallpaper in "${WALLPAPER[@]}"; do
-      cp "${xml_default_template}" "${xml_modified_template}"
-      yq -i '.wallpapers.wallpaper.name = "'"BlueBuild-${wallpaper}"'"' "${xml_modified_template}"
-      yq -i ".wallpapers.wallpaper.filename = \"${wallpaper_destination}/${wallpaper}\"" "${xml_modified_template}"
-      yq 'del(.wallpapers.wallpaper.filename-dark)' "${xml_modified_template}" -i
-      cp "${xml_modified_template}" "${xml_destination}/bluebuild-${wallpaper}.xml"
-      rm "${xml_modified_template}"
+      cp "$xml_default_template" "$xml_modified_template"
+      yq -i '.wallpapers.wallpaper.name = "BlueBuild-'"$wallpaper"'"' "$xml_modified_template"
+      yq -i ".wallpapers.wallpaper.filename = \"$wallpaper_destination/$wallpaper\"" "$xml_modified_template"
+      yq 'del(.wallpapers.wallpaper.filename-dark)' "$xml_modified_template" -i
+      cp "$xml_modified_template" "$xml_destination"/bluebuild-"$wallpaper".xml
+      rm "$xml_modified_template"
   done
 fi
 
@@ -230,12 +230,12 @@ if [[ ${#WALLPAPER_LIGHT_DARK[@]} -gt 0 ]]; then
   for ((i=0; i<${#WALLPAPER_LIGHT_DARK[@]}; i+=2)); do
     wallpaper_light="${WALLPAPER_LIGHT_DARK[i]}"
     wallpaper_dark="${WALLPAPER_LIGHT_DARK[i+1]}"
-    cp "${xml_default_template}" "${xml_modified_template}"
-    yq -i '.wallpapers.wallpaper.name = "'"BlueBuild-${wallpaper_light}_+_${wallpaper_dark}"'"' "${xml_modified_template}"
-    yq -i ".wallpapers.wallpaper.filename = \"${wallpaper_destination}/${wallpaper_light}\"" "${xml_modified_template}"
-    yq -i ".wallpapers.wallpaper.filename-dark = \"${wallpaper_destination}/${wallpaper_dark}\"" "${xml_modified_template}"
-    cp "${xml_modified_template}" "${xml_destination}/bluebuild-${wallpaper_light}_+_${wallpaper_dark}.xml"
-    rm "${xml_modified_template}"
+    cp "$xml_default_template" "$xml_modified_template"
+    yq -i '.wallpapers.wallpaper.name = "BlueBuild-'"$wallpaper_light"_+_"$wallpaper_dark"'"' "$xml_modified_template"
+    yq -i ".wallpapers.wallpaper.filename = \"$wallpaper_destination/$wallpaper_light\"" "$xml_modified_template"
+    yq -i ".wallpapers.wallpaper.filename-dark = \"$wallpaper_destination/$wallpaper_dark\"" "$xml_modified_template"
+    cp "$xml_modified_template" "$xml_destination"/bluebuild-"$wallpaper_light"_+_"$wallpaper_dark".xml
+    rm "$xml_modified_template"
   done
 fi
 
@@ -246,12 +246,12 @@ fi
 if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]]; then
 echo "Writing XML for default wallpaper to appear in Gnome settings"
   for default_wallpaper in "${DEFAULT_WALLPAPER[@]}"; do
-      cp "${xml_default_template}" "${xml_modified_template}"
-      yq -i '.wallpapers.wallpaper.name = "'"BlueBuild-${default_wallpaper}"'"' "${xml_modified_template}"
-      yq -i ".wallpapers.wallpaper.filename = \"${wallpaper_destination}/${default_wallpaper}\"" "${xml_modified_template}"
-      yq 'del(.wallpapers.wallpaper.filename-dark)' "${xml_modified_template}" -i
-      cp "${xml_modified_template}" "${xml_destination}/bluebuild-${default_wallpaper}.xml"
-      rm "${xml_modified_template}"    
+      cp "$xml_default_template" "$xml_modified_template"
+      yq -i '.wallpapers.wallpaper.name = "BlueBuild-'"$default_wallpaper"'"' "$xml_modified_template"
+      yq -i ".wallpapers.wallpaper.filename = \"$wallpaper_destination/$default_wallpaper\"" "$xml_modified_template"
+      yq 'del(.wallpapers.wallpaper.filename-dark)' "$xml_modified_template" -i
+      cp "$xml_modified_template" "$xml_destination"/bluebuild-"$default_wallpaper".xml
+      rm "$xml_modified_template"    
   done
 fi
 
@@ -261,12 +261,12 @@ fi
 if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
 echo "Writing XML for default light+dark wallpaper to appear in Gnome settings"
   for default_wallpaper_light_dark in "${DEFAULT_WALLPAPER_LIGHT_DARK[@]}"; do
-        cp "${xml_default_template}" "${xml_modified_template}"
-        yq -i '.wallpapers.wallpaper.name = "'"BlueBuild-${default_wallpaper_light_dark}"'"' "${xml_modified_template}"
-        yq -i ".wallpapers.wallpaper.filename = \"${wallpaper_destination}/${DEFAULT_WALLPAPER_LIGHT}\"" "${xml_modified_template}"
-        yq -i ".wallpapers.wallpaper.filename-dark = \"${wallpaper_destination}/${DEFAULT_WALLPAPER_DARK}\"" "${xml_modified_template}"
-        cp "${xml_modified_template}" "${xml_destination}/bluebuild-${default_wallpaper_light_dark}.xml"
-        rm "${xml_modified_template}"
+        cp "$xml_default_template" "$xml_modified_template"
+        yq -i '.wallpapers.wallpaper.name = "BlueBuild-'"$default_wallpaper_light_dark"'"' "$xml_modified_template"
+        yq -i ".wallpapers.wallpaper.filename = \"$wallpaper_destination/$DEFAULT_WALLPAPER_LIGHT\"" "$xml_modified_template"
+        yq -i ".wallpapers.wallpaper.filename-dark = \"$wallpaper_destination/$DEFAULT_WALLPAPER_DARK\"" "$xml_modified_template"
+        cp "$xml_modified_template" "$xml_destination"/bluebuild-"$default_wallpaper_light_dark".xml
+        rm "$xml_modified_template"
   done
 fi
 
@@ -274,15 +274,15 @@ fi
 for scaling_option in "${scaling_options[@]}"; do
     scaling_variable="SCALING_${scaling_option^^}_ALL"
     scaling_all="${SCALING_ALL[$scaling_variable]}"
-    if [[ "${scaling_all}" == "all" ]]; then
+    if [[ $scaling_all == "all" ]]; then
         echo "Writing global scaling value to XML file(s)"
         for xml_file in "${WALLPAPER[@]}" "${DEFAULT_WALLPAPER[@]}" "${DEFAULT_WALLPAPER_LIGHT_DARK[@]}"; do
-            yq -i '.wallpapers.wallpaper.options = "'"${scaling_option}"'"' "${xml_destination}/bluebuild-${xml_file}.xml"
+            yq -i '.wallpapers.wallpaper.options = "'"$scaling_option"'"' "$xml_destination"/bluebuild-"$xml_file".xml
         done
         for ((i=0; i<${#WALLPAPER_LIGHT_DARK[@]}; i+=2)); do
             wallpaper_light="${WALLPAPER_LIGHT_DARK[i]}"
             wallpaper_dark="${WALLPAPER_LIGHT_DARK[i+1]}"
-            yq -i '.wallpapers.wallpaper.options = "'"${scaling_option}"'"' "${xml_destination}/bluebuild-${wallpaper_light}_+_${wallpaper_dark}.xml"
+            yq -i '.wallpapers.wallpaper.options = "'"$scaling_option"'"' "$xml_destination"/bluebuild-"$wallpaper_light"_+_"$wallpaper_dark".xml
         done    
     fi
 done
@@ -293,13 +293,13 @@ for scaling_option in "${scaling_options[@]}"; do
     scaling_variable="SCALING_${scaling_option^^}_WALLPAPER"
     scaling_specific="${SCALING_WALLPAPER[$scaling_variable]}"
     # Only display this echo message once
-    if [[ -n "${scaling_specific}" && "${message_displayed}" == false ]]; then
+    if [[ -n $scaling_specific && $message_displayed == false ]]; then
       echo "Writing per-wallpaper scaling value to XML file(s)"
       message_displayed=true
     fi
-    if [[ -n "${scaling_specific}" ]]; then
-        for scaling_per_wallpaper in "${scaling_specific}"; do
-            yq -i '.wallpapers.wallpaper.options = "'"${scaling_option}"'"' "${xml_destination}/bluebuild-${scaling_per_wallpaper}.xml"
+    if [[ -n $scaling_specific ]]; then
+        for scaling_per_wallpaper in $scaling_specific; do
+            yq -i '.wallpapers.wallpaper.options = "'"$scaling_option"'"' "$xml_destination"/bluebuild-"$scaling_per_wallpaper".xml
         done
     fi
 done
@@ -308,24 +308,24 @@ done
 
 # Write default wallpaper to gschema override
 if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]]; then
-  printf "%s\n" "Setting ${DEFAULT_WALLPAPER} as the default wallpaper in gschema override"
-  printf "%s\n" "picture-uri='file://${wallpaper_destination}/${DEFAULT_WALLPAPER}'" >> "${gschema_override}"
+  printf "%s\n" "Setting $DEFAULT_WALLPAPER as the default wallpaper in gschema override"
+  printf "%s\n" "picture-uri='file://$wallpaper_destination/$DEFAULT_WALLPAPER'" >> "$gschema_override"
 fi
 
 # Write default light/dark theme wallpaper to gschema override
 if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
-  printf "%s\n" "Setting ${DEFAULT_WALLPAPER_LIGHT_DARK} as the default light+dark wallpaper in gschema override"
-  printf "%s\n" "picture-uri='file://${wallpaper_destination}/${DEFAULT_WALLPAPER_LIGHT}'" >> "${gschema_override}"
-  printf "%s\n" "picture-uri-dark='file://${wallpaper_destination}/${DEFAULT_WALLPAPER_DARK}'" >> "${gschema_override}"
+  printf "%s\n" "Setting $DEFAULT_WALLPAPER_LIGHT_DARK as the default light+dark wallpaper in gschema override"
+  printf "%s\n" "picture-uri='file://$wallpaper_destination/$DEFAULT_WALLPAPER_LIGHT'" >> "$gschema_override"
+  printf "%s\n" "picture-uri-dark='file://$wallpaper_destination/$DEFAULT_WALLPAPER_DARK'" >> "$gschema_override"
 fi
 
 # Global scaling value (overwrites default zoom value)
 for scaling_option in "${scaling_options[@]}"; do
     scaling_variable="SCALING_${scaling_option^^}_ALL"
     scaling_all="${SCALING_ALL[$scaling_variable]}"
-    if [[ "${scaling_all}" == "all" ]]; then
+    if [[ $scaling_all == "all" ]]; then
       echo "Writing global scaling value to gschema override"
-      sed -i "s/picture-options=.*/picture-options='${scaling_option}'/" "${gschema_override}"
+      sed -i "s/picture-options=.*/picture-options='$scaling_option'/" "$gschema_override"
     fi
 done
 
@@ -334,27 +334,27 @@ for scaling_option in "${scaling_options[@]}"; do
     scaling_variable="SCALING_${scaling_option^^}_WALLPAPER"
     scaling_specific="${SCALING_WALLPAPER[$scaling_variable]}"
     if [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
-      if [[ "${scaling_specific}" == "${DEFAULT_WALLPAPER_LIGHT_DARK}" ]]; then
+      if [[ "$scaling_specific" == "$DEFAULT_WALLPAPER_LIGHT_DARK" ]]; then
         echo "Writing per-wallpaper scaling value of default light+dark wallpaper to gschema override"
-        sed -i "s/picture-options=.*/picture-options='${scaling_option}'/" "${gschema_override}"
+        sed -i "s/picture-options=.*/picture-options='$scaling_option'/" "$gschema_override"
       fi
     fi  
     if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]]; then
-      if [[ "${scaling_specific}" == "${DEFAULT_WALLPAPER}" ]]; then
+      if [[ "$scaling_specific" == "$DEFAULT_WALLPAPER" ]]; then
         echo "Writing per-wallpaper scaling value of default wallpaper to gschema override"
-        sed -i "s/picture-options=.*/picture-options='${scaling_option}'/" "${gschema_override}"
+        sed -i "s/picture-options=.*/picture-options='$scaling_option'/" "$gschema_override"
       fi
     fi  
 done
 
 if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] || [[ ${#DEFAULT_WALLPAPER_LIGHT_DARK[@]} -eq 1 ]]; then
   echo "Copying gschema override to system & building it to include wallpaper defaults"
-  mkdir -p "${gschema_override_test_dir}"
-  cp "${gschema_override}" "${gschema_override_test_dir}"
-  find "${gschema_override_destination}" -type f ! -name "*.gschema.override" -exec cp {} "${gschema_override_test_dir}" \;  
-  glib-compile-schemas --strict "${gschema_override_test_dir}"
-  cp "${gschema_override_test}" "${gschema_override_destination}"
-  glib-compile-schemas "${gschema_override_destination}" &>/dev/null
+  mkdir -p "$gschema_override_test_dir"
+  cp "$gschema_override" "$gschema_override_test_dir"
+  find "$gschema_override_destination" -type f ! -name "*.gschema.override" -exec cp {} "$gschema_override_test_dir" \;  
+  glib-compile-schemas --strict "$gschema_override_test_dir"
+  cp "$gschema_override_test" "$gschema_override_destination"
+  glib-compile-schemas "$gschema_override_destination" &>/dev/null
 fi
 
 echo "Wallpapers module installed successfully!"
