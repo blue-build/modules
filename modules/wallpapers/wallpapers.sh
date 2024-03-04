@@ -77,11 +77,11 @@ extract_wallpaper() {
     # Exclude directory for light/dark wallpapers inclusion.
     # Exclude default wallpaper from the list.
     if [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then            
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f ! -path "${wallpaper_light_dark_dir}"/* ! -name "${DEFAULT_WALLPAPER}" -exec basename {} \;)
+      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f ! -path "${wallpaper_light_dark_dir}/*" ! -name "${DEFAULT_WALLPAPER}" -exec basename {} \;)
     elif  [[ ${#DEFAULT_WALLPAPER[@]} -eq 1 ]] && [[ -z $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
       readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -not -name "${DEFAULT_WALLPAPER}" -exec basename {} \;)
     elif  [[ -n $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
-      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -not -path "${wallpaper_light_dark_dir}"/* -exec basename {} \;)
+      readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -not -path "${wallpaper_light_dark_dir}/*" -exec basename {} \;)
     elif  [[ -z $(find "${wallpaper_light_dark_dir}" -type f) ]]; then
       readarray -t "$1" < <(find "${wallpaper_include_dir}" -type f -exec basename {} \;)
     else
