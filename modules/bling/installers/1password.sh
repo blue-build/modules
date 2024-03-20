@@ -79,17 +79,10 @@ chmod 4755 /usr/lib/1Password/chrome-sandbox
 # Normal user group GIDs on Fedora are sequential starting
 # at 1000, so let's skip ahead and set to something higher.
 
-HELPER_PATH="/usr/lib/1Password/1Password-KeyringHelper"
-BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
-
-# Setup the Core App Integration helper binaries with the correct permissions and group
-chgrp "${GID_ONEPASSWORD}" "${HELPER_PATH}"
-# The binary requires setuid so it may interact with the Kernel keyring facilities
-chmod u+s "${HELPER_PATH}"
-chmod g+s "${HELPER_PATH}"
-
 # BrowserSupport binary needs setgid. This gives no extra permissions to the binary.
 # It only hardens it against environmental tampering.
+BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
+
 chgrp "${GID_ONEPASSWORD}" "${BROWSER_SUPPORT_PATH}"
 chmod g+s "${BROWSER_SUPPORT_PATH}"
 
