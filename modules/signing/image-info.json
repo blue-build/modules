@@ -1,6 +1,0 @@
-{
-    "image-ref": "IMAGE_REF",
-    "image-tag": "latest",
-    "image-vendor": "bluebuild",
-    "fedora-version": "FEDORA_MAJOR_VERSION"
-}
