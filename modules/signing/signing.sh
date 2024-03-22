@@ -42,7 +42,5 @@ yq -i -o=j '.transports.docker |=
     }
 + .' "$POLICY_FILE"
 
-IMAGE_REF="ostree-image-signed:docker://$IMAGE_REGISTRY/$IMAGE_NAME"
-
 mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
 sed -i "s ghcr.io/IMAGENAME $IMAGE_REGISTRY g" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
