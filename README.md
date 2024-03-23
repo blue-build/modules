@@ -2,16 +2,19 @@
 
 This repository contains the default official module repository for [BlueBuild](https://blue-build.org/). See [./modules/](./modules/) for the module source code. See the [website](https://blue-build.org/reference/module/) for module documentation. See [How to make a custom module](https://blue-build.org/how-to/making-modules/) and [Contributing](https://blue-build.org/learn/contributing/) for help with making custom modules and contributing.
 
-## Style guidelines for official modules
+# Style & code guidelines for official modules
 
-These are general guidelines for writing official modules and their documentation to follow to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
+These are general guidelines for writing official modules and their documentation to follow in order to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
 
-### Bash
+## Bash
+
+### Code Rules
 
 - Echo what you're doing on each step and on errors to help debugging.
-- Don't echo blocks using "===", that is reserved for the code launching the modules.
+- Implement error-checks for scenarios where image-maintainer can make a mistake.
 - Use `snake_case` for functions and variables changed by the code.
 - Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
+- Use `"${snake_case}"` to ensure that variables are properly parsed for strings.
 
 ### Documentation
 
@@ -24,3 +27,65 @@ For the documentation of the module in `README.md`, the following guidelines app
 
 For the short module description (`shortdesc:`), the following guidelines apply:
 - The description should start with a phrase like "The glorb module reticulates splines" or "The tree module can be used to plant trees".
+
+### Module Config
+
+**Module config** is used to allow local-users to see & change the behavior of the module on booted system, in order to improve local-user experience.
+
+#### Config Requirements
+**Requirements** for module configs exist, as not all modules need this functionality.  
+Following conditions for approved module config implementation is:
+
+- **module performs it's functions on booted system**  
+ Modules which are fully utilized in build-time don't need configuration options, as those are already located in `recipe.yml`.
+- **module config can be implemented without affecting reliability of the system**  
+ Module maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
+- **module can have additional useful options for configuring**  
+Which can improve user experience.
+- **module can strongly collide with user's usage pattern with it's default behavior**  
+Example: `default-flatpaks` module can remove a flatpak app, which local-user used daily.
+
+#### Config Format
+
+In order to keep config files easy to read & reliable to parse, standardized `.yml` markup format is used.  
+[`yq`](https://github.com/mikefarah/yq) tool is used to process `.yml` configs in order to reach the desired goal.
+
+#### Config Directory Structure
+
+**System config:**  
+`/usr/share/bluebuild/module-name/module-config.yml`
+
+**Local-user config:**  
+`/usr/etc/bluebuild/module-name/module-config.yml` 
+
+**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users touching that file.
+
+**Local-user config** is a module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
+
+#### Config Example
+
+System config:
+
+```yaml
+description: System config file for `system flatpak installation` used by the `default-flatpaks` BlueBuild module.
+instructions: Flatpak ID format is used for system flatpak installation.
+install:
+  - org.gnome.Boxes 
+  - org.gnome.Calculator
+  - org.gnome.Calendar
+  - org.gnome.Snapshot
+  - org.gnome.Contacts
+```
+
+Local-user config:
+
+```yaml
+description: Local-user config file for `system flatpak installation` used by the `default-flatpaks` BlueBuild module.
+instructions: Flatpak ID format is used for system flatpak installation. Insert entries with removed # starting symbol.
+install:
+  # - org.gnome.Boxes 
+  # - org.gnome.Calculator
+  # - org.gnome.Calendar
+  # - org.gnome.Snapshot
+  # - org.gnome.Contacts
+```
