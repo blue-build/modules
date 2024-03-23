@@ -5,7 +5,7 @@ set -euo pipefail
 
 CONTAINER_DIR="/usr/etc/containers"
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
-IMAGE_NAME="${IMAGE_NAME//\//_}"
+IMAGE_NAME_FILE="${IMAGE_NAME//\//_}"
 
 echo "Setting up container signing in policy.json and cosign.yaml for $IMAGE_NAME"
 echo "Registry to write: $IMAGE_REGISTRY"
@@ -26,8 +26,8 @@ if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
     cp "$MODULE_DIRECTORY/signing/policy.json" "$CONTAINER_DIR/policy.json"
 fi
 
-if ! [ -f "/usr/etc/pki/containers/$IMAGE_NAME.pub" ]; then
-    cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_NAME.pub"
+if ! [ -f "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub" ]; then
+    cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub"
 fi
 
 POLICY_FILE="$CONTAINER_DIR/policy.json"
@@ -36,7 +36,7 @@ yq -i -o=j '.transports.docker |=
     {"'"$IMAGE_REGISTRY"'/'"$IMAGE_NAME"'": [
             {
                 "type": "sigstoreSigned",
-                "keyPath": "/usr/etc/pki/containers/'"$IMAGE_NAME"'.pub",
+                "keyPath": "/usr/etc/pki/containers/'"$IMAGE_NAME_FILE"'.pub",
                 "signedIdentity": {
                     "type": "matchRepository"
                 }
@@ -45,5 +45,5 @@ yq -i -o=j '.transports.docker |=
     }
 + .' "$POLICY_FILE"
 
-mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
-sed -i "s ghcr.io/IMAGENAME $IMAGE_REGISTRY g" "$CONTAINER_DIR/registries.d/$IMAGE_NAME.yaml"
+mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME_FILE.yaml"
+sed -i "s ghcr.io/IMAGENAME $IMAGE_REGISTRY g" "$CONTAINER_DIR/registries.d/$IMAGE_NAME_FILE.yaml"
