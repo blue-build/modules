@@ -55,10 +55,10 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 **System config:**  
 `/usr/share/bluebuild/module-name/module-config.yml`
 
+**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users touching that file.
+
 **Local-user config:**  
 `/usr/etc/bluebuild/module-name/module-config.yml` 
-
-**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users touching that file.
 
 **Local-user config** is a module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
 
