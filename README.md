@@ -13,6 +13,8 @@ These are general guidelines for writing official bash modules and their documen
 - Use `snake_case` for functions and variables changed by the code.
 - Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
 - Use `"${snake_case}"` to ensure that variables are properly parsed for strings.
+- Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build.
+- Use `set -euxo pipefail` at the start of the script for debugging, as each executed command is printed. Only use it for testing & not for final release.
 
 ### Documentation
 
