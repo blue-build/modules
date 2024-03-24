@@ -4,7 +4,7 @@ This repository contains the default official module repository for [BlueBuild](
 
 ## Style & code guidelines for official bash modules
 
-These are general guidelines for writing official modules and their documentation to follow in order to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
+These are general guidelines for writing official bash modules and their documentation to follow in order to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
 
 ### Code Rules
 
