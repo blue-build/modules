@@ -39,8 +39,8 @@ Following conditions for approved module config implementation is:
 - **module config can be implemented without affecting reliability of the system**  
  Module maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
 - **module can have additional useful options for configuring**  
-Which can improve user experience.
-- **module can strongly collide with user's usage pattern with it's default behavior**  
+Which can improve local-user experience.
+- **module can strongly collide with local-user's usage pattern with it's default behavior**  
 Example: `default-flatpaks` module can remove a flatpak app, which local-user used daily.
 
 #### Config Format
