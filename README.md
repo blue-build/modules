@@ -6,6 +6,12 @@ This repository contains the default official module repository for [BlueBuild](
 
 These are general guidelines for writing official bash modules and their documentation to follow in order to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
 
+### Terms
+
+**Module-maintainer:** Maintainer of the BlueBuild bash module, to whom is this guideline targeted.  
+**Image-maintainer:** Maintainer of the custom image which uses BlueBuild template.  
+**Local-user:** User which uses a custom image, which utilizes BlueBuild bash modules. Image-maintainer can be a local-user too at the same time.
+
 ### Code Rules
 
 - Echo what you're doing on each step and on errors to help debugging.
@@ -39,7 +45,7 @@ Following conditions for approved module config implementation is:
 - **module performs it's functions on booted system**  
  Modules which are fully utilized in build-time don't need configuration options, as those are already located in `recipe.yml`.
 - **module config can be implemented without affecting reliability of the system**  
- Module maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
+ Module-maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
 - **module can have additional useful options for configuring**  
 Which can improve local-user experience.
 - **module can strongly collide with local-user's usage pattern with it's default behavior**  
