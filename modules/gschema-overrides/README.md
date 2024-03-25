@@ -65,22 +65,21 @@ tap-to-click=true
   
   `gsettings list-recursively`
   
-  You should use this command everytime when you want to apply some setting override,   
+  You should use this command everytime when you want to apply some setting override,
   to ensure that it's listed as available.
 
-**Gschema.override files don't support relocatable schemas & locking settings.**   
-For that functionality, you should use `dconf-update-service` module.
+**Gschema.override files don't support relocatable schemas & locking settings.**
 
-Relocatable schemas are rare, so most users won't run into this scenario.
+For that functionality, you should use the `bling` module with the `dconf-update-service` submodule.
+
+- To gather a list of relocatable schemas, use this command:
+
+  `gsettings list-relocatable-schemas`.
 
 ### Example of relocatable schemas
-gsettings format:
 ```
-[org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/Utilities/]
-[org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/]
-```
-dconf format:
-```
-[org/gnome/desktop/app-folders/folders/Utilities]
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Shift><Alt><Super>s'
+command='systemctl suspend'
+name='Suspend'
 ```
