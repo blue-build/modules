@@ -61,14 +61,12 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 #### Config Directory Structure
 
 **System config:**  
-`/usr/share/bluebuild/module-name/config.yml`  
-`/usr/share/bluebuild/default-flatpaks/config.yml`
+`/usr/share/bluebuild/module-name/config.yml`
 
 **System config** is a post-install module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users writing to it. System config is purely intended to inform local-users about which modifications are done in `recipe.yml`, so they can potentially proceed with modifications on their own.
 
 **Local-user config:**  
-`/usr/etc/bluebuild/module-name/config.yml`  
-`/usr/etc/bluebuild/default-flatpaks/config.yml`
+`/usr/etc/bluebuild/module-name/config.yml`
 
 **Local-user config** is a post-install module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
 
