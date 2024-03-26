@@ -15,7 +15,7 @@ These are general guidelines for writing official bash modules and their documen
 ### Code Rules
 
 - Echo what you're doing on each step and on errors to help debugging.
-- Implement error-checks for scenarios where image-maintainer can make a mistake.
+- Implement error-checks for scenarios where the image-maintainer might misconfigure the module.
 - Use `snake_case` for functions and variables changed by the code.
 - Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
 - Use `"${snake_case}"` to ensure that variables are properly parsed for strings.
