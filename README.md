@@ -72,7 +72,7 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 
 #### Config Example
 
-System config:
+System config (`/usr/share/bluebuild/default-flatpaks/config.yml`):
 
 ```yaml
 vendor: BlueBuild
@@ -94,7 +94,7 @@ user:
     - org.gnome.World.Secrets
 ```
 
-Local-user config:
+Local-user config (`/etc/bluebuild/default-flatpaks/config.yml`):
 
 ```yaml
 vendor: BlueBuild
