@@ -75,25 +75,54 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 System config:
 
 ```yaml
-description: System config file for `system flatpak installation` used by the `default-flatpaks` BlueBuild module.
-instructions: Flatpak ID format is used for system flatpak installation.
-install:
-  - org.gnome.Boxes 
-  - org.gnome.Calculator
-  - org.gnome.Calendar
-  - org.gnome.Snapshot
-  - org.gnome.Contacts
+vendor: BlueBuild
+module: default-flatpaks
+description: System config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
+instructions: Read this system config in order to know what is currently configured by the system & what to potentially modify in local-user config (/etc/bluebuild/default-flatpaks/config.yml).
+
+# Configuration section
+notify: true
+system:
+  install:
+    - org.gnome.Boxes 
+    - org.gnome.Calculator
+    - org.gnome.Calendar
+    - org.gnome.Snapshot
+    - org.gnome.Contacts
+user:
+  install:
+    - org.gnome.World.Secrets
 ```
 
 Local-user config:
 
 ```yaml
-description: Local-user config file for `system flatpak installation` used by the `default-flatpaks` BlueBuild module.
-instructions: Flatpak ID format is used for system flatpak installation. Insert entries with removed # starting symbol.
-install:
-  # - org.gnome.Boxes 
-  # - org.gnome.Calculator
-  # - org.gnome.Calendar
-  # - org.gnome.Snapshot
-  # - org.gnome.Contacts
+vendor: BlueBuild
+module: default-flatpaks
+description: Local-user config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
+instructions: Template of all supported options is in a example below. Modify the options you need & set "active" key to true.
+
+# Configuration section
+active: false
+notify: true # possible options: true/false
+system:
+  repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  repo-name: flathub-system
+  repo-title: "Flathub (System)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+  install:
+    - org.gnome.Boxes 
+    - org.gnome.Calculator
+    - org.gnome.Calendar
+    - org.gnome.Snapshot
+    - org.gnome.Contacts
+  remove:
+    - org.gnome.TextEditor
+user:
+  repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  repo-name: flathub-user
+  repo-title: "Flathub (User)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+  install:
+    - org.gnome.World.Secrets
+  remove:
+    - org.gnome.Contacts    
 ```
