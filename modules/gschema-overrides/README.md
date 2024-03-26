@@ -70,7 +70,7 @@ tap-to-click=true
 
 **Gschema.override files don't support relocatable schemas & locking settings.**
 
-For that functionality, you should use the `bling` module with the `dconf-update-service` submodule.
+To add overrides for schemas not supported by gschema overrides, you can use the `dconf-update-service` from the `bling` module.
 
 - To gather a list of relocatable schemas, use this command:
 
