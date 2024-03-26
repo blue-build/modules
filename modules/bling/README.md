@@ -25,6 +25,6 @@ If you have configured the repository in the `$HOME/.config/flatpaksync/env` fil
 
 ### `dconf-update-service`
 
-The `dconf-update-service` submodule will automatically update changes you make to dconf. For an example of a dconf keyfile, see the [dconf custom defaults documentation](https://help.gnome.org/admin/system-admin-guide/stable/dconf-custom-defaults.html.en).
+The `dconf-update-service` submodule creates a systemd unit to automatically update changes you make to [dconf](https://wiki.gnome.org/Projects/dconf) in your custom image. For an example of a dconf keyfile, see the [dconf custom defaults documentation](https://help.gnome.org/admin/system-admin-guide/stable/dconf-custom-defaults.html.en).
 
 **Unlike the `gschema-overrides` module, dconf keyfiles are not checked at compile time**
