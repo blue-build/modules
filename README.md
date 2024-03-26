@@ -20,7 +20,7 @@ These are general guidelines for writing official bash modules and their documen
 - Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
 - Use `"${snake_case}"` to ensure that variables are properly parsed for strings.
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
-- Use `set -euxo pipefail` at the start of the script for debugging, as each executed command is printed. Only use it for testing & not for final release.
+     -  You can also use `set -euxo pipefail` during debuggiong, so that each executed command is printed. This should not be used in a published module. 
 
 ### Documentation
 
