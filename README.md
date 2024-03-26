@@ -10,7 +10,7 @@ These are general guidelines for writing official bash modules and their documen
 
 **Module-maintainer:** Maintainer of a BlueBuild bash module. The intended audience of this section of the documentation.
 **Image-maintainer:** Maintainer of a custom image that uses BlueBuild.
-**Local-user:** User which uses a custom image, which utilizes BlueBuild bash modules. Image-maintainer can be a local-user too at the same time.
+**Local-user:** User of a custom image using the BlueBuild bash module. The image-maintainer is usually a local-user too.
 
 ### Code Rules
 
