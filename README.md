@@ -34,17 +34,17 @@ For the documentation of the module in `README.md`, the following guidelines app
 For the short module description (`shortdesc:`), the following guidelines apply:
 - The description should start with a phrase like "The glorb module reticulates splines" or "The tree module can be used to plant trees".
 
-### Module Config
+### Post-install Module Config
 
-**Module config** is used to allow local-users to see & change the behavior of the module on booted system, in order to improve local-user experience.
+**Post-install module config** is used to allow local-users to see & change the behavior of the module on booted system, in order to improve local-user experience.
 
 #### Config Requirements
-**Requirements** for module configs exist, as not all modules need this functionality.  
-Following conditions for approved module config implementation is:
+**Requirements** for post-install module configs exist, as not all modules need this functionality.  
+Following conditions for approved post-install module config implementation is:
 
 - **module performs it's functions on booted system**  
  Modules which are fully utilized in build-time don't need configuration options, as those are already located in `recipe.yml`.
-- **module config can be implemented without affecting reliability of the system**  
+- **post-install module config can be implemented without affecting reliability of the system**  
  Module-maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
 - **module can have additional useful options for configuring**  
 Which can improve local-user experience.
@@ -61,12 +61,12 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 **System config:**  
 `/usr/share/bluebuild/module-name/module-config.yml`
 
-**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users touching that file.
+**System config** is a post-install module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users touching that file.
 
 **Local-user config:**  
 `/usr/etc/bluebuild/module-name/module-config.yml` 
 
-**Local-user config** is a module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
+**Local-user config** is a post-install module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
 
 #### Config Example
 
