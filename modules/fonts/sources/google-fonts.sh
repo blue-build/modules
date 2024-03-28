@@ -2,7 +2,7 @@
 set -euo pipefail
 
 mapfile -t FONTS <<< "$@"
-URL="https://fonts.google.com/download?family="
+URL="https://fonts.google.com/download/list?family="
 DIR_PRINCIPAL=/usr/share/fonts/google-fonts
 COMPACT_FORMAT="zip"
 
