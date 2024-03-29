@@ -2,26 +2,19 @@
 set -euo pipefail
 
 mapfile -t FONTS <<< "$@"
-URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"
-DIR_PRINCIPAL=/usr/share/fonts/nerd-fonts
-COMPACT_FORMAT="zip"
+URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
+DEST="/usr/share/fonts/nerd-fonts"
 
-# To download nerd-fonts you need to enter the name of the font and the format you want. See the 3rd parameter of the download script.
+echo "Installation of nerd-fonts started"
+rm -rf "$DEST"
 
-if [ ${#FONTS[@]} -gt 0 ]; then
+for FONT in "${FONTS[@]}"; do
+    mkdir -p "${DEST}/${FONT}"
 
-    echo "Installation of nerd-fonts started"
+    echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz..."
+    
+    curl "${URL}/${FONT}.tar.xz" -L -o "/tmp/fonts/${FONT}.tar.xz"
+    tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
+done
 
-    rm -rf "$DIR_PRINCIPAL"
-
-    for font in "${FONTS[@]}"; do
-
-        font="$(echo "$font" | sed -e 's|^[[:blank:]]||g' | tr -d '\n')"
-        
-        bash "$(dirname "$0")"/../download.sh "$font" "$COMPACT_FORMAT" "$URL$font.$COMPACT_FORMAT" "$DIR_PRINCIPAL/$font"
-
-    done
-
-    fc-cache -f $DIR_PRINCIPAL
-
-fi
+fc-cache -f "${DEST}"

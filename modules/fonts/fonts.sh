@@ -7,16 +7,14 @@ get_yaml_array() {
     readarray "$1" < <(echo "$3" | yq -I=0 "$2")
 }
 
-export FONTS_MODULE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+for SOURCE in "$MODULE_DIRECTORY"/fonts/sources/*.sh; do
+    chmod +x "${SOURCE}"
 
-for source in "$FONTS_MODULE_DIR"/sources/*.sh; do
-
-    chmod +x "$source"
-
-    filename=$(basename -- "$source")
-
-    get_yaml_array FONTS ".fonts.${filename%.*}[]" "$1"
-
-    bash "$source" "${FONTS[@]}"
+    # get array of fonts for current source
+    FILENAME=$(basename -- "${SOURCE}")
+    get_yaml_array FONTS ".fonts.${FILENAME%.*}[]" "$1"
     
+    if [ ${#FONTS[@]} -gt 0 ]; then
+        bash "${SOURCE}" "${FONTS[@]}"
+    fi
 done
