@@ -20,7 +20,7 @@ for FONT in "${FONTS[@]}"; do
         FILENAME=$(echo "${FILE_REF}" | jq -r '.filename')
         URL=$(echo "${FILE_REF}" | jq -r '.url')
 
-        echo "Downloading ${FILENAME} from ${URL}..."
+        echo "Downloading ${FILENAME} from ${URL}"
         
         curl "${URL}" -o "${DEST}/${FONT}/${FILENAME##*/}" # everything before the last / is removed to get the filename
     done

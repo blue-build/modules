@@ -11,7 +11,7 @@ rm -rf "$DEST"
 for FONT in "${FONTS[@]}"; do
     mkdir -p "${DEST}/${FONT}"
 
-    echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz..."
+    echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
     
     curl "${URL}/${FONT}.tar.xz" -L -o "/tmp/fonts/${FONT}.tar.xz"
     tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
