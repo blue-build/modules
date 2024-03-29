@@ -11,13 +11,14 @@ rm -rf "$DEST"
 mkdir -p /tmp/fonts
 for FONT in "${FONTS[@]}"; do
     FONT=${FONT// /} # remove spaces
+    if [ ${#FONT} -gt 0 ]; then
+        mkdir -p "${DEST}/${FONT}"
 
-    mkdir -p "${DEST}/${FONT}"
-
-    echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
-    
-    curl "${URL}/${FONT}.tar.xz" -L -o "/tmp/fonts/${FONT}.tar.xz"
-    tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
+        echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
+        
+        curl "${URL}/${FONT}.tar.xz" -L -o "/tmp/fonts/${FONT}.tar.xz"
+        tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
+    fi
 done
 rm -rf /tmp/fonts
 
