@@ -2,26 +2,28 @@
 set -euo pipefail
 
 mapfile -t FONTS <<< "$@"
-URL="https://fonts.google.com/download?family="
-DIR_PRINCIPAL=/usr/share/fonts/google-fonts
-COMPACT_FORMAT="zip"
+DEST="/usr/share/fonts/google-fonts"
 
-# To download google-fonts it is necessary to enter the name of the font replacing the spaces with '%20'. See the 3rd parameter of the download script.
+echo "Installation of google-fonts started"
+rm -rf "${DEST}"
 
-if [ ${#FONTS[@]} -gt 0 ]; then
+for FONT in "${FONTS[@]}"; do
+    mkdir -p "${DEST}/${FONT}"
 
-    echo "Installation of google-fonts started"
+    readarray -t "FILE_REFS" < <(
+        curl -s "https://fonts.google.com/download/list?family=${FONT// /%20}" | # spaces are replaced with %20 for the URL
+        tail -n +2 | # remove first line, which as of March 2024 contains ")]}'" and breaks JSON parsing
+        jq -c '.manifest.fileRefs[]' # -c option makes output bash parsable
+    )
 
-    rm -rf "$DIR_PRINCIPAL"
+    for FILE_REF in "${FILE_REFS[@]}"; do
+        FILENAME=$(echo "${FILE_REF}" | jq -r '.filename')
+        URL=$(echo "${FILE_REF}" | jq -r '.url')
 
-    for font in "${FONTS[@]}"; do
-
-        font="$(echo "$font" | sed -e 's|^[[:blank:]]||g' | tr -d '\n')"
-
-        bash "$(dirname "$0")"/../download.sh "$font" "$COMPACT_FORMAT" "$URL${font// /%20}" "$DIR_PRINCIPAL/$font" 
-
+        echo "Downloading ${FILENAME} from ${URL}"
+        
+        curl "${URL}" -o "${DEST}/${FONT}/${FILENAME##*/}" # everything before the last / is removed to get the filename
     done
+done
 
-    fc-cache -f $DIR_PRINCIPAL
-
-fi
+fc-cache -f "${DEST}"
