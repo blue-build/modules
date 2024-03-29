@@ -10,6 +10,8 @@ rm -rf "$DEST"
 
 mkdir -p /tmp/fonts
 for FONT in "${FONTS[@]}"; do
+    FONT=${FONT// /} # remove spaces
+
     mkdir -p "${DEST}/${FONT}"
 
     echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
