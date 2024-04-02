@@ -12,8 +12,6 @@ for FONT in "${FONTS[@]}"; do
     FONT="${FONT%"${FONT##*[![:space:]]}"}" # Trim trailing whitespace
     mkdir -p "${DEST}/${FONT}"
 
-    FILE_REFS=()
-
     readarray -t "FILE_REFS" < <(
         if output=$(curl -s "https://fonts.google.com/download/list?family=${FONT// /%20}" | tail -n +2); then
             if FILE_REFS=$(echo "$output" | jq -c '.manifest.fileRefs[]' 2>/dev/null); then
