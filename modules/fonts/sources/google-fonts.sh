@@ -8,6 +8,8 @@ echo "Installation of google-fonts started"
 rm -rf "${DEST}"
 
 for FONT in "${FONTS[@]}"; do
+    FONT="${FONT#"${FONT%%[![:space:]]*}"}" # Trim leading whitespace
+    FONT="${FONT%"${FONT##*[![:space:]]}"}" # Trim trailing whitespace
     mkdir -p "${DEST}/${FONT}"
 
     readarray -t "FILE_REFS" < <(
