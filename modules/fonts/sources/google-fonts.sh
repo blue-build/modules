@@ -14,8 +14,11 @@ for FONT in "${FONTS[@]}"; do
         mkdir -p "${DEST}/${FONT}"
 
         readarray -t "FILE_REFS" < <(
-            if output=$(curl -s "https://fonts.google.com/download/list?family=${FONT// /%20}" | tail -n +2); then
-                if FILE_REFS=$(echo "$output" | jq -c '.manifest.fileRefs[]' 2>/dev/null); then
+            if JSON=$(
+                curl -s "https://fonts.google.com/download/list?family=${FONT// /%20}" | # spaces are replaced with %20 for the URL
+                tail -n +2 # remove first line, which as of March 2024 contains ")]}'" and breaks JSON parsing
+            ); then
+                if FILE_REFS=$(echo "$JSON" | jq -c '.manifest.fileRefs[]' 2>/dev/null); then
                     echo "$FILE_REFS"
                 fi
             fi
