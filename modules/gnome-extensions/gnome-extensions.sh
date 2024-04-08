@@ -27,17 +27,11 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       echo "Reading necessary info from metadata.json"
       EXTENSION_NAME=$(yq '.name' < "${TMP_DIR}/metadata.json")
       UUID=$(yq '.uuid' < "${TMP_DIR}/metadata.json")
-      SCHEMA_ID=$(yq '.settings-schema' < "${TMP_DIR}/metadata.json")
       EXT_GNOME_VER=$(yq '.shell-version[]' < "${TMP_DIR}/metadata.json")
       # If extension does not have the important key in metadata.json,
       # inform the user & fail the build
       if [[ "${UUID}" == "null" ]]; then
         echo "ERROR: Extension ${EXTENSION_NAME} doesn't have 'uuid' key inside metadata.json"
-        echo "You may inform the extension developer about this error, as he can fix it"
-        exit 1
-      fi
-      if [[ "${SCHEMA_ID}" == "null" ]]; then
-        echo "ERROR: Extension ${EXTENSION_NAME} doesn't have 'settings-schema' key inside metadata.json"
         echo "You may inform the extension developer about this error, as he can fix it"
         exit 1
       fi
@@ -61,7 +55,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       # Install schema
       echo "Installing schema extension file"
       install -d -m 0755 "/usr/share/glib-2.0/schemas/"
-      install -D -p -m 0644 "${TMP_DIR}/schemas/${SCHEMA_ID}.gschema.xml" "/usr/share/glib-2.0/schemas/${SCHEMA_ID}.gschema.xml"
+      install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/glib-2.0/schemas/"
       # Install languages
       echo "Installing language extension files"
       install -d -m 0755 "/usr/share/locale/"

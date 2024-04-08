@@ -25,9 +25,3 @@ or by simply downloading the zip file from https://extensions.gnome.org & than l
 
 You must assure that version of the extension is compatible with current Gnome version that your image is using.  
 You can easily see this information when downloading extension from https://extensions.gnome.org
-
-# Known Issues
-
-Some extensions may lack information in metadata.json, like lack of `uuid`, `settings-schema` or `shell-version` key,  
-which is necessary for the module to automatically install extension. Developer can easily fix this issue, so it's advised to inform him if this issue occured.
-As a safe-check, build will fail if any of those 3 keys are not present in extensions metadata.json file.
