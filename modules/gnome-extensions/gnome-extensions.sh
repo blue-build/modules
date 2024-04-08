@@ -5,6 +5,7 @@ set -euo pipefail
 
 get_yaml_array GETTEXT_DOMAIN '.install.gettext-domain[]' "$1"
 GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
+echo "Gnome version: v${GNOME_VER}"
 
 if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
   for EXTENSION in "${GETTEXT_DOMAIN[@]}"; do
@@ -14,7 +15,6 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       ARCHIVE_DIR="${TMP_DIR}/${ARCHIVE}"
       VERSION=$(echo "${EXTENSION}" | grep -oP 'v\d+')
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
-      echo "Gnome version: v${GNOME_VER}"
       # Download archive
       curl -L "${URL}" --create-dirs -o "${ARCHIVE_DIR}"
       # Extract archive
