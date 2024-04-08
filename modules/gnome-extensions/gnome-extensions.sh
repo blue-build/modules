@@ -4,6 +4,7 @@
 set -euo pipefail
 
 get_yaml_array GETTEXT_DOMAIN '.install.gettext-domain[]' "$1"
+GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
 
 if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
   for EXTENSION in "${GETTEXT_DOMAIN[@]}"; do
@@ -13,6 +14,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       ARCHIVE_DIR="${TMP_DIR}/${ARCHIVE}"
       VERSION=$(echo "${EXTENSION}" | grep -oP 'v\d+')
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
+      echo "Gnome version: v${GNOME_VER}"
       # Download archive
       curl -L "${URL}" --create-dirs -o "${ARCHIVE_DIR}"
       # Extract archive
@@ -25,6 +27,12 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       echo "Reading necessary info from metadata.json"
       UUID=$(yq '.uuid' < "${TMP_DIR}/metadata.json")
       SCHEMA_ID=$(yq '.settings-schema' < "${TMP_DIR}/metadata.json")
+      EXT_GNOME_VER=$(yq '.shell-version[]' < "${TMP_DIR}/metadata.json")
+      # Compare if extension is compatible with current Gnome version
+      if ! [[ "${EXT_GNOME_VER}" =~ "${GNOME_VER}" ]]; then
+        echo "ERROR: Extension is not compatible with current Gnome v${GNOME_VER}!"
+        exit 1
+      fi  
       # Install main extension files
       echo "Installing main extension files"
       install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/"
