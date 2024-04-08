@@ -25,31 +25,31 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       rm "${ARCHIVE_DIR}"
       # Read necessary info from metadata.json
       echo "Reading necessary info from metadata.json"
+      EXTENSION_NAME=$(yq '.name' < "${TMP_DIR}/metadata.json")
       UUID=$(yq '.uuid' < "${TMP_DIR}/metadata.json")
       SCHEMA_ID=$(yq '.settings-schema' < "${TMP_DIR}/metadata.json")
       EXT_GNOME_VER=$(yq '.shell-version[]' < "${TMP_DIR}/metadata.json")
-      # Some extensions like GSConnect don't have schema_id information for some reason
-      # So if that's the case, fail the build & notify the user about it
-      # I will try to find the workaround for this,
-      # maybe as manual input inside the recipe
+      # If extension does not have the important key in metadata.json,
+      # inform the user & fail the build
       if [[ "${UUID}" == "null" ]]; then
-        echo "ERROR: Extension ${EXTENSION} doesn't have UUID inside metadata.json"
+        echo "ERROR: Extension ${EXTENSION_NAME} doesn't have 'uuid' key inside metadata.json"
         echo "You may inform the extension developer about this error, as he can fix it"
         exit 1
       fi
       if [[ "${SCHEMA_ID}" == "null" ]]; then
-        echo "ERROR: Extension ${EXTENSION} doesn't have Schema ID inside metadata.json"
+        echo "ERROR: Extension ${EXTENSION_NAME} doesn't have 'settings-schema' key inside metadata.json"
         echo "You may inform the extension developer about this error, as he can fix it"
         exit 1
       fi
       if [[ "${EXT_GNOME_VER}" == "null" ]]; then
-        echo "ERROR: Extension ${EXTENSION} doesn't have Gnome Version inside metadata.json"
+        echo "ERROR: Extension ${EXTENSION_NAME} doesn't have 'shell-version' key inside metadata.json"
         echo "You may inform the extension developer about this error, as he can fix it"
         exit 1
       fi      
       # Compare if extension is compatible with current Gnome version
+      # If extension is not compatible, inform the user & fail the build
       if ! [[ "${EXT_GNOME_VER}" =~ "${GNOME_VER}" ]]; then
-        echo "ERROR: Extension is not compatible with current Gnome v${GNOME_VER}!"
+        echo "ERROR: Extension ${EXTENSION_NAME} is not compatible with current Gnome v${GNOME_VER}!"
         exit 1
       fi  
       # Install main extension files
@@ -72,7 +72,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       echo "------------------------------DONE----------------------------------"     
   done
 else
-  echo "ERROR: You did not specify gettext-domain"
+  echo "ERROR: You did not specify gettext-domain in module recipe file"
   exit 1
 fi
 
