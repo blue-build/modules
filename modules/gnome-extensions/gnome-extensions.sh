@@ -28,6 +28,25 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       UUID=$(yq '.uuid' < "${TMP_DIR}/metadata.json")
       SCHEMA_ID=$(yq '.settings-schema' < "${TMP_DIR}/metadata.json")
       EXT_GNOME_VER=$(yq '.shell-version[]' < "${TMP_DIR}/metadata.json")
+      # Some extensions like GSConnect don't have schema_id information for some reason
+      # So if that's the case, fail the build & notify the user about it
+      # I will try to find the workaround for this,
+      # maybe as manual input inside the recipe
+      if [[ "${UUID}" == "null" ]]; then
+        echo "ERROR: Extension ${EXTENSION} doesn't have UUID inside metadata.json"
+        echo "You may inform the extension developer about this error, as he can fix it"
+        exit 1
+      fi
+      if [[ "${SCHEMA_ID}" == "null" ]]; then
+        echo "ERROR: Extension ${EXTENSION} doesn't have Schema ID inside metadata.json"
+        echo "You may inform the extension developer about this error, as he can fix it"
+        exit 1
+      fi
+      if [[ "${EXT_GNOME_VER}" == "null" ]]; then
+        echo "ERROR: Extension ${EXTENSION} doesn't have Gnome Version inside metadata.json"
+        echo "You may inform the extension developer about this error, as he can fix it"
+        exit 1
+      fi      
       # Compare if extension is compatible with current Gnome version
       if ! [[ "${EXT_GNOME_VER}" =~ "${GNOME_VER}" ]]; then
         echo "ERROR: Extension is not compatible with current Gnome v${GNOME_VER}!"
