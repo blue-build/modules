@@ -4,7 +4,7 @@ The `gnome-extensions` module can be used to install Gnome extensions inside sys
 
 This module is universally compatible with all distributions which ship Gnome, as it's not tied to specific distribution packaging format for installing extensions.  
 
-Almost every Gnome extension is compatible for installation.  
+Most Gnome extensions are compatible for installation.  
 Only rare intervention that might be needed is for extensions which require some additional system dependencies, like Pano.   
 
 Thanks to https://extensions.gnome.org which provides end-releases of extensions as zips, it is very easy to maintain this module configuration.  
