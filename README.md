@@ -6,7 +6,7 @@ This repository contains the default official module repository for [BlueBuild](
 
 These are general guidelines for writing official bash modules and their documentation to follow in order to keep a consistent style. Not all of these are to be mindlessly followed, especially the ones about grammar and writing style, but it's good to keep these in mind if you intend to contribute back upstream, so that your module doesn't feel out of place.
 
-### Terms
+### Glossary
 
 **Module-maintainer:** Maintainer of a BlueBuild bash module. The intended audience of this section of the documentation.
 **Image-maintainer:** Maintainer of a custom image that uses BlueBuild.
