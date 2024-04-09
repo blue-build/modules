@@ -24,9 +24,7 @@ REMOVE_STR=$(echo "${REMOVE[*]}" | tr -d '\n')
 
 # Enable experimental optfix environment variable in rpm-ostree
 mkdir -p /usr/etc/systemd/system/rpm-ostreed.service.d/
-cat > /usr/etc/systemd/system/rpm-ostreed.service.d/state-overlay.conf
-[Service]
-Environment=RPMOSTREE_EXPERIMENTAL_FORCE_OPT_USRLOCAL_OVERLAY=1
+echo -e "[Service]\nEnvironment=RPMOSTREE_EXPERIMENTAL_FORCE_OPT_USRLOCAL_OVERLAY=1" > /usr/etc/systemd/system/rpm-ostreed.service.d/state-overlay.conf
 systemctl daemon-reload
 systemctl restart rpm-ostreed
 
