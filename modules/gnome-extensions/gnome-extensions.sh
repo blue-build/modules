@@ -75,7 +75,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       # This is only for extensions which respect XDG icon standard
       # Some extensions simply supply icons in the extension folder & they work
       if [[ -d "${TMP_DIR}/icons" ]]; then
-        echo "Installing extension icons"
+        echo "Installing icons for the extension"
         install -d -m 0755 "/usr/share/icons/"
         cp -r "${TMP_DIR}/icons"/* "/usr/share/icons/"
       fi  
