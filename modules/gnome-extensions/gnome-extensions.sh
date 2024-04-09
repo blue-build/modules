@@ -49,7 +49,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       # Install main extension files
       echo "Installing main extension files"
       install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/"
-      find "${TMP_DIR}" -mindepth 1 -maxdepth 1 ! -path "*locale*" ! -path "*schemas*" ! -path "*icons*" -exec cp -r {} "/usr/share/gnome-shell/extensions/${UUID}/" \;
+      find "${TMP_DIR}" -mindepth 1 -maxdepth 1 ! -path "*locale*" ! -path "*schemas*" -exec cp -r {} "/usr/share/gnome-shell/extensions/${UUID}/" \;
       find "/usr/share/gnome-shell/extensions/${UUID}" -type d -exec chmod 0755 {} +
       find "/usr/share/gnome-shell/extensions/${UUID}" -type f -exec chmod 0644 {} +
       # Install schema
@@ -70,14 +70,6 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
         echo "Installing language extension files"
         install -d -m 0755 "/usr/share/locale/"
         cp -r "${TMP_DIR}/locale"/* "/usr/share/locale/"
-      fi  
-      # Install icons if extension uses them
-      # This is only for extensions which respect XDG icon standard
-      # Some extensions simply supply icons in the extension folder & they work
-      if [[ -d "${TMP_DIR}/icons" ]]; then
-        echo "Installing icons for the extension"
-        install -d -m 0755 "/usr/share/icons/"
-        cp -r "${TMP_DIR}/icons"/* "/usr/share/icons/"
       fi  
       # Delete the temporary directory
       echo "Cleaning up the temporary directory"
