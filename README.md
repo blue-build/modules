@@ -64,7 +64,7 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 **System config:**  
 `/usr/share/bluebuild/module-name/config.yml`
 
-**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users writing to it. System config is purely intended to inform local-users about which modifications are done in `recipe.yml`, so they can potentially proceed with modifications on their own.
+**System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users writing to it. In terms of modifications, system config is purely intended to inform local-users about which modifications are done in `recipe.yml`, so they can potentially proceed with modifications on their own. In terms of functioning, the data that is obtained from system config is directly used by the module to perform its necessary functions.
 
 **Local-user config:**  
 `/usr/etc/bluebuild/module-name/config.yml`
