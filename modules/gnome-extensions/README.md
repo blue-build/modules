@@ -19,9 +19,12 @@ What does this module do?
 
 # Usage
 
-To use this module, you need to input gettext-domain of the extension without @ symbol + the version of the extension in `.v%VERSION%` format.  
-You can see gettext-domain of the extension by looking at the extension repo inside metadata.json  
-or by simply downloading the zip file from https://extensions.gnome.org & than looking at the download URL part after `/extension-data/` & before `.v%VERSION%`.
+To use this module, you need to input gettext-domain of the extension without @ symbol + the version of the extension in `.v%VERSION%` format in module recipe.  
+But for some extensions, `.v%VERSION%` is parsed as the version of package in incremental numbering, instead of extension version in https://extensions.gnome.org URL.  
+So to be sure that you got the correct module input, follow the steps below.
 
-You must assure that version of the extension is compatible with current Gnome version that your image is using.  
-You can easily see this information when downloading extension from https://extensions.gnome.org
+How to gather correct module input:  
+1. Go to https://extensions.gnome.org
+2. Search for the extension that you want
+3. Select the matching Gnome shell version & extension version that you want to download
+4. When extension is downloaded, you get the info when you omit `.shell-extension.zip` suffix from the extension zip file-name
