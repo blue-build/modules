@@ -63,6 +63,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       # Delete the temporary directory
       echo "Cleaning up the temporary directory"
       rm -r "${TMP_DIR}"
+      echo "Extension ${EXTENSION_NAME} is successfully installed"
       echo "------------------------------DONE----------------------------------"     
   done
 else
