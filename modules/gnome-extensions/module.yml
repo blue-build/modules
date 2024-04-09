@@ -3,6 +3,5 @@ shortdesc: The gnome-extensions module can be used to install Gnome extensions i
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-extensions/README.md
 example: |
   type: gnome-extensions
-  install:
-    gettext-domain:                                 # Omit @ symbol from gettext-domain. You can see the gettext-domain by looking into extension metadata.json.
-      - nightthemeswitcherromainvigier.fr.v75       # Version must be specified by adding .v%VERSION% after gettext domain. Extension version must be compatible with current Gnome version.
+  install:                                        # Omit @ symbol from gettext-domain. You can see the gettext-domain by looking into extension metadata.json.
+    - nightthemeswitcherromainvigier.fr.v75       # Version must be specified by adding .v%VERSION% after gettext domain. Extension version must be compatible with current Gnome version.
