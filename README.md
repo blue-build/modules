@@ -76,10 +76,12 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 System config (`/usr/share/bluebuild/default-flatpaks/config.yml`):
 
 ```yaml
-vendor: BlueBuild
-module: default-flatpaks
-description: System config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
-instructions: Read this system config in order to know what is currently configured by the system & what to potentially modify in local-user config (/etc/bluebuild/default-flatpaks/config.yml).
+# Information about the config file
+#
+# vendor: BlueBuild
+# module: default-flatpaks
+# description: System config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
+# instructions: Read this system config in order to know what is currently configured by the system & what to potentially modify in local-user config (/etc/bluebuild/default-flatpaks/config.yml).
 
 # Configuration section
 notify: true
@@ -98,10 +100,12 @@ user:
 Local-user config (`/etc/bluebuild/default-flatpaks/config.yml`):
 
 ```yaml
-vendor: BlueBuild
-module: default-flatpaks
-description: Local-user config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
-instructions: Template of all supported options is in a example below. Modify the options you need & set "active" key to true.
+# Information about the config file
+#
+# vendor: BlueBuild
+# module: default-flatpaks
+# description: Local-user config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
+# instructions: Template of all supported options is in a example below. Modify the options you need & set "active" key to true.
 
 # Configuration section
 active: false
