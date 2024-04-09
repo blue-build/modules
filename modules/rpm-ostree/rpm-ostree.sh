@@ -27,6 +27,8 @@ mkdir -p /usr/etc/systemd/system/rpm-ostreed.service.d/
 cat > /usr/etc/systemd/system/rpm-ostreed.service.d/state-overlay.conf
 [Service]
 Environment=RPMOSTREE_EXPERIMENTAL_FORCE_OPT_USRLOCAL_OVERLAY=1
+systemctl daemon-reload
+systemctl restart rpm-ostreed
 
 # Install and remove RPM packages
 if [[ ${#INSTALL[@]} -gt 0 && ${#REMOVE[@]} -gt 0 ]]; then
