@@ -13,24 +13,6 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     done
 fi
 
-# Create symlinks to fix packages that create directories in /opt
-get_yaml_array OPTFIX '.optfix[]' "$1"
-if [[ ${#OPTFIX[@]} -gt 0 ]]; then
-    echo "Creating symlinks to fix packages that install to /opt"
-    # Create symlink for /opt to /var/opt since it is not created in the image yet
-    mkdir -p "/var/opt"
-    ln -s "/var/opt"  "/opt"
-    # Create symlinks for each directory specified in recipe.yml
-    for OPTPKG in "${OPTFIX[@]}"; do
-        OPTPKG="${OPTPKG%\"}"
-        OPTPKG="${OPTPKG#\"}"
-        OPTPKG=$(printf "$OPTPKG")
-        mkdir -p "/usr/lib/opt/${OPTPKG}"
-        ln -s "../../usr/lib/opt/${OPTPKG}" "/var/opt/${OPTPKG}"
-        echo "Created symlinks for ${OPTPKG}"
-    done
-fi
-
 get_yaml_array INSTALL '.install[]' "$1"
 get_yaml_array REMOVE '.remove[]' "$1"
 
@@ -39,6 +21,12 @@ get_yaml_array REMOVE '.remove[]' "$1"
 # This is different from other ublue projects and could be investigated further.
 INSTALL_STR=$(echo "${INSTALL[*]}" | tr -d '\n')
 REMOVE_STR=$(echo "${REMOVE[*]}" | tr -d '\n')
+
+# Enable experimental optfix environment variable in rpm-ostree
+mkdir -p /usr/etc/systemd/system/rpm-ostreed.service.d/
+cat > /usr/etc/systemd/system/rpm-ostreed.service.d/state-overlay.conf
+[Service]
+Environment=RPMOSTREE_EXPERIMENTAL_FORCE_OPT_USRLOCAL_OVERLAY=1
 
 # Install and remove RPM packages
 if [[ ${#INSTALL[@]} -gt 0 && ${#REMOVE[@]} -gt 0 ]]; then
