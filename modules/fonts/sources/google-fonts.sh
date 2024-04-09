@@ -2,26 +2,45 @@
 set -euo pipefail
 
 mapfile -t FONTS <<< "$@"
-URL="https://fonts.google.com/download?family="
-DIR_PRINCIPAL=/usr/share/fonts/google-fonts
-COMPACT_FORMAT="zip"
+DEST="/usr/share/fonts/google-fonts"
 
-# To download google-fonts it is necessary to enter the name of the font replacing the spaces with '%20'. See the 3rd parameter of the download script.
+echo "Installation of google-fonts started"
+rm -rf "${DEST}"
 
-if [ ${#FONTS[@]} -gt 0 ]; then
+for FONT in "${FONTS[@]}"; do
+    if [ -n "$FONT" ]; then
+        FONT="${FONT#"${FONT%%[![:space:]]*}"}" # Trim leading whitespace
+        FONT="${FONT%"${FONT##*[![:space:]]}"}" # Trim trailing whitespace
+        mkdir -p "${DEST}/${FONT}"
 
-    echo "Installation of google-fonts started"
+        readarray -t "FILE_REFS" < <(
+            if JSON=$(
+                curl -s "https://fonts.google.com/download/list?family=${FONT// /%20}" | # spaces are replaced with %20 for the URL
+                tail -n +2 # remove first line, which as of March 2024 contains ")]}'" and breaks JSON parsing
+            ); then
+                if FILE_REFS=$(echo "$JSON" | jq -c '.manifest.fileRefs[]' 2>/dev/null); then
+                    echo "$FILE_REFS"
+                fi
+            fi
+        )
 
-    rm -rf "$DIR_PRINCIPAL"
+        if [ ${#FILE_REFS[@]} -eq 0 ]; then
+            echo "Could not find download information for ${FONT}"
+        else
+            for FILE_REF in "${FILE_REFS[@]}"; do
+                if FILENAME=$(echo "${FILE_REF}" | jq -er '.filename' 2>/dev/null); then
+                    if URL=$(echo "${FILE_REF}" | jq -er '.url' 2>/dev/null); then
+                        echo "Downloading ${FILENAME} from ${URL}"
+                        curl "${URL}" -o "${DEST}/${FONT}/${FILENAME##*/}" # everything before the last / is removed to get the filename
+                    else
+                        echo "Failed to extract URLs for: ${FONT}" >&2
+                    fi
+                else
+                    echo "Failed to extract filenames for: ${FONT}" >&2
+                fi
+            done
+        fi
+    fi
+done
 
-    for font in "${FONTS[@]}"; do
-
-        font="$(echo "$font" | sed -e 's|^[[:blank:]]||g' | tr -d '\n')"
-
-        bash "$(dirname "$0")"/../download.sh "$font" "$COMPACT_FORMAT" "$URL${font// /%20}" "$DIR_PRINCIPAL/$font" 
-
-    done
-
-    fc-cache -f $DIR_PRINCIPAL
-
-fi
+fc-cache -f "${DEST}"
