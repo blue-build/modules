@@ -25,6 +25,7 @@ So to be sure that you got the correct module input, follow the steps below.
 
 How to gather correct module input:  
 1. Go to https://extensions.gnome.org
-2. Search for the extension that you want
-3. Select the matching Gnome shell version & extension version that you want to download
-4. When extension is downloaded, you get the info when you omit `.shell-extension.zip` suffix from the extension zip file-name
+2. Search for the extension that you want to install and open its extension page
+3. Select the correct GNOME shell version & extension version from the dropdown
+   - The command `gnome-shell --version` can be used to get the GNOME version of a running system.
+4. When the download dialog for the extension comes up, copy everything but the `.shell-extension.zip` suffix from the filename into the `install:` array in this module's configuration.
