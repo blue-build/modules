@@ -75,10 +75,10 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       echo "Cleaning up the temporary directory"
       rm -r "${TMP_DIR}"
       echo "Extension '${EXTENSION_NAME}' is successfully installed"
-      echo "------------------------------DONE----------------------------------"     
+      echo "----------------------------------DONE----------------------------------"
   done
 else
-  echo "ERROR: You did not specify gettext-domain in module recipe file"
+  echo "ERROR: You did not specify extension to install in module recipe file"
   exit 1
 fi
 
