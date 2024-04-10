@@ -7,7 +7,7 @@ This module is universally compatible with all distributions which ship Gnome, a
 Almost all Gnome extensions are compatible for installation.  
 Only rare intervention that might be needed is for extensions which require some additional system dependencies, like Pano.   
 
-Thanks to https://extensions.gnome.org which provides end-releases of extensions as zips, it is very easy to maintain this module configuration.  
+Thanks to https://extensions.gnome.org which provides releases of extensions as zips, it is very easy to maintain this module configuration.  
 The only maintenance is to bump the extension version when new Fedora/Gnome releases (around every 6 months).
 
 What does this module do?
