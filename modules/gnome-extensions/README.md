@@ -23,7 +23,7 @@ To use this module, you need to input gettext-domain of the extension without @ 
 But for some extensions, `.v%VERSION%` is parsed as the version of package in incremental numbering, instead of extension version in https://extensions.gnome.org URL.  
 So to be sure that you got the correct module input, follow the steps below.
 
-How to gather correct module input:  
+How to install extensions using the module:  
 1. Go to https://extensions.gnome.org
 2. Search for the extension that you want to install and open its extension page
 3. Select the correct GNOME shell version & extension version from the dropdown
