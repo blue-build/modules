@@ -78,7 +78,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       echo "----------------------------------DONE----------------------------------"
   done
 else
-  echo "ERROR: You did not specify extension to install in module recipe file"
+  echo "ERROR: You did not specify the extension to install in module recipe file"
   exit 1
 fi
 
