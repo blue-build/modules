@@ -25,6 +25,6 @@ How to install extensions using the module:
    - The command `gnome-shell --version` can be used to get the GNOME version of a running system.
 4. When the download dialog for the extension comes up, copy everything but the `.shell-extension.zip` suffix from the filename into the `install:` array in this module's configuration.
 
-Rarely, some extensions need additional system dependencies in order to function.  
-Those extensions usually note that case inside the extension description webpage.  
-The solution is to install the required dependencies by using `rpm-ostree` module before `gnome-extensions` module is ran.
+An extension might need additional system dependencies in order to function.  
+In that case, you should install the required dependencies before the `gnome-extensions` module is ran.
+Information about the required dependencies (if any) are usually on the extension's page.  
