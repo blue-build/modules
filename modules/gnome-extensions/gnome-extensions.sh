@@ -57,10 +57,6 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
         echo "Installing schema extension file"
         install -d -m 0755 "/usr/share/glib-2.0/schemas/"
         install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/glib-2.0/schemas/"
-      else
-        echo "ERROR: Extension '${EXTENSION_NAME}' doesn't supply crucial gschema.xml file."
-        echo "       Please contact extension developer about this issue."
-        exit 1
       fi  
       # Install languages
       # Locale is not crucial for extensions to work, as they will fallback to gschema.xml
