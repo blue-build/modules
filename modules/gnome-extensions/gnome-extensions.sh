@@ -16,7 +16,7 @@ if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
       VERSION=$(echo "${EXTENSION}" | grep -oP 'v\d+')
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
       # Download archive
-      curl -L "${URL}" --create-dirs -o "${ARCHIVE_DIR}"
+      wget "${URL}" -P "${ARCHIVE_DIR}"
       # Extract archive
       echo "Extracting ZIP archive"
       unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
