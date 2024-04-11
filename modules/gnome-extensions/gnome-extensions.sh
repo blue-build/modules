@@ -79,7 +79,7 @@ else
 fi
 
 # Compile gschema to include schemas from extensions
-echo "Compiling gschema to include extension schemas
+echo "Compiling gschema to include extension schemas"
 glib-compile-schemas "/usr/share/glib-2.0/schemas/" &>/dev/null
 
 echo "Finished the installation of Gnome extensions"
