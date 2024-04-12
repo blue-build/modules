@@ -3,5 +3,7 @@ shortdesc: The gnome-extensions module can be used to install Gnome extensions i
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-extensions/README.md
 example: |
   type: gnome-extensions
+  uninstall:
+    - apps-menu@gnome-shell-extensions.gcampax.github.com
   install:
     - nightthemeswitcherromainvigier.fr.v75

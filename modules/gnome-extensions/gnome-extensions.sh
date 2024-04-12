@@ -3,9 +3,23 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_yaml_array GETTEXT_DOMAIN '.install[]' "$1"
 GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
 echo "Gnome version: v${GNOME_VER}"
+
+# Uninstall extensions
+
+get_yaml_array GETTEXT_DOMAIN '.uninstall[]' "$1"
+
+if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
+    for UUID in "${GETTEXT_DOMAIN[@]}"; do
+        echo "Uninstalling ${UUID} Gnome extension from system extensions list"
+        rm -rf "/usr/share/gnome-shell/extensions/${UUID}"
+    done
+fi
+
+# Install extensions
+
+get_yaml_array GETTEXT_DOMAIN '.install[]' "$1"
 
 if [[ ${#GETTEXT_DOMAIN[@]} -gt 0 ]]; then
   for EXTENSION in "${GETTEXT_DOMAIN[@]}"; do

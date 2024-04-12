@@ -19,6 +19,8 @@ What does this module do?
 
 # Usage
 
+## Install
+
 How to install extensions using the module:  
 1. Go to https://extensions.gnome.org
 2. Search for the extension that you want to install and open its extension page
@@ -29,3 +31,11 @@ How to install extensions using the module:
 An extension might need additional system dependencies in order to function.  
 In that case, you should install the required dependencies before the `gnome-extensions` module is ran.
 Information about the required dependencies (if any) are usually on the extension's page.  
+
+## Uninstall
+
+1. Open your extension manager or list the contents of the system extensions directory (`/usr/share/gnome-shell/extensions`) and pick the extensions you want to remove.
+2. Get the UUID of the form `extension-name@author.url` of the extension (will
+   be listed in the extension manager, or just be the directory name of the
+   extension in the filesystem).
+3. Put the UUID in the module's `uninstall` list.
