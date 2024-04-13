@@ -1,4 +1,5 @@
 [
+  "https://raw.githubusercontent.com/blue-build/modules/main/modules/files/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/bling/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/default-flatpaks/module.yml",
