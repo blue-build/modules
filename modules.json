@@ -1,8 +1,10 @@
 [
+  "https://raw.githubusercontent.com/blue-build/modules/main/modules/files/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/bling/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/default-flatpaks/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/fonts/module.yml",
+  "https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-extensions/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/gschema-overrides/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/rpm-ostree/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/script/module.yml",

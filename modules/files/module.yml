@@ -1,0 +1,12 @@
+name: files
+shortdesc: Copy files to your image at build time
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/files/README.md
+example: |
+  modules:
+    - type: files
+      files:
+        - usr: /usr # copies config/files/usr into your images /usr
+                    # put configuration files you want in /etc/ on a *booted*
+                    # system in /usr/etc/ in the image.
+        - etc: /etc # copies config/files/etc into your image's /etc immediately,
+                    # for use with further modules.
