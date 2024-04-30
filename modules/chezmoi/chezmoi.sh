@@ -3,7 +3,7 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-# `-I=0` makes sure the output isn't indented
+# '-I=0' makes sure the output isn't indented
 
 # If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
 INSTALL_CHEZMOI==$(echo "$1" | yq -I=0 ".install") # (boolean)
@@ -16,13 +16,13 @@ DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 # If false, chezmoi services will not be enabled for any users, but can be enabled manually, after installation.
 #
 # To enable the services for a single user, run the following command as that user:
-# `systemctl enable --user chezmoi-init.service chezmoi-update.timer`
+# 'systemctl enable --user chezmoi-init.service chezmoi-update.timer'
 #
 # To manually enable the services for all users, run the following command with sudo:
-# `sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer`
+# 'sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer'
 #
 # To turn on lingering for a given user, run the following commmand with sudo:
-# `sudo loginctl enable-linger <username>`
+# 'sudo loginctl enable-linger <username>'
 ENABLE_ALL_USERS=$(echo "$1" | yq -I=0 ".enable_all_users") # (boolean)
 ENABLE_ALL_USERS=${ENABLE_ALL_USERS:-true}
 
@@ -40,14 +40,14 @@ WAIT_AFTER_BOOT=${WAIT_AFTER_BOOT:-'5m'}
 # If true, disables automatic initialization of chezmoi if no dotfile directory is found. (default: false)
 DISABLE_INIT=$(echo "$1" | yq -I=0 ".disable_init") # (boolean)
 DISABLE_INIT=${DISABLE_INIT:-false}
-# If true, disables automatic activation of `chezmoi-update.timer`. (default: false)
+# If true, disables automatic activation of 'chezmoi-update.timer'. (default: false)
 DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable_update") # (boolean)
 DISABLE_UPDATE=${DISABLE_UPDATE:-false}
 
-echo "Checking if \`repository\` is not set and \`disable_init\` is not true."
+echo "Checking if 'repository' is not set and 'disable_init' is not true."
 if [ ! -v DOTFILE_REPOSITORY && ! DISABLE_INIT ]; then
-  echo "ERROR: `repository` is not set, but initialization is not disabled."
-  echo "Set a value for `repository` or set `disable_update` to true, if you do not wish to initialize a chezmoi directory using this module"
+  echo "ERROR: 'repository' is not set, but initialization is not disabled."
+  echo "Set a value for 'repository' or set 'disable_update' to true, if you do not wish to initialize a chezmoi directory using this module"
   exit 1
 fi
 
