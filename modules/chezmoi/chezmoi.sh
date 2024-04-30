@@ -44,7 +44,7 @@ DISABLE_INIT=${DISABLE_INIT:-false}
 DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable_update") # (boolean)
 DISABLE_UPDATE=${DISABLE_UPDATE:-false}
 
-echo "Checking if `repository` is not set and `disable_init` is not true."
+echo "Checking if \`repository\` is not set and \`disable_init\` is not true."
 if [ ! -v DOTFILE_REPOSITORY && ! DISABLE_INIT ]; then
   echo "ERROR: `repository` is not set, but initialization is not disabled."
   echo "Set a value for `repository` or set `disable_update` to true, if you do not wish to initialize a chezmoi directory using this module"
