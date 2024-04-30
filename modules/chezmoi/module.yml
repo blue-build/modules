@@ -1,0 +1,13 @@
+name: chezmoi
+shortdesc: Install latest chezmoi release at build time, along with services to initialize a repository and keep it up-to-date.
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/files/README.md # TODO
+example: |
+  modules:
+    - type: chezmoi
+      install: true # (Default - Expects type: boolean) Installs chezmoi to /usr/bin/chezmoi from latest Github release
+      repository: "https://example.org/user/dotfiles" # (Expects type: string) Git repository to initialize
+      enable_all_users: true # (Default - Expects type: boolean) Enable the modules services globally for all users
+      run_every: '1d' # (Default - Expects type: string) Dotfiles will be updated with this interval
+      wait_after_boot: '5m' # (Default - Expects type: string) Dotfile updates will wait this long after a boot before running
+      disable_init: false # (Default - Expects type: boolean) Disable the service that initializes `repository` on users that are logged in or has linger enabled
+      disable_update: false # (Default - Expects type: boolean) Disable the timer that updates chezmoi with the interval set above
