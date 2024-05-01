@@ -6,7 +6,7 @@ set -euo pipefail
 # '-I=0' makes sure the output isn't indented
 
 # If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
-INSTALL_CHEZMOI==$(echo "$1" | yq -I=0 ".install") # (boolean)
+INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install") # (boolean)
 INSTALL_CHEZMOI=${INSTALL_CHEZMOI:-true}
 
 # The repository with your chezmoi dotfiles. (default: null)
@@ -45,15 +45,15 @@ DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable_update") # (boolean)
 DISABLE_UPDATE=${DISABLE_UPDATE:-false}
 
 echo "Checking if 'repository' is not set and 'disable_init' is not true."
-if [ ! -v DOTFILE_REPOSITORY && ! DISABLE_INIT ]; then
+if [[ ! -n $DOTFILE_REPOSITORY && $DISABLE_INIT == false ]]; then
   echo "ERROR: 'repository' is not set, but initialization is not disabled."
   echo "Set a value for 'repository' or set 'disable_update' to true, if you do not wish to initialize a chezmoi directory using this module"
   exit 1
 fi
 
-if [ INSTALL_CHEZMOI ]; then
+if [[ $INSTALL_CHEZMOI == true ]]; then
   echo "Checking if curl is installed and executable at /usr/bin/curl"
-  if [ -x /usr/bin/curl]; then
+  if [ -x /usr/bin/curl ]; then
     echo "Downloading chezmoi binary from the latest Github release"
     /usr/bin/curl -Ls https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi-linux-amd64 -o /usr/bin/chezmoi
     echo "Ensuring chezmoi is executable"
@@ -65,12 +65,15 @@ if [ INSTALL_CHEZMOI ]; then
   fi
 fi
 
-if [ ! DISABLE_INIT ]; then
+if [[ $DISABLE_INIT == false ]]; then
   # Write the service to initialize Chezmoi, and insert the repo url in the file
   echo "Writing init service to user unit directory"
   cat >> /usr/lib/systemd/user/chezmoi-init.service << EOF
   [Unit]
   Description=Initializes Chezmoi if directory is missing
+  Requires=network-online.target
+  After=network-online.target
+  
   # This service will not execute for a user with an existing chezmoi directory
   ConditionPathExists=!%h/.local/share/chezmoi
   [Service]
@@ -79,12 +82,10 @@ if [ ! DISABLE_INIT ]; then
 
   [Install]
   WantedBy=multi-user.target
-  Requires=network-online.target
-  After=network-online.target
 EOF
 fi
 
-if [ ! DISABLE_UPDATE ]; then
+if [[ $DISABLE_UPDATE == false ]]; then
   # Write the service and timer to update chezmoi for all logged in users and users with lingering enabled
   echo "Writing update service to user unit directory"
   cat >> /usr/lib/systemd/user/chezmoi-update.service << EOF
