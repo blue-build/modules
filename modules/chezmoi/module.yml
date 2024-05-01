@@ -1,6 +1,6 @@
 name: chezmoi
 shortdesc: Install latest chezmoi release at build time, along with services to initialize a repository and keep it up-to-date.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/files/README.md # TODO
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/chezmoi/README.md
 example: |
   modules:
     - type: chezmoi
