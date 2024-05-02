@@ -58,7 +58,7 @@ fi
 
 echo "Checking if 'repository' is not set and 'disable_init' is not true."
 if [[ -z $DOTFILE_REPOSITORY && $DISABLE_INIT == false ]]; then
-  echo "ERROR: 'repository' is not set, but initialization is not disabled."
+  echo "ERROR: Invalid Config: 'repository' is not set, but initialization is not disabled."
   echo "Set a value for 'repository' or set 'disable_update' to true, if you do not wish to initialize a chezmoi directory using this module"
   exit 1
 fi
@@ -75,6 +75,8 @@ if [[ $INSTALL_CHEZMOI == true ]]; then
     echo "Please make sure curl is installed on the system you are building your image."
     exit 1
   fi
+else
+  echo "Skipping install of chezmoi binary"
 fi
 
 if [[ $DISABLE_INIT == false ]]; then
@@ -95,6 +97,8 @@ if [[ $DISABLE_INIT == false ]]; then
   [Install]
   WantedBy=multi-user.target
 EOF
+else
+  echo "Skipping install of chezmoi-init.service"
 fi
 
 if [[ $DISABLE_UPDATE == false ]]; then
@@ -123,6 +127,8 @@ EOF
   [Install]
   WantedBy=timers.target
 EOF
+else
+  echo "Skipping install of chezmoi-update.service"
 fi
 
 # Enable services
@@ -138,4 +144,6 @@ elif [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE =
   echo "Enabling init service and disabling update service"
   systemctl --global enable chezmoi-init.service
   systemctl --global disable chezmoi-update.service
+else
+  echo "No services were enabled"
 fi
