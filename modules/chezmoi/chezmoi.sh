@@ -56,7 +56,7 @@ if [[ -z $DISABLE_UPDATE || $DISABLE_UPDATE == "null" ]]; then
   DISABLE_UPDATE=false
 fi
 
-echo "Checking if 'repository' is not set and 'disable_init' is not true."
+echo "Checking for conflicting arguments"
 if [[ -z $DOTFILE_REPOSITORY && $DISABLE_INIT == false ]]; then
   echo "ERROR: Invalid Config: 'repository' is not set, but initialization is not disabled."
   echo "Set a value for 'repository' or set 'disable_update' to true, if you do not wish to initialize a chezmoi directory using this module"
