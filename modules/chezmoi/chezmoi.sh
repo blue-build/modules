@@ -147,13 +147,11 @@ if [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == 
   echo "Enabling init timer and update service"
   systemctl --global enable chezmoi-init.service chezmoi-update.timer
 elif [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == true && $DISABLE_UPDATE == false ]]; then
-  echo "Enabling update timer and disabling init service"
+  echo "Enabling update timer"
   systemctl --global enable chezmoi-update.timer
-  systemctl --global disable chezmoi-init.service
 elif [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == true ]]; then
-  echo "Enabling init service and disabling update service"
+  echo "Enabling init service"
   systemctl --global enable chezmoi-init.service
-  systemctl --global disable chezmoi-update.service
 else
   echo "No services were enabled"
 fi
