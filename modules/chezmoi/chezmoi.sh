@@ -36,24 +36,24 @@ fi
 # Examples: '1d' (1 day - default), '6h' (6 hours), '10m' (10 minutes)
 RUN_EVERY=$(echo "$1" | yq -I=0 ".run_every") # (string)
 if [[ -z $RUN_EVERY || $RUN_EVERY == "null" ]]; then
-  RUN_EVERY=true
+  RUN_EVERY="1d"
 fi
 # chezmoi-update.service will also run this much time after the system has booted.
 # Same syntax as RUN_EVERY (default: '5m')
 WAIT_AFTER_BOOT=$(echo "$1" | yq -I=0 ".wait_after_boot") # (string)
 if [[ -z $WAIT_AFTER_BOOT || $WAIT_AFTER_BOOT == "null" ]]; then
-  WAIT_AFTER_BOOT=true
+  WAIT_AFTER_BOOT="5m"
 fi
 
 # If true, disables automatic initialization of chezmoi if no dotfile directory is found. (default: false)
 DISABLE_INIT=$(echo "$1" | yq -I=0 ".disable_init") # (boolean)
 if [[ -z $DISABLE_INIT || $DISABLE_INIT == "null" ]]; then
-  DISABLE_INIT=true
+  DISABLE_INIT=false
 fi
 # If true, disables automatic activation of 'chezmoi-update.timer'. (default: false)
 DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable_update") # (boolean)
 if [[ -z $DISABLE_UPDATE || $DISABLE_UPDATE == "null" ]]; then
-  DISABLE_UPDATE=true
+  DISABLE_UPDATE=false
 fi
 
 echo "Checking if 'repository' is not set and 'disable_init' is not true."
