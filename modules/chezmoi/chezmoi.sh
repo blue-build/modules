@@ -16,7 +16,7 @@ if [[ $DEBUG ]]; then
 fi
 
 # If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
-INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install") # (boolean)
+INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install_chezmoi") # (boolean)
 if [[ -z $INSTALL_CHEZMOI || $INSTALL_CHEZMOI == "null" ]]; then
   INSTALL_CHEZMOI=true
 fi
