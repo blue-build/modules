@@ -5,6 +5,16 @@ set -euo pipefail
 
 # '-I=0' makes sure the output isn't indented
 
+# Activates debugging output. This should only be true if you changed it yourself.
+# -v = Verbose output. Outputs every line before executing.
+# -u = Treat unset variables as errors. Useful for spotting typos.
+# -x = Show expanded input for conditional statements.
+DEBUG=false
+if [[ $DEBUG ]]; then
+  echo "Running in debug mode. If you didn't enable this yourself, this is a bug."
+  set -vux
+fi
+
 # If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
 INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install") # (boolean)
 if [[ -z $INSTALL_CHEZMOI || $INSTALL_CHEZMOI == "null" ]]; then

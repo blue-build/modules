@@ -53,3 +53,7 @@ The installation of the initialization service and the update service can be dis
 :::caution
 Note that this will skip the installation of the services completely. If you want them installed but disabled, see `enable_all_users` instead.
 :::
+
+## Development
+
+Setting `DEBUG=true` inside `chezmoi.sh` will enable additional output in bash useful for debugging.
