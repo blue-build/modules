@@ -11,6 +11,8 @@ These are general guidelines for writing official bash modules and their documen
 **Module-maintainer:** Maintainer of a BlueBuild bash module. The intended audience of this section of the documentation.
 **Image-maintainer:** Maintainer of a custom image that uses BlueBuild.
 **Local-user:** User of a custom image using the BlueBuild bash module. The image-maintainer is usually a local-user too.
+**Build-time modules:** Modules that perform its functionality when image is building.
+**Boot-time modules:** Modules that perform its functionality when system is booting or after system is booted.
 
 ### Code Rules
 
@@ -18,7 +20,7 @@ These are general guidelines for writing official bash modules and their documen
 - Implement error-checks for scenarios where the image-maintainer might misconfigure the module.
 - Use `snake_case` for functions and variables changed by the code.
 - Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
-- Use `"${variable_name}"` when you want to expose information from the variable & to ensure that variables are properly parsed as strings."
+- Use `"${variable_name}"` when you want to expose information from the variable & to ensure that variables are properly parsed as strings.
 - If you want to insert another regular string as a suffix or prefix to the `"${variable_name}"`, you should do that in this format: `"prefix-${variable_name}-suffix"`
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
      -  You can also use `set -euxo pipefail` during debugging, where each executed command is printed. This should not be used in a published module. 
@@ -35,17 +37,22 @@ For the documentation of the module in `README.md`, the following guidelines app
 For the short module description (`shortdesc:`), the following guidelines apply:
 - The description should start with a phrase like "The glorb module reticulates splines" or "The tree module can be used to plant trees".
 
-### Local Module Config
+### Boot-time Modules
+> [!IMPORTANT]  
+> Build-time modules are preferred over boot-time modules for better system reliability.  
+> Only implement boot-time modules when build-time modules are impossible to implement for achieving desired functionality.
 
-**Local module config** is used to allow local-users to see & change the behavior of the module on booted system, in order to improve local-user experience.
+**Boot-time modules:** Modules that perform its functionality when system is booting or after system is booted.
 
-Example of the module which satisfies the requirements & implements this functionality: `default-flatpaks`
+**Local module config** is used to allow local-users to see & change the behavior of the boot-time module, in order to improve local-user experience.
 
-#### Config Requirements
+Example of the boot-time module which satisfies the requirements & implements this functionality: `default-flatpaks`
+
+#### Local Module Config Requirements
 **Requirements** for local module configs exist, as not all modules need this functionality.  
 Following conditions for approved local module config implementation are:
 
-- **module performs it's functions on booted system**  
+- **module performs its functions on booted system**  
  Modules which are fully utilized in build-time don't need configuration options, as those are already located in `recipe.yml`.
 - **local module config can be implemented without affecting reliability of the system**  
  Module-maintainer needs to carefully select which type of module to implement based on condition above. If a module compromises system reliability when used on booted system, making the module build-time based should be considered. Examples of this are `rpm-ostree` & `akmods` modules, which are better utilized as build-time modules.
