@@ -97,7 +97,7 @@ if [[ $DISABLE_INIT == false ]]; then
   Description=Initializes Chezmoi if directory is missing
   
   # This service will not execute for a user with an existing chezmoi directory
-  ConditionPathExists=!%h/.local/share/chezmoi
+  ConditionPathExists=!%h/.local/share/chezmoi/.git/
   [Service]
   ExecStart=/usr/bin/chezmoi init --apply ${DOTFILE_REPOSITORY}
   Type=oneshot
