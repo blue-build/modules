@@ -183,8 +183,7 @@ fi
 
 # Stop the script after copying wallpapers if non-Gnome DE is detected
 gnome_section () {
-gnome_detection=$(find /usr/bin -type f -name "gnome-session" -exec basename {} \;)
-if [[ ! $gnome_detection == "gnome-session" ]]; then
+if ! command -v gnome-shell &> /dev/null; then
   echo "Wallpapers module installed successfully!"
   exit 0
 fi
