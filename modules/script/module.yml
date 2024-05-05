@@ -1,7 +1,10 @@
 name: script
-shortdesc: The script module can be used to run arbitrary scripts at image build time.
+shortdesc: The script module can be used to run arbitrary bash snippets and scripts at image build time.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/script/README.md
 example: |
   type: script
+  snippets:
+    - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
+    - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
   scripts:
-    - myscript.sh # will run config/scripts/myscript.sh
+    - myscript.sh # example: run config/scripts/myscript.sh

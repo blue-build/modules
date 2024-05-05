@@ -27,3 +27,11 @@ If a local user is not satisfied with default Flatpak installations and removals
 `/etc/bluebuild/default-flatpaks/`
 
 Folder structure is the same as talked about above, with `system` & `user` folders, `install` & `remove` files containing explanation on how those should be modified & what they do. The `notifications` file also contains this explanation for turning notifications on or off.
+
+## Known issues
+
+Multiple repos inclusion is currently not supported (planned to implement in the future):  
+https://github.com/blue-build/modules/issues/146
+
+Flatpak runtimes are not supported due to technical difficulty in implementing those:  
+https://github.com/blue-build/modules/pull/142#issuecomment-1962458757
