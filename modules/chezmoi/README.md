@@ -1,6 +1,6 @@
 # `chezmoi`
 
-The `chezmoi` module takes care of installing, initializing and updating you dotfiles.
+The `chezmoi` module takes care of installing, initializing and updating your dotfiles.
 Each feature can be enabled or disabled individually.
 
 Installation of the `chezmoi` binary happens at build time and is done by downloading the `amd64` binary from the latest release to `/usr/bin/chezmoi`. 
