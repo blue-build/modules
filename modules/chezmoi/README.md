@@ -36,6 +36,14 @@ sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer
 
 To turn on lingering for a given user, run the following commmand with sudo:
 
+:::note
+By default, any systemd units in a user's namespace will run after the user logs in, and will close after the user closes their last session. 
+When you enable lingering for a user, that user's units will run at boot and will continue running even if the user has no active sessions.
+
+If your dotfiles only contain things used by humans, such as cosmetic settings and aliases, you shouldn't need this. 
+If you understand the above implications, and decide you need this feature, you can enable it with the following command, after installation:
+:::
+
 ```bash
 sudo loginctl enable-linger <username>`
 ```
