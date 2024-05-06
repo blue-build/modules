@@ -5,16 +5,16 @@ example: |
   modules:
     - type: chezmoi
       # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-      install_chezmoi: true # Optional - Default: true  - Expects type: boolean
+      install-chezmoi: true # Optional - Default: true  - Expects type: boolean
       # () Git repository to initialize
       repository: "https://example.org/user/dotfiles" # Required - Default: n/a  - Expects type: string
       # Enable the modules services globally for all users
-      enable_all_users: true # Optional - Default: true - Expects type: boolean
+      enable-all-users: true # Optional - Default: true - Expects type: boolean
       # Dotfiles will be updated with this interval
-      run_every: '1d' # Optional - Default: '1d' - Expects type: string
+      run-every: '1d' # Optional - Default: '1d' - Expects type: string
       # Dotfile updates will wait this long after a boot before running
-      wait_after_boot: '5m' # Optional - Default: '5m' - Expects type: string
+      wait-after-boot: '5m' # Optional - Default: '5m' - Expects type: string
       # Disable the service that initializes `repository` on users that are logged in or has linger enabled
-      disable_init: false # Optional - Default: false - Expects type: boolean
+      disable-init: false # Optional - Default: false - Expects type: boolean
       # Disable the timer that updates chezmoi with the interval set above
-      disable_update: false # Optional - Default: false - Expects type: boolean
+      disable-update: false # Optional - Default: false - Expects type: boolean

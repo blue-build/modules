@@ -16,7 +16,7 @@ if [[ $DEBUG ]]; then
 fi
 
 # If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
-INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install_chezmoi") # (boolean)
+INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install-chezmoi") # (boolean)
 if [[ -z $INSTALL_CHEZMOI || $INSTALL_CHEZMOI == "null" ]]; then
 	INSTALL_CHEZMOI=true
 fi
@@ -35,7 +35,7 @@ DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 #
 # To turn on lingering for a given user, run the following commmand with sudo:
 # 'sudo loginctl enable-linger <username>'
-ENABLE_ALL_USERS=$(echo "$1" | yq -I=0 ".enable_all_users") # (boolean)
+ENABLE_ALL_USERS=$(echo "$1" | yq -I=0 ".enable-all-users") # (boolean)
 if [[ -z $ENABLE_ALL_USERS || $ENABLE_ALL_USERS == "null" ]]; then
 	ENABLE_ALL_USERS=true
 fi
@@ -44,24 +44,24 @@ fi
 # This string is passed on directly to systemd's OnUnitInactiveSec. Complete syntax is described here:
 # https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#
 # Examples: '1d' (1 day - default), '6h' (6 hours), '10m' (10 minutes)
-RUN_EVERY=$(echo "$1" | yq -I=0 ".run_every") # (string)
+RUN_EVERY=$(echo "$1" | yq -I=0 ".run-every") # (string)
 if [[ -z $RUN_EVERY || $RUN_EVERY == "null" ]]; then
 	RUN_EVERY="1d"
 fi
 # chezmoi-update.service will also run this much time after the system has booted.
 # Same syntax as RUN_EVERY (default: '5m')
-WAIT_AFTER_BOOT=$(echo "$1" | yq -I=0 ".wait_after_boot") # (string)
+WAIT_AFTER_BOOT=$(echo "$1" | yq -I=0 ".wait-after-boot") # (string)
 if [[ -z $WAIT_AFTER_BOOT || $WAIT_AFTER_BOOT == "null" ]]; then
 	WAIT_AFTER_BOOT="5m"
 fi
 
 # If true, disables automatic initialization of chezmoi if no dotfile directory is found. (default: false)
-DISABLE_INIT=$(echo "$1" | yq -I=0 ".disable_init") # (boolean)
+DISABLE_INIT=$(echo "$1" | yq -I=0 ".disable-init") # (boolean)
 if [[ -z $DISABLE_INIT || $DISABLE_INIT == "null" ]]; then
 	DISABLE_INIT=false
 fi
 # If true, disables automatic activation of 'chezmoi-update.timer'. (default: false)
-DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable_update") # (boolean)
+DISABLE_UPDATE=$(echo "$1" | yq -I=0 ".disable-update") # (boolean)
 if [[ -z $DISABLE_UPDATE || $DISABLE_UPDATE == "null" ]]; then
 	DISABLE_UPDATE=false
 fi
