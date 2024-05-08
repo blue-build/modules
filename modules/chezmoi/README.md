@@ -11,7 +11,7 @@ The service will only run if `~/.local/share/chezmoi` does not exist.
 Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`)
 :::note
 The value of `repository` will be passed directly to `chezmoi init --apply ${repository}`.
-See the [`chezmoi init` documenation](https://www.chezmoi.io/reference/commands/init/) for detailed syntax.
+See the [`chezmoi init` documentation](https://www.chezmoi.io/reference/commands/init/) for detailed syntax.
 ::: 
 Set `disable_init` to `true` if you do not want to install the init service.
 
