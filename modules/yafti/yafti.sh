@@ -19,7 +19,7 @@ echo "Installing python3-pip and libadwaita"
 rpm-ostree install python3-pip libadwaita
 
 echo "Installing and enabling yafti"
-pip install --prefix=/usr yafti
+pip install --prefix=/usr yafti==0.8.0
 
 # If the profile.d directory doesn't exist, create it
 if [ ! -d "${PROFILED_DIR}" ]; then
