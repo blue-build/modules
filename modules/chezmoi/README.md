@@ -6,6 +6,15 @@ Each feature can be enabled or disabled individually.
 Installation of the `chezmoi` binary happens at build time and is done by downloading the `amd64` binary from the latest release to `/usr/bin/chezmoi`. 
 This can be disabled by setting `install` to false. (defaults: true)
 
+Choose how `chezmoi` handles changed files with `changed-file-policy`. 
+The following values are valid:
+`"skip"` Will not take any action if the file has changed from what is in your dotfiles repository. 
+This executes `chezmoi update --no-tty --keep-going` under the hood. 
+`"replace"` Will overwrite the file if it has changed from what is in your dotfiles repository.
+This executes `chezmoi update --no-tty --force` under the hood.
+
+See `chezmoi`s documentation for [`--no-tty`](https://www.chezmoi.io/reference/command-line-flags/global/#-no-tty), [`--keep-going`](https://www.chezmoi.io/reference/command-line-flags/global/#-k-keep-going) and [`--force`](https://www.chezmoi.io/reference/command-line-flags/global/#-force) for details.
+
 A systemd user service is installed that will initialize a `chezmoi` repository on chezmoi's default path (`~/.local/share/chezmoi`) for any user when it logs in, or at boot if it has lingering enabled.
 The service will only run if `~/.local/share/chezmoi` does not exist.
 Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`)
