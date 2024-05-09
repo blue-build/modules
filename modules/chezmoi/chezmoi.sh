@@ -10,7 +10,7 @@ set -euo pipefail
 # -u = Treat unset variables as errors. Useful for spotting typos.
 # -x = Show expanded input for conditional statements.
 DEBUG=false
-if [[ $DEBUG ]]; then
+if [[ $DEBUG == true ]]; then
 	echo "Running in debug mode. If you didn't enable this yourself, this is a bug."
 	set -vux
 fi
