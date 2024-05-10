@@ -9,7 +9,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     echo "Adding repositories"
     for REPO in "${REPOS[@]}"; do
         REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
-        wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
+        curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
     done
 fi
 
