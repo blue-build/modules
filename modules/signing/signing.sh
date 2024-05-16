@@ -26,7 +26,7 @@ if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
     cp "$MODULE_DIRECTORY/signing/policy.json" "$CONTAINER_DIR/policy.json"
 fi
 
-if ! [ -f "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub" ]; then
+if ! [ -f "/usr/etc/pki/containers/$IMAGE_REGISTRY.pub" ]; then
     cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_REGISTRY.pub"
 fi
 
