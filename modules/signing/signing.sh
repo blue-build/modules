@@ -27,16 +27,16 @@ if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
 fi
 
 if ! [ -f "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub" ]; then
-    cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub"
+    cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_REGISTRY.pub"
 fi
 
 POLICY_FILE="$CONTAINER_DIR/policy.json"
 
 yq -i -o=j '.transports.docker |=
-    {"'"$IMAGE_REGISTRY"'/'"$IMAGE_NAME"'": [
+    {"'"$IMAGE_REGISTRY"'": [
             {
                 "type": "sigstoreSigned",
-                "keyPath": "/usr/etc/pki/containers/'"$IMAGE_NAME_FILE"'.pub",
+                "keyPath": "/usr/etc/pki/containers/'"$IMAGE_REGISTRY"'.pub",
                 "signedIdentity": {
                     "type": "matchRepository"
                 }
