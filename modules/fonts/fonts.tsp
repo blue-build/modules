@@ -5,7 +5,7 @@ using TypeSpec.JsonSchema;
 model FontsModule {
     type: "fonts",
     fonts: {
-        "nerd-fonts": Array<string>,
-        "google-fonts": Array<string>
+        "nerd-fonts"?: Array<string>,
+        "google-fonts"?: Array<string>
     }
 }
