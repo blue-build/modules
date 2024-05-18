@@ -3,7 +3,7 @@ using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/default-flatpaks.json")
 model DefaultFlatpaksModule {
-    type: "default-flatpsk",
+    type: "default-flatpaks",
     notify?: boolean,
     system?: {
         "repo-url"?: string,
