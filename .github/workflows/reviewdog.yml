@@ -1,8 +1,6 @@
 name: reviewdog
 on: 
-  push:
   pull_request:
-  workflow_dispatch:
 
 jobs:
   shellcheck:
@@ -15,8 +13,3 @@ jobs:
         with:
           github_token: ${{ github.token }}
           reporter: github-pr-review
-      - name: shellcheck
-        uses: reviewdog/action-shellcheck@v1
-        with:
-          github_token: ${{ github.token }}
-          reporter: github-check
