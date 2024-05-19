@@ -34,6 +34,16 @@ fi
 get_yaml_array INSTALL '.install[]' "$1"
 get_yaml_array REMOVE '.remove[]' "$1"
 
+if [[ ${#INSTALL[@]} -gt 0 ]]; then
+    for PKG in "${INSTALL[@]}"; do
+        if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
+            echo "Installing directly from URL: ${PKG}"
+            rpm-ostree install "$PKG"
+            INSTALL=( "${INSTALL[@]/$PKG}" ) # delete URL from install array
+        fi
+    done
+fi
+
 # The installation is done with some wordsplitting hacks
 # because of errors when doing array destructuring at the installation step.
 # This is different from other ublue projects and could be investigated further.
