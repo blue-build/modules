@@ -24,10 +24,12 @@ These are general guidelines for writing official bash modules and their documen
 - If you want to insert another regular string as a suffix or prefix to the `"${variable_name}"`, you should do that in this format: `"prefix-${variable_name}-suffix"`
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
      -  You can also use `set -euxo pipefail` during debugging, where each executed command is printed. This should not be used in a published module. 
+  
+Using [Shellcheck](https://www.shellcheck.net/) in your editor is recommended.
 
 ### Documentation
 
-Every public module should have a `module.yml` ([reference](https://blue-build.org/reference/module/#moduleyml)) file for metadata and a `README.md` file for an in-depth description. 
+Every public module should have a `module.yml` (see below) file for metadata and a `README.md` file for an in-depth description. 
 
 For the documentation of the module in `README.md`, the following guidelines apply:
 - At the start of each _paragraph_, refer to the module using its name or with "the module", not "it" or "the script".
@@ -36,6 +38,31 @@ For the documentation of the module in `README.md`, the following guidelines app
 
 For the short module description (`shortdesc:`), the following guidelines apply:
 - The description should start with a phrase like "The glorb module reticulates splines" or "The tree module can be used to plant trees".
+
+### `module.yml`
+
+A `module.yml` is the metadata file for a public module, used on the website to generate module reference pages. May be used in future projects to showcase modules and supply some defaults for them.
+
+#### `name:`
+
+The name of the module, same as the name of the directory and script.
+
+#### `shortdesc:`
+
+A short description of the module, ideally not more than one sentence long. This is used in website metadata or anywhere a shorter module description is needed.
+
+#### `readme:`
+
+The URL to the raw contents of the module’s `README.md` in plain text, not HTML. The README may include a top-level heading for readability, but it will be stripped out in favor of `name:` when the README is ingested for the website.
+
+#### `typespec:`
+
+The URL to the raw contents of the module’s `<modulename>.tsp` [TypeSpec](https://typespec.io/) definition in plain text. This will be used for configuration validation in the editor and CLI, and for generating documentation for the module. Please document each configuration option carefully. 
+
+#### `example:`
+
+A YAML string of example configuration showcasing the configuration options available with inline documentation to describe them. Some of the configuration options may be commented out, with comments describing why one might enable them. The intention here is that the example would be a good place to copy-paste from to get started.
+
 
 ### Boot-time Modules
 > [!IMPORTANT]  
