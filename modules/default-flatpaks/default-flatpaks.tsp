@@ -10,13 +10,13 @@ model DefaultFlatpaksModule {
         "repo-name"?: string,
         "repo-title"?: string,
         install?: Array<string>,
-        remove?: Array<String>,
+        remove?: Array<string>,
     },
     user?: {
         "repo-url"?: string,
         "repo-name"?: string,
         "repo-title"?: string,
         install?: Array<string>,
-        remove?: Array<String>,
+        remove?: Array<string>,
     }
 }
