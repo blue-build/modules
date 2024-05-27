@@ -21,7 +21,7 @@ echo "Gnome version: ${GNOME_VER}"
 LEGACY=false
 
 # Legacy support for installing extensions, to retain compatibility with legacy configs
-if [[ ${#INSTALL[@]} -gt 0 ]] then
+if [[ ${#INSTALL[@]} -gt 0 ]]; then
   for EXTENSION in "${INSTALL[@]}"; do
       # If extension contains .v12 suffix at the end, than it's the legacy install entry
       # 12 number in .v12 is just an example, any integer after it is allowed
@@ -209,7 +209,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         echo "There is no gschema xml to remove, since extension doesn't have any settings"
       fi
       # Removing main extension files
-      if [[ -d "${EXT_FILES}" ]]
+      if [[ -d "${EXT_FILES}" ]]; then
         echo "Removing main extension files"
         rm -r "${EXT_FILES}"
       else
