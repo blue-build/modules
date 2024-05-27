@@ -224,4 +224,3 @@ fi
 echo "Compiling gschema to include extension schemas & to refresh the schema state"
 glib-compile-schemas "/usr/share/glib-2.0/schemas/" &>/dev/null
 
-echo "Finished the setup of gnome-extensions module"
