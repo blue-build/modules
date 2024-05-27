@@ -166,7 +166,6 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   done
 fi
 
-# Uninstall section goes here
 if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
   for UNINSTALL_EXT in "${UNINSTALL[@]}"; do
       # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
