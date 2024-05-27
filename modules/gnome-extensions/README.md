@@ -1,7 +1,7 @@
 # `gnome-extensions`
 
 :::caution
-Legacy configuration is still supported, but it is advised to migrate to new configuration, since it offers the benefit of automatic installation of latest Gnome extension with compatible Gnome version of the image. New configuration can be seen in "Example Configuration" section.
+The legacy configuration format, which uses a part of the extension download URL to declare extensions to install, is still supported. However, it is advised to migrate to new configuration, since it offers the benefits of a clearer configuration and automatic installation of the latest extension version compatible with the GNOME version in the image. The new configuration format is showcased below in detail.
 :::
 
 The `gnome-extensions` module can be used to install Gnome extensions inside system directory.  
