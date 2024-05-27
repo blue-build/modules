@@ -1,0 +1,10 @@
+[Unit]
+Description=Upgrade Brew packages
+After=local-fs.target
+After=network-online.target
+ConditionPathIsSymbolicLink=/home/linuxbrew/.linuxbrew/bin/brew
+
+[Service]
+# Override the user if different UID/User
+User=1000
+Type=ones
