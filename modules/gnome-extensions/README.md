@@ -1,31 +1,57 @@
 # `gnome-extensions`
 
-The `gnome-extensions` module can be used to install Gnome extensions inside system directory.
+:::caution
+Legacy configuration is still supported, but it is advised to migrate to new configuration, since it offers the benefit of automatic installation of latest Gnome extension with compatible Gnome version of the image. New configuration can be seen in "Example Configuration" section.
+:::
+
+The `gnome-extensions` module can be used to install Gnome extensions inside system directory.  
+It also supports uninstallation as well, for extensions which are not installed through OS package manager.
 
 This module is universally compatible with all distributions which ship Gnome, as it's not tied to specific distribution packaging format for installing extensions.
 
 Almost all Gnome extensions are compatible for installation.
 
 Thanks to https://extensions.gnome.org which provides releases of extensions as zips, it is very easy to maintain this module configuration.  
-The only maintenance is to bump the extension version when new Fedora/Gnome releases (around every 6 months).
 
 What does this module do?  
-- It parses the extension input from module recipe file, which is part of the download URL
-- It downloads the extension directly from https://extensions.gnome.org
+- It checks the current Gnome version of your image
+- It parses the extension name input from module recipe file
+- It processes the jsquery from https://extensions.gnome.org using the extension name input,  
+  which contains useful info about latest extension version compatible with Gnome version of your image 
+- Download archive URL is formed based on the info above  
 - Downloaded extension archive is then extracted to temporary directory
 - All of its extracted files are copied to the appropriate final directories  
   (`/usr/share/gnome-shell/extensions`, `/usr/share/glib-2.0/schemas`, & `/usr/share/locale`)
 - Gschema is finally compiled to include the copied extensions schemas to its database
 
+Uninstallation step is performed similarly, except it obviously removes files from the mentioned final directories.
+
 # Usage
 
+## Extension Installation
+
+By default, latest extension version compatible with Gnome version of your image, is installed.
+
 How to install extensions using the module:  
-1. Go to https://extensions.gnome.org
+1. Go to https://extensions.gnome.org or preferably [Extension Manager](https://github.com/mjakeman/extension-manager) application
 2. Search for the extension that you want to install and open its extension page
-3. Select the correct GNOME shell version & extension version from the dropdown
+3. If browsing through https://extensions.gnome.org, select the correct GNOME shell version, which matches the GNOME shell version of your image
    - The command `gnome-shell --version` can be used to get the GNOME version of a running system.
-4. When the download dialog for the extension comes up, copy everything but the `.shell-extension.zip` suffix from the filename into the `install:` array in this module's configuration.
+   If there is no GNOME shell version of the extension that matches the GNOME version of your image, that means that extension is not compatible
+4. Copy the extension name & input it in module recipe (it is case-sensitive, so be sure that you copied it correctly)
 
 An extension might need additional system dependencies in order to function.  
-In that case, you should install the required dependencies before the `gnome-extensions` module is ran.
+In that case, you should install the required dependencies before the `gnome-extensions` module is ran.  
 Information about the required dependencies (if any) are usually on the extension's page.  
+
+## Extension Uninstallation
+
+Extension uninstallation can be useful to uninstall extensions from the base image,  
+which are not installed through OS package manager (like extensions installed from `gnome-extensions` module).
+
+However, if extensions in the base image are installed through OS package manager, than they should be removed through it instead.
+
+How to uninstall extensions using the module:  
+1. Go to Gnome Extensions app, https://extensions.gnome.org/local/ or [Extension Manager](https://github.com/mjakeman/extension-manager) application
+2. List of installed system extensions should be presented
+3. Copy the extension name & input it in module recipe (it is case-sensitive, so be sure that you copied it correctly)
