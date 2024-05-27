@@ -184,8 +184,8 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
       # This is where uninstall step goes, above step is reused from install part
       EXT_FILES="/usr/share/gnome-shell/extensions/${EXT_UUID}"
       UNINSTALL_METADATA="${EXT_FILES}/metadata.json"
-      GETTEXT_DOMAIN=$(jq -I=0 ".gettext-domain" < "${UNINSTALL_METADATA}")
-      SETTINGS_SCHEMA=$(jq -I=0 ".settings-schema" < "${UNINSTALL_METADATA}")
+      GETTEXT_DOMAIN=$(jq ".gettext-domain" < "${UNINSTALL_METADATA}")
+      SETTINGS_SCHEMA=$(jq ".settings-schema" < "${UNINSTALL_METADATA}")
       LANGUAGE_LOCATION="/usr/share/locale"
       # If settings-schema YAML key exists, than use that, if it doesn't
       # Than substract the schema ID before @ symbol
