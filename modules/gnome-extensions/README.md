@@ -26,9 +26,9 @@ What does this module do?
 
 Uninstallation step is performed similarly, except it obviously removes files from the mentioned final directories.
 
-# Usage
+## Usage
 
-## Extension Installation
+### Extension Installation
 
 By default, latest extension version compatible with Gnome version of your image, is installed.
 
@@ -44,7 +44,7 @@ An extension might need additional system dependencies in order to function.
 In that case, you should install the required dependencies before the `gnome-extensions` module is ran.  
 Information about the required dependencies (if any) are usually on the extension's page.  
 
-## Extension Uninstallation
+### Extension Uninstallation
 
 Extension uninstallation can be useful to uninstall extensions from the base image,  
 which are not installed through OS package manager (like extensions installed from `gnome-extensions` module).
