@@ -10,9 +10,6 @@ The brew module installs Homebrew (Brew) on your system and ensures the package 
 
 ## Configuration Options
 
-### `install_brew` (optional: boolean, default: true)
-Determines whether Brew should be installed at build time. If set to `false`, Brew will not be installed.
-
 ### `packages` (required: list of strings)
 A list of Brew packages to be installed. This is a mandatory configuration and must be provided.
 
