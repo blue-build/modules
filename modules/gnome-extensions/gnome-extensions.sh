@@ -209,8 +209,14 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         echo "There is no gschema xml to remove, since extension doesn't have any settings"
       fi
       # Removing main extension files
-      echo "Removing main extension files"
-      rm -r "${EXT_FILES}"
+      if [[ -d "${EXT_FILES}" ]]
+        echo "Removing main extension files"
+        rm -r "${EXT_FILES}"
+      else
+        echo "ERROR: There are no main extension files to remove from the base image"
+        echo "       It is possible that the extension that you inputted is not actually installed"
+        exit 1
+      fi
       echo "----------------------------------UNINSTALLATION DONE----------------------------------"
   done    
 fi
