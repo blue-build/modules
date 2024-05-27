@@ -106,7 +106,7 @@ fi
 if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
       # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
-      WHITESPACE_HTML=$(echo "${INSTALL_EXT}" | sed 's/ /%20/g')
+      WHITESPACE_HTML=$(echo "${INSTALL_EXT// /%20}")
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
       QUERIED_EXT=$(echo "${URL_QUERY}" | yq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
       if [[ -z "${QUERIED_EXT}" ]]; then
@@ -171,7 +171,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
   for UNINSTALL_EXT in "${UNINSTALL[@]}"; do
       # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
       # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
-      WHITESPACE_HTML=$(echo "${UNINSTALL_EXT}" | sed 's/ /%20/g')
+      WHITESPACE_HTML=$(echo "${UNINSTALL_EXT// /%20}")
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
       QUERIED_EXT=$(echo "${URL_QUERY}" | yq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
       if [[ -z "${QUERIED_EXT}" ]]; then
