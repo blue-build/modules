@@ -52,9 +52,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       rm "${ARCHIVE_DIR}"
       # Read necessary info from metadata.json
       echo "Reading necessary info from metadata.json"
-      EXTENSION_NAME=$(jq '.name' < "${TMP_DIR}/metadata.json")
-      UUID=$(jq '.uuid' < "${TMP_DIR}/metadata.json")
-      EXT_GNOME_VER=$(jq '.shell-version[]' < "${TMP_DIR}/metadata.json")
+      EXTENSION_NAME=$(jq -r '.["name"]' < "${TMP_DIR}/metadata.json")
+      UUID=$(jq -r '.["uuid"]' < "${TMP_DIR}/metadata.json")
+      EXT_GNOME_VER=$(jq -r '.["shell-version"][]' < "${TMP_DIR}/metadata.json")
       # If extension does not have the important key in metadata.json,
       # inform the user & fail the build
       if [[ "${UUID}" == "null" ]]; then
@@ -115,10 +115,10 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         echo "       including the correct uppercase & lowercase characters"
         exit 1
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | jq ".uuid")
-      EXT_NAME=$(echo "${QUERIED_EXT}" | jq ".name")
+      EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
+      EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
       # Gets suitable extension version for Gnome version from the image
-      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[${GNOME_VER}].version")
+      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
       if [[ "${SUITABLE_VERSION}" == "null" ]]; then
         echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
         exit 1
@@ -179,13 +179,13 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         echo "       including the correct uppercase & lowercase characters"
         exit 1
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | jq ".uuid")
-      EXT_NAME=$(echo "${QUERIED_EXT}" | jq ".name")
+      EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
+      EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
       # This is where uninstall step goes, above step is reused from install part
       EXT_FILES="/usr/share/gnome-shell/extensions/${EXT_UUID}"
       UNINSTALL_METADATA="${EXT_FILES}/metadata.json"
-      GETTEXT_DOMAIN=$(jq ".gettext-domain" < "${UNINSTALL_METADATA}")
-      SETTINGS_SCHEMA=$(jq ".settings-schema" < "${UNINSTALL_METADATA}")
+      GETTEXT_DOMAIN=$(jq -r '.["gettext-domain"]' < "${UNINSTALL_METADATA}")
+      SETTINGS_SCHEMA=$(jq -r '.["settings-schema"]' < "${UNINSTALL_METADATA}")
       LANGUAGE_LOCATION="/usr/share/locale"
       # If settings-schema YAML key exists, than use that, if it doesn't
       # Than substract the schema ID before @ symbol
