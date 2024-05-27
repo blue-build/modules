@@ -52,9 +52,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       rm "${ARCHIVE_DIR}"
       # Read necessary info from metadata.json
       echo "Reading necessary info from metadata.json"
-      EXTENSION_NAME=$(yq '.name' < "${TMP_DIR}/metadata.json")
-      UUID=$(yq '.uuid' < "${TMP_DIR}/metadata.json")
-      EXT_GNOME_VER=$(yq '.shell-version[]' < "${TMP_DIR}/metadata.json")
+      EXTENSION_NAME=$(jq '.name' < "${TMP_DIR}/metadata.json")
+      UUID=$(jq '.uuid' < "${TMP_DIR}/metadata.json")
+      EXT_GNOME_VER=$(jq '.shell-version[]' < "${TMP_DIR}/metadata.json")
       # If extension does not have the important key in metadata.json,
       # inform the user & fail the build
       if [[ "${UUID}" == "null" ]]; then
@@ -108,17 +108,17 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
       WHITESPACE_HTML="${INSTALL_EXT// /%20}"
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
-      QUERIED_EXT=$(echo "${URL_QUERY}" | yq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
+      QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
       if [[ -z "${QUERIED_EXT}" ]]; then
         echo "ERROR: Extension '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
         echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
         echo "       including the correct uppercase & lowercase characters"
         exit 1
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | yq ".uuid")
-      EXT_NAME=$(echo "${QUERIED_EXT}" | yq ".name")
+      EXT_UUID=$(echo "${QUERIED_EXT}" | jq ".uuid")
+      EXT_NAME=$(echo "${QUERIED_EXT}" | jq ".name")
       # Gets suitable extension version for Gnome version from the image
-      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | yq ".shell_version_map[${GNOME_VER}].version")
+      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[${GNOME_VER}].version")
       if [[ "${SUITABLE_VERSION}" == "null" ]]; then
         echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
         exit 1
@@ -173,20 +173,20 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
       # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
       WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
-      QUERIED_EXT=$(echo "${URL_QUERY}" | yq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
+      QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
       if [[ -z "${QUERIED_EXT}" ]]; then
         echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
         echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
         echo "       including the correct uppercase & lowercase characters"
         exit 1
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | yq ".uuid")
-      EXT_NAME=$(echo "${QUERIED_EXT}" | yq ".name")
+      EXT_UUID=$(echo "${QUERIED_EXT}" | jq ".uuid")
+      EXT_NAME=$(echo "${QUERIED_EXT}" | jq ".name")
       # This is where uninstall step goes, above step is reused from install part
       EXT_FILES="/usr/share/gnome-shell/extensions/${EXT_UUID}"
       UNINSTALL_METADATA="${EXT_FILES}/metadata.json"
-      GETTEXT_DOMAIN=$(yq -I=0 ".gettext-domain" < "${UNINSTALL_METADATA}")
-      SETTINGS_SCHEMA=$(yq -I=0 ".settings-schema" < "${UNINSTALL_METADATA}")
+      GETTEXT_DOMAIN=$(jq -I=0 ".gettext-domain" < "${UNINSTALL_METADATA}")
+      SETTINGS_SCHEMA=$(jq -I=0 ".settings-schema" < "${UNINSTALL_METADATA}")
       LANGUAGE_LOCATION="/usr/share/locale"
       # If settings-schema YAML key exists, than use that, if it doesn't
       # Than substract the schema ID before @ symbol
