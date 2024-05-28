@@ -14,7 +14,9 @@ fi
 # Check if gcc is installed
 if ! command -v gcc &> /dev/null
 then
-    echo "Error: gcc could not be found. Include \"gcc\" in the list of packages to install with rpm-ostree"
+    echo "ERROR: \"gcc\" package could not be found."
+    echo "       Brew depends on \"gcc\" in order to function"
+    echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
     exit 1
 fi
 
