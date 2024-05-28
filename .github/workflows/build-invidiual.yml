@@ -53,7 +53,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             alias_tags+=("pr-${{ github.event.number }}-${{ matrix.module.name }}")
           elif [[ "${{ github.ref_name }}" == "main" ]]; then
-            alias_tags+=("${{ matrix.module.tags }")
+            alias_tags+=("${{ matrix.module.tags }}")
           fi
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
