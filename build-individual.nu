@@ -14,8 +14,8 @@ ls modules | each { |moduleDir|
 
         (docker build .
             -f ../../individual.Containerfile
-            --build-arg DIRECTORY=($moduleDir.name) 
-            --build-arg NAME=($moduleDir.name | path basename))
+            --build-arg $"DIRECTORY=($moduleDir.name)"
+            --build-arg $"NAME=($moduleDir.name | path basename)")
 
     } else { # module is versioned
         ls v*/ | each { |item|
