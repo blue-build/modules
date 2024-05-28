@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# Convince the installer that we are in CI
+touch /.dockerenv
+
 # Debugging
 DEBUG="${DEBUG:-false}"
 if [[ "${DEBUG}" == true ]]; then
@@ -51,9 +54,9 @@ mkdir -p /var/roothome
 
 # Always install Brew
 echo "Downloading and installing Brew..."
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh > /tmp/brew.sh
-chmod +x /tmp/brew.sh
-/tmp/brew.sh
+curl -Lo /tmp/brew-install https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+chmod +x /tmp/brew-install
+/tmp/brew-install
 
 # Move Brew installation and set ownership to default user (UID 1000)
 tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew/.linuxbrew
@@ -147,8 +150,13 @@ EOF
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completion.fish /usr/share/fish/vendor_conf.d/brew-fish-completion.fish
 cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completion.sh /etc/profile.d/brew-bash-completion.sh
 
-# Copy tmpfiles.d configuration file
-cp -r "${MODULE_DIRECTORY}"/brew/homebrew.conf /usr/lib/tmpfiles.d/homebrew.conf
+# Register path symlink
+# We do this via tmpfiles.d so that it is created by the live system.
+cat >/usr/lib/tmpfiles.d/homebrew.conf <<EOF
+d /var/lib/homebrew 0755 1000 1000 - -
+d /var/cache/homebrew 0755 1000 1000 - -
+d /var/home/linuxbrew 0755 1000 1000 - -
+EOF
 
 # Enable the setup service
 systemctl enable brew-setup.service
