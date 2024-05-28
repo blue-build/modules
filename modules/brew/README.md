@@ -39,7 +39,7 @@ If false, disables automatic activation of `brew-upgrade.timer`.
 Determines whether to apply nofile limits for Brew installations. When set to true, it increases the nofile limits to prevent certain packages from failing due to file limits. However, it's important to note that increasing nofile limits can have potential security implications. Defaults to false for security purposes.
 
 ### `brew-analytics` (optional: boolean, default: true)
-Determines whether to opt-out of Brew analytics. When set to true, analytics are disabled.
+Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
