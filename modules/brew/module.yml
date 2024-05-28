@@ -17,3 +17,5 @@ example: |
   # Auto-update and auto-upgrade Brew packages
   auto-update: true # Optional - Default: true - Expects type: boolean
   auto-upgrade: true # Optional - Default: true - Expects type: boolean
+  # Apply nofile limits for Brew installations
+  nofile-limits: false # Optional - Default: false - Expects type: boolean

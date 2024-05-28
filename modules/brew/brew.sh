@@ -11,6 +11,13 @@ if [[ "${DEBUG}" == true ]]; then
     set -x
 fi
 
+# Check if gcc is installed
+if ! command -v gcc &> /dev/null
+then
+    echo "Error: gcc could not be found. Include \"gcc\" in the list of packages to install with rpm-ostree"
+    exit 1
+fi
+
 # Module-specific directories and paths
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 
@@ -46,6 +53,11 @@ fi
 AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto_upgrade")
 if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
     AUTO_UPGRADE=true
+fi
+
+NOFILE_LIMITS=$(echo "${1}" | yq -I=0 ".nofile_limits")
+if [[ -z "${NOFILE_LIMITS}" || "${NOFILE_LIMITS}" == "null" ]]; then
+    NOFILE_LIMITS=false
 fi
 
 # Create necessary directories
@@ -172,6 +184,32 @@ if [[ "${AUTO_UPGRADE}" == true ]]; then
     systemctl enable brew-upgrade.timer
 else
     systemctl disable brew-upgrade.timer
+fi
+
+# Apply nofile limits if enabled
+if [[ "${NOFILE_LIMITS}" == true ]]; then
+    echo "Applying nofile limits..."
+    cat >/usr/etc/security/limits.d/30-brew-limits.conf > /dev/null <<EOF
+# This file sets the resource limits for users logged in via PAM,
+# more specifically, users logged in via SSH or tty (console).
+# Limits related to terminals in Wayland/Xorg sessions depend on a
+# change to /etc/systemd/user.conf.
+# This does not affect resource limits of the system services.
+# This file overrides defaults set in /etc/security/limits.conf
+
+* soft nofile 4096
+* hard nofile 524288
+EOF
+
+    cat >/usr/lib/systemd/system/system.conf.d/30-brew-limits.conf > /dev/null <<EOF
+[Manager]
+DefaultLimitNOFILE=4096:524288
+EOF
+
+    cat >/usr/lib/systemd/user/user.conf.d/30-brew-limits.conf > /dev/null <<EOF
+[Manager]
+DefaultLimitNOFILE=4096:524288
+EOF
 fi
 
 # Install specified Brew packages if any
