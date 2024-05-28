@@ -1,9 +1,6 @@
 name: brew
-
 shortdesc: The brew module installs Homebrew (Brew) at build time and ensures the package manager remains updated and maintained.
-
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/brew/README.md
-
 example: |
   type: brew
   # List of Brew packages to be installed
