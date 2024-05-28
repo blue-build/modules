@@ -11,9 +11,10 @@ ls modules | each { |moduleDir|
             directory: ($moduleDir.name)
             tags: ["latest", "v1"]
         }
-
+        
+        cd ../../
         (docker build .
-            -f ../../individual.Containerfile
+            -f ./individual.Containerfile
             --build-arg $"DIRECTORY=($moduleDir.name)"
             --build-arg $"NAME=($moduleDir.name | path basename)")
 
