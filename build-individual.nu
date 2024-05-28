@@ -13,7 +13,7 @@ ls modules | each { |moduleDir|
         }
 
         (docker build .
-            -f ../individual.Containerfile
+            -f ../../individual.Containerfile
             --build-arg DIRECTORY=($moduleDir.name) 
             --build-arg NAME=($moduleDir.name | path basename))
 
