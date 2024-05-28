@@ -1,6 +1,7 @@
-# Generate build matrix for GitHub Actions to build separate images for each module in the repo
+#!/usr/bin/env nu
+# build separate images for each module in the repo
 
-print (ls modules | each { |moduleDir|
+ls modules | each { |moduleDir|
     cd $moduleDir.name
 
     # module is unversioned
@@ -10,6 +11,12 @@ print (ls modules | each { |moduleDir|
             directory: ($moduleDir.name)
             tags: ["latest", "v1"]
         }
+
+        (docker build .
+            -f ../invididual.Containerfile
+            --build-arg DIRECTORY=($moduleDir.name) 
+            --build-arg NAME=($moduleDir.name | path basename))
+
     } else { # module is versioned
         ls v*/ | each { |item|
             if ($item.type == dir) {
@@ -21,5 +28,4 @@ print (ls modules | each { |moduleDir|
             }
         }
     }
-
-} | flatten name | to json --raw)
+}

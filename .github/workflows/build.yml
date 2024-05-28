@@ -12,8 +12,8 @@ env:
 
 jobs:
   push-ghcr:
-    name: Build and push image
-    runs-on: ubuntu-22.04
+    name: Build and push module repository
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write

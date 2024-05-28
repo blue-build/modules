@@ -1,6 +1,6 @@
 FROM scratch
 
-ARG directory
-ARG name
+ARG DIRECTORY
+ARG NAME
 
-COPY ${directory} /modules/${name}
+COPY ${DIRECTORY} /modules/${NAME}
