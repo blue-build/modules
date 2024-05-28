@@ -68,7 +68,7 @@ cp -r "$MODULE_DIRECTORY"/brew/brew-update.timer /usr/lib/systemd/system/brew-up
 cp -r "$MODULE_DIRECTORY"/brew/brew-upgrade.timer /usr/lib/systemd/system/brew-upgrade.timer
 
 # Copy shell configuration files
-cp -r "$MODULE_DIRECTORY"/brew/brew.fish /usr/share/fish/vendor_conf.d/brew.fish
+cp -r "$MODULE_DIRECTORY"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
 cp -r "$MODULE_DIRECTORY"/brew/brew-bash-completion.sh /etc/profile.d/brew-bash-completion.sh
 
 # Copy tmpfiles.d configuration file

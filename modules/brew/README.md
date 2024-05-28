@@ -5,7 +5,8 @@ The brew module installs Homebrew (Brew) on your system and ensures the package 
 ## Features
 - Installs Brew at build time.
 - Configures and installs specified Brew packages.
-- Sets up systemd services to update and upgrade Brew packages automatically.
+- Sets up systemd services to update Brew packages automatically.
+- Sets up systemd services to upgrade the Brew binary to the latest version.
 - Options to control the frequency of updates and upgrades.
 
 ## Configuration Options
@@ -25,12 +26,11 @@ Time delay after system boot before the first Brew update runs. The string is pa
 ### `wait_after_boot_upgrade` (optional: string, default: '30min')
 Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `auto_update` (optional: boolean, default: false)
+### `auto_update` (optional: boolean, default: true)
 If true, disables automatic activation of `brew-update.timer`.
 
-### `auto_upgrade` (optional: boolean, default: false)
+### `auto_upgrade` (optional: boolean, default: true)
 If true, disables automatic activation of `brew-upgrade.timer`.
 
 ## Development
-
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
