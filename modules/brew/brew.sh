@@ -60,12 +60,88 @@ tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew/.linuxbrew
 cp -R /home/linuxbrew /usr/share/homebrew
 chown -R 1000:1000 /usr/share/homebrew
 
-# Copy systemd service and timer files
-cp -r "${MODULE_DIRECTORY}"/brew/brew-setup.service /usr/lib/systemd/system/brew-setup.service
-cp -r "${MODULE_DIRECTORY}"/brew/brew-update.service /usr/lib/systemd/system/brew-update.service
-cp -r "${MODULE_DIRECTORY}"/brew/brew-upgrade.service /usr/lib/systemd/system/brew-upgrade.service
-cp -r "${MODULE_DIRECTORY}"/brew/brew-update.timer /usr/lib/systemd/system/brew-update.timer
-cp -r "${MODULE_DIRECTORY}"/brew/brew-upgrade.timer /usr/lib/systemd/system/brew-upgrade.timer
+# Write systemd service files dynamically
+cat >/usr/lib/systemd/system/brew-setup.service <<EOF
+[Unit]
+Description=Setup Brew
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=!/etc/.linuxbrew
+ConditionPathExists=!/var/home/linuxbrew/.linuxbrew
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mkdir -p /tmp/homebrew
+ExecStart=/usr/bin/tar --zstd -xvf /usr/share/homebrew.tar.zst -C /tmp/homebrew
+ExecStart=/usr/bin/cp -R -n /tmp/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
+ExecStart=/usr/bin/chown -R 1000:1000 /var/home/linuxbrew
+ExecStart=/usr/bin/rm -rf /tmp/homebrew
+ExecStart=/usr/bin/touch /etc/.linuxbrew
+
+[Install]
+WantedBy=default.target multi-user.target
+EOF
+
+cat >/usr/lib/systemd/system/brew-update.service <<EOF
+[Unit]
+Description=Auto update brew for mutable brew installs
+After=local-fs.target
+After=network-online.target
+ConditionPathIsSymbolicLink=/home/linuxbrew/.linuxbrew/bin/brew
+
+[Service]
+User=1000
+Type=oneshot
+Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
+Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
+ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew update"
+EOF
+
+cat >/usr/lib/systemd/system/brew-upgrade.service <<EOF
+[Unit]
+Description=Upgrade Brew packages
+After=local-fs.target
+After=network-online.target
+ConditionPathIsSymbolicLink=/home/linuxbrew/.linuxbrew/bin/brew
+
+[Service]
+User=1000
+Type=oneshot
+Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
+Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
+ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
+EOF
+
+# Write systemd timer files dynamically
+cat >/usr/lib/systemd/system/brew-update.timer <<EOF
+[Unit]
+Description=Timer for brew update for mutable brew
+Wants=network-online.target
+
+[Timer]
+OnBootSec=${WAIT_AFTER_BOOT_UPDATE}
+OnUnitInactiveSec=${UPDATE_INTERVAL}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+cat >/usr/lib/systemd/system/brew-upgrade.timer <<EOF
+[Unit]
+Description=Timer for brew upgrade for on image brew
+Wants=network-online.target
+
+[Timer]
+OnBootSec=${WAIT_AFTER_BOOT_UPGRADE}
+OnUnitInactiveSec=${UPGRADE_INTERVAL}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
 
 # Copy shell configuration files
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
@@ -77,14 +153,13 @@ cp -r "${MODULE_DIRECTORY}"/brew/homebrew.conf /usr/lib/tmpfiles.d/homebrew.conf
 # Enable the setup service
 systemctl enable brew-setup.service
 
-# Conditionally enable or disable update service based on configuration
+# Always enable or disable update and upgrade services for consistency
 if [[ "${AUTO_UPDATE}" == true ]]; then
     systemctl enable brew-update.timer
 else
     systemctl disable brew-update.timer
 fi
 
-# Conditionally enable or disable upgrade service based on configuration
 if [[ "${AUTO_UPGRADE}" == true ]]; then
     systemctl enable brew-upgrade.timer
 else
@@ -99,3 +174,4 @@ else
     echo "No Brew packages specified for installation."
 fi
 
+echo "Brew setup completed."
