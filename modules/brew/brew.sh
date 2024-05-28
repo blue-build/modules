@@ -144,7 +144,7 @@ WantedBy=timers.target
 EOF
 
 # Copy shell configuration files
-cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
+cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completion.fish /usr/share/fish/vendor_conf.d/brew-fish-completion.fish
 cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completion.sh /etc/profile.d/brew-bash-completion.sh
 
 # Copy tmpfiles.d configuration file
