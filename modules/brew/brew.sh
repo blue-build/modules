@@ -60,6 +60,11 @@ if [[ -z "${NOFILE_LIMITS}" || "${NOFILE_LIMITS}" == "null" ]]; then
     NOFILE_LIMITS=false
 fi
 
+BREW_ANALYTICS=$(echo "${1}" | yq -I=0 ".brew-analytics")
+if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
+    BREW_ANALYTICS=true
+fi
+
 # Create necessary directories
 mkdir -p /var/home
 mkdir -p /var/roothome
@@ -210,6 +215,12 @@ EOF
 [Manager]
 DefaultLimitNOFILE=4096:524288
 EOF
+fi
+
+# Disable homebrew analytics if the flag is set to false
+# like secureblue: https://github.com/secureblue/secureblue/blob/live/config/scripts/homebrewanalyticsoptout.sh
+if [[ "${BREW_ANALYTICS}" == false ]]; then
+    echo "HOMEBREW_NO_ANALYTICS=1" >> /usr/etc/environment
 fi
 
 # Install specified Brew packages if any
