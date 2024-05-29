@@ -27,37 +27,37 @@ MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 get_yaml_array PACKAGE_LIST '.packages[]' "${1}"
 
 # Configuration values
-UPDATE_INTERVAL=$(echo "${1}" | yq -I=0 ".update_interval")
+UPDATE_INTERVAL=$(echo "${1}" | yq -I=0 ".update-interval")
 if [[ -z "${UPDATE_INTERVAL}" || "${UPDATE_INTERVAL}" == "null" ]]; then
     UPDATE_INTERVAL="6h"
 fi
 
-UPGRADE_INTERVAL=$(echo "$1" | yq -I=0 ".upgrade_interval")
+UPGRADE_INTERVAL=$(echo "$1" | yq -I=0 ".upgrade-interval")
 if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-WAIT_AFTER_BOOT_UPDATE=$(echo "${1}" | yq -I=0 ".wait_after_boot_update")
+WAIT_AFTER_BOOT_UPDATE=$(echo "${1}" | yq -I=0 ".wait-after-boot-update")
 if [[ -z "${WAIT_AFTER_BOOT_UPDATE}" || "${WAIT_AFTER_BOOT_UPDATE}" == "null" ]]; then
     WAIT_AFTER_BOOT_UPDATE="10min"
 fi
 
-WAIT_AFTER_BOOT_UPGRADE=$(echo "${1}" | yq -I=0 ".wait_after_boot_upgrade")
+WAIT_AFTER_BOOT_UPGRADE=$(echo "${1}" | yq -I=0 ".wait-after-boot-upgrade")
 if [[ -z "${WAIT_AFTER_BOOT_UPGRADE}" || "${WAIT_AFTER_BOOT_UPGRADE}" == "null" ]]; then
     WAIT_AFTER_BOOT_UPGRADE="30min"
 fi
 
-AUTO_UPDATE=$(echo "${1}" | yq -I=0 ".auto_update")
+AUTO_UPDATE=$(echo "${1}" | yq -I=0 ".auto-update")
 if [[ -z "${AUTO_UPDATE}" || "${AUTO_UPDATE}" == "null" ]]; then
     AUTO_UPDATE=true
 fi
 
-AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto_upgrade")
+AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto-upgrade")
 if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
     AUTO_UPGRADE=true
 fi
 
-NOFILE_LIMITS=$(echo "${1}" | yq -I=0 ".nofile_limits")
+NOFILE_LIMITS=$(echo "${1}" | yq -I=0 ".nofile-limits")
 if [[ -z "${NOFILE_LIMITS}" || "${NOFILE_LIMITS}" == "null" ]]; then
     NOFILE_LIMITS=false
 fi
