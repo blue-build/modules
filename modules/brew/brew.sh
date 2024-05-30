@@ -105,7 +105,7 @@ EOF
 echo "Writing brew-update service"
 cat >/usr/lib/systemd/system/brew-update.service <<EOF
 [Unit]
-Description=Auto update brew for mutable brew installs
+Description=Auto-update Brew binary
 After=local-fs.target
 After=network-online.target
 ConditionPathIsSymbolicLink=/home/linuxbrew/.linuxbrew/bin/brew
@@ -122,7 +122,7 @@ EOF
 echo "Writing brew-upgrade service"
 cat >/usr/lib/systemd/system/brew-upgrade.service <<EOF
 [Unit]
-Description=Upgrade Brew packages
+Description=Auto-upgrade Brew packages
 After=local-fs.target
 After=network-online.target
 ConditionPathIsSymbolicLink=/home/linuxbrew/.linuxbrew/bin/brew
@@ -146,7 +146,7 @@ if [[ -n "${UPDATE_INTERVAL}" ]] && [[ "${UPDATE_INTERVAL}" != "6h" ]]; then
 fi
 cat >/usr/lib/systemd/system/brew-update.timer <<EOF
 [Unit]
-Description=Timer for brew update for mutable brew
+Description=Timer for updating Brew binary
 Wants=network-online.target
 
 [Timer]
@@ -167,7 +167,7 @@ if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
 fi
 cat >/usr/lib/systemd/system/brew-upgrade.timer <<EOF
 [Unit]
-Description=Timer for brew upgrade for on image brew
+Description=Timer for upgrading Brew packages
 Wants=network-online.target
 
 [Timer]
@@ -180,7 +180,7 @@ WantedBy=timers.target
 EOF
 
 # Copy shell configuration files
-echo "Copying brew bash & fish shell completions"
+echo "Copying Brew bash & fish shell completions"
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
 cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completions.sh /etc/profile.d/brew-bash-completions.sh
 
@@ -199,18 +199,18 @@ systemctl enable brew-setup.service
 
 # Always enable or disable update and upgrade services for consistency
 if [[ "${AUTO_UPDATE}" == true ]]; then
-    echo "Enabling auto-updates for brew packages"
+    echo "Enabling auto-updates for Brew binary"
     systemctl enable brew-update.timer
 else
-    echo "Disabling auto-updates for brew packages"
+    echo "Disabling auto-updates for Brew binary"
     systemctl disable brew-update.timer
 fi
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
-    echo "Enabling auto-upgrades for brew binary"
+    echo "Enabling auto-upgrades for Brew packages"
     systemctl enable brew-upgrade.timer
 else
-    echo "Disabling auto-upgrades for brew binary"
+    echo "Disabling auto-upgrades for Brew packages"
     systemctl disable brew-upgrade.timer
 fi
 
@@ -237,4 +237,4 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   fi
 fi
 
-echo "Brew setup completed."
+echo "Brew setup completed"
