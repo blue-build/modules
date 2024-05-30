@@ -11,9 +11,6 @@ The brew module installs Homebrew (Brew) on your system and ensures the package 
 
 ## Configuration Options
 
-### `packages` (required: list of strings)
-A list of Brew packages to be installed. This is a mandatory configuration and must be provided.
-
 ### `update-interval` (optional: string, default: '6h')
 Defines how often the Brew update service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
