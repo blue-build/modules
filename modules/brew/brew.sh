@@ -80,6 +80,7 @@ cp -R /home/linuxbrew /usr/share/homebrew
 chown -R 1000:1000 /usr/share/homebrew
 
 # Write systemd service files dynamically
+echo "Writing brew-setup service"
 cat >/usr/lib/systemd/system/brew-setup.service <<EOF
 [Unit]
 Description=Setup Brew
@@ -101,6 +102,7 @@ ExecStart=/usr/bin/touch /etc/.linuxbrew
 WantedBy=default.target multi-user.target
 EOF
 
+echo "Writing brew-update service"
 cat >/usr/lib/systemd/system/brew-update.service <<EOF
 [Unit]
 Description=Auto update brew for mutable brew installs
@@ -117,6 +119,7 @@ Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
 ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew update"
 EOF
 
+echo "Writing brew-upgrade service"
 cat >/usr/lib/systemd/system/brew-upgrade.service <<EOF
 [Unit]
 Description=Upgrade Brew packages
@@ -134,6 +137,13 @@ ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
 EOF
 
 # Write systemd timer files dynamically
+echo "Writing brew-update timer"
+if [[ -n "${WAIT_AFTER_BOOT_UPDATE}" ]] && [[ "${WAIT_AFTER_BOOT_UPDATE}" != "10min" ]]; then
+  echo "Applying custom 'wait-after-boot' value in ${WAIT_AFTER_BOOT_UPDATE} time interval for brew update timer"
+fi
+if [[ -n "${UPDATE_INTERVAL}" ]] && [[ "${UPDATE_INTERVAL}" != "6h" ]]; then
+  echo "Applying custom 'update-interval' value in ${UPDATE_INTERVAL} time interval for brew update timer"
+fi
 cat >/usr/lib/systemd/system/brew-update.timer <<EOF
 [Unit]
 Description=Timer for brew update for mutable brew
@@ -148,6 +158,13 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
+echo "Writing brew-upgrade timer"
+if [[ -n "${WAIT_AFTER_BOOT_UPGRADE}" ]] && [[ "${WAIT_AFTER_BOOT_UPGRADE}" != "30min" ]]; then
+  echo "Applying custom 'wait-after-boot' value in ${WAIT_AFTER_BOOT_UPGRADE} time interval for brew upgrade timer"
+fi
+if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
+  echo "Applying custom 'update-interval' value in ${UPGRADE_INTERVAL} time interval for brew upgrade timer"
+fi
 cat >/usr/lib/systemd/system/brew-upgrade.timer <<EOF
 [Unit]
 Description=Timer for brew upgrade for on image brew
@@ -163,11 +180,13 @@ WantedBy=timers.target
 EOF
 
 # Copy shell configuration files
+echo "Copying brew bash & fish shell completions"
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
 cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completions.sh /etc/profile.d/brew-bash-completions.sh
 
 # Register path symlink
 # We do this via tmpfiles.d so that it is created by the live system.
+echo "Writing brew tmpfiles.d configuration"
 cat >/usr/lib/tmpfiles.d/homebrew.conf <<EOF
 d /var/lib/homebrew 0755 1000 1000 - -
 d /var/cache/homebrew 0755 1000 1000 - -
@@ -175,18 +194,23 @@ d /var/home/linuxbrew 0755 1000 1000 - -
 EOF
 
 # Enable the setup service
+echo "Enabling brew-setup service"
 systemctl enable brew-setup.service
 
 # Always enable or disable update and upgrade services for consistency
 if [[ "${AUTO_UPDATE}" == true ]]; then
+    echo "Enabling auto-updates for brew packages"
     systemctl enable brew-update.timer
 else
+    echo "Disabling auto-upgrades for brew packages"
     systemctl disable brew-update.timer
 fi
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
+    echo "Enabling auto-upgrades for brew binary"
     systemctl enable brew-upgrade.timer
 else
+    echo "Disabling auto-upgrades for brew binary"
     systemctl disable brew-upgrade.timer
 fi
 
