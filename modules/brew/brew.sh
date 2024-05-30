@@ -139,10 +139,10 @@ EOF
 # Write systemd timer files dynamically
 echo "Writing brew-update timer"
 if [[ -n "${WAIT_AFTER_BOOT_UPDATE}" ]] && [[ "${WAIT_AFTER_BOOT_UPDATE}" != "10min" ]]; then
-  echo "Applying custom 'wait-after-boot' value in ${WAIT_AFTER_BOOT_UPDATE} time interval for brew update timer"
+  echo "Applying custom 'wait-after-boot' value in '${WAIT_AFTER_BOOT_UPDATE}' time interval for brew update timer"
 fi
 if [[ -n "${UPDATE_INTERVAL}" ]] && [[ "${UPDATE_INTERVAL}" != "6h" ]]; then
-  echo "Applying custom 'update-interval' value in ${UPDATE_INTERVAL} time interval for brew update timer"
+  echo "Applying custom 'update-interval' value in '${UPDATE_INTERVAL}' time interval for brew update timer"
 fi
 cat >/usr/lib/systemd/system/brew-update.timer <<EOF
 [Unit]
@@ -160,10 +160,10 @@ EOF
 
 echo "Writing brew-upgrade timer"
 if [[ -n "${WAIT_AFTER_BOOT_UPGRADE}" ]] && [[ "${WAIT_AFTER_BOOT_UPGRADE}" != "30min" ]]; then
-  echo "Applying custom 'wait-after-boot' value in ${WAIT_AFTER_BOOT_UPGRADE} time interval for brew upgrade timer"
+  echo "Applying custom 'wait-after-boot' value in '${WAIT_AFTER_BOOT_UPGRADE}' time interval for brew upgrade timer"
 fi
 if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
-  echo "Applying custom 'update-interval' value in ${UPGRADE_INTERVAL} time interval for brew upgrade timer"
+  echo "Applying custom 'upgrade-interval' value in '${UPGRADE_INTERVAL}' time interval for brew upgrade timer"
 fi
 cat >/usr/lib/systemd/system/brew-upgrade.timer <<EOF
 [Unit]
@@ -202,7 +202,7 @@ if [[ "${AUTO_UPDATE}" == true ]]; then
     echo "Enabling auto-updates for brew packages"
     systemctl enable brew-update.timer
 else
-    echo "Disabling auto-upgrades for brew packages"
+    echo "Disabling auto-updates for brew packages"
     systemctl disable brew-update.timer
 fi
 
