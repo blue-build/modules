@@ -4,7 +4,6 @@ The brew module installs Homebrew (Brew) on your system and ensures the package 
 
 ## Features
 - Installs Brew at build-time.
-- Configures and installs specified Brew packages.
 - Sets up systemd services to update Brew packages automatically.
 - Sets up systemd services to upgrade the Brew binary to the latest version.
 - Options to control the frequency of updates and upgrades.
