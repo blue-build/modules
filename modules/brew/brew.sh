@@ -225,7 +225,7 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   if [[ ! -f "/usr/etc/environment" ]]; then
     echo "" > "/usr/etc/environment" # touch fails for some reason, probably a bug with it
   fi  
-  CURRENT_HOMEBREW_CONFIG=$(cat "/usr/etc/environment" | grep -o "HOMEBREW_NO_ANALYTICS=0")
+  CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/usr/etc/environment")
   if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
     echo "Disabling Brew analytics"  
     sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/usr/etc/environment"
