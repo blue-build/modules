@@ -195,28 +195,7 @@ fi
 
 # Apply nofile limits if enabled
 if [[ "${NOFILE_LIMITS}" == true ]]; then
-    echo "Applying nofile limits..."
-    cat >/usr/etc/security/limits.d/30-brew-limits.conf > /dev/null <<EOF
-# This file sets the resource limits for users logged in via PAM,
-# more specifically, users logged in via SSH or tty (console).
-# Limits related to terminals in Wayland/Xorg sessions depend on a
-# change to /etc/systemd/user.conf.
-# This does not affect resource limits of the system services.
-# This file overrides defaults set in /etc/security/limits.conf
-
-* soft nofile 4096
-* hard nofile 524288
-EOF
-
-    cat >/usr/lib/systemd/system/system.conf.d/30-brew-limits.conf > /dev/null <<EOF
-[Manager]
-DefaultLimitNOFILE=4096:524288
-EOF
-
-    cat >/usr/lib/systemd/user/user.conf.d/30-brew-limits.conf > /dev/null <<EOF
-[Manager]
-DefaultLimitNOFILE=4096:524288
-EOF
+  source "${MODULE_DIRECTORY}"/brew/brew-nofile-limits-logic.sh
 fi
 
 # Disable homebrew analytics if the flag is set to false
