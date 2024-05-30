@@ -23,9 +23,6 @@ fi
 # Module-specific directories and paths
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 
-# Get list of brew packages to install
-get_yaml_array PACKAGE_LIST '.packages[]' "${1}"
-
 # Configuration values
 UPDATE_INTERVAL=$(echo "${1}" | yq -I=0 ".update-interval")
 if [[ -z "${UPDATE_INTERVAL}" || "${UPDATE_INTERVAL}" == "null" ]]; then
@@ -214,14 +211,6 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   elif [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=1" ]]; then
     echo "Brew analytics are already disabled!"
   fi
-fi
-
-# Install specified Brew packages if any
-if [[ "${#PACKAGE_LIST[@]}" -gt 0 ]]; then
-    echo "Installing specified Brew packages..."
-    su -c "/home/linuxbrew/.linuxbrew/bin/brew install ${PACKAGE_LIST[*]}" -s /bin/bash linuxbrew
-else
-    echo "No Brew packages specified for installation."
 fi
 
 echo "Brew setup completed."
