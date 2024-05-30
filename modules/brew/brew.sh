@@ -224,16 +224,22 @@ fi
 if [[ "${BREW_ANALYTICS}" == false ]]; then
   if [[ ! -f "/usr/etc/environment" ]]; then
     echo "" > "/usr/etc/environment" # touch fails for some reason, probably a bug with it
-  fi  
+  fi
+  CURRENT_ENVIRONMENT=$(cat "/usr/etc/environment")
   CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/usr/etc/environment")
-  if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
-    echo "Disabling Brew analytics"  
-    sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/usr/etc/environment"
-  elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
+  if [[ -n "${CURRENT_ENVIRONMENT}" ]]; then
+    if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
+      echo "Disabling Brew analytics"  
+      sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/usr/etc/environment"
+    elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
+      echo "Disabling Brew analytics"
+      echo "HOMEBREW_NO_ANALYTICS=1" >> "/usr/etc/environment"
+    elif [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=1" ]]; then
+      echo "Brew analytics are already disabled!"
+    fi
+  elif [[ -z "${CURRENT_ENVIRONMENT}" ]]; then
     echo "Disabling Brew analytics"
-    echo "HOMEBREW_NO_ANALYTICS=1" >> "/usr/etc/environment"
-  elif [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=1" ]]; then
-    echo "Brew analytics are already disabled!"
+    echo "HOMEBREW_NO_ANALYTICS=1" > "/usr/etc/environment"
   fi
 fi
 
