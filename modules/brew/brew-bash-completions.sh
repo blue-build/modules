@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # shellcheck shell=sh disable=SC1091,SC2039,SC2166
 
 # Check for interactive bash and that we haven't already been sourced.
