@@ -70,7 +70,7 @@ If false, disables automatic activation of `brew-upgrade.timer`.
 Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
 !!! warning
-    Please review the brew documentation carefully before modifying these settings.
+    Please review the Brew documentation carefully before modifying the settings below.
 
 ### `nofile-limits` (optional: boolean, default: false)
 Determines whether to apply nofile limits for Brew installations. When set to true, it increases the nofile limits to prevent certain packages from failing due to file limits. However, it's important to note that increasing nofile limits can have potential security implications. Defaults to false for security purposes.
