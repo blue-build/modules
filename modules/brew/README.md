@@ -46,8 +46,8 @@ The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system a
 - Empty file `/etc/.linuxbrew` is created, which indicates that brew-setup (installation) is successful & which allows setup to run again on next boot when removed
 
 **Rest of the setup:**
-- `brew-update` is runnning in specified time to update Brew binary to latest version
-- `brew-upgrade` is runnning in specified time to upgrade Brew packages to latest versions
+- `brew-update` runs at the specified time to update Brew to the latest version
+- `brew-upgrade` runs at the specified time to upgrade Brew packages
 
 ## Configuration Options
 
