@@ -2,8 +2,7 @@
 # shellcheck shell=bash disable=SC1091,SC2166	
 
 # Check for interactive bash and that we haven't already been sourced.
-if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BREW_BASH_COMPLETION-}" = x ]; then
-
+if [[ "${BASH_VERSION-}" != "" ]] && [[ "${PS1-}" != "" ]] && [[ "${BREW_BASH_COMPLETION-}" == "" ]]; then
     # Check for recent enough version of bash.
     if [ "${BASH_VERSINFO[0]}" -gt 4 ] ||
         [ "${BASH_VERSINFO[0]}" -eq 4 -a "${BASH_VERSINFO[1]}" -ge 2 ]; then
