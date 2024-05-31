@@ -8,6 +8,46 @@ The brew module installs [Homebrew (Brew)](https://brew.sh/) on your system and 
 - Sets up systemd services to upgrade Brew packages automatically.
 - Options to control the frequency of updates and upgrades.
 
+## How it works
+
+### Directory paths glossary:
+- `/home/` is a symlink to `/var/home/`  
+- `/root/` is a symlink to `/var/roothome/`
+
+### Build-time:
+
+- Directories `/home/` & `/root/` are created
+- Official brew installation script is downloaded & executed
+- Brew is extracted to `/home/linuxbrew/` by the official script (`/root/` is needed, since image builds are running as root)
+- Brew in `/home/linuxbrew/` is compressed in tar, copied to `/usr/share/homebrew/` & permissions to it are set to default user (UID 1000)
+- `brew-update` & `brew-upgrade` SystemD service timers are enabled (by default)
+- Brew bash & fish shell completions are copied to `/etc/profile.d/brew-bash-completions.sh` & `/usr/share/fish/vendor_conf.d/brew-fish-completions.fish`
+- `tmpfiles.d` configuration `homebrew.conf` is written with these directory locations:
+  - `/var/lib/homebrew/`
+  - `/var/cache/homebrew/`
+  - `/home/linuxbrew/`
+- `brew-setup` service is enabled
+
+### Boot-time:
+
+**`tmpfiles.d homebrew.conf`:**
+- This configuration is telling SystemD to: automatically create these necessary directories on every system boot if not available & to give them permissions of the default user (UID 1000):
+  - `/var/lib/homebrew/`
+  - `/var/cache/homebrew/`
+  - `/home/linuxbrew/`
+
+**`brew-setup`:**
+- `brew-setup` SystemD service checks if main directory used by Brew exists (`/home/linuxbrew/.linuxbrew/`)  
+  & if `brew-setup` state file exists (`/etc/.linuxbrew`)
+- If one of those paths don't exist, than Homebrew tar is extracted from `/usr/share/homebrew/homebrew.tar.zst` to `/tmp/homebrew/`
+- Extracted Homebrew is than copied from `/tmp/homebrew/` to `/home/linuxbrew/` & permissions to it are set to default user (UID 1000)
+- Temporary directory `/tmp/homebrew/` is removed
+- Empty file `/etc/.linuxbrew` is created, which indicates that brew-setup (installation) is successful & which allows setup to run again on next boot when removed
+
+**Rest of the setup:**
+- `brew-update` is runnning in specified time to update Brew binary to latest version
+- `brew-upgrade` is runnning in specified time to upgrade Brew packages to latest versions
+
 ## Configuration Options
 
 ### `update-interval` (optional: string, default: '6h')
@@ -43,39 +83,48 @@ Setting `DEBUG=true` inside `brew.sh` will enable additional output for debuggin
 ## Uninstallation
 
 When excluding `brew` module from the recipe, it's not enough to get it removed.  
-On booted system, it's also necessary to run the official `brew` uninstalation script & to delete folders created by tmpfiles.d.
+On booted system, it's also necessary to run the `brew` uninstalation script.
 
-This happens, because Brew installs itself in `/var/home/` by default, which is not possible to include or remove in the image, since it is considered as per-machine state directory (like whole `/var/` & its subdirectories).  
-But, we made it possible to install `brew` inside the image through a hack, by making `/var/roothome/` (`/root/` is a symlink to it) & tricking official Brew installation script that it's not run as root, while installing it there.  
-It is indeed mentioned in [`files` module documentation](https://blue-build.org/reference/modules/files/) that copying files to `/var/` is not possible in build-time, but we somehow managed to make it work in this case (big thanks to Bluefin maintainer [m2giles](https://github.com/m2Giles), who made this module possible).  
-As a consequence, automatic uninstallation by `rpm-ostree` is not possible, as explained in 1st sentence of this paragraph.
-
-Either local-user can execute this script manually or image-maintainer can make it automatic through systemd service.
+Either local-user can execute this script manually or image-maintainer can make it automatic through SystemD service.
 
 Uninstallation script:  
 ```
 #!/usr/bin/env bash
 
-# Official Brew uninstaller
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+# Remove Homebrew cache
+if [[ -d "${HOME}/cache/Homebrew/" ]]; then
+  echo "Removing '$HOME/cache/Homebrew/' directory"
+  rm -r "${HOME}/cache/Homebrew/"
+else
+  echo "'${HOME}/cache/Homebrew/' directory is already removed"
+fi
 
 # Remove folders created by tmpfiles.d
-if [[ -d "/var/lib/homebrew" ]]; then
-  echo "Removing /var/lib/homebrew/ directory"
-  sudo rm -r /var/lib/homebrew
+if [[ -d "/var/lib/homebrew/" ]]; then
+  echo "Removing '/var/lib/homebrew/' directory"
+  sudo rm -r "/var/lib/homebrew/"
 else
-  echo "/var/lib/homebrew/ directory is already removed"
+  echo "'/var/lib/homebrew/' directory is already removed"
 fi
-if [[ -d "/var/cache/homebrew" ]]; then
-  echo "Removing /var/cache/homebrew/ directory"
-  sudo rm -r /var/cache/homebrew
+if [[ -d "/var/cache/homebrew/" ]]; then
+  echo "Removing '/var/cache/homebrew/' directory"
+  sudo rm -r "/var/cache/homebrew/"
 else
-  echo "/var/cache/homebrew/ directory is already removed"
+  echo "'/var/cache/homebrew/' directory is already removed"
 fi
-if [[ -d "/var/home/linuxbrew" ]]; then
-  echo "Removing /var/home/homebrew/ directory"
-  sudo rm -r /var/home/linuxbrew
+## This is the main directory where brew is located
+if [[ -d "/var/home/linuxbrew/" ]]; then
+  echo "Removing '/var/home/homebrew/' directory"
+  sudo rm -r "/var/home/linuxbrew/"
 else
-  echo "/var/home/homebrew/ directory is already removed"
+  echo "'/var/home/homebrew/' directory is already removed"
+fi
+
+# Remove redundant brew-setup service state file
+if [[ -f "/etc/.linuxbrew" ]]; then
+  echo "Removing empty '/etc/.linuxbrew' file"
+  sudo rm "/etc/.linuxbrew"
+else
+  echo "'/etc/.linuxbrew' file is already removed"
 fi
 ```
