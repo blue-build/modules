@@ -17,8 +17,9 @@ The brew module installs [Homebrew (Brew)](https://brew.sh/) on your system and 
 ### Build-time:
 
 - Directories `/home/` & `/root/` are created
+- Empty `.dockerenv` file is created in the root of the image-builder, to convince official Brew installation script that we are **not** running as root
 - Official brew installation script is downloaded & executed
-- Brew is extracted to `/home/linuxbrew/` by the official script (`/root/` is needed, since image builds are running as root)
+- Brew is extracted to `/home/linuxbrew/` by the official script (`/root/` is needed, since image-builds are running as root)
 - Brew in `/home/linuxbrew/` is compressed in tar, copied to `/usr/share/homebrew/` & permissions to it are set to default user (UID 1000)
 - `brew-update` & `brew-upgrade` SystemD service timers are enabled (by default)
 - Brew bash & fish shell completions are copied to `/etc/profile.d/brew-bash-completions.sh` & `/usr/share/fish/vendor_conf.d/brew-fish-completions.fish`
@@ -102,20 +103,20 @@ fi
 # Remove folders created by tmpfiles.d
 if [[ -d "/var/lib/homebrew/" ]]; then
   echo "Removing '/var/lib/homebrew/' directory"
-  sudo rm -r "/var/lib/homebrew/"
+  sudo rm -rf "/var/lib/homebrew/"
 else
   echo "'/var/lib/homebrew/' directory is already removed"
 fi
 if [[ -d "/var/cache/homebrew/" ]]; then
   echo "Removing '/var/cache/homebrew/' directory"
-  sudo rm -r "/var/cache/homebrew/"
+  sudo rm -rf "/var/cache/homebrew/"
 else
   echo "'/var/cache/homebrew/' directory is already removed"
 fi
 ## This is the main directory where brew is located
 if [[ -d "/var/home/linuxbrew/" ]]; then
   echo "Removing '/var/home/homebrew/' directory"
-  sudo rm -r "/var/home/linuxbrew/"
+  sudo rm -rf "/var/home/linuxbrew/"
 else
   echo "'/var/home/homebrew/' directory is already removed"
 fi
@@ -123,8 +124,13 @@ fi
 # Remove redundant brew-setup service state file
 if [[ -f "/etc/.linuxbrew" ]]; then
   echo "Removing empty '/etc/.linuxbrew' file"
-  sudo rm "/etc/.linuxbrew"
+  sudo rm -f "/etc/.linuxbrew"
 else
   echo "'/etc/.linuxbrew' file is already removed"
 fi
 ```
+
+## Credits
+
+Thanks a lot to Bluefin custom image maintainer [m2giles](https://github.com/m2Giles), who made this entire module possible.  
+In fact, the module's logic of installing & updating/upgrading Brew is fully copied from him & Bluefin, we just made it easier & more convenient to use for BlueBuild users.
