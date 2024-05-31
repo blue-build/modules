@@ -83,10 +83,10 @@ Setting `DEBUG=true` inside `brew.sh` will enable additional output for debuggin
 
 ## Uninstallation
 
-When excluding `brew` module from the recipe, it's not enough to get it removed.  
-On booted system, it's also necessary to run the `brew` uninstalation script.
+Removing the `brew` module from the recipe is not enough to get it completely removed.   
+On a booted system, it's also necessary to run the `brew` uninstallation script.
 
-Either local-user can execute this script manually or image-maintainer can make it automatic through SystemD service.
+Either a local-user can execute this script manually or the image-maintainer may make it automatic through a custom systemd service.
 
 Uninstallation script:  
 ```bash
