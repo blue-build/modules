@@ -15,11 +15,11 @@ ls modules | each { |moduleDir|
         cd ../../
         (docker build .
             -f ./individual.Containerfile
-            ...($meta.tags | each { |tag| ["-t", $"modules/($meta.name):($tag)"] } | flatten)
+            ...($meta.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($meta.name):($tag)"] } | flatten)
             --build-arg $"DIRECTORY=($meta.directory)"
             --build-arg $"NAME=($meta.name)")
 
-        docker push --all-tags $"$env.REGISTRY/modules/($meta.name)"
+        docker push --all-tags $"($env.REGISTRY)/modules/($meta.name)"
 
     } else { # module is versioned
         ls v*/ | each { |item|
