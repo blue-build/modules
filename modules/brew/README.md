@@ -57,17 +57,17 @@ Defines how often the Brew update service should run. The string is passed direc
 ### `upgrade-interval` (optional: string, default: '8h')
 Defines how often the Brew upgrade service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `wait-after-boot-update` (optional: string, default: '10min')
-Time delay after system boot before the first Brew update runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
-
-### `wait-after-boot-upgrade` (optional: string, default: '30min')
-Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
-
 ### `auto-update` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-update.timer`.
 
+### `wait-after-boot-update` (optional: string, default: '10min')
+Time delay after system boot before the first Brew update runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
+
 ### `auto-upgrade` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-upgrade.timer`.
+
+### `wait-after-boot-upgrade` (optional: string, default: '30min')
+Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
 !!! warning
     Please review the brew documentation carefully before modifying these settings.
