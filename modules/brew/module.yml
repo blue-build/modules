@@ -3,17 +3,18 @@ shortdesc: The brew module installs Homebrew (Brew) at build time and ensures th
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/brew/README.md
 example: |
   type: brew
+  # Auto-update Brew binary
+  auto-update: true # Optional - Default: true - Expects type: boolean
   # Interval between Brew updates
   update-interval: '6h' # Optional - Default: '6h' - Expects type: string
+   # Time delay after boot before first Brew update
+  update-wait-after-boot: '10min' # Optional - Default: '10min' - Expects type: string 
+  # Auto-upgrade Brew packages
+  auto-upgrade: true # Optional - Default: true - Expects type: boolean    
   # Interval between Brew package upgrades
   upgrade-interval: '8h' # Optional - Default: '8h' - Expects type: string
-  # Time delay after boot before first Brew update
-  wait-after-boot-update: '10min' # Optional - Default: '10min' - Expects type: string
   # Time delay after boot before first Brew upgrade
-  wait-after-boot-upgrade: '30min' # Optional - Default: '30min' - Expects type: string
-  # Auto-update and auto-upgrade Brew packages
-  auto-update: true # Optional - Default: true - Expects type: boolean
-  auto-upgrade: true # Optional - Default: true - Expects type: boolean
+  upgrade-wait-after-boot: '30min' # Optional - Default: '30min' - Expects type: string
   # Apply nofile limits for Brew installations
   nofile-limits: false # Optional - Default: false - Expects type: boolean
   # Control Brew analytics
