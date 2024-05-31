@@ -24,9 +24,24 @@ fi
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 
 # Configuration values
+AUTO_UPDATE=$(echo "${1}" | yq -I=0 ".auto-update")
+if [[ -z "${AUTO_UPDATE}" || "${AUTO_UPDATE}" == "null" ]]; then
+    AUTO_UPDATE=true
+fi
+
 UPDATE_INTERVAL=$(echo "${1}" | yq -I=0 ".update-interval")
 if [[ -z "${UPDATE_INTERVAL}" || "${UPDATE_INTERVAL}" == "null" ]]; then
     UPDATE_INTERVAL="6h"
+fi
+
+UPDATE_WAIT_AFTER_BOOT=$(echo "${1}" | yq -I=0 ".update-wait-after-boot")
+if [[ -z "${UPDATE_WAIT_AFTER_BOOT}" || "${UPDATE_WAIT_AFTER_BOOT}" == "null" ]]; then
+    UPDATE_WAIT_AFTER_BOOT="10min"
+fi
+
+AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto-upgrade")
+if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
+    AUTO_UPGRADE=true
 fi
 
 UPGRADE_INTERVAL=$(echo "$1" | yq -I=0 ".upgrade-interval")
@@ -34,24 +49,9 @@ if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-WAIT_AFTER_BOOT_UPDATE=$(echo "${1}" | yq -I=0 ".wait-after-boot-update")
-if [[ -z "${WAIT_AFTER_BOOT_UPDATE}" || "${WAIT_AFTER_BOOT_UPDATE}" == "null" ]]; then
-    WAIT_AFTER_BOOT_UPDATE="10min"
-fi
-
-WAIT_AFTER_BOOT_UPGRADE=$(echo "${1}" | yq -I=0 ".wait-after-boot-upgrade")
-if [[ -z "${WAIT_AFTER_BOOT_UPGRADE}" || "${WAIT_AFTER_BOOT_UPGRADE}" == "null" ]]; then
-    WAIT_AFTER_BOOT_UPGRADE="30min"
-fi
-
-AUTO_UPDATE=$(echo "${1}" | yq -I=0 ".auto-update")
-if [[ -z "${AUTO_UPDATE}" || "${AUTO_UPDATE}" == "null" ]]; then
-    AUTO_UPDATE=true
-fi
-
-AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto-upgrade")
-if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
-    AUTO_UPGRADE=true
+UPGRADE_WAIT_AFTER_BOOT=$(echo "${1}" | yq -I=0 ".upgrade-wait-after-boot")
+if [[ -z "${UPGRADE_WAIT_AFTER_BOOT}" || "${UPGRADE_WAIT_AFTER_BOOT}" == "null" ]]; then
+    UPGRADE_WAIT_AFTER_BOOT="30min"
 fi
 
 NOFILE_LIMITS=$(echo "${1}" | yq -I=0 ".nofile-limits")
@@ -138,8 +138,8 @@ EOF
 
 # Write systemd timer files dynamically
 echo "Writing brew-update timer"
-if [[ -n "${WAIT_AFTER_BOOT_UPDATE}" ]] && [[ "${WAIT_AFTER_BOOT_UPDATE}" != "10min" ]]; then
-  echo "Applying custom 'wait-after-boot' value in '${WAIT_AFTER_BOOT_UPDATE}' time interval for brew update timer"
+if [[ -n "${UPDATE_WAIT_AFTER_BOOT}" ]] && [[ "${UPDATE_WAIT_AFTER_BOOT}" != "10min" ]]; then
+  echo "Applying custom 'wait-after-boot' value in '${UPDATE_WAIT_AFTER_BOOT}' time interval for brew update timer"
 fi
 if [[ -n "${UPDATE_INTERVAL}" ]] && [[ "${UPDATE_INTERVAL}" != "6h" ]]; then
   echo "Applying custom 'update-interval' value in '${UPDATE_INTERVAL}' time interval for brew update timer"
@@ -150,7 +150,7 @@ Description=Timer for updating Brew binary
 Wants=network-online.target
 
 [Timer]
-OnBootSec=${WAIT_AFTER_BOOT_UPDATE}
+OnBootSec=${UPDATE_WAIT_AFTER_BOOT}
 OnUnitInactiveSec=${UPDATE_INTERVAL}
 Persistent=true
 
@@ -159,8 +159,8 @@ WantedBy=timers.target
 EOF
 
 echo "Writing brew-upgrade timer"
-if [[ -n "${WAIT_AFTER_BOOT_UPGRADE}" ]] && [[ "${WAIT_AFTER_BOOT_UPGRADE}" != "30min" ]]; then
-  echo "Applying custom 'wait-after-boot' value in '${WAIT_AFTER_BOOT_UPGRADE}' time interval for brew upgrade timer"
+if [[ -n "${UPGRADE_WAIT_AFTER_BOOT}" ]] && [[ "${UPGRADE_WAIT_AFTER_BOOT}" != "30min" ]]; then
+  echo "Applying custom 'wait-after-boot' value in '${UPGRADE_WAIT_AFTER_BOOT}' time interval for brew upgrade timer"
 fi
 if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
   echo "Applying custom 'upgrade-interval' value in '${UPGRADE_INTERVAL}' time interval for brew upgrade timer"
@@ -171,7 +171,7 @@ Description=Timer for upgrading Brew packages
 Wants=network-online.target
 
 [Timer]
-OnBootSec=${WAIT_AFTER_BOOT_UPGRADE}
+OnBootSec=${UPGRADE_WAIT_AFTER_BOOT}
 OnUnitInactiveSec=${UPGRADE_INTERVAL}
 Persistent=true
 
