@@ -47,8 +47,8 @@ On booted system, it's also necessary to run the official `brew` uninstalation s
 
 This happens, because Brew installs itself in `/var/home/` by default, which is not possible to include or remove in the image, since it is considered as per-machine state directory (like whole `/var/` & its subdirectories).  
 But, we made it possible to install `brew` inside the image through a hack, by making `/var/roothome/` (`/root/` is a symlink to it) & tricking official Brew installation script that it's not run as root, while installing it there.  
-It is indeed mentioned in `files` module documentation that copying files to `/var/` is not possible in build-time, but we somehow managed to make it work in this case (big thanks to Bluefin maintainer [m2giles](https://github.com/m2Giles), who made this module possible).  
-As a consequence, automatic uninstallation by `rpm-ostree` is not possible, as explained in 1st sentence.
+It is indeed mentioned in [`files` module documentation](https://blue-build.org/reference/modules/files/) that copying files to `/var/` is not possible in build-time, but we somehow managed to make it work in this case (big thanks to Bluefin maintainer [m2giles](https://github.com/m2Giles), who made this module possible).  
+As a consequence, automatic uninstallation by `rpm-ostree` is not possible, as explained in 1st sentence of this paragraph.
 
 Either local-user can execute this script manually or image-maintainer can make it automatic through systemd service.
 
