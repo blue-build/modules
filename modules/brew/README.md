@@ -69,14 +69,14 @@ If false, disables automatic activation of `brew-upgrade.timer`.
 ### `wait-after-boot-upgrade` (optional: string, default: '30min')
 Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
+### `brew-analytics` (optional: boolean, default: true)
+Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
+
 !!! warning
     Please review the Brew documentation carefully before modifying the settings below.
 
 ### `nofile-limits` (optional: boolean, default: false)
 Determines whether to apply nofile limits for Brew installations. When set to true, it increases the nofile limits to prevent certain packages from failing due to file limits. However, it's important to note that increasing nofile limits can have potential security implications. Defaults to false for security purposes.
-
-### `brew-analytics` (optional: boolean, default: true)
-Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
