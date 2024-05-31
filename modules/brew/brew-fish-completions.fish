@@ -1,4 +1,4 @@
-#!/usr/bin/fish
+#!/usr/bin/env fish
 #shellcheck disable=all
 if status --is-interactive
     if [ -d /home/linuxbrew/.linuxbrew ]
