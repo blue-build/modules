@@ -179,6 +179,16 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
+# Apply brew shell environment only when shell is interactive
+# Fish already includes this fix in brew-fish-completions.sh
+# Officially, brew applies brew shell environment globally, which causes path conflicts between system & brew installed programs with same name.
+# Universal Blue images include this same fix
+if [[ ! -f "/usr/etc/profile.d/brew.sh" ]]; then
+  echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
+  echo "#!/usr/bin/env bash
+[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" > "/usr/etc/profile.d/brew.sh"
+fi
+
 # Copy shell configuration files
 echo "Copying Brew bash & fish shell completions"
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
