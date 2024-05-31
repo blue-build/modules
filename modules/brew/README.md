@@ -1,6 +1,6 @@
 # brew
 
-The brew module installs Homebrew (Brew) on your system and ensures the package manager remains updated and maintained. This module sets up systemd services to periodically update and upgrade the installed Brew packages.
+The brew module installs [Homebrew (Brew)](https://brew.sh/) on your system and ensures the package manager remains updated and maintained. This module sets up systemd services to periodically update and upgrade the installed Brew packages.
 
 ## Features
 - Installs Brew at build-time.
