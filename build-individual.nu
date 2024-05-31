@@ -14,15 +14,19 @@ let images = ls modules | each { |moduleDir|
             tags: ["latest", "v1"]
         }
     } else { # module is versioned
-        ls v*/ | each { |item|
-            if ($item.type == dir) {
+        let versioned = ls v*/
+            | get name | str substring 1.. | into int | sort # sort versions properly
+            | each {|version|
                 {
                     name: ($moduleDir.name | path basename)
-                    directory: $"($moduleDir.name)/($item.name)"
-                    tags: ["latest", ($item.name)]
+                    directory: $"($moduleDir.name)/v($version)"
+                    tags: [($"v($version)")]
                 }
-            }
         }
+        let latest = $versioned | last
+        ($versioned
+            | update (($versioned | length) - 1) # update the last / latest item in list
+            ($latest | update "tags" ($latest.tags | append "latest"))) # append "latest" to tags
     }
 } | flatten directory
 
