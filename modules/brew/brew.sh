@@ -183,6 +183,9 @@ EOF
 # Fish already includes this fix in brew-fish-completions.sh
 # Officially, brew applies brew shell environment globally, which causes path conflicts between system & brew installed programs with same name.
 # Universal Blue images include this same fix
+if [[ ! -d "/usr/etc/profile.d/" ]]; then
+  mkdir -p "/usr/etc/profile.d/"
+fi
 if [[ ! -f "/usr/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
   echo "#!/usr/bin/env bash
