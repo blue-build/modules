@@ -13,8 +13,8 @@ if [[ "${BASH_VERSION-}" != "" ]] && [[ "${PS1-}" != "" ]] && [[ "${BREW_BASH_CO
         fi
         if test -d /home/linuxbrew/.linuxbrew/etc/bash_completion.d; then
             for rc in /home/linuxbrew/.linuxbrew/etc/bash_completion.d/*; do
-                if test -r "$rc"; then
-                    . "$rc"
+                if test -r "${rc}"; then
+                    . "${rc}"
                 fi
             done
             unset rc
