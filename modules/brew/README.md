@@ -89,7 +89,7 @@ On booted system, it's also necessary to run the `brew` uninstalation script.
 Either local-user can execute this script manually or image-maintainer can make it automatic through SystemD service.
 
 Uninstallation script:  
-```
+```bash
 #!/usr/bin/env bash
 
 # Remove Homebrew cache
