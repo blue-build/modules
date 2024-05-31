@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck shell=sh disable=SC1091,SC2039,SC2166
+# shellcheck shell=bash disable=SC1091,SC2166	
 
 # Check for interactive bash and that we haven't already been sourced.
 if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BREW_BASH_COMPLETION-}" = x ]; then
