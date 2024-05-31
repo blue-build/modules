@@ -1,5 +1,6 @@
 #!/bin/sh
 # shellcheck shell=sh disable=SC1091,SC2039,SC2166
+# Completion is in sh to account for the zsh syntax & when zsh tries to source scripts from /etc/profiles
 
 # Check for interactive bash and that we haven't already been sourced.
 if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BREW_BASH_COMPLETION-}" = x ]; then
