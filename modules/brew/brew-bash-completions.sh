@@ -4,9 +4,9 @@
 # Check for interactive bash and that we haven't already been sourced.
 if [[ "${BASH_VERSION-}" != "" ]] && [[ "${PS1-}" != "" ]] && [[ "${BREW_BASH_COMPLETION-}" == "" ]]; then
     # Check for recent enough version of bash.
-    if [ "${BASH_VERSINFO[0]}" -gt 4 ] ||
-        [ "${BASH_VERSINFO[0]}" -eq 4 -a "${BASH_VERSINFO[1]}" -ge 2 ]; then
-        if [ -w /home/linuxbrew/.linuxbrew ]; then
+    if [[ "${BASH_VERSINFO[0]}" -gt 4 ]] ||
+        [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 2 ]]; then
+        if [[ -w /home/linuxbrew/.linuxbrew ]]; then
             if ! test -L /home/linuxbrew/.linuxbrew/etc/bash_completion.d/brew; then
                 /home/linuxbrew/.linuxbrew/bin/brew completions link > /dev/null
             fi
