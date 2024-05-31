@@ -39,3 +39,32 @@ Determines whether to opt-out of Brew analytics. When set to true, analytics are
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
+
+## Uninstallation
+
+When excluding `brew` module from the recipe, it's not enough to get it removed.  
+On booted system, it's also necessary to run the official `brew` uninstalation script & to delete folders created by tmpfiles.d.
+
+Either local-user can execute this script manually or image-maintainer can make it automatic through systemd service.
+
+Uninstallation script:  
+```
+#!/usr/bin/env bash
+
+# Official Brew uninstaller
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+
+# Remove folders created by tmpfiles.d
+if [[ -d "/var/lib/homebrew" ]]; then
+  echo "Removing /var/lib/homebrew directory"
+  sudo rm -r /var/lib/homebrew
+fi
+if [[ -d "/var/cache/homebrew" ]]; then
+  echo "Removing /var/cache/homebrew directory"
+  sudo rm -r /var/cache/homebrew
+fi
+if [[ -d "/var/home/linuxbrew" ]]; then
+  echo "Removing /var/home/homebrew directory"
+  sudo rm -r /var/home/linuxbrew
+fi
+```
