@@ -58,7 +58,7 @@ $images | par-each { |img|
     )
 
     print $"Signing image: ($env.REGISTRY)/modules/($img.name):($digest)"
-    cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name):($digest)"
+    cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name)@($digest)"
 
 }
 
