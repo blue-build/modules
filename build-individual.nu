@@ -25,7 +25,7 @@ let images = ls modules | each { |moduleDir|
         {
             name: ($moduleDir.name | path basename)
             directory: ($moduleDir.name)
-            tags: tags
+            tags: $tags
         }
 
     } else { # module is versioned
@@ -47,7 +47,7 @@ let images = ls modules | each { |moduleDir|
                 {
                     name: ($moduleDir.name | path basename)
                     directory: $"($moduleDir.name)/v($version)"
-                    tags: tags
+                    tags: $tags
                 }
         }
 
