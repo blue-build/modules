@@ -7,8 +7,8 @@ example: |
   install-chezmoi: true # Optional - Default: true  - Expects type: boolean
   # Git repository to initialize
   repository: "https://example.org/user/dotfiles" # Required - Default: n/a  - Expects type: string
-  # Enable the modules services globally for all users, if false users need to enable services manually
-  enable-all-users: true # Optional - Default: true - Expects type: boolean
+  # Whether to enable the modules services globally for all users, if false users need to enable services manually
+  all-users: true # Optional - Default: true - Expects type: boolean
   # Dotfiles will be updated with this interval
   run-every: '1d' # Optional - Default: '1d' - Expects type: string
   # Dotfile updates will wait this long after a boot before running

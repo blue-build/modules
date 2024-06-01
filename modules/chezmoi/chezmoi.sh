@@ -35,9 +35,9 @@ DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 #
 # To turn on lingering for a given user, run the following commmand with sudo:
 # 'sudo loginctl enable-linger <username>'
-ENABLE_ALL_USERS=$(echo "$1" | yq -I=0 ".enable-all-users") # (boolean)
-if [[ -z $ENABLE_ALL_USERS || $ENABLE_ALL_USERS == "null" ]]; then
-	ENABLE_ALL_USERS=true
+ALL_USERS=$(echo "$1" | yq -I=0 ".all-users") # (boolean)
+if [[ -z $ALL_USERS || $ALL_USERS == "null" ]]; then
+	ALL_USERS=true
 fi
 
 # chezmoi-update.service will run with this interval
@@ -159,13 +159,13 @@ fi
 
 # Enable services
 echo "Checking which services to enable"
-if [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == false ]]; then
+if [[ $ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == false ]]; then
 	echo "Enabling init timer and update service"
 	systemctl --global enable chezmoi-init.service chezmoi-update.timer
-elif [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == true && $DISABLE_UPDATE == false ]]; then
+elif [[ $ALL_USERS == true && $DISABLE_INIT == true && $DISABLE_UPDATE == false ]]; then
 	echo "Enabling update timer"
 	systemctl --global enable chezmoi-update.timer
-elif [[ $ENABLE_ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == true ]]; then
+elif [[ $ALL_USERS == true && $DISABLE_INIT == false && $DISABLE_UPDATE == true ]]; then
 	echo "Enabling init service"
 	systemctl --global enable chezmoi-init.service
 else

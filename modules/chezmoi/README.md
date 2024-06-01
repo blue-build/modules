@@ -28,7 +28,7 @@ Set `disable_init` to `true` if you do not want to install the init service.
 If `repository` is not set, and `disable_init` is false the module will fail, due to not being able to initialize the repository.
 :::
 
-Set `enable_all_users` to `false` if you want to install the update and initialization services, but do not want them enabled for all users.
+Set `all-users` to `false` if you want to install the update and initialization services, but do not want them enabled for all users.
 You can enable them manually instead when the system has been installed:
 
 To enable the services for a single user, run the following command as that user:
