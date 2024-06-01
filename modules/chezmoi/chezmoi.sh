@@ -15,12 +15,6 @@ if [[ $DEBUG == true ]]; then
 	set -vux
 fi
 
-# If true, downloads the chezmoi binary from the latest Github release and moves it to /usr/bin/. (default: true)
-INSTALL_CHEZMOI=$(echo "$1" | yq -I=0 ".install-chezmoi") # (boolean)
-if [[ -z $INSTALL_CHEZMOI || $INSTALL_CHEZMOI == "null" ]]; then
-	INSTALL_CHEZMOI=true
-fi
-
 # The repository with your chezmoi dotfiles. (default: null)
 DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 
@@ -91,7 +85,11 @@ if [[ (-z $DOTFILE_REPOSITORY || $DOTFILE_REPOSITORY == "null") && $DISABLE_INIT
 	exit 1
 fi
 
-if [[ $INSTALL_CHEZMOI == true ]]; then
+
+echo "Checking if /usr/bin/chezmoi exists"
+if [ -e /usr/bin/chezmoi ]; then
+	echo "chezmoi binary already exists, no need to redownload it"
+else
 	echo "Checking if curl is installed and executable at /usr/bin/curl"
 	if [ -x /usr/bin/curl ]; then
 		echo "Downloading chezmoi binary from the latest Github release"
@@ -103,9 +101,8 @@ if [[ $INSTALL_CHEZMOI == true ]]; then
 		echo "Please make sure curl is installed on the system you are building your image."
 		exit 1
 	fi
-else
-	echo "Skipping install of chezmoi binary"
 fi
+
 
 if [[ $DISABLE_INIT == false ]]; then
 	# Write the service to initialize Chezmoi, and insert the repo url in the file

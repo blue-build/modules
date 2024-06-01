@@ -3,8 +3,6 @@ shortdesc: The chezmoi module installs the latest chezmoi release at build time,
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/chezmoi/README.md
 example: |
   type: chezmoi
-  # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-  install-chezmoi: true # Optional - Default: true  - Expects type: boolean
   # Git repository to initialize
   repository: "https://example.org/user/dotfiles" # Required - Default: n/a  - Expects type: string
   # Whether to enable the modules services globally for all users, if false users need to enable services manually
