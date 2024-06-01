@@ -44,6 +44,8 @@ let images = ls modules | each { |moduleDir|
                         [$"pr-($env.GH_PR_NUMBER)", $"v($version)-pr-($env.GH_PR_NUMBER)"]
                     }
                 )
+                print $"(ansi cyan)Generated tags:(ansi reset) ($tags | str join ' ')"
+                
                 {
                     name: ($moduleDir.name | path basename)
                     directory: $"($moduleDir.name)/v($version)"
