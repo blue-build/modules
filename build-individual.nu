@@ -57,7 +57,7 @@ $images | par-each { |img|
             | split row "\n"  | last | split row " " | get 2 # parse push output to get digest for signing
     )
 
-    print $"(ansi cyan)Signing image: ($env.REGISTRY)/modules/($img.name):($digest)"
+    print $"(ansi cyan)Signing image: ($env.REGISTRY)/modules/($img.name)@($digest)"
     cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name)@($digest)"
 
 }
