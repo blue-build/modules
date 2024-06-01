@@ -89,7 +89,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
         if [[ "${INSTALL_EXT}" == "Fly-Pie" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"        
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
-          install -D -p -m 0644 "${TMP_DIR}/schemas/gschemas.compiled" "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
+          glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
         else
           # Regular schema installation
           install -d -m 0755 "/usr/share/glib-2.0/schemas/"
@@ -164,7 +164,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         if [[ "${INSTALL_EXT}" == "Fly-Pie" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
-          install -D -p -m 0644 "${TMP_DIR}/schemas/gschemas.compiled" "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
+          glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
         else
           # Regular schema installation
           install -d -m 0755 "/usr/share/glib-2.0/schemas/"
