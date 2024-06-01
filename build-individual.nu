@@ -42,24 +42,24 @@ let images = ls modules | each { |moduleDir|
 
 print $"(ansi green_bold)Starting image build"
 
-$images | par-each --keep-order { |img|
-    do --capture-errors {
-        print $"(ansi cyan)Building image: modules/($img.name)"
-        (docker build .
-            -f ./individual.Containerfile
-            ...($img.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($img.name):($tag)"] } | flatten)
-            --build-arg $"DIRECTORY=($img.directory)"
-            --build-arg $"NAME=($img.name)")
+$images | par-each { |img|
 
-        print $"(ansi cyan)Pushing image: ($env.REGISTRY)/modules/($img.name)"
-        let digest = (
-            docker push --all-tags $"($env.REGISTRY)/modules/($img.name)"
-                | split row "\n"  | last | split row " " | get 2 # parse push output to get digest for signing
-        )
+    print $"(ansi cyan)Building image: modules/($img.name)"
+    (docker build .
+        -f ./individual.Containerfile
+        ...($img.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($img.name):($tag)"] } | flatten)
+        --build-arg $"DIRECTORY=($img.directory)"
+        --build-arg $"NAME=($img.name)")
 
-        print $"(ansi cyan)Signing image: ($env.REGISTRY)/modules/($img.name)@($digest)"
-        cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name)@($digest)"
-    }
+    print $"(ansi cyan)Pushing image: ($env.REGISTRY)/modules/($img.name)"
+    let digest = (
+        docker push --all-tags $"($env.REGISTRY)/modules/($img.name)"
+            | split row "\n"  | last | split row " " | get 2 # parse push output to get digest for signing
+    )
+
+    print $"(ansi cyan)Signing image: ($env.REGISTRY)/modules/($img.name)@($digest)"
+    cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name)@($digest)"
+
 }
 
 print $"(ansi green_bold)DONE!"
