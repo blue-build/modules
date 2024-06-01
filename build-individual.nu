@@ -11,10 +11,21 @@ let images = ls modules | each { |moduleDir|
 
         print $"(ansi cyan)Found unversioned module: ($moduleDir.name)"
 
+        let tags = (
+            if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
+                ["latest", "v1"]
+            } else if ($env.GH_EVENT_NAME != "pull_request") {
+                [$env.GH_BRANCH, $"v1-($env.GH_BRANCH)"]
+            } else {
+                [$"pr-($env.GH_PR_NUMBER)", $"v1-pr-($env.GH_PR_NUMBER)"]
+            }
+        )
+        print $"(ansi cyan)Generated tags:(ansi reset) ($tags | str join ' ')"
+
         {
             name: ($moduleDir.name | path basename)
             directory: ($moduleDir.name)
-            tags: ["latest", "v1"]
+            tags: tags
         }
 
     } else { # module is versioned
@@ -24,17 +35,35 @@ let images = ls modules | each { |moduleDir|
         let versioned = ls v*/
             | get name | str substring 1.. | into int | sort # sort versions properly
             | each {|version|
+                let tags = (
+                    if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
+                        ["latest", $"v($version)"]
+                    } else if ($env.GH_EVENT_NAME != "pull_request") {
+                        [$env.GH_BRANCH, $"v($version)-($env.GH_BRANCH)"]
+                    } else {
+                        [$"pr-($env.GH_PR_NUMBER)", $"v($version)-pr-($env.GH_PR_NUMBER)"]
+                    }
+                )
                 {
                     name: ($moduleDir.name | path basename)
                     directory: $"($moduleDir.name)/v($version)"
-                    tags: [($"v($version)")]
+                    tags: tags
                 }
         }
 
+        let latest_tag = (
+            if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
+                "latest"
+            } else if ($env.GH_EVENT_NAME != "pull_request") {
+                $env.GH_BRANCH
+            } else {
+                $"pr-($env.GH_PR_NUMBER)"
+            }
+        )
         let latest = ($versioned | last)
         ($versioned
             | update (($versioned | length) - 1) # update the last / latest item in list
-            ($latest | update "tags" ($latest.tags | append "latest")) # append "latest" to tags
+            ($latest | update "tags" ($latest.tags | append latest_tag)) # append tag which should only be given to the latest version
         )
 
     }
