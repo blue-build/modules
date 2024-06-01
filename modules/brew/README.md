@@ -74,8 +74,7 @@ Time delay after system boot before the first Brew package upgrade runs. The str
 ### `brew-analytics` (optional: boolean, default: true)
 Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
 
-!!! warning
-    Please review the Brew documentation carefully before modifying the settings above.
+:::caution Please review the Brew documentation carefully before modifying the settings above. :::
 
 ### `nofile-limits` (optional: boolean, default: false)
 Determines whether to apply nofile limits for Brew installations. When set to true, it increases the nofile limits to prevent certain packages from failing due to file limits. However, it's important to note that increasing nofile limits can have potential security implications. Defaults to false for security purposes.
