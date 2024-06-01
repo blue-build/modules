@@ -22,10 +22,10 @@ Set `repository` to the URL of your dotfiles repository. (eg. `repository: https
 The value of `repository` will be passed directly to `chezmoi init --apply ${repository}`.
 See the [`chezmoi init` documentation](https://www.chezmoi.io/reference/commands/init/) for detailed syntax.
 ::: 
-Set `disable_init` to `true` if you do not want to install the init service.
+Set `disable-init` to `true` if you do not want to install the init service.
 
 :::caution
-If `repository` is not set, and `disable_init` is false the module will fail, due to not being able to initialize the repository.
+If `repository` is not set, and `disable-init` is false the module will fail, due to not being able to initialize the repository.
 :::
 
 Set `all-users` to `false` if you want to install the update and initialization services, but do not want them enabled for all users.
@@ -57,18 +57,18 @@ If you understand the above implications, and decide you need this feature, you 
 sudo loginctl enable-linger <username>`
 ```
 
-You can configure the interval between updates of your dotfiles by setting the value of `run_every`.
+You can configure the interval between updates of your dotfiles by setting the value of `run-every`.
 The string is passed directly to OnUnitInactiveSec. (default: '1d')
 See [`systemd.time` documenation](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html) for detailed syntax.
 Examples: '1d' (1 day - default), '6h' (6 hours), '10m' (10 minutes)
 
-Likewise, `wait_after_boot` configures the delay between the system booting and the update service starting.
-This follows the same syntax as `run_every`. (default: '5m')
+Likewise, `wait-after-boot` configures the delay between the system booting and the update service starting.
+This follows the same syntax as `run-every`. (default: '5m')
 
-The installation of the initialization service and the update service can be disabled separately by setting `disable_init` and/or `disable_update` to `true`. (Both default: false)
+The installation of the initialization service and the update service can be disabled separately by setting `disable-init` and/or `disable-update` to `true`. (Both default: false)
 
 :::caution
-Note that this will skip the installation of the services completely. If you want them installed but disabled, see `enable_all_users` instead.
+Note that this will skip the installation of the services completely. If you want them installed but disabled, see `all-users` instead.
 :::
 
 ## Development
