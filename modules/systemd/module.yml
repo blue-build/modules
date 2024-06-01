@@ -1,6 +1,7 @@
 name: systemd
 shortdesc: The systemd module streamlines the management of systemd units during image building.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/113-feat-create-json-schemas-for-module-configuration/modules/systemd/systemd.tsp
 example: |
   type: systemd
   system:
