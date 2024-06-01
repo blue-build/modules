@@ -60,18 +60,18 @@ if [[ -z $DISABLE_UPDATE || $DISABLE_UPDATE == "null" ]]; then
 	DISABLE_UPDATE=false
 fi
 
-# Determines how chezmoi handles duplicate files. (default: "skip")
+# Determines how chezmoi handles conflicting files. (default: "skip")
 # "skip" will not replace files that have changed.
 # "replace" will overwrite all files that have changed.
-CHANGED_FILE_POLICY=$(echo "$1" | yq -I=0 ".changed-file-policy") # (string)
-if [[ -z $CHANGED_FILE_POLICY || $CHANGED_FILE_POLICY == "null" ]]; then
-	CHANGED_FILE_POLICY="skip"
+FILE_CONFLICT_POLICY=$(echo "$1" | yq -I=0 ".file-conflict-policy") # (string)
+if [[ -z $FILE_CONFLICT_POLICY || $FILE_CONFLICT_POLICY == "null" ]]; then
+	FILE_CONFLICT_POLICY="skip"
 fi
 
-if [[ $CHANGED_FILE_POLICY == "skip" ]]; then
-	CHANGED_FILE_POLICY_FLAGS="--no-tty --keep-going"
-elif [[ $CHANGED_FILE_POLICY == "replace" ]]; then
-	CHANGED_FILE_POLICY_FLAGS="--no-tty --force"
+if [[ $FILE_CONFLICT_POLICY == "skip" ]]; then
+	FILE_CONFLICT_POLICY_FLAGS="--no-tty --keep-going"
+elif [[ $FILE_CONFLICT_POLICY == "replace" ]]; then
+	FILE_CONFLICT_POLICY_FLAGS="--no-tty --force"
 else
 	echo "ERROR: 'duplicate-file-policy' has an invalid value."
 	echo "Only \"skip\" or \"replace\" are acceptable values"
@@ -132,7 +132,7 @@ if [[ $DISABLE_UPDATE == false ]]; then
   Description=Chezmoi Update
 
   [Service]
-  ExecStart=/usr/bin/chezmoi update ${CHANGED_FILE_POLICY_FLAGS}
+  ExecStart=/usr/bin/chezmoi update ${FILE_CONFLICT_POLICY_FLAGS}
   Type=oneshot
 EOF
 

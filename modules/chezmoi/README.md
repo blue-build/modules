@@ -6,7 +6,7 @@ Each feature can be enabled or disabled individually.
 Installation of the `chezmoi` binary happens at build time and is done by downloading the `amd64` binary from the latest release to `/usr/bin/chezmoi`. 
 This can be disabled by setting `install` to false. (defaults: true)
 
-Choose how `chezmoi` handles changed files with `changed-file-policy`. 
+Choose how `chezmoi` handles conflicting files with `file-conflict-policy`. 
 The following values are valid:
 `"skip"` Will not take any action if the file has changed from what is in your dotfiles repository. 
 This executes `chezmoi update --no-tty --keep-going` under the hood. 

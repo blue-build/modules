@@ -15,6 +15,6 @@ example: |
   disable-init: false # Optional - Default: false - Expects type: boolean
   # Disable the timer that updates chezmoi with the interval set above
   disable-update: false # Optional - Default: false - Expects type: boolean
-  # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
-  changed-file-policy: "skip" # Optional - Default: "skip" - Expects type: string
+  # What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace"
+  file-conflict-policy: "skip" # Optional - Default: "skip" - Expects type: string
 
