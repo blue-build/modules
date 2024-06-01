@@ -37,15 +37,15 @@ let images = ls modules | each { |moduleDir|
             | each {|version|
                 let tags = (
                     if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
-                        ["latest", $"v($version)"]
+                        [$"v($version)"]
                     } else if ($env.GH_EVENT_NAME != "pull_request") {
-                        [$env.GH_BRANCH, $"v($version)-($env.GH_BRANCH)"]
+                        [$"v($version)-($env.GH_BRANCH)"]
                     } else {
-                        [$"pr-($env.GH_PR_NUMBER)", $"v($version)-pr-($env.GH_PR_NUMBER)"]
+                        [$"v($version)-pr-($env.GH_PR_NUMBER)"]
                     }
                 )
                 print $"(ansi cyan)Generated tags:(ansi reset) ($tags | str join ' ')"
-                
+
                 {
                     name: ($moduleDir.name | path basename)
                     directory: $"($moduleDir.name)/v($version)"
