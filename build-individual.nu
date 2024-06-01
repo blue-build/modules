@@ -9,7 +9,7 @@ let images = ls modules | each { |moduleDir|
     # module is unversioned
     if ($"($moduleDir.name | path basename).sh" | path exists) {
 
-        print $"(ansi cyan)Found unversioned module: ($moduleDir.name)"
+        print $"(ansi cyan)Found(ansi reset) (ansi cyan_bold)versioned(ansi reset) (ansi cyan)module:(ansi reset) ($moduleDir.name | path basename)"
 
         let tags = (
             if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
@@ -30,7 +30,7 @@ let images = ls modules | each { |moduleDir|
 
     } else { # module is versioned
 
-        print $"(ansi cyan)Found versioned module: ($moduleDir.name)"
+        print $"(ansi cyan)Found(ansi reset) (ansi blue_bold)versioned(ansi reset) (ansi cyan)module:(ansi reset) ($moduleDir.name | path basename)"
 
         let versioned = ls v*/
             | get name | str substring 1.. | into int | sort # sort versions properly
@@ -62,6 +62,7 @@ let images = ls modules | each { |moduleDir|
                 $"pr-($env.GH_PR_NUMBER)"
             }
         )
+        print $"(ansi cyan)Generated extra tag for latest image:(ansi reset) ($latest_tag)"
         let latest = ($versioned | last)
         ($versioned
             | update (($versioned | length) - 1) # update the last / latest item in list
@@ -78,7 +79,7 @@ $images | par-each { |img|
     print $"(ansi cyan)Building image: modules/($img.name)"
     (docker build .
         -f ./individual.Containerfile
-        ...($img.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($img.name):($tag)"] } | flatten)
+        ...($img.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($img.name):($tag)"] } | flatten) # generate and spread list of tags
         --build-arg $"DIRECTORY=($img.directory)"
         --build-arg $"NAME=($img.name)")
 
