@@ -22,8 +22,7 @@ The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system a
 - Brew is extracted to `/home/linuxbrew/` by the official script (`/root/` is needed, since image-builds are running as root)
 - Brew in `/home/linuxbrew/` is compressed in tar, copied to `/usr/share/homebrew/` & permissions to it are set to default user (UID 1000)
 - `brew-update` & `brew-upgrade` SystemD service timers are enabled (by default)
-- Applied fix for program path conflict between system & brew packages with same name  
-  by exporting Brew path to shell environment when interactive shell is used only, unlike offical Homebrew way of exporting it globally (`/etc/profile.d/brew.sh`)
+- A fix for path conflicts between system & brew packages with the same name is applied by adding Brew to path only in interactive shells, unlike what Brew does by default.
 - Brew bash & fish shell completions are copied to `/etc/profile.d/brew-bash-completions.sh` & `/usr/share/fish/vendor_conf.d/brew-fish-completions.fish`
 - `tmpfiles.d` configuration `homebrew.conf` is written with these directory locations:
   - `/var/lib/homebrew/`
