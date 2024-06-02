@@ -76,7 +76,10 @@ Determines whether to opt-out of Brew analytics. When set to true, analytics are
 :::caution Please review the Brew documentation carefully before modifying the settings above. :::
 
 ### `nofile-limits` (optional: boolean, default: false)
-Determines whether to apply nofile limits for Brew installations. When set to true, it increases the nofile limits to prevent certain packages from failing due to file limits. However, it's important to note that increasing nofile limits can have potential security implications. Defaults to false for security purposes.
+Determines whether to increase nofile limits for Brew installations. Nofile limit refers to the maximum number of open files for a single process. For more information about this, you can read this article:
+https://www.cyberciti.biz/faq/linux-increase-the-maximum-number-of-open-files/
+
+When set to true, it increases the nofile limits to prevent certain "I/O heavy" Brew packages from failing due to "too many open files" error. However, it's important to note that increasing nofile limits can have potential security implications for malicious applications which would try to abuse storage I/O. Defaults to false for security purposes.
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
