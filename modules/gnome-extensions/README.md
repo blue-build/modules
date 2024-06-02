@@ -58,7 +58,7 @@ How to uninstall extensions using the module:
 
 ## Known issues
 
-###Multiple compatible Gnome extensions with the same name are not supported
+### Multiple compatible Gnome extensions with the same name are not supported
 
 For example,  
 Your custom image is on Gnome 46.  
