@@ -52,33 +52,48 @@ The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system a
 
 ## Configuration Options
 
-### `auto-update` (optional: boolean, default: true)
+### Update
+
+Brew update operation updates the Brew binary to latest version.
+
+#### `auto-update` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-update.timer`.
 
-### `update-interval` (optional: string, default: '6h')
+#### `update-interval` (optional: string, default: '6h')
 Defines how often the Brew update service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `update-wait-after-boot` (optional: string, default: '10min')
+#### `update-wait-after-boot` (optional: string, default: '10min')
 Time delay after system boot before the first Brew update runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `auto-upgrade` (optional: boolean, default: true)
+### Upgrade
+
+Brew upgrade operation upgrades all installed Brew packages to latest version.
+
+#### `auto-upgrade` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-upgrade.timer`.
 
-### `upgrade-interval` (optional: string, default: '8h')
+#### `upgrade-interval` (optional: string, default: '8h')
 Defines how often the Brew upgrade service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `upgrade-wait-after-boot` (optional: string, default: '30min')
+#### `upgrade-wait-after-boot` (optional: string, default: '30min')
 Time delay after system boot before the first Brew package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']).
 
-### `brew-analytics` (optional: boolean, default: true)
+### Analytics
+
+Brew analytics are used to anonymously collect the information about Brew usage & system, in order to improve the experience of Brew users.  
+
+#### `brew-analytics` (optional: boolean, default: true)
 Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
 
 :::caution Please review the Brew documentation carefully before modifying the settings above. :::
 
-### `nofile-limits` (optional: boolean, default: false)
-Determines whether to increase nofile limits for Brew installations. Nofile limit refers to the maximum number of open files for a single process. For more information about this, you can read this thread:  
+### Nofile limits
+
+Nofile limit refers to the maximum number of open files for a single process. For more information about this, you can read this thread:  
 https://serverfault.com/questions/577437/what-is-the-impact-of-increasing-nofile-limits-in-etc-security-limits-conf
 
+#### `nofile-limits` (optional: boolean, default: false)
+Determines whether to increase nofile limits for Brew installations.  
 When set to true, it increases the nofile limits to prevent certain "I/O heavy" Brew packages from failing due to "too many open files" error. However, it's important to note that increasing nofile limits can have potential security implications for malicious applications which would try to abuse storage I/O. Defaults to false for security purposes.
 
 ## Development
