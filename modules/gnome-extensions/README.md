@@ -77,5 +77,5 @@ Most extensions which follow Gnome extension standards don't have this issue.
 If you get the error similar to this one (Fly-Pie extension example):  
 `GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
 
-Then please open the issue with the affecting extension, as it's trivial to fix.  
+Then please open the issue in BlueBuild Modules GitHub repo with the affecting extension, as it's trivial to fix.  
 https://github.com/blue-build/modules/issues/new
