@@ -87,9 +87,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
         if [[ "${EXTENSION_NAME}" == "Fly-Pie" ]]; then
-          install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"        
-          install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
-          glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
+          install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
+          install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
+          glib-compile-schemas "/usr/share/gnome-shell/extensions/${UUID}/schemas/" &>/dev/null
         else
           # Regular schema installation
           install -d -m 0755 "/usr/share/glib-2.0/schemas/"
