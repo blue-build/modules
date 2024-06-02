@@ -55,3 +55,27 @@ How to uninstall extensions using the module:
 1. Go to Gnome Extensions app, https://extensions.gnome.org/local/ or [Extension Manager](https://github.com/mjakeman/extension-manager) application
 2. List of installed system extensions should be presented
 3. Copy the extension name & input it in module recipe (it is case-sensitive, so be sure that you copied it correctly)
+
+## Known issues
+
+###Multiple compatible Gnome extensions with the same name are not supported
+
+For example,  
+Your custom image is on Gnome 46.  
+You want to install extension named "Titler"  
+You find out there are 2 "Titler" extensions, where both of them are compatible with Gnome 46.  
+In this case, extension will fail with the message:  
+`Multiple compatible Gnome extensions with the same name are found, which this module cannot select`
+  
+If there are multiple extensions with the same name, but only 1 is compatible with the Gnome 46, then it won't fail & it will install that one.
+  
+### Some extensions complain about missing gschema.compiled file
+
+This is a rarity, but some extensions might complain about this one, due to the way they are programmed with hard-coded gschema locations.  
+Most extensions which follow Gnome extension standards don't have this issue.
+
+If you get the error similar to this one (Fly-Pie extension example):  
+`GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
+
+Then please open the issue with the affecting extension, as it's trivial to fix.  
+https://github.com/blue-build/modules/issues/new
