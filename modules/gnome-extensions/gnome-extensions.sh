@@ -131,10 +131,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
       readarray -t EXT_UUID < <(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
       readarray -t EXT_NAME < <(echo "${QUERIED_EXT}" | jq -r '.["name"]')
-      # Gets suitable extension version for Gnome version from the image
-      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
-      if [[ "${SUITABLE_VERSION}" == "null" ]] || [[ -z "${QUERIED_EXT}" ]]; then
-        echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
+      # Fail the build if extension is not compatible with the current Gnome version
+      if [[ -z "${QUERIED_EXT}" ]]; then
+        echo "ERROR: Extension '${INSTALL_EXT}' is not compatible with Gnome v${GNOME_VER} in your image"
         exit 1
       fi
       # If multiple extensions with same name exist, which are compatible with the current Gnome version, then error out the build
@@ -142,6 +141,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         echo "Multiple compatible Gnome extensions with the same name are found, which this module cannot select"
         exit 1
       fi
+      # Gets suitable extension version for Gnome version from the image
+      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
       # Removes every @ symbol from UUID, since extension URL doesn't contain @ symbol
       URL="https://extensions.gnome.org/extension-data/${EXT_UUID//@/}.v${SUITABLE_VERSION}.shell-extension.zip"
       TMP_DIR="/tmp/${EXT_UUID}"
