@@ -41,8 +41,8 @@ The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system a
 **`brew-setup`:**
 - `brew-setup` SystemD service checks if main directory used by Brew exists (`/home/linuxbrew/.linuxbrew/`)  
   & if `brew-setup` state file exists (`/etc/.linuxbrew`)
-- If one of those paths don't exist, than Homebrew tar is extracted from `/usr/share/homebrew/homebrew.tar.zst` to `/tmp/homebrew/`
-- Extracted Homebrew is than copied from `/tmp/homebrew/` to `/home/linuxbrew/` & permissions to it are set to default user (UID 1000)
+- If one of those paths don't exist, then Homebrew tar is extracted from `/usr/share/homebrew/homebrew.tar.zst` to `/tmp/homebrew/`
+- Extracted Homebrew is then copied from `/tmp/homebrew/` to `/home/linuxbrew/` & permissions to it are set to default user (UID 1000)
 - Temporary directory `/tmp/homebrew/` is removed
 - Empty file `/etc/.linuxbrew` is created, which indicates that brew-setup (installation) is successful & which allows setup to run again on next boot when removed
 
