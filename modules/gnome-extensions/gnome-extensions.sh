@@ -114,7 +114,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
 fi
 
 # Legacy support for installing extensions through literal extension names, to retain compatibility with legacy configs
-if [[ ${#INSTALL[@]} -gt 0 ]]; then
+if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
   # If extension input contains numbers only (PK), then break the loop
       if [[ "${INSTALL_EXT}" =~ ^[0-9]+$ ]]; then
