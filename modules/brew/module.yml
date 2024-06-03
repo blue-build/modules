@@ -1,5 +1,5 @@
 name: brew
-shortdesc: The brew module installs Homebrew (Brew) at build time and ensures the package manager remains updated and maintained.
+shortdesc: The brew module installs Homebrew / Linuxbrew at build time and ensures the package manager remains up-to-date.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/brew/README.md
 example: |
   type: brew
