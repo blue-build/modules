@@ -212,7 +212,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
       PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
-      if [[ -z "${PK_EXT}" ]]; then
+      if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
         echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
         echo "       Please assure that you typed the PK ID correctly,"
         echo "       and that it exists in Gnome extensions website"
@@ -222,7 +222,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       EXT_NAME=$(echo "${URL_QUERY}" | jq -r '.["name"]')
       SUITABLE_VERSION=$(echo "${URL_QUERY}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
       # Fail the build if extension is not compatible with the current Gnome version
-      if [[ -z "${SUITABLE_VERSION}" ]]; then
+      if [[ -z "${SUITABLE_VERSION}" ]] || [[ "${SUITABLE_VERSION}" == "null" ]]; then
         echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
         exit 1
       fi
