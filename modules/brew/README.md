@@ -123,8 +123,7 @@ fi
 # Remove folders created by tmpfiles.d
 if [[ -d "/var/lib/homebrew/" ]]; then
   echo "Removing '/var/lib/homebrew/' directory"
-  sudo rm -rf "/var/lib/homebrew/" lot to Bluefin custom image maintainer m2giles, who made this entire module possible.
-In fact, t
+  sudo rm -rf "/var/lib/homebrew/"
 else
   echo "'/var/lib/homebrew/' directory is already removed"
 fi
