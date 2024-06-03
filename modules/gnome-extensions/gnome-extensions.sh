@@ -211,7 +211,7 @@ fi
 if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
       URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
-      EXT_PK=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
+      PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
       if [[ -z "${PK_EXT}" ]]; then
         echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
         echo "       Please assure that you typed the PK ID correctly,"
