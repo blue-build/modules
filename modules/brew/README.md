@@ -135,10 +135,10 @@ else
 fi
 ## This is the main directory where brew is located
 if [[ -d "/var/home/linuxbrew/" ]]; then
-  echo "Removing '/var/home/homebrew/' directory"
+  echo "Removing '/home/linuxbrew/' directory"
   sudo rm -rf "/var/home/linuxbrew/"
 else
-  echo "'/home/homebrew/' directory is already removed"
+  echo "'/home/linuxbrew/' directory is already removed"
 fi
 
 # Remove redundant brew-setup service state file
