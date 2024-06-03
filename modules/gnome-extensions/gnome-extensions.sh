@@ -20,7 +20,7 @@ GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
 echo "Gnome version: ${GNOME_VER}"
 LEGACY=false
 
-# Legacy support for installing extensions, to retain compatibility with legacy configs
+# Legacy support for installing extensions through part of extension URL, to retain compatibility with legacy configs
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
   for EXTENSION in "${INSTALL[@]}"; do
       # If extension contains .v12 suffix at the end, than it's the legacy install entry
@@ -33,7 +33,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       fi
       shopt -u extglob
       echo "ATTENTION: This is the legacy method of installing extensions."
-      echo "           Change the install entry to literal name of the extension"
+      echo "           Change the install entry to PK ID of the extension"
       echo "           Please see the latest docs of gnome-extensions module for more details:"
       echo "           https://blue-build.org/reference/modules/gnome-extensions/"
       URL="https://extensions.gnome.org/extension-data/${EXTENSION}.shell-extension.zip"
@@ -113,9 +113,19 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
   done
 fi
 
-# New method of installing extensions
-if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
+# Legacy support for installing extensions through literal extension names, to retain compatibility with legacy configs
+if [[ ${#INSTALL[@]} -gt 0 ]]; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
+  # If extension input contains numbers only (PK), then break the loop
+      if [[ "${INSTALL_EXT}" =~ ^[0-9]+$ ]]; then
+        break
+      else
+        LEGACY=true
+      fi
+      echo "ATTENTION: This is the legacy method of installing extensions."
+      echo "           Change the install entry to PK ID of the extension"
+      echo "           Please see the latest docs of gnome-extensions module for more details:"
+      echo "           https://blue-build.org/reference/modules/gnome-extensions/"
       # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
       WHITESPACE_HTML="${INSTALL_EXT// /%20}"
       # Gathers if extension name exists
@@ -138,7 +148,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       fi
       # If multiple extensions with same name exist, which are compatible with the current Gnome version, then error out the build
       if [[ ${#EXT_UUID[@]} -gt 1 ]] || [[ ${#EXT_NAME[@]} -gt 1 ]]; then
-        echo "Multiple compatible Gnome extensions with the same name are found, which this module cannot select"
+        echo "ERROR: Multiple compatible Gnome extensions with the same name are found, which this module cannot select"
         exit 1
       fi
       # Gets suitable extension version for Gnome version from the image
@@ -171,6 +181,80 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
         if [[ "${INSTALL_EXT}" == "Fly-Pie" ]]; then
+          install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
+          install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
+          glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
+        else
+          # Regular schema installation
+          install -d -m 0755 "/usr/share/glib-2.0/schemas/"
+          install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/glib-2.0/schemas/"
+        fi  
+      fi  
+      # Install languages
+      # Locale is not crucial for extensions to work, as they will fallback to gschema.xml
+      # Some of them might not have any locale at the moment
+      # So that's why I made a check for directory
+      if [[ -d "${TMP_DIR}/locale" ]]; then
+        echo "Installing language extension files"
+        install -d -m 0755 "/usr/share/locale/"
+        cp -r "${TMP_DIR}/locale"/* "/usr/share/locale/"
+      fi  
+      # Delete the temporary directory
+      echo "Cleaning up the temporary directory"
+      rm -r "${TMP_DIR}"
+      echo "Extension '${EXT_NAME}' is successfully installed"
+      echo "----------------------------------INSTALLATION DONE----------------------------------"
+  done
+fi
+
+# New method of installing extensions through PK ID
+if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
+  for INSTALL_EXT in "${INSTALL[@]}"; do
+      URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
+      EXT_PK=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
+      if [[ -z "${PK_EXT}" ]]; then
+        echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+        echo "       Please assure that you typed the PK ID correctly,"
+        echo "       and that it exists in Gnome extensions website"
+        exit 1
+      fi
+      EXT_UUID=$(echo "${URL_QUERY}" | jq -r '.["uuid"]')
+      EXT_NAME=$(echo "${URL_QUERY}" | jq -r '.["name"]')
+      SUITABLE_VERSION=$(echo "${URL_QUERY}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
+      # Fail the build if extension is not compatible with the current Gnome version
+      if [[ -z "${SUITABLE_VERSION}" ]]; then
+        echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
+        exit 1
+      fi
+      # Removes every @ symbol from UUID, since extension URL doesn't contain @ symbol
+      URL="https://extensions.gnome.org/extension-data/${EXT_UUID//@/}.v${SUITABLE_VERSION}.shell-extension.zip"
+      TMP_DIR="/tmp/${EXT_UUID}"
+      ARCHIVE=$(basename "${URL}")
+      ARCHIVE_DIR="${TMP_DIR}/${ARCHIVE}"
+      echo "Installing '${EXT_NAME}' Gnome extension with version ${SUITABLE_VERSION}"
+      # Download archive
+      wget --directory-prefix="${TMP_DIR}" "${URL}"
+      # Extract archive
+      echo "Extracting ZIP archive"
+      unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
+      # Remove archive
+      echo "Removing archive"
+      rm "${ARCHIVE_DIR}"
+      # Install main extension files
+      echo "Installing main extension files"
+      install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/"
+      find "${TMP_DIR}" -mindepth 1 -maxdepth 1 ! -path "*locale*" ! -path "*schemas*" -exec cp -r {} "/usr/share/gnome-shell/extensions/${EXT_UUID}/" \;
+      find "/usr/share/gnome-shell/extensions/${EXT_UUID}" -type d -exec chmod 0755 {} +
+      find "/usr/share/gnome-shell/extensions/${EXT_UUID}" -type f -exec chmod 0644 {} +
+      # Install schema
+      if [[ -d "${TMP_DIR}/schemas" ]]; then
+        echo "Installing schema extension file"
+        # Workaround for extensions, which explicitly require compiled schema to be in extension UUID directory (rare scenario due to how extension is programmed in non-standard way)
+        # Error code example:
+        # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
+        # If any extension produces this error, PK ID of it can be added in if statement below to solve the problem
+        # 3433 = Fly-Pie
+        if [[ "${INSTALL_EXT}" == "3433" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
