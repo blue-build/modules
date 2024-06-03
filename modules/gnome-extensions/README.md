@@ -61,7 +61,8 @@ How to uninstall extensions using the module:
       - Click "See Details"  
       - You will notice the "View on Extensions" card, which has extension URL  
       - Copy the extension PK ID (which is always in numbers) as part of the URL of the extension:  
-         https://extensions.gnome.org/extension/PK-ID/extension-name/      
+         https://extensions.gnome.org/extension/PK-ID/extension-name/
+  
     Gnome Extensions / extensions.gnome.org website:  
       - Go to https://extensions.gnome.org  
       - Search for the extension that you want to uninstall & open its extension page  
