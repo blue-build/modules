@@ -85,7 +85,9 @@ Brew analytics are used to anonymously collect the information about Brew usage 
 #### `brew-analytics` (optional: boolean, default: true)
 Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
 
-:::caution Please review the Brew documentation carefully before modifying the settings above. :::
+:::caution
+Please review the Brew documentation carefully before modifying the settings above.
+:::
 
 ### Nofile limits
 
