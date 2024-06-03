@@ -1,7 +1,7 @@
 # `gnome-extensions`
 
 :::caution
-The legacy configuration formats are still supported. Those include module inputs in part-of-URL format (with `.v` as the final version suffix with numbers) & literal extension name format. However, it is advised to migrate to new configuration, since it offers some benefits. For part-of-URL legacy config, benefits are clearer configuration & automatic installation of the latest extension version compatible with the GNOME version in the image. For literal name legacy config, additional benefit is the better reliability of installing extensions, since collision with same-named extensions are avoided. The new configuration format is showcased below in detail.
+The legacy configuration formats are still supported. Those include module inputs in part-of-URL format (with `.v` as the final version suffix with numbers) & literal extension name format. However, it is advised to migrate to new configuration, since it offers some benefits. For part-of-URL legacy config, benefit is automatic installation of the latest extension version compatible with the GNOME version in the image. For literal name legacy config, additional benefit is the better reliability of installing extensions, since collision with same-named extensions are avoided. The new configuration format is showcased below in detail.
 :::
 
 The `gnome-extensions` module can be used to install Gnome extensions inside system directory.  
