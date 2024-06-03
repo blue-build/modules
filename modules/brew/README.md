@@ -1,6 +1,6 @@
 # brew
 
-The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system and ensures the package manager remains updated and maintained. This module also sets up systemd services to periodically update the installed Brew packages.
+The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system and ensures the package manager remains updated and maintained. This module also sets up systemd services to periodically update the installed Brew packages.
 
 ## Features
 - Installs Brew at build-time.
@@ -54,7 +54,7 @@ The brew module installs [Homebrew/Linuxbrew](https://brew.sh/) on your system a
 
 ### Update
 
-Brew update operation updates the Brew binary to latest version.
+The Brew update operation updates the Brew binary to latest version.
 
 #### `auto-update` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-update.timer`.
@@ -67,7 +67,7 @@ Time delay after system boot before the first Brew update runs. The string is pa
 
 ### Upgrade
 
-Brew upgrade operation upgrades all installed Brew packages to latest version.
+The Brew upgrade operation upgrades all installed Brew packages to latest version.
 
 #### `auto-upgrade` (optional: boolean, default: true)
 If false, disables automatic activation of `brew-upgrade.timer`.
@@ -80,7 +80,7 @@ Time delay after system boot before the first Brew package upgrade runs. The str
 
 ### Analytics
 
-Brew analytics are used to anonymously collect the information about Brew usage & system, in order to improve the experience of Brew users.  
+The Homebrew project uses analytics to anonymously collect the information about Brew usage & your system in order to improve the experience of Brew users.  
 
 #### `brew-analytics` (optional: boolean, default: true)
 Determines whether to opt-out of Brew analytics. When set to true, analytics are enabled.
@@ -123,7 +123,8 @@ fi
 # Remove folders created by tmpfiles.d
 if [[ -d "/var/lib/homebrew/" ]]; then
   echo "Removing '/var/lib/homebrew/' directory"
-  sudo rm -rf "/var/lib/homebrew/"
+  sudo rm -rf "/var/lib/homebrew/" lot to Bluefin custom image maintainer m2giles, who made this entire module possible.
+In fact, t
 else
   echo "'/var/lib/homebrew/' directory is already removed"
 fi
