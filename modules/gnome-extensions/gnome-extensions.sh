@@ -283,19 +283,16 @@ fi
 
 if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
   for UNINSTALL_EXT in "${UNINSTALL[@]}"; do
-      # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
-      # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
-      WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
-      URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
-      QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
-      if [[ -z "${QUERIED_EXT}" ]]; then
-        echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
-        echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
-        echo "       including the correct uppercase & lowercase characters"
+      URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
+      PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
+      if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
+        echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+        echo "       Please assure that you typed the PK ID correctly,"
+        echo "       and that it exists in Gnome extensions website"
         exit 1
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
-      EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
+      EXT_UUID=$(echo "${URL_QUERY}" | jq -r '.["uuid"]')
+      EXT_NAME=$(echo "${URL_QUERY}" | jq -r '.["name"]')
       # This is where uninstall step goes, above step is reused from install part
       EXT_FILES="/usr/share/gnome-shell/extensions/${EXT_UUID}"
       UNINSTALL_METADATA="${EXT_FILES}/metadata.json"
