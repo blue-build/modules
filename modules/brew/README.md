@@ -16,6 +16,7 @@ The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system
 
 ### Build-time:
 
+- Necessary Brew package dependency `gcc` is installed if not present in the base image
 - Directories `/home/` & `/root/` are created
 - Empty `.dockerenv` file is created in the root of the image-builder, to convince official Brew installation script that we are **not** running as root
 - Official brew installation script is downloaded & executed
