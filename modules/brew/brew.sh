@@ -12,10 +12,10 @@ fi
 # (add VanillaOS package manager in the future when it gets supported)
 if ! command -v gcc &> /dev/null; then
   if command -v rpm-ostree &> /dev/null; then
-    echo "Installing \"gcc\" package, which is necessary for Brew to function."
+    echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
   else
-    echo "ERROR: \"gcc\" package could not be found."
+    echo "ERROR: \"gcc\" package could not be found"
     echo "       Brew depends on \"gcc\" in order to function"
     echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
     exit 1
