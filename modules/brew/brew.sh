@@ -2,22 +2,24 @@
 
 set -euo pipefail
 
-# Convince the installer that we are in CI
-touch /.dockerenv
-
 # Debugging
 DEBUG="${DEBUG:-false}"
 if [[ "${DEBUG}" == true ]]; then
     set -x
 fi
 
-# Check if gcc is installed
-if ! command -v gcc &> /dev/null
-then
-    echo "ERROR: \"gcc\" package could not be found."
+# Check if gcc is installed & install it if it's not
+# (add VanillaOS package manager in the future when it gets supported)
+if ! command -v gcc &> /dev/null; then
+  if command -v rpm-ostree &> /dev/null; then
+    echo "Installing \"gcc\" package, which is necessary for Brew to function"
+    rpm-ostree install gcc
+  else
+    echo "ERROR: \"gcc\" package could not be found"
     echo "       Brew depends on \"gcc\" in order to function"
     echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
     exit 1
+  fi  
 fi
 
 # Module-specific directories and paths
@@ -67,6 +69,9 @@ fi
 # Create necessary directories
 mkdir -p /var/home
 mkdir -p /var/roothome
+
+# Convince the installer that we are in CI
+touch /.dockerenv
 
 # Always install Brew
 echo "Downloading and installing Brew..."
