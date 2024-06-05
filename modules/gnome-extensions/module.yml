@@ -4,11 +4,10 @@ readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-
 example: |
   type: gnome-extensions
   install:
-    - 2236 # Night Theme Switcher
-    - 3193 # Blur my Shell
+    - Night Theme Switcher
+    - Blur my Shell # Notice how extension is named "Blur my Shell" & not "Blur My Shell"?
+                    # Name is case-sensitive, so check if extension name is typed correctly
   uninstall:
-    - 1319 # GSConnect
-  #
-  # Uninstall step here should be used only for the extensions
-  # which are not installed through OS package manager in the base image,
-  # like extensions installed from gnome-extensions module
+    - GSConnect # Uninstall step here should be used only for the extensions
+                # which are not installed through OS package manager in the base image,
+                # like extensions installed from gnome-extensions module
