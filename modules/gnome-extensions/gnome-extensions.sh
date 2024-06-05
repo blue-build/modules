@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2128
 
 # Tell build process to exit if there are any errors.
 set -euo pipefail
