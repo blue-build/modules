@@ -228,7 +228,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
         URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
         QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
-        if [[ -z "${QUERIED_EXT}" ]]; then
+        if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
           echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
           echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
           echo "       including the correct uppercase & lowercase characters"
