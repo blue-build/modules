@@ -13,6 +13,14 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     done
 fi
 
+get_yaml_array KEYS '.keys[]' "$1" 
+if [[ ${#KEYS[@]} -gt 0 ]]; then
+    echo "Adding keys"
+    for KEY in "${KEYS[@]}"; do
+        rpm --import "${KEY//[$'\t\r\n ']}"
+    done
+fi
+
 # Create symlinks to fix packages that create directories in /opt
 get_yaml_array OPTFIX '.optfix[]' "$1"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
