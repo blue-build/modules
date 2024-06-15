@@ -17,6 +17,7 @@ get_yaml_array KEYS '.keys[]' "$1"
 if [[ ${#KEYS[@]} -gt 0 ]]; then
     echo "Adding keys"
     for KEY in "${KEYS[@]}"; do
+        KEY="${KEY//%OS_VERSION%/${OS_VERSION}}"
         rpm --import "${KEY//[$'\t\r\n ']}"
     done
 fi
