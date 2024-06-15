@@ -4,7 +4,7 @@ The [`rpm-ostree`](https://coreos.github.io/rpm-ostree/) module offers pseudo-de
 
 The module first downloads the repository files from repositories declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
 
-If you use a repo that requires adding custom keys (eg. brave browser) you can import the keys by decalring the key urls in under `keys:`. The magic string acts the same as it does in `repos`.
+If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
 Then the module installs the packages declared under `install:` using `rpm-ostree install`, it removes the packages declared under `remove:` using `rpm-ostree override remove`. If there are packages declared under both `install:` and `remove:` a hybrid command `rpm-ostree remove <packages> --install <packages>` is used, which should allow you to switch required packages for other ones.
 
