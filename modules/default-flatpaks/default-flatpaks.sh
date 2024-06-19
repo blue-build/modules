@@ -111,7 +111,8 @@ if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     configure_flatpak_repo "$1" "system"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
-    elif [ ! -f "/usr/share/bluebuild/default-flatpaks/system/remove" ]; then  
+    fi
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/remove" ]; then  
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
     fi  
     configure_lists "$1" "system"
@@ -122,7 +123,8 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
-    elif [ ! -f "/usr/share/bluebuild/default-flatpaks/user/remove" ]; then
+    fi
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/remove" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
     fi
     configure_lists "$1" "user"
