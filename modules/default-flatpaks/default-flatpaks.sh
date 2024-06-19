@@ -109,16 +109,22 @@ systemctl enable -f --global user-flatpak-setup.service
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     configure_flatpak_repo "$1" "system"
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
+    elif [ ! -f "/usr/share/bluebuild/default-flatpaks/system/remove" ]; then  
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
+    fi  
     configure_lists "$1" "system"
 fi
 
 # Check that `user` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/install" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
+    elif [ ! -f "/usr/share/bluebuild/default-flatpaks/user/remove" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
+    fi
     configure_lists "$1" "user"
 fi
 

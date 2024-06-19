@@ -35,9 +35,3 @@ https://github.com/blue-build/modules/issues/146
 
 Flatpak runtimes are not supported due to technical difficulty in implementing those:  
 https://github.com/blue-build/modules/pull/142#issuecomment-1962458757
-
-Flatpak IDs input in the last module definition overwrites the 1st one.  
-This scenario happens when multiple module definitions of `default-flatpaks` are used.  
-This means that the only flatpak list that is going to take the effect is the one in last module definition.  
-More details about this issue:
-https://github.com/blue-build/modules/issues/231
