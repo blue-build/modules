@@ -22,7 +22,7 @@ See available tags here: https://github.com/ublue-os/akmods/#how-its-organized
 
 ## Known issues
 
-### Outdated akmods compared to the kernel version fail the build
+### Outdated akmods compared to the current kernel version fail the build
 
 When the upstream base image is failing to build for some time, you will probably notice that this module fails too with this error:
 ```
@@ -48,6 +48,6 @@ Problem: conflicting requests
 This happens when the mentioned akmod is not pulled from ublue-os/akmods COPR repo, but from some other one.  
 Those akmods are rare & they are residing in `extra` akmods stream.  
 There is also the information of repo source of the akmod, where you can see which akmod is the "exotic" one.  
-All this information can be seen in [`akmods` repo](https://github.com/ublue-os/akmods).
+All this information can be seen in [`akmods` repo](https://github.com/ublue-os/akmods#kmod-packages).
 
 The solution to this problem is to add the affected akmod repo to [`rpm-ostree`](https://blue-build.org/reference/modules/rpm-ostree/) module in `repos` section.
