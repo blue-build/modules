@@ -24,7 +24,7 @@ model BrewModule {
     "upgrade-interval"?: string = "8h",
 
     /** Time delay after boot before first Brew package upgrade. */
-    "upgrade-wait-after-boot"?: = "30min",
+    "upgrade-wait-after-boot"?: string = "30min",
 
     /** Whether to apply nofile limits (limits for number of open files) for Brew installations. */
     "nofile-limits"?: boolean = false,

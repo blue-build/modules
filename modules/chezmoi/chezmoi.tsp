@@ -21,7 +21,7 @@ model ChezmoiModule {
     "wait-after-boot"?: string = "5m",
     
     /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. */
-    "disable-init"?: boolean = "5m",
+    "disable-init"?: boolean = false,
 
     /** Disable the timer that updates chezmoi with the set interval. */
     "disable-update"?: boolean = false,

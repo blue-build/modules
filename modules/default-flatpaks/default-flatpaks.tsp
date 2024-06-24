@@ -32,7 +32,7 @@ model DefaultFlatpaksModule {
     /** Configuration for user flatpaks. */
     user?: {
         /** URL of the repo to add. Defaults to Flathub's URL. */
-        "repo-url"?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo"s,
+        "repo-url"?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo",
 
         /** Name for the repo to add. */
         "repo-name"?: string = "flathub",
