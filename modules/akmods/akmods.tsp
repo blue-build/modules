@@ -14,6 +14,6 @@ model AkmodsModule {
      * fsync: fsync kernel / bazzite images
      * surface: surface kernel / surface images
      */
-    base?: "main" | "asus" | "fsync" | "surface",
+    base?: "main" | "asus" | "fsync" | "surface" = "main",
     install: Array<string>
 }

@@ -8,27 +8,27 @@ model BrewModule {
     */
     type: "brew",
 
-    /** Whether to auto-update the Brew binary. (default: true) */
-    "auto-update"?: boolean,
+    /** Whether to auto-update the Brew binary. */
+    "auto-update"?: boolean = true,
 
-    /** Interval between Brew updates. (default: 6h) */
-    "update-interval"?: string,
+    /** Interval between Brew updates. */
+    "update-interval"?: string = "6h",
 
-    /** Time delay after boot before first Brew update. (default: 10min) */
-    "update-wait-after-boot"?: string, 
+    /** Time delay after boot before first Brew update .*/
+    "update-wait-after-boot"?: string = "10min", 
 
-    /** Wthether to auto-upgrade Brew packages. (default: true) */
-    "auto-upgrade"?: boolean,
+    /** Wthether to auto-upgrade Brew packages. */
+    "auto-upgrade"?: boolean = true,
 
-    /** Interval between Brew package upgrades. (default: 8h) */
-    "upgrade-interval"?: string,
+    /** Interval between Brew package upgrades. */
+    "upgrade-interval"?: string = "8h",
 
-    /** Time delay after boot before first Brew package upgrade. (default: 30min) */
-    "upgrade-wait-after-boot"?: string,
+    /** Time delay after boot before first Brew package upgrade. */
+    "upgrade-wait-after-boot"?: = "30min",
 
-    /** Whether to apply nofile limits (limits for number of open files) for Brew installations. (default: false) */
-    "nofile-limits"?: boolean,
+    /** Whether to apply nofile limits (limits for number of open files) for Brew installations. */
+    "nofile-limits"?: boolean = false,
 
-    /** Whether to enable Brew analytics. (default: true) */
-    "brew-analytics"?: boolean,
+    /** Whether to enable Brew analytics. */
+    "brew-analytics"?: boolean = true,
 }

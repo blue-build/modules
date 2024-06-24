@@ -11,21 +11,21 @@ model ChezmoiModule {
     /** Git repository to initialize. */
     repository: string,
 
-    /** Whether to enable the modules services globally for all users, if false users need to enable services manually. (default: true) */
-    "all-users"?: boolean,
+    /** Whether to enable the modules services globally for all users, if false users need to enable services manually. */
+    "all-users"?: boolean = true,
 
-    /** Dotfiles will be updated with this interval. (default: 1d) */
-    "run-every"?: string,
+    /** Dotfiles will be updated with this interval. */
+    "run-every"?: string = "1d",
 
-    /** Dotfile updates will wait this long after a boot before running. (default: 5m)*/
-    "wait-after-boot"?: string,
+    /** Dotfile updates will wait this long after a boot before running. */
+    "wait-after-boot"?: string = "5m",
     
-    /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. (default: false) */
-    "disable-init"?: boolean,
+    /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. */
+    "disable-init"?: boolean = "5m",
 
-    /** Disable the timer that updates chezmoi with the set interval. (default: false) */
-    "disable-update"?: boolean,
+    /** Disable the timer that updates chezmoi with the set interval. */
+    "disable-update"?: boolean = false,
 
-    /** What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace". (default: skip) */
-    "file-conflict-policy"?: "skip" | "replace"
+    /** What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace". */
+    "file-conflict-policy"?: "skip" | "replace" = "skip",
 }

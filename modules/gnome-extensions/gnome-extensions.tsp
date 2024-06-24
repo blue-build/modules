@@ -9,7 +9,7 @@ model GnomeExtensionsModule {
     type: "gnome-extensions",
 
     /** List of GNOME extensions to install. 
-     * (case sensitive extension names from https://extensions.gnome.org/)
+     * (case sensitive extension names or extension IDs from https://extensions.gnome.org/)
     */
     install?: Array<string>,
 
