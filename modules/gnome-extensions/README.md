@@ -1,7 +1,7 @@
 # `gnome-extensions`
 
 :::caution
-The legacy configuration format, which uses a part of the extension download URL to declare extensions to install, is still supported. However, it is advised to migrate to new configuration, since it offers the benefits of a clearer configuration and automatic installation of the latest extension version compatible with the GNOME version in the image. The new configuration format is showcased below in detail.
+The legacy configuration format, which uses a part of the extension download URL to declare extensions to install, is still supported. However, it is advised to migrate to new configuration, since it offers the benefits of a clearer configuration & automatic installation of the latest extension version compatible with the GNOME version in the image. The new configuration format is showcased below in detail.
 :::
 
 The `gnome-extensions` module can be used to install Gnome extensions inside system directory.  
@@ -55,3 +55,16 @@ How to uninstall extensions using the module:
 1. Go to Gnome Extensions app, https://extensions.gnome.org/local/ or [Extension Manager](https://github.com/mjakeman/extension-manager) application
 2. List of installed system extensions should be presented
 3. Copy the extension name & input it in module recipe (it is case-sensitive, so be sure that you copied it correctly)
+
+## Known issues
+  
+### Some extensions complain about missing gschema.compiled file
+
+This is a rarity, but some extensions might complain about this one, due to the way they are programmed with hard-coded gschema locations.  
+Most extensions which follow Gnome extension standards don't have this issue.
+
+If you get the error similar to this one (Fly-Pie extension example):  
+`GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
+
+Then please open the issue in BlueBuild Modules GitHub repo with the affecting extension, as it's trivial to fix.  
+https://github.com/blue-build/modules/issues/new

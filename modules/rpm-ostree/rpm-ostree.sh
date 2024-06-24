@@ -13,6 +13,15 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     done
 fi
 
+get_yaml_array KEYS '.keys[]' "$1" 
+if [[ ${#KEYS[@]} -gt 0 ]]; then
+    echo "Adding keys"
+    for KEY in "${KEYS[@]}"; do
+        KEY="${KEY//%OS_VERSION%/${OS_VERSION}}"
+        rpm --import "${KEY//[$'\t\r\n ']}"
+    done
+fi
+
 # Create symlinks to fix packages that create directories in /opt
 get_yaml_array OPTFIX '.optfix[]' "$1"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
@@ -37,8 +46,9 @@ get_yaml_array REMOVE '.remove[]' "$1"
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
     for PKG in "${INSTALL[@]}"; do
         if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
-            echo "Installing directly from URL: ${PKG}"
-            rpm-ostree install "$PKG"
+            REPLACED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"
+            echo "Installing directly from URL: ${REPLACED_PKG}"
+            rpm-ostree install "$REPLACED_PKG"
             INSTALL=( "${INSTALL[@]/$PKG}" ) # delete URL from install array
         fi
     done

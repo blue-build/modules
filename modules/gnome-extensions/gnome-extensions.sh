@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2128,SC2178
 
 # Tell build process to exit if there are any errors.
 set -euo pipefail
@@ -86,7 +87,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        if [[ "${EXTENSION_NAME}" == "Fly-Pie" ]]; then
+        # Fly-Pie
+        if [[ "${UUID}" == "flypie@schneegans.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${UUID}/schemas/" &>/dev/null
@@ -116,24 +118,52 @@ fi
 # New method of installing extensions
 if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
-      # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
-      WHITESPACE_HTML="${INSTALL_EXT// /%20}"
-      URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
-      QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
-      if [[ -z "${QUERIED_EXT}" ]]; then
-        echo "ERROR: Extension '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
-        echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
-        echo "       including the correct uppercase & lowercase characters"
-        exit 1
-      fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
-      EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
-      # Gets suitable extension version for Gnome version from the image
-      SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
-      if [[ "${SUITABLE_VERSION}" == "null" ]]; then
-        echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
-        exit 1
-      fi
+      if [[ ! "${INSTALL_EXT}" =~ ^[0-9]+$ ]]; then
+        # Literal-name extension config
+        # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace      
+        WHITESPACE_HTML="${INSTALL_EXT// /%20}"
+        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
+        if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
+          echo "ERROR: Extension '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+          echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
+          echo "       including the correct uppercase & lowercase characters"
+          exit 1
+        fi
+        readarray -t EXT_UUID < <(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
+        readarray -t EXT_NAME < <(echo "${QUERIED_EXT}" | jq -r '.["name"]')
+        if [[ ${#EXT_UUID[@]} -gt 1 ]] || [[ ${#EXT_NAME[@]} -gt 1 ]]; then
+          echo "ERROR: Multiple compatible Gnome extensions with the same name are found, which this module cannot select"
+          echo "       To solve this problem, please use PK ID as a module input entry instead of the extension name"
+          echo "       You can get PK ID from the extension URL, like from Blur my Shell's 3193 PK ID example below:"
+          echo "       https://extensions.gnome.org/extension/3193/blur-my-shell/"
+          exit 1
+        fi        
+        # Gets suitable extension version for Gnome version from the image
+        SUITABLE_VERSION=$(echo "${QUERIED_EXT}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
+        if [[ -z "${SUITABLE_VERSION}" ]] || [[ "${SUITABLE_VERSION}" == "null" ]]; then
+          echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
+          exit 1
+        fi
+      else
+        # PK ID extension config fallback if specified
+        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
+        PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
+        if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
+          echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+          echo "       Please assure that you typed the PK ID correctly,"
+          echo "       and that it exists in Gnome extensions website"
+          exit 1
+        fi
+        EXT_UUID=$(echo "${URL_QUERY}" | jq -r '.["uuid"]')
+        EXT_NAME=$(echo "${URL_QUERY}" | jq -r '.["name"]')
+        SUITABLE_VERSION=$(echo "${URL_QUERY}" | jq ".shell_version_map[\"${GNOME_VER}\"].version")
+        # Fail the build if extension is not compatible with the current Gnome version
+        if [[ -z "${SUITABLE_VERSION}" ]] || [[ "${SUITABLE_VERSION}" == "null" ]]; then
+          echo "ERROR: Extension '${EXT_NAME}' is not compatible with Gnome v${GNOME_VER} in your image"
+          exit 1
+        fi
+      fi  
       # Removes every @ symbol from UUID, since extension URL doesn't contain @ symbol
       URL="https://extensions.gnome.org/extension-data/${EXT_UUID//@/}.v${SUITABLE_VERSION}.shell-extension.zip"
       TMP_DIR="/tmp/${EXT_UUID}"
@@ -161,7 +191,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        if [[ "${INSTALL_EXT}" == "Fly-Pie" ]]; then
+        # Fly-Pie
+        if [[ "${EXT_UUID}" == "flypie@schneegans.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
@@ -190,19 +221,34 @@ fi
 
 if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
   for UNINSTALL_EXT in "${UNINSTALL[@]}"; do
-      # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
-      # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
-      WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
-      URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
-      QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
-      if [[ -z "${QUERIED_EXT}" ]]; then
-        echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
-        echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
-        echo "       including the correct uppercase & lowercase characters"
-        exit 1
+      if [[ ! "${UNINSTALL_EXT}" =~ ^[0-9]+$ ]]; then
+        # Literal-name extension config
+        # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
+        # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
+        WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
+        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
+        if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
+          echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+          echo "       Extension name is case-sensitive, so be sure that you typed it correctly,"
+          echo "       including the correct uppercase & lowercase characters"
+          exit 1
+        fi
+        EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
+        EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
+      else
+        # PK ID extension config fallback if specified
+        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${UNINSTALL_EXT}")
+        PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
+        if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
+          echo "ERROR: Extension with PK ID '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
+          echo "       Please assure that you typed the PK ID correctly,"
+          echo "       and that it exists in Gnome extensions website"
+          exit 1
+        fi
+        EXT_UUID=$(echo "${URL_QUERY}" | jq -r '.["uuid"]')
+        EXT_NAME=$(echo "${URL_QUERY}" | jq -r '.["name"]')
       fi
-      EXT_UUID=$(echo "${QUERIED_EXT}" | jq -r '.["uuid"]')
-      EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
       # This is where uninstall step goes, above step is reused from install part
       EXT_FILES="/usr/share/gnome-shell/extensions/${EXT_UUID}"
       UNINSTALL_METADATA="${EXT_FILES}/metadata.json"
