@@ -8,8 +8,11 @@ model RpmOstreeModule {
      */
     type: "rpm-ostree",
 
-    /** List of links to .repo files to download into /etc/yum.repos.d/ */
+    /** List of links to .repo files to download into /etc/yum.repos.d/. */
     repos?: Array<string>,
+
+    /** List of links to key files to import for installing from custom repositories. */
+    keys?: Array<string>,
 
     /** List of RPM packages to install. */
     install?: Array<string>,
