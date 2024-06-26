@@ -17,7 +17,7 @@ fi
 
 # Include all files in the folder if none specified
 if [[ ${#CONFIG_SELECTION[@]} == 0 ]]; then
-    CONFIG_SELECTION=($(ls "${CONFIG_FOLDER}"))
+    CONFIG_SELECTION=($(find "${CONFIG_FOLDER}" -mindepth 1 -maxdepth 1 -exec basename {} \;))
 fi
 
 for SELECTED in "${CONFIG_SELECTION[@]}"; do
