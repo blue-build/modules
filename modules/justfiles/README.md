@@ -1,8 +1,8 @@
 # `justfiles`
 
-The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
+:::note The module is only compatible with Universal Blue images. :::
 
-:::note The module is compatible only with Universal Blue images. :::
+The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
 
 ## What it does
 
