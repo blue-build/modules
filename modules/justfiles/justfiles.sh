@@ -22,9 +22,9 @@ fi
 
 for SELECTED in "${CONFIG_SELECTION[@]}"; do
 
-    echo "----------------------------------------------------------"
-    echo "------------ Adding folder/file '${SELECTED}' ------------"
-    echo "----------------------------------------------------------"
+    echo "------------------------------------------------------------------------"
+    echo "--- Adding folder/file '${SELECTED}'"
+    echo "------------------------------------------------------------------------"
 
     # Find all justfiles, starting from 'SELECTED' and get their paths
     JUSTFILES=($(find "${CONFIG_FOLDER}/${SELECTED}" -type f -name "*.just" | sed "s|${CONFIG_FOLDER}/||g"))
@@ -38,11 +38,11 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
     # Validate all found justfiles if set to do so
     if [ "${VALIDATE}" == "true" ]; then
 
-        echo "-- Validating justfiles"
+        echo "Validating justfiles"
         VALIDATION_FAILED=0
         for JUSTFILE in "${JUSTFILES[@]}"; do
             if ! /usr/bin/just --fmt --check --unstable --justfile "${CONFIG_FOLDER}/${JUSTFILE}" &> /dev/null; then
-                echo "The justfile '${JUSTFILE}' FAILED validation."
+                echo "- The justfile '${JUSTFILE}' FAILED validation."
                 VALIDATION_FAILED=1
             fi
         done
@@ -52,19 +52,19 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
             echo "Error: Some justfiles didn't pass validation."
             exit 1
         else
-            echo "All justfiles passed validation."
+            echo "- All justfiles passed validation."
         fi
 
     fi
 
     # Copy 'SELECTED' to destination folder
-    echo "-- Copying folders/files"
+    echo "Copying folders/files"
     mkdir -p "${DEST_FOLDER}/$(dirname ${SELECTED})"
     cp -rfT "${CONFIG_FOLDER}/${SELECTED}" "${DEST_FOLDER}/${SELECTED}"
-    echo "Copied '${CONFIG_FOLDER}/${SELECTED}' to '${DEST_FOLDER}/${SELECTED}'."
+    echo "- Copied '${CONFIG_FOLDER}/${SELECTED}' to '${DEST_FOLDER}/${SELECTED}'."
 
     # Generate import lines for all found justfiles
-    echo "-- Adding import lines"
+    echo "Adding import lines"
     for JUSTFILE in "${JUSTFILES[@]}"; do
 
         # Create an import line
@@ -72,10 +72,10 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
         
         # Abort if import line already exists, else append it to import file
         if grep -wq "${IMPORT_LINE}" "${IMPORT_FILE}"; then
-            echo "Error: Duplicated import line: '${IMPORT_LINE}' found."
-            exit 1
+            echo "- Skipped: '${IMPORT_LINE}' (already present)"
         else
-            echo "${IMPORT_LINE}" | tee -a "${IMPORT_FILE}"
+            echo "${IMPORT_LINE}" >> "${IMPORT_FILE}"
+            echo "- Added: '${IMPORT_LINE}'"
         fi
 
     done

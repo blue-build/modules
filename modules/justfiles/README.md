@@ -2,6 +2,8 @@
 
 The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
 
+:::note The module is compatible only with Universal Blue images. :::
+
 ## What it does
 
 1. The module checks if the `config/justfiles/` folder is present.
@@ -24,7 +26,7 @@ The `justfiles` module allows for easy `.just` files importing. It can be useful
     
     * The module does not overwrite the destination file. New lines are added to an existing file.
 
-    * If the generated import lines are already present, the module fails to avoid duplications.
+    * If the generated import lines are already present, the module skips them to avoid duplications.
 
 ## How to use it
 
