@@ -4,7 +4,39 @@
 
 The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
 
-## What it does
+## What is just and what is a justfile ?
+
+`just` is a tool for running pre-defined commands or scripts.
+
+The commands/scripts otherwise called recipes are defined in a file named `justfile`. That file can also contain import lines, allowing to include recipes from other files that usually end with the `.just` postfix.
+
+Without specifying any arguments, `just` will run the first recipe defined in a `justfile` of the current directory. If the current directory doesn't contain a `justfile`, `just` will attempt to find the nearest `justfile` going back the current directory path.
+
+In all Universal Blue images, `just` is preinstalled and a `.justfile` is created by default in the `$HOME` directory. It contains an import line that includes Universal Blue recipes and if this module was used, it will also include all recipes from the `.just` files this module worked with.
+
+* This means if you run `just` from anywhere in your `$HOME` directory, `$HOME/.justfile` will be considered the nearest (unless there's another `justfile` in the directory path as mentioned before) and all your recipes + recipes from Universal Blue should be available.
+
+* Universal Blue also includes the command `ujust`, that specifies what `justfile` to use, meaning all your recipes + recipes from Universal Blue will be available from anywhere, even if there is another `justfile` in your current directory path.
+
+### Usage examples
+
+Run a specific recipe from the nearest justfile by including its name as the first argument:
+    
+* `just build-a-program`
+
+List all recipes from the nearest justfile using:
+    
+* `just --list`
+
+Specify a justfile to be used:
+
+* `just --justfile <DESTINATION FILE>`
+
+### More information
+
+* [Official just documentation](https://just.systems/man/en)
+
+## What the module does
 
 1. The module checks if the `config/justfiles/` folder is present.
     
@@ -28,7 +60,7 @@ The `justfiles` module allows for easy `.just` files importing. It can be useful
 
     * If the generated import lines are already present, the module skips them to avoid duplications.
 
-## How to use it
+## How to use the module
 
 Place all your `.just` files or folders with `.just` files inside the `config/justfiles/` folder. If that folder doesn't exist, create it.
 
