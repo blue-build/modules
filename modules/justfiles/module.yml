@@ -1,0 +1,11 @@
+name: justfiles
+shortdesc: The justfiles module allows for easy justfiles importing.
+readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/justfiles/README.md
+example: |
+  type: justfiles
+  validate: true
+  include:
+    - common
+    - gnome/monitors.just
+    - shared/flatpak/fix-theming.just
+    - justfile1.just
