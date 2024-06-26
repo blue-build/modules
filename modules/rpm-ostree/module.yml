@@ -15,3 +15,13 @@ example: |
   remove:
     - firefox
     - firefox-langpacks
+  replace:
+    - from-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
+      packages:
+        - mutter
+        - mutter-common
+        - gdm
+    - from-repo: https://copr.fedorainfracloud.org/coprs/owner/repository2/repo/fedora-%OS_VERSION%/owner-repository2-fedora-%OS_VERSION%.repo
+      packages:
+        - package4
+        - package5
