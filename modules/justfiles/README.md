@@ -4,35 +4,11 @@
 
 The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
 
-## What is just and what is a justfile ?
+## What is just ?
 
-`just` is a tool for running pre-defined commands or scripts.
+Just is a command runner (kind of like make) that can be used to supply arbitrary scripts under a single shell command. Images based on Universal Blue bundle a set of these scripts, called recipes, which can be accessed with the `ujust` command.
 
-The commands/scripts otherwise called recipes are defined in a file named `justfile`. That file can also contain import lines, allowing to include recipes from other files that usually end with the `.just` postfix.
-
-Without specifying any arguments, `just` will run the first recipe defined in a `justfile` of the current directory. If the current directory doesn't contain a `justfile`, `just` will attempt to find the nearest `justfile` going back the current directory path.
-
-In all Universal Blue images, `just` is preinstalled and a `.justfile` is created by default in the `$HOME` directory. It contains an import line that includes Universal Blue recipes and if this module was used, it will also include all recipes from the `.just` files this module worked with.
-
-* This means if you run `just` from anywhere in your `$HOME` directory, `$HOME/.justfile` will be considered the nearest (unless there's another `justfile` in the directory path as mentioned before) and all your recipes + recipes from Universal Blue should be available.
-
-* Universal Blue also includes the command `ujust`, that specifies what `justfile` to use, meaning all your recipes + recipes from Universal Blue will be available from anywhere, even if there is another `justfile` in your current directory path.
-
-### Usage examples
-
-Run a specific recipe from the nearest justfile by including its name as the first argument:
-    
-* `just build-a-program`
-
-List all recipes from the nearest justfile using:
-    
-* `just --list`
-
-Specify a justfile to be used:
-
-* `just --justfile <DESTINATION FILE>`
-
-### More information
+For more information, refer to these links:
 
 * [Official just documentation](https://just.systems/man/en)
 * [Universal Blue documentation](https://universal-blue.discourse.group/docs?topic=42)
