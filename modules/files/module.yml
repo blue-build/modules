@@ -1,6 +1,7 @@
 name: files
 shortdesc: Copy files to your image at build time
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/files/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/113-feat-create-json-schemas-for-module-configuration/modules/files/files.tsp
 example: |
   modules:
     - type: files

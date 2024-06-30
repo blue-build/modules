@@ -1,6 +1,7 @@
 name: akmods
 shortdesc: The akmods module is a tool used for managing and installing kernel modules built by Universal Blue.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/akmods/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/113-feat-create-json-schemas-for-module-configuration/modules/akmods/akmods.tsp
 example: |
   type: akmods
   base: asus # if not specified, classic "main" base is used by default

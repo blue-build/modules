@@ -1,13 +1,14 @@
 name: brew
 shortdesc: The brew module installs Homebrew / Linuxbrew at build time and ensures the package manager remains up-to-date.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/brew/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/113-feat-create-json-schemas-for-module-configuration/modules/brew/brew.tsp
 example: |
   type: brew
   # Auto-update Brew binary
   auto-update: true # Optional - Default: true - Expects type: boolean
   # Interval between Brew updates
   update-interval: '6h' # Optional - Default: '6h' - Expects type: string
-   # Time delay after boot before first Brew update
+  # Time delay after boot before first Brew update
   update-wait-after-boot: '10min' # Optional - Default: '10min' - Expects type: string 
   # Auto-upgrade Brew packages
   auto-upgrade: true # Optional - Default: true - Expects type: boolean    
