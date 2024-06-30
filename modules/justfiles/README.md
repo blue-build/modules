@@ -2,7 +2,7 @@
 
 :::note The module is only compatible with Universal Blue images. :::
 
-The `justfiles` module allows for easy `.just` files importing. It can be useful for example to separate DE specific justfiles when building multiple images.
+The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files in Universal Blue -based images. It can be useful for example when utilizing DE-specific justfiles when building multiple images. On the other hand, you likely wont need the module if you're building just one image or need just one justfile for all your images.
 
 ## What is just ?
 
@@ -42,7 +42,7 @@ For more information, refer to these links:
 
 Place all your `.just` files or folders with `.just` files inside the `config/justfiles/` folder. If that folder doesn't exist, create it.
 
-Without specifying `include`, the module will assume you want to import everything. Otherwise, specify your files/folders under `include`.
+By default, the module will import all files with names ending in `.just` from `config/justfiles/`. You can also specify files or subfolders under `include`, and they will be the only ones imported.
 
 If you also want to validate your justfiles, set `validate: true`. The validation can be very unforgiving and is turned off by default.
 
