@@ -1,6 +1,6 @@
 # `files`
 
-The `files` module can be used to copy directories from `config/files` to
+The `files` module can be used to remove files/directories and copy directories from `config/files` to
 any location in your image at build time, as long as the location exists at
 build time (e.g. you can't put files in `/home/<username>`, because users
 haven't been created yet prior to first boot).
