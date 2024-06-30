@@ -87,6 +87,7 @@ Every module folder should inlude a `<modulename>.tsp` file containing a model o
   - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/documentation).
 - Remember to use the `?` syntax to declare all properties which are not required to use the module successfully as optional. Also declare default values when applicable.
   - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/models#optional-properties).
+- Make sure to add a semicolon `;` to the end of all property definitions. Without this, the schema compilation will fail.
 
 ### Boot-time Modules
 > [!IMPORTANT]  

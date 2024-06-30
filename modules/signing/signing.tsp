@@ -6,5 +6,5 @@ model SigningModule {
     /** The signing module is used to install the required signing policies for cosign image verification with rpm-ostree and bootc.
      * https://blue-build.org/reference/modules/signing/
      */    
-    type: "signing",
+    type: "signing";
 }

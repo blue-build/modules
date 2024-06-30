@@ -6,7 +6,7 @@ model AkmodsModule {
     /** The akmods module is a tool used for managing and installing kernel modules built by Universal Blue.
      * https://blue-build.org/reference/modules/akmods/
      */
-    type: "akmods",
+    type: "akmods";
 
     /** The kernel / image your image is based on.
      * main: stock kernel / main and nvidia images
@@ -14,6 +14,6 @@ model AkmodsModule {
      * fsync: fsync kernel / bazzite images
      * surface: surface kernel / surface images
      */
-    base?: "main" | "asus" | "fsync" | "surface" = "main",
-    install: Array<string>
+    base?: "main" | "asus" | "fsync" | "surface" = "main";
+    install: Array<string>;
 }

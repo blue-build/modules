@@ -6,11 +6,11 @@ model ScriptModule {
     /** The script module can be used to run arbitrary bash snippets and scripts at image build time.
      * https://blue-build.org/reference/modules/script/
      */
-    type: "script",
+    type: "script";
 
     /** List of bash one-liners to run. */
-    snippets?: Array<string>,
+    snippets?: Array<string>;
 
     /** List of script files to run. */
-    scripts?: Array<string>,
+    scripts?: Array<string>;
 }
