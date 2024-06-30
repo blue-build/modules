@@ -65,7 +65,7 @@ A YAML string of example configuration showcasing the configuration options avai
 
 ### [TypeSpec](https://typespec.io/) schema
 
-Every module folder should inlude a `<modulename>.tsp` file containing a model of the module's valid configuration options. This schema syntax should be familiar to programmers used to typed languages, especially TypeScript. The schemas will be compiled to the [JSON Schema](https://json-schema.org/) format and used for validation in editors and CLI.
+Every module folder should include a `<modulename>.tsp` file containing a model of the module's valid configuration options. This schema syntax should be familiar to programmers used to typed languages, especially TypeScript. The schemas will be compiled to the [JSON Schema](https://json-schema.org/) format and used for validation in editors and CLI.
 
 - When creating a new module, you can get started easily by copying relevant parts of the `.tsp` file of a module with similar configuration.
   - Make sure to change all references to the module's name.
