@@ -63,6 +63,29 @@ The URL to the raw contents of the module’s `<modulename>.tsp` [TypeSpec](http
 
 A YAML string of example configuration showcasing the configuration options available with inline documentation to describe them. Some of the configuration options may be commented out, with comments describing why one might enable them. The intention here is that the example would be a good place to copy-paste from to get started.
 
+### [TypeSpec](https://typespec.io/) schema
+
+Every module folder should inlude a `<modulename>.tsp` file containing a model of the module's valid configuration options. This schema syntax should be familiar to programmers used to typed languages, especially TypeScript. The schemas will be compiled to the [JSON Schema](https://json-schema.org/) format and used for validation in editors and CLI.
+
+- When creating a new module, you can get started easily by copying relevant parts of the `.tsp` file of a module with similar configuration.
+  - Make sure to change all references to the module's name.
+  - Here's an example of an empty `.tsp` file for a module. Replace `<module-name>` with the module's name in kebab-case, and `<ModuleName>` with the module's name in PascalCase.
+  ```tsp
+  import "@typespec/json-schema";
+  using TypeSpec.JsonSchema;
+
+  @jsonSchema("/modules/<module-name>.json")
+  model <ModuleName>Module {
+      /** <Short description of the module>
+      * https://blue-build.org/reference/modules/<module-name>/
+      */
+      type: "<module-name>",
+  }
+  ``` 
+- Use docstrings with the `/** */` syntax liberally to describe every option in the configuration.
+  - Even the `type:` key should be documented as in the example above.
+- Remember to use the `?` syntax to declare all properties which are not required to use the module successfully as optional. Also declare default values when applicable.
+  - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/models#optional-properties).
 
 ### Boot-time Modules
 > [!IMPORTANT]  
