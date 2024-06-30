@@ -84,6 +84,7 @@ Every module folder should inlude a `<modulename>.tsp` file containing a model o
   ``` 
 - Use docstrings with the `/** */` syntax liberally to describe every option in the configuration.
   - Even the `type:` key should be documented as in the example above.
+  - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/documentation).
 - Remember to use the `?` syntax to declare all properties which are not required to use the module successfully as optional. Also declare default values when applicable.
   - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/models#optional-properties).
 
