@@ -1,6 +1,8 @@
 # `justfiles`
 
-:::note The module is only compatible with Universal Blue images. :::
+:::note
+The module is only compatible with Universal Blue images.
+:::
 
 The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files in Universal Blue -based images. It can be useful for example when utilizing DE-specific justfiles when building multiple images. On the other hand, you likely wont need the module if you're building just one image or need just one justfile for all your images.
 
