@@ -27,5 +27,4 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
   ENABLE_MULTIMEDIA_REPO
   rpm-ostree install $INSTALL_STR
   DISABLE_MULTIMEDIA_REPO
-  fi  
 fi    
