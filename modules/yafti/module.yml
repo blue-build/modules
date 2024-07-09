@@ -1,6 +1,7 @@
 name: yafti
 shortdesc: The yafti module can be used to install yafti and set it up to run on first boot.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/yafti/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/yafti/yafti.tsp
 example: |
   type: yafti
   custom-flatpaks:

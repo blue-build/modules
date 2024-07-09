@@ -1,23 +1,24 @@
 name: systemd
 shortdesc: The systemd module streamlines the management of systemd units during image building.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/systemd.tsp
 example: |
   type: systemd
   system:
     enabled:
       - example.service # Enabled (runs on system boot)
     disabled:
-      - example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
+      - example.target # Disabled (does not run on system boot, unless another unit strictly requires it)
     masked:
       - example.service # Masked (does not run on system boot, under any circumstances)
     unmasked:
       - example.service # Unmasked (runs on system boot, even if previously masked)    
   user:
     enabled:
-      - example.timer # Enabled (runs for the user)
+      - example.timer # Enabled (runs for the users)
     disabled:
-      - example.service # Disabled (does not run for the user, unless other unit strictly requires it)
+      - example.service # Disabled (does not run for the users, unless another unit strictly requires it)
     masked:
-      - example.service # Masked (does not run for the user, under any circumstances) 
+      - example.service # Masked (does not run for the users, under any circumstances) 
     unmasked:
-      - example.service # Unmasked (runs for the user, even if previously masked)
+      - example.service # Unmasked (runs for the users, even if previously masked)

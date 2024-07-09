@@ -1,6 +1,7 @@
 name: bling
 shortdesc: The bling module can be used to pull in small "bling" into your image.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/bling/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/bling/bling.tsp
 example: |
   type: bling
   install:
