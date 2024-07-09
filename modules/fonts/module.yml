@@ -1,7 +1,7 @@
 name: fonts
 shortdesc: The `fonts` module can be used to install fonts from Nerd Fonts or Google Fonts.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/fonts/README.md
-typespec: https://raw.githubusercontent.com/blue-build/modules/113-feat-create-json-schemas-for-module-configuration/modules/fonts/fonts.tsp
+typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/fonts/fonts.tsp
 example: |
   type: fonts
   fonts:
