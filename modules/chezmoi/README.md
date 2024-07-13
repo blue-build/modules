@@ -34,7 +34,7 @@ You can enable them manually instead when the system has been installed:
 To enable the services for a single user, run the following command as that user:
 
 ```bash
-systemctl enable --user chezmoi-init.service chezmoi-update.timer`
+systemctl enable --user chezmoi-init.service chezmoi-update.timer
 ```
 
 To manually enable the services for all users, run the following command with sudo:
