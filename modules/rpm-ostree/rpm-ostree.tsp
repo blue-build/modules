@@ -19,4 +19,12 @@ model RpmOstreeModule {
 
     /** List of RPM packages to remove. */
     remove?: Array<string>;
+
+    /** List of configurations for `rpm-ostree override replace`ing packages. */
+    replace?: Array<{
+        /** URL to the source COPR repo for the new packages. */
+        "from-repo": string,
+        /** List of packages to replace using packages from the defined repo. */
+        packages: Array<string>,
+    }>;
 }
