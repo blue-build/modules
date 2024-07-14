@@ -15,5 +15,9 @@ model AkmodsModule {
      * surface: surface kernel / surface images
      */
     base?: "main" | "asus" | "fsync" | "surface" = "main";
+
+    /** List of akmods to install.
+     * See all available akmods here: https://github.com/ublue-os/akmods#kmod-packages
+     */
     install: Array<string>;
 }
