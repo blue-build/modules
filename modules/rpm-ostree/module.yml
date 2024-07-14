@@ -9,9 +9,12 @@ example: |
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+  optfix:
+    - Tabby # needed because tabby installs into /opt/Tabby
   install:
     - starship
     - brave-browser
+    - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
   remove:
     - firefox
     - firefox-langpacks
