@@ -4,21 +4,12 @@ readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/system
 typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/systemd.tsp
 example: |
   type: systemd
+  # this example disables automatic flatpak updates and enables a custom service unit for all users
   system:
-    enabled:
-      - example.service # Enabled (runs on system boot)
     disabled:
-      - example.target # Disabled (does not run on system boot, unless another unit strictly requires it)
-    masked:
-      - example.service # Masked (does not run on system boot, under any circumstances)
-    unmasked:
-      - example.service # Unmasked (runs on system boot, even if previously masked)    
+      - flatpak-system-update.timer
   user:
     enabled:
-      - example.timer # Enabled (runs for the users)
+      - my-custom.service
     disabled:
-      - example.service # Disabled (does not run for the users, unless another unit strictly requires it)
-    masked:
-      - example.service # Masked (does not run for the users, under any circumstances) 
-    unmasked:
-      - example.service # Unmasked (runs for the users, even if previously masked)
+      - flatpak-user-update.timer
