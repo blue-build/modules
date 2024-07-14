@@ -14,6 +14,9 @@ model RpmOstreeModule {
     /** List of links to key files to import for installing from custom repositories. */
     keys?: Array<string>;
 
+    /** List of folder names under /opt/ to enable for installing into. */
+    optfix?: Array<string>;
+
     /** List of RPM packages to install. */
     install?: Array<string>;
 
