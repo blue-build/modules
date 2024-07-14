@@ -6,27 +6,27 @@ This module is similar to using `dconf` configuration, but is better because it 
 
 What does this module do?
 
-- It copies all content from `/usr/share/glib-2.0/schemas/`, except existing gschema.overrides to avoid conflicts, into temporary test location.
-- It copies your gschema.overrides you provided in this module from `files/gschema-overrides/` into temporary test location.
+- It copies all content from `/usr/share/glib-2.0/schemas`, except existing gschema.overrides to avoid conflicts, into temporary test location.
+- It copies your gschema.overrides you provided in this module from `config/gschema-overrides` into temporary test location.
 - It tests them for errors in temporary test location by using `glib-compile-schemas` with `--strict` flag. If errors are found, build will fail.
-- If test is passed successfully, it copies your gschema.overrides to `/usr/share/glib-2.0/schemas/`.
-- It compiles gschema using `glib-compile-schemas` in `/usr/share/glib-2.0/schemas/` location to include your changes.
+- If test is passed successfully, it copies your gschema.overrides to `/usr/share/glib-2.0/schemas`.
+- It compiles gschema using `glib-compile-schemas` in `/usr/share/glib-2.0/schemas` location to include your changes.
 
 Temporary test location is:
 
-`/tmp/bluebuild-schema-test/`
+`/tmp/bluebuild-schema-test`
 
 ## Usage
 
 To use this module, you need to include your gschema.override file(s) in this location (make folder if it doesn't exist):
 
-`files/gschema-overrides/`
+`config/gschema-overrides`
 
 Then you need to include those file(s) in recipe file, like in example configuration.
 
 It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
-Also don't forget to rename your file(s) too with this prefix in `files/gschema-overrides/`.
+Also don't forget to rename your file(s) too with this prefix in `config/gschema-overrides`.
 
 ## Creating gschema.override files
 
