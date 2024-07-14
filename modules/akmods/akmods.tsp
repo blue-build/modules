@@ -8,11 +8,11 @@ model AkmodsModule {
      */
     type: "akmods";
 
-    /** The kernel / image your image is based on.
-     * main: stock kernel / main and nvidia images
-     * asus: asus kernel / asus images
-     * fsync: fsync kernel / bazzite images
-     * surface: surface kernel / surface images
+    /** The kernel your images uses.
+     * - main: stock kernel / main and nvidia images
+     * - asus: asus kernel / asus images
+     * - fsync: fsync kernel / bazzite images
+     * - surface: surface kernel / surface images
      */
     base?: "main" | "asus" | "fsync" | "surface" = "main";
 
