@@ -5,7 +5,13 @@ set -euo pipefail
 
 get_yaml_array FILES '.files[]' "$1"
 
-cd "$CONFIG_DIRECTORY/files"
+if [[ "${CONFIG_DIRECTORY}" == "/tmp/config" ]]; then
+  FILES_DIR="${CONFIG_DIRECTORY}/files"
+elif [[ "${CONFIG_DIRECTORY}" == "/tmp/files" ]]; then
+  FILES_DIR="${CONFIG_DIRECTORY}/system"
+fi
+
+cd "${FILES_DIR}"
 shopt -s dotglob
 
 if [[ ${#FILES[@]} -gt 0 ]]; then
@@ -29,7 +35,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             cp -f $FILE $DEST
             rm -f "$DEST"/.gitkeep
         else
-            echo "File or Directory $FILE Does Not Exist in $CONFIG_DIRECTORY/files"
+            echo "File or Directory $FILE Does Not Exist in ${FILES_DIR}"
             exit 1
         fi
     done
