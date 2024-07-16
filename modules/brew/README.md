@@ -51,8 +51,6 @@ The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system
 - `brew-update` runs at the specified time to update Brew to the latest version
 - `brew-upgrade` runs at the specified time to upgrade Brew packages
 
-## Configuration Options
-
 ### Update
 
 The Brew update operation updates the Brew binary to latest version.
