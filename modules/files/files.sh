@@ -5,10 +5,11 @@ set -euo pipefail
 
 get_yaml_array FILES '.files[]' "$1"
 
+# Support for legacy "/tmp/config/" to satisfy transition period to "/tmp/files/"
 if [[ "${CONFIG_DIRECTORY}" == "/tmp/config" ]]; then
   FILES_DIR="${CONFIG_DIRECTORY}/files"
 elif [[ "${CONFIG_DIRECTORY}" == "/tmp/files" ]]; then
-  FILES_DIR="${CONFIG_DIRECTORY}/system"
+  FILES_DIR="${CONFIG_DIRECTORY}"
 fi
 
 cd "${FILES_DIR}"
@@ -17,8 +18,8 @@ shopt -s dotglob
 if [[ ${#FILES[@]} -gt 0 ]]; then
     echo "Adding files to image"
     for pair in "${FILES[@]}"; do
-        FILE="$PWD/$(echo $pair | yq 'to_entries | .[0].key')"
-        DEST=$(echo $pair | yq 'to_entries | .[0].value')
+        FILE="$PWD/$(echo $pair | yq '.source')"
+        DEST=$(echo $pair | yq '.destination')
         if [ -d "$FILE" ]; then
             if [ ! -d "$DEST" ]; then
                 mkdir -p "$DEST"
