@@ -110,7 +110,7 @@ check_flatpak_id_validity_from_flathub () {
       get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
       get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
       if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
-      echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
+        echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
         if [[ ${#INSTALL[@]} -gt 0 ]]; then
           for id in "${INSTALL[@]}"; do
             if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
