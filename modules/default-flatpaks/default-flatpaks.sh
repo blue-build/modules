@@ -101,8 +101,12 @@ configure_lists () {
 }
 
 check_flatpak_id_validity_from_flathub () {
-      SYSTEM_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
-      USER_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml" ]]; then
+        SYSTEM_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
+      fi  
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml" ]]; then
+        USER_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      fi  
       FLATHUB_REPO_LINK="https://dl.flathub.org/repo/flathub.flatpakrepo"
       URL="https://flathub.org/apps"
       CONFIG_FILE="${1}"
