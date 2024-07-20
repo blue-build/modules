@@ -100,6 +100,38 @@ configure_lists () {
     fi
 }
 
+check_flatpak_id_validity_from_flathub () {
+      SYSTEM_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
+      USER_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      FLATHUB_REPO_LINK="https://dl.flathub.org/repo/flathub.flatpakrepo"
+      URL="https://flathub.org/apps"
+      CONFIG_FILE="${1}"
+      INSTALL_LEVEL="${2}"
+      get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
+      get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
+      if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
+      echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
+        if [[ ${#INSTALL[@]} -gt 0 ]]; then
+          for id in "${INSTALL[@]}"; do
+            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+              echo "This ${INSTALL_LEVEL} install flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
+              exit 1
+            fi
+          done
+        fi
+        if [[ ${#REMOVE[@]} -gt 0 ]]; then  
+          for id in "${REMOVE[@]}"; do
+            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+              echo "This ${INSTALL_LEVEL} removal flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
+              exit 1
+            fi
+          done
+        fi  
+      else
+        echo "NOTE: Flatpak ID safe-check is only available for FlatHub repo"
+      fi  
+}
+
 echo "Enabling flatpaks module"
 mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
 mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
@@ -129,6 +161,9 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     fi
     configure_lists "$1" "user"
 fi
+
+check_flatpak_id_validity_from_flathub "${1}" "system"
+check_flatpak_id_validity_from_flathub "${1}" "user"
 
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
