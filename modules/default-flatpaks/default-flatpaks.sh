@@ -136,7 +136,10 @@ check_flatpak_id_validity_from_flathub () {
           done
         fi  
       else
-        echo "NOTE: Flatpak ID safe-check is only available for FlatHub repo"
+        if ! ${MESSAGE_DISPLAYED}; then
+          echo "NOTE: Flatpak ID safe-check is only available for FlatHub repo"
+          MESSAGE_DISPLAYED=true
+        fi  
       fi  
 }
 
@@ -170,6 +173,7 @@ if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_lists "$1" "user"
 fi
 
+MESSAGE_DISPLAYED=false
 check_flatpak_id_validity_from_flathub "${1}" "system"
 check_flatpak_id_validity_from_flathub "${1}" "user"
 
