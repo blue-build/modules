@@ -8,7 +8,7 @@ haven't been created yet prior to first boot).
 :::note
 If you want to place files into `/etc/`, there are two ways to do it:
 
-1. copying a directory in `files/system/` directly to `/etc` to add all of its
+1. copying a directory in `files/` directly to `/etc` to add all of its
    files at build time, or
 2. putting the files you want there in `/usr/etc/` as part of copying things
    over to `/usr/`, which `rpm-ostree` will then copy to `/etc/` at runtime/boot.
