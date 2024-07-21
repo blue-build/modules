@@ -35,7 +35,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             if [ ! -d "$DEST" ]; then
                 mkdir -p "$DEST"
             fi
-            echo "Copying $FILE to $DEST"
+            echo "Copying $FILE/* to $DEST"
             cp -rf "$FILE"/* $DEST
             if [[ "${DEST}" =~ *"/" ]] || [[ "${DEST}" == "/" ]]; then
               rm -f "${DEST}.gitkeep"
