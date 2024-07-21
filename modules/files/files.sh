@@ -37,7 +37,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp -rf "$FILE"/* $DEST
-            if [[ "${DEST}" =~ */ ]]; then
+            if [[ "${DEST}" =~ *"/" ]] || [[ "${DEST}" == "/" ]]; then
               rm -f "${DEST}.gitkeep"
             else
               rm -f "${DEST}/.gitkeep"
@@ -49,7 +49,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp -f $FILE $DEST
-            if [[ "${DEST}" =~ */ ]]; then
+            if [[ "${DEST}" =~ *"/" ]] || [[ "${DEST}" == "/" ]]; then
               rm -f "${DEST}.gitkeep"
             else
               rm -f "${DEST}/.gitkeep"
