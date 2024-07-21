@@ -8,6 +8,6 @@ model FilesModule {
      */
     type: "files";
 
-    /** List of files / folders to copy. Format is: `sourcefile.txt: /destination/file.txt`  */
+    /** List of files / folders to copy. */
     files: Array<Record<string>>;
 }

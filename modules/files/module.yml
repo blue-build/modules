@@ -6,8 +6,5 @@ example: |
   modules:
     - type: files
       files:
-        - usr: /usr # copies config/files/usr into your images /usr
-                    # put configuration files you want in /etc/ on a *booted*
-                    # system in /usr/etc/ in the image.
-        - etc: /etc # copies config/files/etc into your image's /etc immediately,
-                    # for use with further modules.
+        - source: system   # copies files/system/* (* indicates everything inside it) into your image root folder /
+          destination: /
