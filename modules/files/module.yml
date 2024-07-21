@@ -6,7 +6,7 @@ example: |
   modules:
     - type: files
       files:
-        - source: system   # copies `files/system/*` (* means everything inside it) into your image's root folder /
+        - source: system   # copies `files/system/*` (* means everything inside it) into your image's root folder `/`
           destination: / 
-        - source: my-image/usr   # copies `files/my-image/usr/*` to /usr/ inside the image
+        - source: my-image/usr   # copies `files/my-image/usr/*` to `/usr/` inside the image
           destination: /usr
