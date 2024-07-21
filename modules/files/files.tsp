@@ -9,5 +9,8 @@ model FilesModule {
     type: "files";
 
     /** List of files / folders to copy. */
-    files: Array<Record<string>>;
+    files: Array<Record<string>> | Array<{
+        source: string;
+        destination: string;
+    }>;
 }
