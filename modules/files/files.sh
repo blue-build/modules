@@ -37,7 +37,11 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp -rf "$FILE"/* $DEST
-            rm -f "$DEST"/.gitkeep
+            if [[ "${DEST}" =~ *"/" ]] || [[ "${DEST}" == "/" ]]; then
+              rm -f "${DEST}.gitkeep"
+            else
+              rm -f "${DEST}/.gitkeep"
+            fi  
         elif [ -f "$FILE" ]; then
             DEST_DIR=$(dirname "$DEST")
             if [ ! -d "$DEST_DIR" ]; then
@@ -45,7 +49,11 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             fi
             echo "Copying $FILE to $DEST"
             cp -f $FILE $DEST
-            rm -f "$DEST"/.gitkeep
+            if [[ "${DEST}" =~ *"/" ]] || [[ "${DEST}" == "/" ]]; then
+              rm -f "${DEST}.gitkeep"
+            else
+              rm -f "${DEST}/.gitkeep"
+            fi  
         else
             echo "File or Directory $FILE Does Not Exist in ${FILES_DIR}"
             exit 1
