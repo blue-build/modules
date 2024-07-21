@@ -5,14 +5,32 @@ set -euo pipefail
 
 get_yaml_array FILES '.files[]' "$1"
 
-cd "$CONFIG_DIRECTORY/files"
-shopt -s dotglob
+# Support for legacy "/tmp/config/" to satisfy transition period to "/tmp/files/"
+if [[ "${CONFIG_DIRECTORY}" == "/tmp/config" ]]; then
+  FILES_DIR="${CONFIG_DIRECTORY}/files"
+elif [[ "${CONFIG_DIRECTORY}" == "/tmp/files" ]]; then
+  FILES_DIR="${CONFIG_DIRECTORY}"
+fi
 
+cd "${FILES_DIR}"
+shopt -s dotglob
+ 
 if [[ ${#FILES[@]} -gt 0 ]]; then
     echo "Adding files to image"
     for pair in "${FILES[@]}"; do
+      # Support for legacy recipe format to satisfy transition period to new source/destination recipe format
+      if [[ $(echo $pair | yq '.source') == "null" || -z $(echo $pair | yq '.source') ]] && [[ $(echo $pair | yq '.destination') == "null" || -z $(echo $pair | yq '.destination') ]]; then
+        echo "ATTENTION: You are using the legacy module recipe format"
+        echo "           It is advised to switch to new module recipe format,"
+        echo "           which contains 'source' & 'destination' YAML keys"
+        echo "           For more details, please visit 'files' module documentation:"
+        echo "           https://blue-build.org/reference/modules/files/"
         FILE="$PWD/$(echo $pair | yq 'to_entries | .[0].key')"
         DEST=$(echo $pair | yq 'to_entries | .[0].value')
+      else
+        FILE="$PWD/$(echo $pair | yq '.source')"
+        DEST=$(echo $pair | yq '.destination')
+      fi 
         if [ -d "$FILE" ]; then
             if [ ! -d "$DEST" ]; then
                 mkdir -p "$DEST"
@@ -29,7 +47,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             cp -f $FILE $DEST
             rm -f "$DEST"/.gitkeep
         else
-            echo "File or Directory $FILE Does Not Exist in $CONFIG_DIRECTORY/files"
+            echo "File or Directory $FILE Does Not Exist in ${FILES_DIR}"
             exit 1
         fi
     done
