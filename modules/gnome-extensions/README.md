@@ -58,10 +58,16 @@ How to uninstall extensions using the module:
 
 ## Known issues
   
-### Some extensions complain about missing gschema.compiled file
+### Some extensions use extension-only gschemas.compiled file location
 
-This is a rarity, but some extensions might complain about this one, due to the way they are programmed with hard-coded gschema locations.  
+This is a rarity, but some extensions might have this issue, due to the way they are programmed with hard-coded gschema locations.  
 Most extensions which follow Gnome extension standards don't have this issue.
+
+Standard location for global `gschema.compiled` file is:  
+`/usr/share/glib-2.0/schemas/gschema.compiled`
+
+Those problematic extensions explicitly ask for this extension-only location instead:
+`/usr/share/gnome-shell/extensions/$EXT_UUID/schemas/gschemas.compiled`
 
 If you get the error similar to this one (Fly-Pie extension example):  
 `GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
