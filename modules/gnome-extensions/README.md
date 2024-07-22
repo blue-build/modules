@@ -71,13 +71,15 @@ https://github.com/blue-build/modules/issues/new
 
 ### Some extensions published in https://extensions.gnome.org are hard-coded to user locations
 
-Those type of extensions are fixed to these locations:  
-- `/usr/local/share/` (`/var/usrlocal/share/`)  
-- `$HOME/.local/share/`
+Those type of extensions are fixed to these locations (... indicates further folders):  
+- `/usr/local/share/...` (`/var/usrlocal/share/...`)  
+- `$HOME/.local/share/...`
 
 Those locations are not writable in build-time.
 
-That means that extension has build instructions for packagers to build the extension either system-wise or user-wise.
+`/usr/share/...` is the standard location for system Gnome extensions, as outlined in "What does this module do?" section.
+
+That means that extension has build instructions for packagers to build the extension either system-wide or user-wide.
 
 While some extensions might not have this limit even with the instructions above, some extensions might have.
 
@@ -86,7 +88,7 @@ Those system versions are usually provided by the system packagers.
 
 So the solution is to install the extension from system repository instead if available.
 
-In this scenario, you will notice the extension error similar to this when trying to run it (notice the explicit request to `/usr/local/share` location):  
+In this scenario, you will notice the extension error similar to this when trying to run it (notice the explicit request to `/usr/local/share/...` location):  
 ```
 GLib.FileError: Failed to open file “/usr/local/share/glib-2.0/schemas/gschemas.compiled”: open() failed: No such file or directory
 ```
