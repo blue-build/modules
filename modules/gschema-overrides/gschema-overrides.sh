@@ -4,7 +4,7 @@ set -euo pipefail
 
 get_yaml_array INCLUDE '.include[]' "$1"
 
-schema_include_location="/tmp/config/gschema-overrides"
+schema_include_location="${CONFIG_DIRECTORY}/gschema-overrides"
 schema_test_location="/tmp/bluebuild-schema-test"
 schema_location="/usr/share/glib-2.0/schemas"
 gschema_extension=false

@@ -76,3 +76,44 @@ elif [[ ${#REMOVE[@]} -gt 0 ]]; then
     echo "Removing: ${REMOVE_STR[*]}"
     rpm-ostree override remove $REMOVE_STR
 fi
+
+get_yaml_array REPLACE '.replace[]' "$1"
+
+# Override-replace RPM packages
+if [[ ${#REPLACE[@]} -gt 0 ]]; then
+    for REPLACEMENT in "${REPLACE[@]}"; do
+
+        # Get repository
+        REPO=$(echo "${REPLACEMENT}" | yq -I=0 ".from-repo")
+        REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
+
+        # Ensure repository is provided
+        if [[ "${REPO}" == "null" ]]; then
+            echo "Error: Key 'from-repo' was declared, but repository URL was not provided."
+            exit 1
+        fi
+
+        # Get info from repository URL
+        MAINTAINER=$(awk -F'/' '{print $5}' <<< "${REPO}")
+        REPO_NAME=$(awk -F'/' '{print $6}' <<< "${REPO}")
+        FILE_NAME=$(awk -F'/' '{print $9}' <<< "${REPO}")
+
+        # Get packages to replace
+        get_yaml_array PACKAGES '.packages[]' "${REPLACEMENT}"
+        REPLACE_STR="$(echo "${PACKAGES[*]}" | tr -d '\n')"
+
+        # Ensure packages are provided
+        if [[ ${#PACKAGES[@]} == 0 ]]; then
+            echo "Error: No packages were provided for repository '${REPO_NAME}'."
+            exit 1
+        fi
+
+        echo "Replacing packages from repository: '${REPO_NAME}' owned by '${MAINTAINER}'"
+        echo "Replacing: ${REPLACE_STR}"
+
+        curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
+        rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME} ${REPLACE_STR}
+        rm "/etc/yum.repos.d/${FILE_NAME}"
+
+    done
+fi

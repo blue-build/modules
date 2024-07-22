@@ -1,23 +1,15 @@
 name: systemd
 shortdesc: The systemd module streamlines the management of systemd units during image building.
 readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/README.md
+typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/systemd/systemd.tsp
 example: |
   type: systemd
+  # this example disables automatic flatpak updates and enables a custom service unit for all users
   system:
-    enabled:
-      - example.service # Enabled (runs on system boot)
     disabled:
-      - example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
-    masked:
-      - example.service # Masked (does not run on system boot, under any circumstances)
-    unmasked:
-      - example.service # Unmasked (runs on system boot, even if previously masked)    
+      - flatpak-system-update.timer
   user:
     enabled:
-      - example.timer # Enabled (runs for the user)
+      - my-custom.service
     disabled:
-      - example.service # Disabled (does not run for the user, unless other unit strictly requires it)
-    masked:
-      - example.service # Masked (does not run for the user, under any circumstances) 
-    unmasked:
-      - example.service # Unmasked (runs for the user, even if previously masked)
+      - flatpak-user-update.timer

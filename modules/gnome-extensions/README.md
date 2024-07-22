@@ -58,13 +58,45 @@ How to uninstall extensions using the module:
 
 ## Known issues
   
-### Some extensions complain about missing gschema.compiled file
+### Some extensions use extension-only gschemas.compiled file location
 
-This is a rarity, but some extensions might complain about this one, due to the way they are programmed with hard-coded gschema locations.  
+This is a rarity, but some extensions might have this issue, due to the way they are programmed with hard-coded gschema locations.  
 Most extensions which follow Gnome extension standards don't have this issue.
 
+Standard location for global `gschema.compiled` file is:  
+`/usr/share/glib-2.0/schemas/gschema.compiled`
+
+Those problematic extensions explicitly ask for this extension-only location instead:  
+`/usr/share/gnome-shell/extensions/$EXT_UUID/schemas/gschemas.compiled`
+
 If you get the error similar to this one (Fly-Pie extension example):  
-`GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
+```
+GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
+```
 
 Then please open the issue in BlueBuild Modules GitHub repo with the affecting extension, as it's trivial to fix.  
 https://github.com/blue-build/modules/issues/new
+
+### Some extensions published in https://extensions.gnome.org are hard-coded to user locations
+
+Those type of extensions are fixed to these locations (... indicates further folders):  
+- `/usr/local/share/...` (local system location)  
+- `$HOME/.local/share/...` (user location)
+
+Those locations are not writable in build-time.
+
+`/usr/share/...` is the standard location for system Gnome extensions, as outlined in "What does this module do?" section.
+
+That means that the extension has build instructions for packagers to build the extension either system-wide or user-wide.
+
+While some extensions might not have this limit even with the instructions above, some extensions might have.
+
+GSConnect from https://extensions.gnome.org has this limitation & requires the system version of the extension to make it work successfully.  
+Those system versions are usually provided by the system packagers.
+
+So the solution is to install the extension from system repository instead if available.
+
+In this scenario, you will notice the extension error similar to this when trying to run it (notice the explicit request to `/usr/local/share/...` location):  
+```
+GLib.FileError: Failed to open file “/usr/local/share/glib-2.0/schemas/gschemas.compiled”: open() failed: No such file or directory
+```
