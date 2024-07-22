@@ -70,7 +70,9 @@ Those problematic extensions explicitly ask for this extension-only location ins
 `/usr/share/gnome-shell/extensions/$EXT_UUID/schemas/gschemas.compiled`
 
 If you get the error similar to this one (Fly-Pie extension example):  
-`GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory`
+```
+GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
+```
 
 Then please open the issue in BlueBuild Modules GitHub repo with the affecting extension, as it's trivial to fix.  
 https://github.com/blue-build/modules/issues/new
