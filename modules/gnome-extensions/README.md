@@ -68,3 +68,27 @@ If you get the error similar to this one (Fly-Pie extension example):
 
 Then please open the issue in BlueBuild Modules GitHub repo with the affecting extension, as it's trivial to fix.  
 https://github.com/blue-build/modules/issues/new
+
+### Some extensions published in https://extensions.gnome.org are hard-coded to user locations
+
+Those type of extensions are fixed to these locations (... indicates further folders):  
+- `/usr/local/share/...` (`/var/usrlocal/share/...`, local system location)  
+- `$HOME/.local/share/...` (user location)
+
+Those locations are not writable in build-time.
+
+`/usr/share/...` is the standard location for system Gnome extensions, as outlined in "What does this module do?" section.
+
+That means that the extension has build instructions for packagers to build the extension either system-wide or user-wide.
+
+While some extensions might not have this limit even with the instructions above, some extensions might have.
+
+GSConnect from https://extensions.gnome.org has this limitation & requires the system version of the extension to make it work successfully.  
+Those system versions are usually provided by the system packagers.
+
+So the solution is to install the extension from system repository instead if available.
+
+In this scenario, you will notice the extension error similar to this when trying to run it (notice the explicit request to `/usr/local/share/...` location):  
+```
+GLib.FileError: Failed to open file “/usr/local/share/glib-2.0/schemas/gschemas.compiled”: open() failed: No such file or directory
+```
