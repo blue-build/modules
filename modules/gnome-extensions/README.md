@@ -66,7 +66,7 @@ Most extensions which follow Gnome extension standards don't have this issue.
 Standard location for global `gschema.compiled` file is:  
 `/usr/share/glib-2.0/schemas/gschema.compiled`
 
-Those problematic extensions explicitly ask for this extension-only location instead:
+Those problematic extensions explicitly ask for this extension-only location instead:  
 `/usr/share/gnome-shell/extensions/$EXT_UUID/schemas/gschemas.compiled`
 
 If you get the error similar to this one (Fly-Pie extension example):  
@@ -78,7 +78,7 @@ https://github.com/blue-build/modules/issues/new
 ### Some extensions published in https://extensions.gnome.org are hard-coded to user locations
 
 Those type of extensions are fixed to these locations (... indicates further folders):  
-- `/usr/local/share/...` (`/var/usrlocal/share/...`, local system location)  
+- `/usr/local/share/...` (local system location)  
 - `$HOME/.local/share/...` (user location)
 
 Those locations are not writable in build-time.
