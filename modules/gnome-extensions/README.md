@@ -72,14 +72,14 @@ https://github.com/blue-build/modules/issues/new
 ### Some extensions published in https://extensions.gnome.org are hard-coded to user locations
 
 Those type of extensions are fixed to these locations (... indicates further folders):  
-- `/usr/local/share/...` (`/var/usrlocal/share/...`)  
-- `$HOME/.local/share/...`
+- `/usr/local/share/...` (`/var/usrlocal/share/...`, local system location)  
+- `$HOME/.local/share/...` (user location)
 
 Those locations are not writable in build-time.
 
 `/usr/share/...` is the standard location for system Gnome extensions, as outlined in "What does this module do?" section.
 
-That means that extension has build instructions for packagers to build the extension either system-wide or user-wide.
+That means that the extension has build instructions for packagers to build the extension either system-wide or user-wide.
 
 While some extensions might not have this limit even with the instructions above, some extensions might have.
 
