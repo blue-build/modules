@@ -59,6 +59,10 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
             exit 1
         fi
     done
+else
+  echo "ERROR: You did not add any file or folder to the module recipe for copying,"
+  echo "       Please assure that you performed this operation correctly"
+  exit 1
 fi
 
 shopt -u dotglob
