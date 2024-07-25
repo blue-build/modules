@@ -17,6 +17,17 @@ if ! command -v gnome-shell &> /dev/null; then
   exit 1
 fi
 
+echo "Testing connection with https://extensions.gnome.org/..."
+if ! curl --output /dev/null --silent --head --fail "https://extensions.gnome.org/"; then
+  echo "ERROR: Connection unsuccessful."
+  echo "       This usually happens when https://extensions.gnome.org/ website is down."
+  echo "       Please try again later (or disable the module temporarily)"
+  exit 1
+else
+  echo "Connection successful, proceeding."
+fi  
+
+
 GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
 echo "Gnome version: ${GNOME_VER}"
 LEGACY=false
