@@ -24,7 +24,7 @@ if ! curl --output /dev/null --silent --head --fail "https://extensions.gnome.or
   echo "       Please try again later (or disable the module temporarily)"
   exit 1
 else
-  echo "Connection successful, proceeding.
+  echo "Connection successful, proceeding."
 fi  
 
 
