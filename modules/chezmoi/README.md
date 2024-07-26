@@ -43,7 +43,7 @@ To manually enable the services for all users, run the following command with su
 sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer
 ```
 
-To turn on lingering for a given user, run the following commmand with sudo:
+To turn on lingering for a given user, run the following command with sudo:
 
 :::note
 By default, any systemd units in a user's namespace will run after the user logs in, and will close after the user closes their last session. 
@@ -59,7 +59,7 @@ sudo loginctl enable-linger <username>`
 
 You can configure the interval between updates of your dotfiles by setting the value of `run-every`.
 The string is passed directly to OnUnitInactiveSec. (default: '1d')
-See [`systemd.time` documenation](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html) for detailed syntax.
+See [`systemd.time` documentation](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html) for detailed syntax.
 Examples: '1d' (1 day - default), '6h' (6 hours), '10m' (10 minutes)
 
 Likewise, `wait-after-boot` configures the delay between the system booting and the update service starting.
