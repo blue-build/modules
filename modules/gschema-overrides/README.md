@@ -65,7 +65,7 @@ tap-to-click=true
   
   `gsettings list-recursively`
   
-  You should use this command everytime when you want to apply some setting override,
+  You should use this command every time when you want to apply some setting override,
   to ensure that it's listed as available.
 
 **Gschema.override files don't support relocatable schemas & locking settings.**
