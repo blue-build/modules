@@ -1,7 +1,5 @@
 name: chezmoi
 shortdesc: The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/chezmoi/README.md
-typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/chezmoi/chezmoi.tsp
 example: |
   type: chezmoi
   repository: "https://github.com/octocat/dotfiles" # my dotfiles repo

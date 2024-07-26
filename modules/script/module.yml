@@ -1,7 +1,5 @@
 name: script
 shortdesc: The script module can be used to run arbitrary bash snippets and scripts at image build time.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/script/README.md
-typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/script/script.tsp
 example: |
   type: script
   snippets:

@@ -1,7 +1,5 @@
 name: gnome-extensions
 shortdesc: The gnome-extensions module can be used to install GNOME extensions inside system directory.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-extensions/README.md
-typespec: https://raw.githubusercontent.com/blue-build/modules/main/modules/gnome-extensions/gnome-extensions.tsp
 example: |
   type: gnome-extensions
   install:
