@@ -32,7 +32,7 @@ example: |
         # the module will use the previously configured repo.
         # Otherwise, it will overwrite the repo configuration.
         install:
-          - org.kde.kdenlive # this Flatpak is appended to the insta llist
+          - org.kde.kdenlive # this Flatpak is appended to the install list
       user:
         # repo-name will overwrite the previously-configured repo-name for the user remote
         repo-name: flathub-user
