@@ -51,14 +51,6 @@ The name of the module, same as the name of the directory and script.
 
 A short description of the module, ideally not more than one sentence long. This is used in website metadata or anywhere a shorter module description is needed.
 
-#### `readme:`
-
-The URL to the raw contents of the module’s `README.md` in plain text, not HTML. The README may include a top-level heading for readability, but it will be stripped out in favor of `name:` when the README is ingested for the website.
-
-#### `typespec:`
-
-The URL to the raw contents of the module’s `<modulename>.tsp` [TypeSpec](https://typespec.io/) definition in plain text. This will be used for configuration validation in the editor and CLI, and for generating documentation for the module. Please document each configuration option carefully. 
-
 #### `example:`
 
 A YAML string of example configuration showcasing the configuration options available with inline documentation to describe them. Some of the configuration options may be commented out, with comments describing why one might enable them. The intention here is that the example would be a good place to copy-paste from to get started.
