@@ -8,4 +8,3 @@ example: |
       - dconf-update-service # a service unit that updates the dconf db on boot
       - gnome-vrr # enables gnome-vrr for your image
       - laptop # installs TLP and configures your system for laptop usage
-      - flatpaksync # allows synchronization of user-installed flatpaks, see separate documentation section
