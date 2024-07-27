@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
+echo "Attention: flatpaksync has been removed from the bling module due to it being unmaintained and unused."
+echo "If you need this module and want to resurrect it, you can find the source code and documentation in the URLs below:"
+echo "https://github.com/blue-build/modules/tree/af2db664acdcf05eedd4780736d420b87691d60f/modules/bling/flatpaksync"
+echo "https://github.com/blue-build/modules/blob/af2db664acdcf05eedd4780736d420b87691d60f/modules/bling/installers/flatpaksync.sh"
+echo "https://github.com/blue-build/modules/blob/af2db664acdcf05eedd4780736d420b87691d60f/modules/bling/README.md#flatpaksync-unmaintained"
+echo "To fix your build: remove the flatpaksync entry from your bling module configuration"
 
-SYSTEMD_USER_JOBS_DIR="/usr/lib/systemd/user"
-
-mkdir -p "$SYSTEMD_USER_JOBS_DIR"
-
-chmod +x "$MODULE_DIRECTORY"/bling/flatpaksync/flatpaksync
-chmod +x "$MODULE_DIRECTORY"/bling/flatpaksync/flatpakcheckout
-
-cp -r "$MODULE_DIRECTORY"/bling/flatpaksync/flatpaksync /usr/bin/flatpaksync
-cp -r "$MODULE_DIRECTORY"/bling/flatpaksync/flatpakcheckout /usr/bin/flatpakcheckout
-cp -r "$MODULE_DIRECTORY"/bling/flatpaksync/flatpaksync.service "$SYSTEMD_USER_JOBS_DIR/flatpaksync.service"
-cp -r "$MODULE_DIRECTORY"/bling/flatpaksync/flatpaksync.path "$SYSTEMD_USER_JOBS_DIR/flatpaksync.path"
-
-
-systemctl enable --global flatpaksync.path
+exit 1

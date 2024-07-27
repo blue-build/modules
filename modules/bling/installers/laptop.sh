@@ -3,19 +3,12 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
+echo "Attention: laptop submodule has been removed from the bling module."
+echo "It has been removed due to it being depreciated compared to the current power-saving solutions like Power Profiles Daemon (PPD) or Tuned."
+echo "TLP v1.6+ also has issues with SeLinux & requires the insecure workaround of setting SeLinux to permissive mode."
+echo "If you need this submodule and want to resurrect it, you can find the source code in the URLs below:"
+echo "https://github.com/blue-build/modules/blob/af2db664acdcf05eedd4780736d420b87691d60f/modules/bling/installers/laptop.sh"
+echo "https://github.com/blue-build/modules/tree/af2db664acdcf05eedd4780736d420b87691d60f/modules/bling/50-laptop.conf"
+echo "To fix your build: remove the laptop entry from your bling module configuration"
 
-wget "https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo" \
-    -O "/etc/yum.repos.d/_copr_ublue-os_staging.repo"
-if rpm -qa | grep power-profiles-daemon ; then
-    rpm-ostree override remove power-profiles-daemon --install=fprintd --install=tlp --install=tlp-rdw
-else
-    rpm-ostree install fprintd tlp tlp-rdw
-fi
-systemctl enable tlp
-systemctl enable fprintd
-mkdir -p /usr/etc/tlp.d
-mkdir -p /usr/share/ublue-os/just/bling/
-cp -r "$MODULE_DIRECTORY"/bling/50-laptop.conf /usr/etc/tlp.d/50-laptop.conf
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os_staging.repo
-
+exit 1
