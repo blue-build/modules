@@ -76,7 +76,8 @@ To add overrides for schemas not supported by gschema overrides, you can use the
 
   `gsettings list-relocatable-schemas`.
 
-### Example of relocatable schemas
+### Example of relocatable schemas (unsupported with this module)
+This is an example of a relocatable schema setting in the dconf format.
 ```
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Shift><Alt><Super>s'
