@@ -8,8 +8,12 @@ get_yaml_array REPOS '.repos[]' "$1"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
     echo "Adding repositories"
     for REPO in "${REPOS[@]}"; do
-        REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
-        curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
+    REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
+        if [[ "${REPO}" =~ ^https?:\/\/.* ]]; then
+          curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
+        elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
+          cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO}"
+        fi  
     done
 fi
 
@@ -43,16 +47,22 @@ fi
 get_yaml_array INSTALL '.install[]' "$1"
 get_yaml_array REMOVE '.remove[]' "$1"
 
+# Install and remove RPM packages
+# Sort classic, URL & local packages
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
     for PKG in "${INSTALL[@]}"; do
-        if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
-            REPLACED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"
-            echo "Installing directly from URL: ${REPLACED_PKG}"
-            rpm-ostree install "$REPLACED_PKG"
-            INSTALL=( "${INSTALL[@]/$PKG}" ) # delete URL from install array
-        fi
-    done
-fi
+    if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
+      VERSION_SUBSTITUTED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
+      HTTPS_INSTALL=true
+      HTTPS_PKG+=("${VERSION_SUBSTITUTED_PKG}")
+    elif [[ ! "$PKG" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
+      LOCAL_INSTALL=true
+      LOCAL_PKG+=("${PKG}")
+    else
+      CLASSIC_INSTALL=true
+      CLASSIC_PKG+=("${PKG}")
+    fi
+done
 
 # The installation is done with some wordsplitting hacks
 # because of errors when doing array destructuring at the installation step.
@@ -60,16 +70,38 @@ fi
 INSTALL_STR=$(echo "${INSTALL[*]}" | tr -d '\n')
 REMOVE_STR=$(echo "${REMOVE[*]}" | tr -d '\n')
 
-# Install and remove RPM packages
+echo_rpm_install() {
+    if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      echo "Installing: ${CLASSIC_PKG[*]}"
+    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
+    elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      echo "Installing: ${CLASSIC_PKG[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
+    elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      echo "Installing: ${CLASSIC_PKG[*]}"
+      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"    
+      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      echo "Installing: ${CLASSIC_PKG[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
+      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+    fi
+}
+
 if [[ ${#INSTALL[@]} -gt 0 && ${#REMOVE[@]} -gt 0 ]]; then
     echo "Installing & Removing RPMs"
-    echo "Installing: ${INSTALL_STR[*]}"
+    echo_rpm_install
     echo "Removing: ${REMOVE_STR[*]}"
     # Doing both actions in one command allows for replacing required packages with alternatives
     rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $INSTALL_STR)
 elif [[ ${#INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPMs"
-    echo "Installing: ${INSTALL_STR[*]}"
+    echo_rpm_install
     rpm-ostree install $INSTALL_STR
 elif [[ ${#REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPMs"
@@ -108,7 +140,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
             exit 1
         fi
 
-        echo "Replacing packages from repository: '${REPO_NAME}' owned by '${MAINTAINER}'"
+        echo "Replacing packages from COPR repository: '${REPO_NAME}' owned by '${MAINTAINER}'"
         echo "Replacing: ${REPLACE_STR}"
 
         curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"

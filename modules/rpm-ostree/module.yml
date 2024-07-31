@@ -5,6 +5,7 @@ example: |
   repos:
     - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo # when including COPR repos, use the %OS_VERSION% magic string
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+    - my-local-repository.repo # local repo located in `files/rpm-ostree/my-local-repository.repo`
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
   optfix:
@@ -16,6 +17,8 @@ example: |
   remove:
     - firefox
     - firefox-langpacks
+    - my-local-package.rpm # local package located in `files/rpm-ostree/my-local-package.rpm`
+    - some-folder/my-local-package-2.rpm # local package located in `files/rpm-ostree/some-folder/my-local-package-2.rpm`
   replace:
     - from-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
       packages:
