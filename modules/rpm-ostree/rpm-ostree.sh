@@ -12,7 +12,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
         if [[ "${REPO}" =~ ^https?:\/\/.* ]]; then
           curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
-          cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO}"
+          cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
         fi  
     done
 fi
