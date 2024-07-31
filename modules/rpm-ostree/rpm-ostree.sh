@@ -54,19 +54,20 @@ LOCAL_INSTALL=false
 # Install and remove RPM packages
 # Sort classic, URL & local packages
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
-    for PKG in "${INSTALL[@]}"; do
-    if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
-      VERSION_SUBSTITUTED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
-      HTTPS_INSTALL=true
-      HTTPS_PKG+=("${VERSION_SUBSTITUTED_PKG}")
-    elif [[ ! "$PKG" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
-      LOCAL_INSTALL=true
-      LOCAL_PKG+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
-    else
-      CLASSIC_INSTALL=true
-      CLASSIC_PKG+=("${PKG}")
-    fi
-done
+  for PKG in "${INSTALL[@]}"; do
+      if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
+        VERSION_SUBSTITUTED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
+        HTTPS_INSTALL=true
+        HTTPS_PKG+=("${VERSION_SUBSTITUTED_PKG}")
+      elif [[ ! "$PKG" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
+        LOCAL_INSTALL=true
+        LOCAL_PKG+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
+      else
+        CLASSIC_INSTALL=true
+        CLASSIC_PKG+=("${PKG}")
+      fi
+  done
+fi
 
 # The installation is done with some wordsplitting hacks
 # because of errors when doing array destructuring at the installation step.
