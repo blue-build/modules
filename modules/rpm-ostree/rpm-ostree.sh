@@ -47,6 +47,10 @@ fi
 get_yaml_array INSTALL '.install[]' "$1"
 get_yaml_array REMOVE '.remove[]' "$1"
 
+CLASSIC_INSTALL=false
+HTTPS_INSTALL=false
+LOCAL_INSTALL=false
+
 # Install and remove RPM packages
 # Sort classic, URL & local packages
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
@@ -57,7 +61,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       HTTPS_PKG+=("${VERSION_SUBSTITUTED_PKG}")
     elif [[ ! "$PKG" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
       LOCAL_INSTALL=true
-      LOCAL_PKG+=("${PKG}")
+      LOCAL_PKG+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
     else
       CLASSIC_INSTALL=true
       CLASSIC_PKG+=("${PKG}")
@@ -67,7 +71,22 @@ done
 # The installation is done with some wordsplitting hacks
 # because of errors when doing array destructuring at the installation step.
 # This is different from other ublue projects and could be investigated further.
-INSTALL_STR=$(echo "${INSTALL[*]}" | tr -d '\n')
+if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
+elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
+elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
+elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${HTTPS_PKG[*]}" | tr -d '\n')
+elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
+elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${HTTPS_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
+elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${HTTPS_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
+fi
+
 REMOVE_STR=$(echo "${REMOVE[*]}" | tr -d '\n')
 
 echo_rpm_install() {
