@@ -118,7 +118,27 @@ if [[ ${#INSTALL[@]} -gt 0 && ${#REMOVE[@]} -gt 0 ]]; then
     echo_rpm_install
     echo "Removing: ${REMOVE_STR[*]}"
     # Doing both actions in one command allows for replacing required packages with alternatives
-    rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $INSTALL_STR)
+    # When --install= flag is used, URLs & local packages are not supported
+    if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
+      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
+    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
+      HTTPS_PKGS=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
+      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
+      rpm-ostree install $HTTPS_PKGS
+    elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
+      LOCAL_PKGS=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
+      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)    
+      rpm-ostree install $LOCAL_PKGS
+    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
+      HTTPS_PKGS=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
+      LOCAL_PKGS=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
+      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
+      rpm-ostree install $HTTPS_PKGS $LOCAL_PKGS
+    fi  
 elif [[ ${#INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
