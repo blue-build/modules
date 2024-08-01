@@ -21,7 +21,7 @@ FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
 wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
 
-rpm-ostree install yafti
+rpm-ostree install yafti-0.8.0
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
