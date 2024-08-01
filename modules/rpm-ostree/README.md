@@ -2,14 +2,13 @@
 
 The [`rpm-ostree`](https://coreos.github.io/rpm-ostree/) module offers pseudo-declarative package and repository management using `rpm-ostree`.
 
-The module first downloads the repository files from repositories declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
+The module first downloads the repository files from URLs declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
 
-You can also have local repos inserted in this file location (make the directory if it doesn't exist):  
+You can also add repository files directly into your git repository if URLs are not provided. For example:
+```yml
+repos:
+   - my-repository.repo # copies in .repo file from files/rpm-ostree/my-repository.repo to /etc/yum.repos.d/
 ```
-files/rpm-ostree/my-repository.repo
-files/rpm-ostree/my-image/my-2nd-repository.repo
-```
-
 If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
 Then the module installs the packages declared under `install:` using `rpm-ostree install`, it removes the packages declared under `remove:` using `rpm-ostree override remove`. If there are packages declared under both `install:` and `remove:` a hybrid command `rpm-ostree remove <packages> --install <packages>` is used, which should allow you to switch required packages for other ones.
