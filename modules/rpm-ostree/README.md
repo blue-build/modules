@@ -15,12 +15,11 @@ Then the module installs the packages declared under `install:` using `rpm-ostre
 
 Installing RPM packages directly from a `http(s)` url that points to the RPM file is also supported, you can just put the URLs under `install:` and they'll be installed along with the other packages. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) like with the `repos:` property.
 
-Installing local RPM packages from the file location is supported. You can insert those RPMs in this file location (make the directory if it doesn't exist):  
+If an RPM is not available in a repository or as an URL, you can also install it directly from a file in your git repository. For example:
+```yml
+install:
+   - weird-package.rpm # tries to install files/rpm-ostree/weird-package.rpm
 ```
-files/rpm-ostree/my-package.rpm
-files/rpm-ostree/my-image/somepackage.rpm
-```
-
 The module can also replace base RPM packages with packages from COPR repo. Under `replace:`, the module finds every pair of keys `- from-repo:` and `packages:`. (Multiple pairs are supported.) The module downloads the COPR repository file declared by `- from-repo:` into `/etc/yum.repos.d/`, and from that repository replaces packages declared under `packages:` using the command `rpm-ostree override replace`. The COPR repository file is then deleted. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) as already said above. At the moment, only COPR repo is supported.
 
 :::note
