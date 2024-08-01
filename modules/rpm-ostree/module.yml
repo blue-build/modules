@@ -17,8 +17,6 @@ example: |
   remove:
     - firefox
     - firefox-langpacks
-    - my-local-package.rpm # local package located in `files/rpm-ostree/my-local-package.rpm`
-    - some-folder/my-local-package-2.rpm # local package located in `files/rpm-ostree/some-folder/my-local-package-2.rpm`
   replace:
     - from-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
       packages:
