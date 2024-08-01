@@ -17,11 +17,14 @@ FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
 PROFILED_DIR="/usr/etc/profile.d"
 FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
-echo "Installing python3-pip and libadwaita"
-rpm-ostree install python3-pip libadwaita
+# Fetch ublue COPR
+REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
+wget -O "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo" "${REPO//[$'\t\r\n ']}"
 
-echo "Installing and enabling yafti"
-pip install --prefix=/usr yafti==0.8.0
+rpm-ostree install yafti-0.8.0
+
+# Remove ublue COPR
+rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
 
 # If the profile.d directory doesn't exist, create it
 if [ ! -d "${PROFILED_DIR}" ]; then
