@@ -23,6 +23,11 @@ wget -O "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo" "${REPO//[
 # Increase repo priority, since downstream Ublue images like Bluefin/Aurora & Bazzite can explicitly disable this repo in another .repo file
 echo "priority=90" >> "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo"
 
+# Remove system python3-pydantic package if it's already installed, so yafti's older version is installed instead
+if rpm -q python3-pydantic >/dev/null; then
+  rpm-ostree uninstall python3-pydantic
+fi  
+
 # Install yafti RPM to fixed version, since refactored yafti should come after this version
 # We don't want to surprise users with that
 rpm-ostree install yafti-0.8.0
