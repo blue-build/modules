@@ -20,11 +20,15 @@ FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 # Fetch ublue COPR
 REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
 wget -O "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo" "${REPO//[$'\t\r\n ']}"
+# Increase repo priority, since downstream Ublue images like Bluefin/Aurora & Bazzite can explicitly disable this repo in another .repo file
+echo "priority=90" >> "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo"
 
+# Install yafti RPM to fixed version, since refactored yafti should come after this version
+# We don't want to surprise users with that
 rpm-ostree install yafti-0.8.0
 
-# Remove ublue COPR
-rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
+# Remove ublue-staging COPR
+rm "/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo"
 
 # If the profile.d directory doesn't exist, create it
 if [ ! -d "${PROFILED_DIR}" ]; then
