@@ -37,15 +37,14 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     for OPTPKG in "${OPTFIX[@]}"; do
         OPTPKG="${OPTPKG%\"}"
         OPTPKG="${OPTPKG#\"}"
-        OPTPKG=$(printf "$OPTPKG")
         mkdir -p "/usr/lib/opt/${OPTPKG}"
         ln -s "../../usr/lib/opt/${OPTPKG}" "/var/opt/${OPTPKG}"
         echo "Created symlinks for ${OPTPKG}"
     done
 fi
 
-get_yaml_array INSTALL '.install[]' "$1"
-get_yaml_array REMOVE '.remove[]' "$1"
+get_yaml_array INSTALL_PKGS '.install[]' "$1"
+get_yaml_array REMOVE_PKGS '.remove[]' "$1"
 
 CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
@@ -53,100 +52,71 @@ LOCAL_INSTALL=false
 
 # Install and remove RPM packages
 # Sort classic, URL & local packages
-if [[ ${#INSTALL[@]} -gt 0 ]]; then
-  for PKG in "${INSTALL[@]}"; do
-      if [[ "$PKG" =~ ^https?:\/\/.* ]]; then
+if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
+  for PKG in "${INSTALL_PKGS[@]}"; do
+      if [[ "${PKG}" =~ ^https?:\/\/.* ]]; then
         VERSION_SUBSTITUTED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
         HTTPS_INSTALL=true
-        HTTPS_PKG+=("${VERSION_SUBSTITUTED_PKG}")
-      elif [[ ! "$PKG" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
+        HTTPS_PKGS+=("${VERSION_SUBSTITUTED_PKG}")
+      elif [[ ! "${PKG}" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
         LOCAL_INSTALL=true
-        LOCAL_PKG+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
+        LOCAL_PKGS+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
       else
         CLASSIC_INSTALL=true
-        CLASSIC_PKG+=("${PKG}")
+        CLASSIC_PKGS+=("${PKG}")
       fi
   done
 fi
 
-# The installation is done with some wordsplitting hacks
-# because of errors when doing array destructuring at the installation step.
-# This is different from other ublue projects and could be investigated further.
-if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
-elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
-elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
-elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${HTTPS_PKG[*]}" | tr -d '\n')
-elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
-elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${HTTPS_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
-elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-  INSTALL_STR=$(echo "${CLASSIC_PKG[*]}" "${HTTPS_PKG[*]}" "${LOCAL_PKG[*]}" | tr -d '\n')
-fi
-
-REMOVE_STR=$(echo "${REMOVE[*]}" | tr -d '\n')
-
 echo_rpm_install() {
     if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKG[*]}"
+      echo "Installing: ${CLASSIC_PKGS[*]}"
     elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
     elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
     elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKG[*]}"
-      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
+      echo "Installing: ${CLASSIC_PKGS[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
     elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKG[*]}"
-      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+      echo "Installing: ${CLASSIC_PKGS[*]}"
+      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
     elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"    
-      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"    
+      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
     elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKG[*]}"
-      echo "Installing package(s) directly from URL: ${HTTPS_PKG[*]}"
-      echo "Installing local package(s): ${LOCAL_PKG[*]}"
+      echo "Installing: ${CLASSIC_PKGS[*]}"
+      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
+      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
     fi
 }
 
-if [[ ${#INSTALL[@]} -gt 0 && ${#REMOVE[@]} -gt 0 ]]; then
+if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Installing & Removing RPMs"
     echo_rpm_install
-    echo "Removing: ${REMOVE_STR[*]}"
+    echo "Removing: ${REMOVE_PKGS[*]}"
     # Doing both actions in one command allows for replacing required packages with alternatives
     # When --install= flag is used, URLs & local packages are not supported
     if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
-      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
+      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
     elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
-      HTTPS_PKGS=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
-      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
-      rpm-ostree install $HTTPS_PKGS
+      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
+      rpm-ostree install "${HTTPS_PKGS[@]}"
     elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
-      LOCAL_PKGS=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
-      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)    
-      rpm-ostree install $LOCAL_PKGS
+      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")    
+      rpm-ostree install "${LOCAL_PKGS[@]}"
     elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      CLASSIC_PKGS=$(echo "${CLASSIC_PKG[*]}" | tr -d '\n')
-      HTTPS_PKGS=$(echo "${HTTPS_PKG[*]}" | tr -d '\n')
-      LOCAL_PKGS=$(echo "${LOCAL_PKG[*]}" | tr -d '\n')
-      rpm-ostree override remove $REMOVE_STR $(printf -- "--install=%s " $CLASSIC_PKGS)
-      rpm-ostree install $HTTPS_PKGS $LOCAL_PKGS
+      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
+      rpm-ostree install "${HTTPS_PKGS[@]}" "${LOCAL_PKGS[@]}"
     fi  
-elif [[ ${#INSTALL[@]} -gt 0 ]]; then
+elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    rpm-ostree install $INSTALL_STR
-elif [[ ${#REMOVE[@]} -gt 0 ]]; then
+    rpm-ostree install "${INSTALL_PKGS[@]}"
+elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
-    echo "Removing: ${REMOVE_STR[*]}"
-    rpm-ostree override remove $REMOVE_STR
+    echo "Removing: ${REMOVE_PKGS[*]}"
+    rpm-ostree override remove "${REMOVE_PKGS[@]}"
 fi
 
 get_yaml_array REPLACE '.replace[]' "$1"
