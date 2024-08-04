@@ -11,7 +11,7 @@ mkdir -p "$FIRSTBOOT_DATA/launcher/"
 
 # doesn't overwrite user's yafti.yml (ignores error)
 cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" || true
-cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA/launcher/"
+cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA"
 
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
 PROFILED_DIR="/usr/etc/profile.d"
