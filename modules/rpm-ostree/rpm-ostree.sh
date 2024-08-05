@@ -9,8 +9,13 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     echo "Adding repositories"
     for REPO in "${REPOS[@]}"; do
     REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
-        if [[ "${REPO}" =~ ^https?:\/\/.* ]]; then
+        # If it's the COPR repo, then download the repo normally
+        # If it's not, then download the repo with URL in it's filename, to avoid duplicate repo name issue
+        if [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
+        elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
+          CLEAN_REPO_NAME=$(echo "${REPO}" | sed 's/^https\?:\/\///')
+          curl -o "/etc/yum.repos.d/${CLEAN_REPO_NAME//\//.}" "${REPO//[$'\t\r\n ']}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
         fi  
