@@ -6,17 +6,6 @@ build-time (e.g. you can't put files in `/home/<username>/`, because users
 haven't been created yet prior to first boot).
 
 :::note
-Don't copy files directly to `/usr/etc/` in build-time, but copy those to `/etc/` instead,
-due to the nature of how `ostree` handles `/usr/etc/` & `/etc/` relationship.
-
-`/usr/etc/` is empty in build-time, while `/etc/` is populated from the base image & changes that you do to it afterwards.
-`/etc/` is then automatically merged to `/usr/etc/` in build-time by `ostree`.
-
-So this means that copying files to `/etc/` in build-time is actually copying it to `/usr/etc/` as an end result.
-
-While copying files to `/usr/etc/` directly in build-time didn't cause any harm,
-the mentioned way above is the more correct one.
-
 In run-time, `/usr/etc/` is the directory for "system"
 configuration templates on atomic Fedora distros, whereas `/etc/` is meant for
 manual overrides and editing by the machine's admin *after* installation.
