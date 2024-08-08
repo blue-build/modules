@@ -1,27 +1,25 @@
 # `files`
 
 The `files` module can be used to copy directories from `files/` to
-any location in your image at build time, as long as the location exists at
-build time (e.g. you can't put files in `/home/<username>/`, because users
+any location in your image at build-time, as long as the location exists at
+build-time (e.g. you can't put files in `/home/<username>/`, because users
 haven't been created yet prior to first boot).
 
 :::note
-If you want to place files into `/etc/`, there are two ways to do it:
+Don't copy files directly to `/usr/etc/` in build-time, but copy those to `/etc/` instead,
+due to the nature of how `ostree` handles `/usr/etc/` & `/etc/` relationship.
 
-1. copying a directory in `files/` directly to `/etc` to add all of its
-   files at build time, or
-2. putting the files you want there in `/usr/etc/` as part of copying things
-   over to `/usr/`, which `rpm-ostree` will then copy to `/etc/` at runtime/boot.
+`/usr/etc/` is empty in build-time, while `/etc/` is populated from the base image & changes that you do to it afterwards.
+`/etc/` is then automatically merged to `/usr/etc/` in build-time by `ostree`.
 
-Typically, you will want to use the latter option (putting files in `/usr/etc/`)
-in almost all cases, since that is the proper directory for "system"
+So this means that copying files to `/etc/` in build-time is actually copying it to `/usr/etc/` as an end result.
+
+While copying files to `/usr/etc/` directly in build-time didn't cause any harm,
+the mentioned way above is the more correct one.
+
+In run-time, `/usr/etc/` is the directory for "system"
 configuration templates on atomic Fedora distros, whereas `/etc/` is meant for
-manual overrides and editing by the machine's admin *after* installation (see
-issue https://github.com/blue-build/legacy-template/issues/28). However, if you
-really need something to be in `/etc/` *at build time* --- for instance, if you
-for some reason need to place a repo file in `/etc/yum.repos.d/` in such a way
-that it is used by a `rpm-ostree` module later on --- then the former option
-will be necessary.
+manual overrides and editing by the machine's admin *after* installation.
 :::
 
 :::caution
