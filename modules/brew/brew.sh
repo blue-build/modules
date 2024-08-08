@@ -188,19 +188,19 @@ EOF
 # Fish already includes this fix in brew-fish-completions.sh
 # By default Brew applies the shell environment changes globally, which causes path conflicts between system & brew installed programs with same name.
 # Universal Blue images include this same fix
-if [[ ! -d "/usr/etc/profile.d/" ]]; then
-  mkdir -p "/usr/etc/profile.d/"
+if [[ ! -d "/etc/profile.d/" ]]; then
+  mkdir -p "/etc/profile.d/"
 fi
-if [[ ! -f "/usr/etc/profile.d/brew.sh" ]]; then
+if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
   echo "#!/usr/bin/env bash
-[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" > "/usr/etc/profile.d/brew.sh"
+[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" > "/etc/profile.d/brew.sh"
 fi
 
 # Copy shell configuration files
 echo "Copying Brew bash & fish shell completions"
 cp -r "${MODULE_DIRECTORY}"/brew/brew-fish-completions.fish /usr/share/fish/vendor_conf.d/brew-fish-completions.fish
-cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completions.sh /usr/etc/profile.d/brew-bash-completions.sh
+cp -r "${MODULE_DIRECTORY}"/brew/brew-bash-completions.sh /etc/profile.d/brew-bash-completions.sh
 
 # Register path symlink
 # We do this via tmpfiles.d so that it is created by the live system.
@@ -240,24 +240,24 @@ fi
 # Disable homebrew analytics if the flag is set to false
 # like secureblue: https://github.com/secureblue/secureblue/blob/live/config/scripts/homebrewanalyticsoptout.sh
 if [[ "${BREW_ANALYTICS}" == false ]]; then
-  if [[ ! -f "/usr/etc/environment" ]]; then
-    echo "" > "/usr/etc/environment" # touch fails for some reason, probably a bug with it
+  if [[ ! -f "/etc/environment" ]]; then
+    echo "" > "/etc/environment" # touch fails for some reason, probably a bug with it
   fi
-  CURRENT_ENVIRONMENT=$(cat "/usr/etc/environment")
-  CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/usr/etc/environment")
+  CURRENT_ENVIRONMENT=$(cat "/etc/environment")
+  CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/etc/environment")
   if [[ -n "${CURRENT_ENVIRONMENT}" ]]; then
     if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
       echo "Disabling Brew analytics"  
-      sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/usr/etc/environment"
+      sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/etc/environment"
     elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
       echo "Disabling Brew analytics"
-      echo "HOMEBREW_NO_ANALYTICS=1" >> "/usr/etc/environment"
+      echo "HOMEBREW_NO_ANALYTICS=1" >> "/etc/environment"
     elif [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=1" ]]; then
       echo "Brew analytics are already disabled!"
     fi
   elif [[ -z "${CURRENT_ENVIRONMENT}" ]]; then
     echo "Disabling Brew analytics"
-    echo "HOMEBREW_NO_ANALYTICS=1" > "/usr/etc/environment"
+    echo "HOMEBREW_NO_ANALYTICS=1" > "/etc/environment"
   fi
 fi
 
