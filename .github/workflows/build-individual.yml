@@ -1,4 +1,4 @@
-name: build-module-repo
+name: build-individual
 on:
   push:
     paths-ignore: # don't rebuild if only documentation has changed

@@ -1,4 +1,4 @@
-name: build-module-repo
+name: build-unified
 on:
   push:
     paths-ignore: # don't rebuild if only documentation has changed
