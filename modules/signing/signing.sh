@@ -3,7 +3,9 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-CONTAINER_DIR="/etc/containers"
+# Don't migrate this module from utilizing `/usr/etc/` to `/etc/` yet, as Ublue needs to solve this issue
+# https://github.com/ublue-os/config/pull/311
+CONTAINER_DIR="/usr/etc/containers"
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
 IMAGE_NAME_FILE="${IMAGE_NAME//\//_}"
 
@@ -18,16 +20,16 @@ if ! [ -d $CONTAINER_DIR/registries.d ]; then
    mkdir -p "$CONTAINER_DIR/registries.d"
 fi
 
-if ! [ -d "/etc/pki/containers" ]; then
-    mkdir -p "/etc/pki/containers"
+if ! [ -d "/usr/etc/pki/containers" ]; then
+    mkdir -p "/usr/etc/pki/containers"
 fi
 
 if ! [ -f "$CONTAINER_DIR/policy.json" ]; then
     cp "$MODULE_DIRECTORY/signing/policy.json" "$CONTAINER_DIR/policy.json"
 fi
 
-if ! [ -f "/etc/pki/containers/$IMAGE_NAME_FILE.pub" ]; then
-    cp "/usr/share/ublue-os/cosign.pub" "/etc/pki/containers/$IMAGE_NAME_FILE.pub"
+if ! [ -f "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub" ]; then
+    cp "/usr/share/ublue-os/cosign.pub" "/usr/etc/pki/containers/$IMAGE_NAME_FILE.pub"
 fi
 
 POLICY_FILE="$CONTAINER_DIR/policy.json"
