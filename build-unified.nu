@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # generates modules-latest directory with only latest versions of modules and builds the Containerfile
 
-print $"(ansi green_bold)Gathering images"
+print $"(ansi green_bold)Gathering images(ansi reset)"
 
 rm -rf ./modules-latest
 mkdir ./modules-latest
@@ -28,7 +28,7 @@ ls modules | each { |moduleDir|
     }
 }
 
-print $"(ansi green_bold)Starting image build"
+print $"(ansi green_bold)Starting image build(ansi reset)"
 
 let tags = (
     if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
@@ -56,4 +56,4 @@ let digest = (
 print $"(ansi cyan)Signing image:(ansi reset) ($env.REGISTRY)/modules@($digest)"
 cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules@($digest)"
 
-print $"(ansi green_bold)DONE!"
+print $"(ansi green_bold)DONE!(ansi reset)"

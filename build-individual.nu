@@ -72,7 +72,7 @@ let images = ls modules | each { |moduleDir|
     }
 } | flatten directory
 
-print $"(ansi green_bold)Starting image build"
+print $"(ansi green_bold)Starting image build(ansi reset)"
 
 $images | par-each { |img|
 
@@ -94,4 +94,4 @@ $images | par-each { |img|
 
 }
 
-print $"(ansi green_bold)DONE!"
+print $"(ansi green_bold)DONE!(ansi reset)"
