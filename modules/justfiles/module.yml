@@ -1,0 +1,10 @@
+name: justfiles
+shortdesc: The justfiles module makes it easy to include just recipes from multiple files in Universal Blue -based images. 
+example: |
+  type: justfiles
+  validate: true
+  include:
+    - common
+    - gnome/monitors.just
+    - shared/flatpak/fix-theming.just
+    - justfile1.just

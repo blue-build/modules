@@ -6,27 +6,27 @@ This module is similar to using `dconf` configuration, but is better because it 
 
 What does this module do?
 
-- It copies all content from `/usr/share/glib-2.0/schemas`, except existing gschema.overrides to avoid conflicts, into temporary test location.
-- It copies your gschema.overrides you provided in this module from `config/gschema-overrides` into temporary test location.
+- It copies all content from `/usr/share/glib-2.0/schemas/`, except existing gschema.overrides to avoid conflicts, into temporary test location.
+- It copies your gschema.overrides you provided in this module from `files/gschema-overrides/` into temporary test location.
 - It tests them for errors in temporary test location by using `glib-compile-schemas` with `--strict` flag. If errors are found, build will fail.
-- If test is passed successfully, it copies your gschema.overrides to `/usr/share/glib-2.0/schemas`.
-- It compiles gschema using `glib-compile-schemas` in `/usr/share/glib-2.0/schemas` location to include your changes.
+- If test is passed successfully, it copies your gschema.overrides to `/usr/share/glib-2.0/schemas/`.
+- It compiles gschema using `glib-compile-schemas` in `/usr/share/glib-2.0/schemas/` location to include your changes.
 
 Temporary test location is:
 
-`/tmp/bluebuild-schema-test`
+`/tmp/bluebuild-schema-test/`
 
 ## Usage
 
 To use this module, you need to include your gschema.override file(s) in this location (make folder if it doesn't exist):
 
-`config/gschema-overrides`
+`files/gschema-overrides/`
 
 Then you need to include those file(s) in recipe file, like in example configuration.
 
 It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
-Also don't forget to rename your file(s) too with this prefix in `config/gschema-overrides`.
+Also don't forget to rename your file(s) too with this prefix in `files/gschema-overrides/`.
 
 ## Creating gschema.override files
 
@@ -65,7 +65,7 @@ tap-to-click=true
   
   `gsettings list-recursively`
   
-  You should use this command everytime when you want to apply some setting override,
+  You should use this command every time when you want to apply some setting override,
   to ensure that it's listed as available.
 
 **Gschema.override files don't support relocatable schemas & locking settings.**
@@ -76,7 +76,8 @@ To add overrides for schemas not supported by gschema overrides, you can use the
 
   `gsettings list-relocatable-schemas`.
 
-### Example of relocatable schemas
+### Example of relocatable schemas (unsupported with this module)
+This is an example of a relocatable schema setting in the dconf format.
 ```
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Shift><Alt><Super>s'

@@ -1,21 +1,8 @@
 name: chezmoi
 shortdesc: The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/chezmoi/README.md
 example: |
   type: chezmoi
-  # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-  install_chezmoi: true # Optional - Default: true  - Expects type: boolean
-  # () Git repository to initialize
-  repository: "https://example.org/user/dotfiles" # Required - Default: n/a  - Expects type: string
-  # Enable the modules services globally for all users
-  enable_all_users: true # Optional - Default: true - Expects type: boolean
-  # Dotfiles will be updated with this interval
-  run_every: '1d' # Optional - Default: '1d' - Expects type: string
-  # Dotfile updates will wait this long after a boot before running
-  wait_after_boot: '5m' # Optional - Default: '5m' - Expects type: string
-  # Disable the service that initializes `repository` on users that are logged in or has linger enabled
-  disable_init: false # Optional - Default: false - Expects type: boolean
-  # Disable the timer that updates chezmoi with the interval set above
-  disable_update: false # Optional - Default: false - Expects type: boolean
-  # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
-  changed-file-policy: "skip" # Optional - Default: "skip" - Expects type: string
+  repository: "https://github.com/octocat/dotfiles" # my dotfiles repo
+  all-users: false # make users have to enable chezmoi manually
+  file-conflict-policy: replace # override changed files with those from the repo
+

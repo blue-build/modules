@@ -100,6 +100,49 @@ configure_lists () {
     fi
 }
 
+check_flatpak_id_validity_from_flathub () {
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml" ]]; then
+        SYSTEM_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
+      else
+        SYSTEM_FLATHUB_REPO=""
+      fi  
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml" ]]; then
+        USER_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      else
+        USER_FLATHUB_REPO=""
+      fi  
+      FLATHUB_REPO_LINK="https://dl.flathub.org/repo/flathub.flatpakrepo"
+      URL="https://flathub.org/apps"
+      CONFIG_FILE="${1}"
+      INSTALL_LEVEL="${2}"
+      get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
+      get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
+      if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
+        echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
+        if [[ ${#INSTALL[@]} -gt 0 ]]; then
+          for id in "${INSTALL[@]}"; do
+            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+              echo "ERROR: This ${INSTALL_LEVEL} install flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
+              exit 1
+            fi
+          done
+        fi
+        if [[ ${#REMOVE[@]} -gt 0 ]]; then  
+          for id in "${REMOVE[@]}"; do
+            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+              echo "ERROR: This ${INSTALL_LEVEL} removal flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
+              exit 1
+            fi
+          done
+        fi  
+      else
+        if ! ${MESSAGE_DISPLAYED}; then
+          echo "NOTE: Flatpak ID safe-check is only available for FlatHub repo"
+          MESSAGE_DISPLAYED=true
+        fi  
+      fi  
+}
+
 echo "Enabling flatpaks module"
 mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
 mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
@@ -109,18 +152,30 @@ systemctl enable -f --global user-flatpak-setup.service
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
     configure_flatpak_repo "$1" "system"
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
+    fi
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/remove" ]; then  
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/remove /usr/share/bluebuild/default-flatpaks/system/remove
+    fi  
     configure_lists "$1" "system"
 fi
 
 # Check that `user` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
     configure_flatpak_repo "$1" "user"
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
-    cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/install" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
+    fi
+    if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/remove" ]; then
+      cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/remove /usr/share/bluebuild/default-flatpaks/user/remove
+    fi
     configure_lists "$1" "user"
 fi
+
+MESSAGE_DISPLAYED=false
+check_flatpak_id_validity_from_flathub "${1}" "system"
+check_flatpak_id_validity_from_flathub "${1}" "user"
 
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")

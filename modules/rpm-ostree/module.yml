@@ -1,14 +1,24 @@
 name: rpm-ostree
 shortdesc: The rpm-ostree module offers pseudo-declarative package and repository management using rpm-ostree.
-readme: https://raw.githubusercontent.com/blue-build/modules/main/modules/rpm-ostree/README.md
 example: |
   type: rpm-ostree
   repos:
     - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo # when including COPR repos, use the %OS_VERSION% magic string
-    - https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+    - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+  keys:
+    - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+  optfix:
+    - Tabby # needed because tabby installs into /opt/Tabby
   install:
-    - python3-pip
-    - libadwaita
+    - starship
+    - brave-browser
+    - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
   remove:
     - firefox
     - firefox-langpacks
+  replace:
+    - from-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
+      packages:
+        - mutter
+        - mutter-common
+        - gdm
