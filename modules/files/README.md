@@ -9,6 +9,11 @@ haven't been created yet prior to first boot).
 In run-time, `/usr/etc/` is the directory for "system"
 configuration templates on atomic Fedora distros, whereas `/etc/` is meant for
 manual overrides and editing by the machine's admin *after* installation.
+
+In build-time, as a custom-image maintainer, you want to copy files to `/etc/`,
+as those are automatically moved to system directory `/usr/etc/` during atomic Fedora image deployment.
+Check out this blog post for more details about this:  
+https://blue-build.org/blog/preferring-system-etc/
 :::
 
 :::caution
