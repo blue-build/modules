@@ -14,7 +14,7 @@ cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" || true
 cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA"
 
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
-PROFILED_DIR="/usr/etc/profile.d"
+PROFILED_DIR="/etc/profile.d"
 FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
 echo "Installing python3-pip and libadwaita"
