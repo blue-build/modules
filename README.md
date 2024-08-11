@@ -12,7 +12,7 @@ These are general guidelines for writing official bash modules and their documen
 **Image-maintainer:** Maintainer of a custom image that uses BlueBuild.  
 **Local-user:** User of a custom image using the BlueBuild bash module. The image-maintainer is usually a local-user too.  
 **Build-time modules:** Modules that perform its functionality when image is building.  
-**Boot-time modules:** Modules that perform its functionality when system is booting or after system is booted.
+**Run-time modules:** Modules that perform its functionality when system is booting or after system is booted.
 
 ### Code Rules
 
@@ -81,16 +81,16 @@ Every module folder should include a `<modulename>.tsp` file containing a model 
   - See [the TypeSpec documentation](https://typespec.io/docs/language-basics/models#optional-properties).
 - Make sure to add a semicolon `;` to the end of all property definitions. Without this, the schema compilation will fail.
 
-### Boot-time Modules
+### Run-time Modules
 > [!IMPORTANT]  
-> Build-time modules are preferred over boot-time modules for better system reliability.  
-> Only implement boot-time modules when build-time modules are impossible to implement for achieving desired functionality.
+> Build-time modules are preferred over run-time modules for better system reliability.  
+> Only implement run-time modules when build-time modules are impossible to implement for achieving desired functionality.
 
-**Boot-time modules:** Modules that perform its functionality when system is booting or after system is booted.
+**Run-time modules:** Modules that perform its functionality when system is booting or after system is booted.
 
-**Local module config** is used to allow local-users to see & change the behavior of the boot-time module, in order to improve local-user experience.
+**Local module config** is used to allow local-users to see & change the behavior of the run-time module, in order to improve local-user experience.
 
-Example of the boot-time module which satisfies the requirements & implements this functionality: `default-flatpaks`
+Example of the run-time module which satisfies the requirements & implements this functionality: `default-flatpaks`
 
 #### Local Module Config Requirements
 **Requirements** for local module configs exist, as not all modules need this functionality.  
