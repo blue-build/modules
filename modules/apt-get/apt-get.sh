@@ -23,8 +23,6 @@ if [[ -z "${FIX_BROKEN}" || "${FIX_BROKEN}" == "null" ]]; then
     FIX_BROKEN=false
 fi
 
-APT_ARGS=()
-
 if [[ ${NO_RECOMMENDS} == true ]]; then
     APT_ARGS+=("--no-install-recommends")
 fi
@@ -41,9 +39,25 @@ if [[ ${FIX_BROKEN} == true ]]; then
     APT_ARGS+=("--fix-broken")
 fi
 
-get_yaml_array INSTALL_PKGS '.install[]' "$1"
+# get_yaml_array INSTALL_PKGS '.install[]' "$1"
+
+INSTALL_PKGS=("https://discord.com/api/download?platform=linux&format=deb" "micro")
+
+if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
+  for PKG in "${INSTALL_PKGS[@]}"; do
+      if [[ "${PKG}" =~ ^https?:\/\/.* ]]; then
+        PKG_PATH=$(mktemp --suffix=".deb")
+        wget -o "${PKG_PATH}" "${PKG}"
+        wait
+        PROCESSED_INSTALL_PKGS+=("${PKG_PATH}")
+      else
+        PROCESSED_INSTALL_PKGS+=("${PKG}")
+      fi
+  done
+fi
+
 # shellcheck disable=SC2068
-apt-get install -y ${APT_ARGS[@]} "${INSTALL_PKGS[@]}"
+apt-get install -y ${APT_ARGS[@]} "${PROCESSED_INSTALL_PKGS[@]}"
 
 get_yaml_array REMOVE_PKGS '.remove[]' "$1"
 apt-get remove -y "${REMOVE_PKGS[@]}"
