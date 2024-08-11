@@ -47,7 +47,7 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
   for PKG in "${INSTALL_PKGS[@]}"; do
       if [[ "${PKG}" =~ ^https?:\/\/.* ]]; then
         PKG_PATH=$(mktemp --suffix=".deb")
-        wget -o "${PKG_PATH}" "${PKG}"
+        wget -O "${PKG_PATH}" "${PKG}"
         wait
         PROCESSED_INSTALL_PKGS+=("${PKG_PATH}")
       else
