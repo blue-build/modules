@@ -10,8 +10,6 @@ on:
 jobs:
   build-individual:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.generate-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
 
