@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "timonwong.shellcheck"
+        "timonwong.shellcheck",
+        "thenuprojectcontributors.vscode-nushell-lang"
     ]
 }

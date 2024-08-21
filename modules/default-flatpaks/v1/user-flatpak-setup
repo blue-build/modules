@@ -11,14 +11,32 @@ REPO_URL=$(yq '.repo-url' $REPO_INFO)
 REPO_NAME=$(yq '.repo-name' $REPO_INFO)
 REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 
+# General conditions for not running the unnecessary flatpak setup
+# Currently, we don't modify remote title if it's already modified
+# Flatpak add remote is ran for some reason, even with --if-not-exists flag, apparently, it modifies the URL
+# We cannot compare repo URLs properly
+# Flatpak outputs repo URL, while we have flatpakref URL, which is not the same
+readarray -t CURRENT_REPO_INFO < <(flatpak remotes --user --columns=name,url,title)
+for index in "${CURRENT_REPO_INFO[@]}"; do
+    CURRENT_REPO_NAMES+=("$(echo "${index}" | awk '{print $1}')")
+    CURRENT_REPO_TITLES+=("$(echo "${index}" | awk '{ for(i=3;i<NF;i++) printf "%s ", $i; print $NF }')")
+    for name in "${CURRENT_REPO_NAMES[@]}"; do
+      for title in "${CURRENT_REPO_TITLES[@]}"; do
+      if [[ "${name}" == "${REPO_NAME}" ]] && [[ "${title}" == "${REPO_TITLE}" ]]; then
+        no_title_modify=true
+      fi
+      done  
+    done
+done
+
 # Set up per-user Flatpak repository
-if [[ ! $REPO_URL == "null" && ! $REPO_NAME == "null" ]]; then
-  flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
   echo "Adding remote $REPO_NAME from $REPO_URL"  
+  flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
 fi
 
 # Change repository title to configured title, if not null
-if [[ ! $REPO_TITLE == "null" ]]; then
+if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
   flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
   echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
 fi

@@ -3,6 +3,8 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
+# Don't migrate this module from utilizing `/usr/etc/` to `/etc/` yet, as Ublue needs to solve this issue
+# https://github.com/ublue-os/config/pull/311
 CONTAINER_DIR="/usr/etc/containers"
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
 IMAGE_NAME_FILE="${IMAGE_NAME//\//_}"

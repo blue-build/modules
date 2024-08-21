@@ -1,27 +1,19 @@
 # `files`
 
 The `files` module can be used to copy directories from `files/` to
-any location in your image at build time, as long as the location exists at
-build time (e.g. you can't put files in `/home/<username>/`, because users
+any location in your image at build-time, as long as the location exists at
+build-time (e.g. you can't put files in `/home/<username>/`, because users
 haven't been created yet prior to first boot).
 
 :::note
-If you want to place files into `/etc/`, there are two ways to do it:
-
-1. copying a directory in `files/` directly to `/etc` to add all of its
-   files at build time, or
-2. putting the files you want there in `/usr/etc/` as part of copying things
-   over to `/usr/`, which `rpm-ostree` will then copy to `/etc/` at runtime/boot.
-
-Typically, you will want to use the latter option (putting files in `/usr/etc/`)
-in almost all cases, since that is the proper directory for "system"
+In run-time, `/usr/etc/` is the directory for "system"
 configuration templates on atomic Fedora distros, whereas `/etc/` is meant for
-manual overrides and editing by the machine's admin *after* installation (see
-issue https://github.com/blue-build/legacy-template/issues/28). However, if you
-really need something to be in `/etc/` *at build time* --- for instance, if you
-for some reason need to place a repo file in `/etc/yum.repos.d/` in such a way
-that it is used by a `rpm-ostree` module later on --- then the former option
-will be necessary.
+manual overrides and editing by the machine's admin *after* installation.
+
+In build-time, as a custom-image maintainer, you want to copy files to `/etc/`,
+as those are automatically moved to system directory `/usr/etc/` during atomic Fedora image deployment.
+Check out this blog post for more details about this:  
+https://blue-build.org/blog/preferring-system-etc/
 :::
 
 :::caution

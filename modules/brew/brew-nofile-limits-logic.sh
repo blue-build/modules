@@ -9,7 +9,7 @@ set -euo pipefail
 
 DESIRED_SOFT_LIMIT=4096
 DESIRED_HARD_LIMIT=524288
-BREW_LIMITS_D_CONFIG="/usr/etc/security/limits.d/zz1-brew-limits.conf"
+BREW_LIMITS_D_CONFIG="/etc/security/limits.d/zz1-brew-limits.conf"
 BREW_SYSTEMD_SYSTEM_CONFIG="/usr/lib/systemd/system.conf.d/zz1-brew-limits.conf"
 BREW_SYSTEMD_USER_CONFIG="/usr/lib/systemd/user.conf.d/zz1-brew-limits.conf"
 
@@ -17,8 +17,6 @@ BREW_SYSTEMD_USER_CONFIG="/usr/lib/systemd/user.conf.d/zz1-brew-limits.conf"
 
 # From least to most preferred
 SSH_TTY_LIMIT_ORDER=(
-"/usr/etc/security/limits.conf"
-"/usr/etc/security/limits.d/"
 "/etc/security/limits.conf"
 "/etc/security/limits.d/"
 )
@@ -54,8 +52,6 @@ fi
 SYSTEMD_SYSTEM_LIMIT_ORDER=(
 "/usr/lib/systemd/system.conf"
 "/usr/lib/systemd/system.conf.d/"
-"/usr/etc/systemd/system.conf"
-"/usr/etc/systemd/system.conf.d/"
 "/etc/systemd/system.conf"
 "/etc/systemd/system.conf.d/"
 )
@@ -87,8 +83,6 @@ fi
 SYSTEMD_USER_LIMIT_ORDER=(
 "/usr/lib/systemd/user.conf"
 "/usr/lib/systemd/user.conf.d/"
-"/usr/etc/systemd/user.conf"
-"/usr/etc/systemd/user.conf.d/"
 "/etc/systemd/user.conf"
 "/etc/systemd/user.conf.d/"
 )
@@ -140,8 +134,8 @@ echo "SystemD user hard nofile limit: $(check_and_print ${CURRENT_SYSTEMD_USER_H
 
 # Write SSH/TTY nolimit values
 if [[ "${CURRENT_SSH_TTY_SOFT_VALUE}" -lt "${DESIRED_SOFT_LIMIT}" ]] || [[ "${CURRENT_SSH_TTY_HARD_VALUE}" -lt "${DESIRED_HARD_LIMIT}" ]]; then
-  if [[ ! -d "/usr/etc/security/limits.d/" ]]; then
-    mkdir -p "/usr/etc/security/limits.d/"
+  if [[ ! -d "/etc/security/limits.d/" ]]; then
+    mkdir -p "/etc/security/limits.d/"
   fi
   echo "# This file sets the resource limits for users logged in via PAM,
 # more specifically, users logged in via SSH or tty (console).

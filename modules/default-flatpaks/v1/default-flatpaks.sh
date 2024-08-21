@@ -145,7 +145,7 @@ check_flatpak_id_validity_from_flathub () {
 
 echo "Enabling flatpaks module"
 mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
-mkdir -p /usr/etc/bluebuild/default-flatpaks/{system,user}
+mkdir -p /etc/bluebuild/default-flatpaks/{system,user}
 systemctl enable -f system-flatpak-setup.service
 systemctl enable -f --global user-flatpak-setup.service
 
@@ -185,8 +185,8 @@ echo "$NOTIFICATIONS" >> "$CONFIG_NOTIFICATIONS"
 
 echo "Copying user modification template files"
 
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/install /usr/etc/bluebuild/default-flatpaks/system/install
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/remove /usr/etc/bluebuild/default-flatpaks/system/remove
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/install /usr/etc/bluebuild/default-flatpaks/user/install
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/remove /usr/etc/bluebuild/default-flatpaks/user/remove
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/notifications /usr/etc/bluebuild/default-flatpaks/notifications
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/install /etc/bluebuild/default-flatpaks/system/install
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/system/remove /etc/bluebuild/default-flatpaks/system/remove
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/install /etc/bluebuild/default-flatpaks/user/install
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/user/remove /etc/bluebuild/default-flatpaks/user/remove
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-config/notifications /etc/bluebuild/default-flatpaks/notifications

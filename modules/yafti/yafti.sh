@@ -11,17 +11,17 @@ mkdir -p "$FIRSTBOOT_DATA/launcher/"
 
 # doesn't overwrite user's yafti.yml (ignores error)
 cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" || true
-cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA/launcher/"
+cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA"
 
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
-PROFILED_DIR="/usr/etc/profile.d"
+PROFILED_DIR="/etc/profile.d"
 FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
 echo "Installing pipx and libadwaita"
 rpm-ostree install pipx libadwaita
 
 echo "Installing and enabling yafti"
-pipx install --global yafti==0.8.0
+pipx install --global yafti==0.9.0
 
 # If the profile.d directory doesn't exist, create it
 if [ ! -d "${PROFILED_DIR}" ]; then
