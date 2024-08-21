@@ -19,12 +19,23 @@ FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
 # Fetch ublue COPR
 REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
+STAGING_REPO_PATH="/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo"
+BACKUP_STAGING_REPO_PATH="${STAGING_REPO_PATH}.backup"
+
+if [ -f "$STAGING_REPO_PATH" ]; then
+    mv "$STAGING_REPO_PATH" "$BACKUP_STAGING_REPO_PATH"
+fi
+
 wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
 
 rpm-ostree install yafti
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
+
+if [ -f "$BACKUP_STAGING_REPO_PATH" ]; then
+    mv "$BACKUP_STAGING_REPO_PATH" "$STAGING_REPO_PATH"
+fi
 
 # If the profile.d directory doesn't exist, create it
 if [ ! -d "${PROFILED_DIR}" ]; then
