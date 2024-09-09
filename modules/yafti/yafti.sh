@@ -28,7 +28,7 @@ fi
 
 wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
 
-rpm-ostree install yafti
+rpm-ostree install libadwaita yafti
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
