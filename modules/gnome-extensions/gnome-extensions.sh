@@ -98,8 +98,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        # Fly-Pie
-        if [[ "${UUID}" == "flypie@schneegans.github.com" ]]; then
+        # Fly-Pie or PaperWM
+        if [[ "${UUID}" == "flypie@schneegans.github.com" || "${UUID}" == "paperwm@paperwm.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${UUID}/schemas/" &>/dev/null
@@ -202,8 +202,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        # Fly-Pie
-        if [[ "${EXT_UUID}" == "flypie@schneegans.github.com" ]]; then
+        # Fly-Pie or PaperWM
+        if [[ "${EXT_UUID}" == "flypie@schneegans.github.com" || "${EXT_UUID}" == "paperwm@paperwm.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
