@@ -12,10 +12,17 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
         # If it's the COPR repo, then download the repo normally
         # If it's not, then download the repo with URL in it's filename, to avoid duplicate repo name issue
         if [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
+          REPO_URL="${REPO//[$'\t\r\n ']}"
+
+          echo "Downloading repo file ${REPO_URL}"
+          curl -fs --output-dir "/etc/yum.repos.d/" -O "${REPO_URL}"
+          echo "Downloaded repo file ${REPO_URL}"
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           CLEAN_REPO_NAME=$(echo "${REPO}" | sed 's/^https\?:\/\///')
-          curl -o "/etc/yum.repos.d/${CLEAN_REPO_NAME//\//.}" "${REPO//[$'\t\r\n ']}"
+
+          echo "Downloading repo file ${CLEAN_REPO_NAME}"
+          curl -fs -o "/etc/yum.repos.d/${CLEAN_REPO_NAME//\//.}" "${REPO//[$'\t\r\n ']}"
+          echo "Downloaded repo file ${CLEAN_REPO_NAME}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
         fi  
@@ -158,8 +165,13 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         echo "Replacing packages from COPR repository: '${REPO_NAME}' owned by '${MAINTAINER}'"
         echo "Replacing: ${REPLACE_STR}"
 
-        curl --output-dir "/etc/yum.repos.d/" -O "${REPO//[$'\t\r\n ']}"
-        rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME} ${REPLACE_STR}
+        REPO_URL="${REPO//[$'\t\r\n ']}"
+
+        echo "Downloading repo file ${REPO_URL}"
+        curl -fs --output-dir "/etc/yum.repos.d/" -O "${REPO_URL}"
+        echo "Downloaded repo file ${REPO_URL}"
+
+        rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" "${REPLACE_STR}"
         rm "/etc/yum.repos.d/${FILE_NAME}"
 
     done
