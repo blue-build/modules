@@ -38,7 +38,7 @@ yq -i -o=j '.transports.docker |=
     {"'"$IMAGE_REGISTRY"'/'"$IMAGE_NAME"'": [
             {
                 "type": "sigstoreSigned",
-                "keyPath": "/usr/etc/pki/containers/'"$IMAGE_NAME_FILE"'.pub",
+                "keyPath": "/etc/pki/containers/'"$IMAGE_NAME_FILE"'.pub",
                 "signedIdentity": {
                     "type": "matchRepository"
                 }
