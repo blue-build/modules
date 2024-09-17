@@ -8,7 +8,7 @@ echo "Installation of google-fonts started"
 rm -rf "${DEST}"
 
 for FONT in "${FONTS[@]}"; do
-    if [ -n "$FONT" ]; then
+    if [ -n "${FONT}" ]; then
         FONT="${FONT#"${FONT%%[![:space:]]*}"}" # Trim leading whitespace
         FONT="${FONT%"${FONT##*[![:space:]]}"}" # Trim trailing whitespace
         mkdir -p "${DEST}/${FONT}"
@@ -43,4 +43,4 @@ for FONT in "${FONTS[@]}"; do
     fi
 done
 
-fc-cache -f "${DEST}"
+fc-cache --system-only --really-force "${DEST}"
