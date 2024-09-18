@@ -9,7 +9,7 @@ if [[ $(gnome-shell --version) =~ "46" ]]; then
     exit 1
 fi
 
-REP_URL="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
+REPO_URL="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
 
 echo "Downloading repo file ${REPO_URL}"
 curl -fs -o "/etc/yum.repos.d/ublue-os-staging.repo" "${REPO_URL}"
