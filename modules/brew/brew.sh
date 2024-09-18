@@ -75,7 +75,7 @@ touch /.dockerenv
 
 # Always install Brew
 echo "Downloading and installing Brew..."
-curl -fLs https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install
+curl -fLs --create-dirs https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install
 echo "Downloaded Brew install script"
 chmod +x /tmp/brew-install
 /tmp/brew-install

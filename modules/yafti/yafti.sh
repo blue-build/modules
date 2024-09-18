@@ -28,7 +28,7 @@ if [ -f "$STAGING_REPO_PATH" ]; then
 fi
 
 echo "Downloading repo file ${REPO_URL}"
-curl -fs -o "${STAGING_REPO_PATH}" "${REPO_URL}"
+curl -fLs --create-dirs "${REPO_URL}" -o "${STAGING_REPO_PATH}"
 echo "Downloaded repo file ${REPO_URL}"
 
 rpm-ostree install libadwaita yafti
