@@ -18,11 +18,13 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
           curl -fs --output-dir "/etc/yum.repos.d/" -O "${REPO_URL}"
           echo "Downloaded repo file ${REPO_URL}"
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          CLEAN_REPO_NAME=$(echo "${REPO}" | sed 's/^https\?:\/\///')
-
-          echo "Downloading repo file ${REPO}"
-          curl -fs -o "/etc/yum.repos.d/${CLEAN_REPO_NAME//\//.}" "${REPO//[$'\t\r\n ']}"
-          echo "Downloaded repo file ${REPO}"
+          REPO_URL="${REPO//[$'\t\r\n ']}"
+          CLEAN_REPO_NAME=$(echo "${REPO_URL}" | sed 's/^https\?:\/\///')
+          CLEAN_REPO_NAME=$(echo "${CLEAN_REPO_NAME//\//.}")
+          
+          echo "Downloading repo file ${REPO_URL}"
+          curl -fs -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}" "${REPO_URL}"
+          echo "Downloaded repo file ${REPO_URL}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
         fi  
