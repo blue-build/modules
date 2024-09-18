@@ -20,7 +20,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           REPO_URL="${REPO//[$'\t\r\n ']}"
           CLEAN_REPO_NAME=$(echo "${REPO_URL}" | sed 's/^https\?:\/\///')
-          CLEAN_REPO_NAME=$(echo "${CLEAN_REPO_NAME//\//.}")
+          CLEAN_REPO_NAME="${CLEAN_REPO_NAME//\//.}"
           
           echo "Downloading repo file ${REPO_URL}"
           curl -fs -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}" "${REPO_URL}"
