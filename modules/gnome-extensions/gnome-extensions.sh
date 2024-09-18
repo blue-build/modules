@@ -55,7 +55,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       VERSION=$(echo "${EXTENSION}" | grep -oP 'v\d+')
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
       # Download archive
-      wget --directory-prefix="${TMP_DIR}" "${URL}"
+      echo "Downloading ZIP archive ${URL}"
+      curl -fs -o "${ARCHIVE_DIR}" "${URL}"
+      echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
       unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
@@ -182,7 +184,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       ARCHIVE_DIR="${TMP_DIR}/${ARCHIVE}"
       echo "Installing '${EXT_NAME}' Gnome extension with version ${SUITABLE_VERSION}"
       # Download archive
-      wget --directory-prefix="${TMP_DIR}" "${URL}"
+      echo "Downloading ZIP archive ${URL}"
+      curl -fs -o "${ARCHIVE_DIR}" "${URL}"
+      echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
       unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
