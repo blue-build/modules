@@ -15,7 +15,7 @@ for FONT in "${FONTS[@]}"; do
         mkdir -p "${DEST}/${FONT}"
 
         echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
-        curl "${URL}/${FONT}.tar.xz" -sfL -o "/tmp/fonts/${FONT}.tar.xz"
+        curl -fLs --create-dirs "${URL}/${FONT}.tar.xz" -o "/tmp/fonts/${FONT}.tar.xz"
         echo "Downloaded ${FONT}"
 
         tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
