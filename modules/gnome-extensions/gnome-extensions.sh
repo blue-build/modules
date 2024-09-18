@@ -56,7 +56,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
       # Download archive
       echo "Downloading ZIP archive ${URL}"
-      curl -fs -o "${ARCHIVE_DIR}" "${URL}"
+      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
       echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
@@ -185,7 +185,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       echo "Installing '${EXT_NAME}' Gnome extension with version ${SUITABLE_VERSION}"
       # Download archive
       echo "Downloading ZIP archive ${URL}"
-      curl -fs -o "${ARCHIVE_DIR}" "${URL}"
+      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
       echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"

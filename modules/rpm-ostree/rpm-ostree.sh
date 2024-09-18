@@ -15,7 +15,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
           REPO_URL="${REPO//[$'\t\r\n ']}"
 
           echo "Downloading repo file ${REPO_URL}"
-          curl -fs --output-dir "/etc/yum.repos.d/" -O "${REPO_URL}"
+          curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
           echo "Downloaded repo file ${REPO_URL}"
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           REPO_URL="${REPO//[$'\t\r\n ']}"
@@ -23,7 +23,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
           CLEAN_REPO_NAME="${CLEAN_REPO_NAME//\//.}"
           
           echo "Downloading repo file ${REPO_URL}"
-          curl -fs -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}" "${REPO_URL}"
+          curl -fLs --create-dirs "${REPO_URL}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
           echo "Downloaded repo file ${REPO_URL}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
@@ -170,7 +170,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         REPO_URL="${REPO//[$'\t\r\n ']}"
 
         echo "Downloading repo file ${REPO_URL}"
-        curl -fs --output-dir "/etc/yum.repos.d/" -O "${REPO_URL}"
+        curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
         echo "Downloaded repo file ${REPO_URL}"
 
         rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" "${REPLACE_STR}"

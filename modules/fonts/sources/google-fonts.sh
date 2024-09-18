@@ -31,7 +31,7 @@ for FONT in "${FONTS[@]}"; do
                 if FILENAME=$(echo "${FILE_REF}" | jq -er '.filename' 2>/dev/null); then
                     if URL=$(echo "${FILE_REF}" | jq -er '.url' 2>/dev/null); then
                         echo "Downloading ${FILENAME} from ${URL}"
-                        curl "${URL}" -sfo "${DEST}/${FONT}/${FILENAME##*/}" # everything before the last / is removed to get the filename
+                        curl -fLs --create-dirs "${URL}" -o "${DEST}/${FONT}/${FILENAME##*/}" # everything before the last / is removed to get the filename
                         echo "Downloaded ${FILENAME}"
                     else
                         echo "Failed to extract URLs for: ${FONT}" >&2
