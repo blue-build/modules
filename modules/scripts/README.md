@@ -1,5 +1,7 @@
 # `scripts`
 
+:::caution For the sake of module naming consistency, we renamed `script` module to `scripts`. Custom images which utilize `script` as a module name will still work, but it is advised to rename it to `scripts` in recipe. :::
+
 The `scripts` module can be used to run arbitrary bash snippets and scripts at image build-time. This is intended for running commands that need no YAML configuration.
 
 The snippets, which are run in a bash subshell, are declared under `snippets:`.   
