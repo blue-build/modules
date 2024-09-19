@@ -24,7 +24,12 @@ These are general guidelines for writing official bash modules and their documen
 - If you want to insert another regular string as a suffix or prefix to the `"${variable_name}"`, you should do that in this format: `"prefix-${variable_name}-suffix"`
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
      -  You can also use `set -euxo pipefail` during debugging, where each executed command is printed. This should not be used in a published module. 
-  
+- For downloading files, we utilize `curl`. Here's the template for what we're using:  
+  - Download file with differently specified filename:  
+`curl -fLs --create-dirs "${URL}" -o "${DIR}/${FILENAME.EXT}"`  
+  - Download file to directory with no filename changes:  
+`curl -fLs --create-dirs -O "${URL}" --output-dir "${DIR}"`
+
 Using [Shellcheck](https://www.shellcheck.net/) in your editor is recommended.
 
 ### Documentation

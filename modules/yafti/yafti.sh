@@ -19,6 +19,7 @@ FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 
 # Fetch ublue COPR
 REPO="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
+REPO_URL="${REPO//[$'\t\r\n ']}"
 STAGING_REPO_PATH="/etc/yum.repos.d/ublue-os-staging-fedora-${OS_VERSION}.repo"
 BACKUP_STAGING_REPO_PATH="${STAGING_REPO_PATH}.backup"
 
@@ -26,9 +27,11 @@ if [ -f "$STAGING_REPO_PATH" ]; then
     mv "$STAGING_REPO_PATH" "$BACKUP_STAGING_REPO_PATH"
 fi
 
-wget "${REPO//[$'\t\r\n ']}" -P "/etc/yum.repos.d/"
+echo "Downloading repo file ${REPO_URL}"
+curl -fLs --create-dirs "${REPO_URL}" -o "${STAGING_REPO_PATH}"
+echo "Downloaded repo file ${REPO_URL}"
 
-rpm-ostree install yafti
+rpm-ostree install libadwaita yafti
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo

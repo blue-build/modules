@@ -75,7 +75,8 @@ touch /.dockerenv
 
 # Always install Brew
 echo "Downloading and installing Brew..."
-curl -Lo /tmp/brew-install https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+curl -fLs --create-dirs https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install
+echo "Downloaded Brew install script"
 chmod +x /tmp/brew-install
 /tmp/brew-install
 
@@ -193,8 +194,10 @@ if [[ ! -d "/etc/profile.d/" ]]; then
 fi
 if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
-  echo "#!/usr/bin/env bash
-[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" > "/etc/profile.d/brew.sh"
+  cat > /etc/profile.d/brew.sh <<EOF
+#!/usr/bin/env bash
+[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+EOF
 fi
 
 # Copy shell configuration files
@@ -234,7 +237,7 @@ fi
 
 # Apply nofile limits if enabled
 if [[ "${NOFILE_LIMITS}" == true ]]; then
-  source "${MODULE_DIRECTORY}"/brew/brew-nofile-limits-logic.sh
+  source "${MODULE_DIRECTORY}/brew/brew-nofile-limits-logic.sh"
 fi
 
 # Disable homebrew analytics if the flag is set to false

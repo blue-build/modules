@@ -180,8 +180,12 @@ check_flatpak_id_validity_from_flathub "${1}" "user"
 echo "Configuring default-flatpaks notifications"
 NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
 CONFIG_NOTIFICATIONS="/usr/share/bluebuild/default-flatpaks/notifications"
-cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/notifications "$CONFIG_NOTIFICATIONS"
-echo "$NOTIFICATIONS" >> "$CONFIG_NOTIFICATIONS"
+cp -r "${MODULE_DIRECTORY}/default-flatpaks/config/notifications" "${CONFIG_NOTIFICATIONS}"
+if [[ -z "${NOTIFICATIONS}" ]] || [[ "${NOTIFICATIONS}" == "null" ]]; then
+  echo "false" >> "${CONFIG_NOTIFICATIONS}"
+else
+  echo "${NOTIFICATIONS}" >> "${CONFIG_NOTIFICATIONS}"
+fi
 
 echo "Copying user modification template files"
 

@@ -55,7 +55,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       VERSION=$(echo "${EXTENSION}" | grep -oP 'v\d+')
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
       # Download archive
-      wget --directory-prefix="${TMP_DIR}" "${URL}"
+      echo "Downloading ZIP archive ${URL}"
+      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
+      echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
       unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
@@ -98,8 +100,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        # Fly-Pie
-        if [[ "${UUID}" == "flypie@schneegans.github.com" ]]; then
+        # Fly-Pie or PaperWM
+        if [[ "${UUID}" == "flypie@schneegans.github.com" || "${UUID}" == "paperwm@paperwm.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${UUID}/schemas/" &>/dev/null
@@ -133,7 +135,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # Literal-name extension config
         # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace      
         WHITESPACE_HTML="${INSTALL_EXT// /%20}"
-        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
         QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
         if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
           echo "ERROR: Extension '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -158,7 +160,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         fi
       else
         # PK ID extension config fallback if specified
-        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
+        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
         PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
         if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
           echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -182,7 +184,9 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       ARCHIVE_DIR="${TMP_DIR}/${ARCHIVE}"
       echo "Installing '${EXT_NAME}' Gnome extension with version ${SUITABLE_VERSION}"
       # Download archive
-      wget --directory-prefix="${TMP_DIR}" "${URL}"
+      echo "Downloading ZIP archive ${URL}"
+      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
+      echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
       unzip "${ARCHIVE_DIR}" -d "${TMP_DIR}" > /dev/null
@@ -202,8 +206,8 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # Error code example:
         # GLib.FileError: Failed to open file “/usr/share/gnome-shell/extensions/flypie@schneegans.github.com/schemas/gschemas.compiled”: open() failed: No such file or directory
         # If any extension produces this error, it can be added in if statement below to solve the problem
-        # Fly-Pie
-        if [[ "${EXT_UUID}" == "flypie@schneegans.github.com" ]]; then
+        # Fly-Pie or PaperWM
+        if [[ "${EXT_UUID}" == "flypie@schneegans.github.com" || "${EXT_UUID}" == "paperwm@paperwm.github.com" ]]; then
           install -d -m 0755 "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           install -D -p -m 0644 "${TMP_DIR}/schemas/"*.gschema.xml "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/"
           glib-compile-schemas "/usr/share/gnome-shell/extensions/${EXT_UUID}/schemas/" &>/dev/null
@@ -237,7 +241,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
         # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
         WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
-        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
         QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
         if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
           echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -249,7 +253,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
       else
         # PK ID extension config fallback if specified
-        URL_QUERY=$(curl -s "https://extensions.gnome.org/extension-info/?pk=${UNINSTALL_EXT}")
+        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-info/?pk=${UNINSTALL_EXT}")
         PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
         if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
           echo "ERROR: Extension with PK ID '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
