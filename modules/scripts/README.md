@@ -1,6 +1,6 @@
-# `script`
+# `scripts`
 
-The `script` module can be used to run arbitrary bash snippets and scripts at image build time. This is intended for running commands that need no YAML configuration.
+The `scripts` module can be used to run arbitrary bash snippets and scripts at image build-time. This is intended for running commands that need no YAML configuration.
 
 The snippets, which are run in a bash subshell, are declared under `snippets:`.   
 The scripts, which are run from the `files/scripts/` directory, are declared under `scripts:`.

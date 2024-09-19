@@ -1,7 +1,7 @@
-name: script
-shortdesc: The script module can be used to run arbitrary bash snippets and scripts at image build time.
+name: scripts
+shortdesc: The scripts module can be used to run arbitrary bash snippets and scripts at image build time.
 example: |
-  type: script
+  type: scripts
   snippets:
     - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
     - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
