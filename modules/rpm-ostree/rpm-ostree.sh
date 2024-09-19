@@ -173,7 +173,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
         echo "Downloaded repo file ${REPO_URL}"
 
-        rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" "${REPLACE_STR}"
+        rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" ${REPLACE_STR}
         rm "/etc/yum.repos.d/${FILE_NAME}"
 
     done
