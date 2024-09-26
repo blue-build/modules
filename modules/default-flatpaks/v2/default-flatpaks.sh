@@ -12,10 +12,10 @@ const defaultInstallation = {
     }
     install: []
 }
-const configPath = '/usr/share/bluebuild/default-flatpaks/configuration.json'
+const configPath = '/usr/share/bluebuild/default-flatpaks/configuration.yaml'
 
 def main [configStr: string] {
-    let config = $configStr | from json
+    let config = $configStr | from yaml
     
     let installations = $config.installations | each {|installation|
         mut merged = $defaultInstallation | merge $installation
@@ -50,7 +50,7 @@ def main [configStr: string] {
 
     open $configPath
         | append $installations
-        | to json | save -f $configPath
+        | to yaml | save -f $configPath
 
     print $"(ansi green_bold)Successfully generated following installations:(ansi reset)"
     print ($installations | to yaml)
