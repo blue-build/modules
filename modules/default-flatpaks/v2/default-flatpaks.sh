@@ -21,7 +21,7 @@ def main [configStr: string] {
         mut merged = $defaultInstallation | merge $installation
         $merged.repo = $defaultInstallation.repo | merge $merged.repo # make sure all repo properties exist
 
-        print $"(ansi blue)Validating installation of(ansi reset) (ansi default_italic)($merged.install | length)(ansi reset) (ansi blue)Flatpaks from(ansi reset) (ansi default_italic)($merged.repo.title)(ansi reset)"
+        print $"Validating installation of (ansi default_italic)($merged.install | length)(ansi reset) Flatpaks from (ansi default_italic)($merged.repo.title)(ansi reset)"
 
         if (not ($merged.scope == "system" or $merged.scope == "user")) {
             print $"(ansi red_bold)Scope must be either(ansi reset) (ansi blue_italic)system(ansi reset) (ansi red_bold)or(ansi reset) (ansi blue_italic)user(ansi reset)"
@@ -37,7 +37,7 @@ def main [configStr: string] {
             checkFlathub $merged.install
         }
 
-        print $"(ansi green_bold)Validation successful!(ansi reset)"
+        print $"Validation successful!"
 
         $merged
     }
@@ -52,19 +52,18 @@ def main [configStr: string] {
         | append $installations
         | to json | save -f $configPath
 
-    print $"(ansi green_bold)Generated following installations:(ansi reset)"
+    print $"(ansi green_bold)Successfully generated following installations:(ansi reset)"
     print ($installations | to yaml)
 }
 
 def checkFlathub [packages: list<string>] {
+    print "Checking if configured packages exist on Flathub..."
     $packages | each { |package| 
-        print $"(ansi blue)Checking if package(ansi reset) (ansi default_italic)($package)(ansi reset) (ansi blue)exists on Flathub.(ansi reset)"
         try {
             let _ = http get $"https://flathub.org/apps/($package)"
         } catch {
             print $"(ansi red_bold)Package(ansi reset) (ansi default_italic)($package)(ansi reset) (ansi red_bold)does not exist on Flathub, which is the specified repository for it to be installed from.(ansi reset)"
             exit 1
         }
-        print $"(ansi green)Package found!(ansi reset)"
     }
 }
