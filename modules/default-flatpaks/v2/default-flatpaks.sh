@@ -12,7 +12,9 @@ const defaultInstallation = {
     }
     install: []
 }
-const configPath = '/usr/share/bluebuild/default-flatpaks/configuration.yaml'
+
+const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
+const configPath = $"($usrSharePath)/configuration.yaml"
 
 def main [configStr: string] {
     let config = $configStr | from yaml
@@ -54,6 +56,18 @@ def main [configStr: string] {
 
     print $"(ansi green_bold)Successfully generated following installations:(ansi reset)"
     print ($installations | to yaml)
+
+    print "Setting up Flatpak setup services..."
+
+    cp -r ($"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/*" | into glob) $usrSharePath
+
+    cp $"($usrSharePath)/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
+    cp $"($usrSharePath)/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
+    systemctl enable --force system-flatpak-setup.service
+    systemctl enable --force --global user-flatpak-setup.service
+
+    chmod +x $"($usrSharePath)/system-flatpak-setup"
+    chmod +x $"($usrSharePath)/user-flatpak-setup"
 }
 
 def checkFlathub [packages: list<string>] {
