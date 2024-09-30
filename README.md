@@ -19,9 +19,10 @@ These are general guidelines for writing official bash modules and their documen
 - Echo what you're doing on each step and on errors to help debugging.
 - Implement error-checks for scenarios where the image-maintainer might misconfigure the module.
 - Use `snake_case` for functions and variables changed by the code.
-- Use `SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
+- Use `readonly SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
 - Use `"${variable_name}"` when you want to expose information from the variable & to ensure that variables are properly parsed as strings.
 - If you want to insert another regular string as a suffix or prefix to the `"${variable_name}"`, you should do that in this format: `"prefix-${variable_name}-suffix"`
+- For functions that are set once and stay unchanged, make a function & in next line set: `readonly -f function_name`
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
      -  You can also use `set -euxo pipefail` during debugging, where each executed command is printed. This should not be used in a published module. 
 - For downloading files, we utilize `curl`. Here's the template for what we're using:  
