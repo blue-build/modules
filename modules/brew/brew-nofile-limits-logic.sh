@@ -7,11 +7,11 @@ set -euo pipefail
 # (if nofile limit is already applied with appropriate values in the base image, than this tweak is not applied)
 # Modifies limits nofile value & systemd DefaultLimitNOFILE value
 
-DESIRED_SOFT_LIMIT=4096
-DESIRED_HARD_LIMIT=524288
-BREW_LIMITS_D_CONFIG="/etc/security/limits.d/zz1-brew-limits.conf"
-BREW_SYSTEMD_SYSTEM_CONFIG="/usr/lib/systemd/system.conf.d/zz1-brew-limits.conf"
-BREW_SYSTEMD_USER_CONFIG="/usr/lib/systemd/user.conf.d/zz1-brew-limits.conf"
+readonly DESIRED_SOFT_LIMIT=4096
+readonly DESIRED_HARD_LIMIT=524288
+readonly BREW_LIMITS_D_CONFIG="/etc/security/limits.d/zz1-brew-limits.conf"
+readonly BREW_SYSTEMD_SYSTEM_CONFIG="/usr/lib/systemd/system.conf.d/zz1-brew-limits.conf"
+readonly BREW_SYSTEMD_USER_CONFIG="/usr/lib/systemd/user.conf.d/zz1-brew-limits.conf"
 
 # SSH/TTY nofile limit (security ulimit config)
 

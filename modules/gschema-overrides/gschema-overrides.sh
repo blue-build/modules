@@ -4,9 +4,9 @@ set -euo pipefail
 
 get_yaml_array INCLUDE '.include[]' "$1"
 
-schema_include_location="${CONFIG_DIRECTORY}/gschema-overrides"
-schema_test_location="/tmp/bluebuild-schema-test"
-schema_location="/usr/share/glib-2.0/schemas"
+readonly SCHEMA_INCLUDE_LOCATION="${CONFIG_DIRECTORY}/gschema-overrides"
+readonly SCHEMA_TEST_LOCATION="/tmp/bluebuild-schema-test"
+readonly SCHEMA_LOCATION="/usr/share/glib-2.0/schemas"
 gschema_extension=false
 
 echo "Installing gschema-overrides module"
@@ -20,7 +20,7 @@ fi
 # Abort build if included file does not have .gschema.override extension
 if [[ ${#INCLUDE[@]} -gt 0 ]]; then
   for file in "${INCLUDE[@]}"; do
-    if [[ "$file" == *.gschema.override ]]; then
+    if [[ "${file}" == *.gschema.override ]]; then
       gschema_extension=true
     else  
       echo "Module failed because included files in module don't have .gschema.override extension."
@@ -33,20 +33,20 @@ fi
 if [[ ${#INCLUDE[@]} -gt 0 ]] && $gschema_extension; then
   printf "Applying the following gschema-overrides:\n"
   for file in "${INCLUDE[@]}"; do
-    printf "%s\n" "$file"
+    printf "%s\n" "${file}"
   done
-  mkdir -p "$schema_test_location" "$schema_location"
-  find "$schema_location" -type f ! -name "*.gschema.override" -exec cp {} "$schema_test_location" \;
+  mkdir -p "${SCHEMA_TEST_LOCATION}" "${SCHEMA_LOCATION}"
+  find "${SCHEMA_LOCATION}" -type f ! -name "*.gschema.override" -exec cp {} "${SCHEMA_TEST_LOCATION}" \;
   for file in "${INCLUDE[@]}"; do
-    file_path="${schema_include_location}/${file}"
-    cp "$file_path" "$schema_test_location"
+    file_path="${SCHEMA_INCLUDE_LOCATION}/${file}"
+    cp "${file_path}" "${SCHEMA_TEST_LOCATION}"
   done
   echo "Running error-checking test for your gschema-overrides. If test fails, build also fails."
-  glib-compile-schemas --strict "$schema_test_location"
+  glib-compile-schemas --strict "${SCHEMA_TEST_LOCATION}"
   echo "Compiling gschema to include your changes with gschema-override"
   for file in "${INCLUDE[@]}"; do
-    file_path="${schema_test_location}/${file}"
-    cp "$file_path" "$schema_location"
+    file_path="${SCHEMA_TEST_LOCATION}/${file}"
+    cp "${file_path}" "${SCHEMA_LOCATION}"
   done  
-  glib-compile-schemas "$schema_location" &>/dev/null
+  glib-compile-schemas "${SCHEMA_LOCATION}" &>/dev/null
 fi

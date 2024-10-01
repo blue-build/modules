@@ -28,9 +28,9 @@ else
 fi  
 
 
-GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
+readonly GNOME_VER=$(gnome-shell --version | sed 's/[^0-9]*\([0-9]*\).*/\1/')
 echo "Gnome version: ${GNOME_VER}"
-LEGACY=false
+legacy=false
 
 # Legacy support for installing extensions, to retain compatibility with legacy configs
 if [[ ${#INSTALL[@]} -gt 0 ]]; then
@@ -41,7 +41,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       if [[ ! "${EXTENSION}" == *".v"*([0-9]) ]]; then
         break
       else
-        LEGACY=true
+        legacy=true
       fi
       shopt -u extglob
       echo "ATTENTION: This is the legacy method of installing extensions."
@@ -129,7 +129,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
 fi
 
 # New method of installing extensions
-if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
+if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${legacy}"; then
   for INSTALL_EXT in "${INSTALL[@]}"; do
       if [[ ! "${INSTALL_EXT}" =~ ^[0-9]+$ ]]; then
         # Literal-name extension config

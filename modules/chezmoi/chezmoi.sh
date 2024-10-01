@@ -16,7 +16,7 @@ if [[ $DEBUG == true ]]; then
 fi
 
 # The repository with your chezmoi dotfiles. (default: null)
-DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
+readonly DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 
 # If true, chezmoi services will be enabled for all logged in users, and users with lingering enabled. (default: true)
 # If false, chezmoi services will not be enabled for any users, but can be enabled manually, after installation.

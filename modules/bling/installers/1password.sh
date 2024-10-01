@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-set -ouex pipefail
+set -euxo pipefail
 
 #### Variables
 
 # Can be "beta" or "stable"
-RELEASE_CHANNEL="${ONEPASSWORD_RELEASE_CHANNEL:-stable}"
+readonly RELEASE_CHANNEL="${ONEPASSWORD_RELEASE_CHANNEL:-stable}"
 
 # Must be over 1000
-GID_ONEPASSWORD="${GID_ONEPASSWORD:-1500}"
+readonly GID_ONEPASSWORD="${GID_ONEPASSWORD:-1500}"
 
 # Must be over 1000
-GID_ONEPASSWORDCLI="${GID_ONEPASSWORDCLI:-1600}"
+readonly GID_ONEPASSWORDCLI="${GID_ONEPASSWORDCLI:-1600}"
 
 echo "Installing 1Password"
 
@@ -81,7 +81,7 @@ chmod 4755 /usr/lib/1Password/chrome-sandbox
 
 # BrowserSupport binary needs setgid. This gives no extra permissions to the binary.
 # It only hardens it against environmental tampering.
-BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
+readonly BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
 
 chgrp "${GID_ONEPASSWORD}" "${BROWSER_SUPPORT_PATH}"
 chmod g+s "${BROWSER_SUPPORT_PATH}"
