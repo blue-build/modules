@@ -19,9 +19,10 @@ These are general guidelines for writing official bash modules and their documen
 - Echo what you're doing on each step and on errors to help debugging.
 - Implement error-checks for scenarios where the image-maintainer might misconfigure the module.
 - Use `snake_case` for functions and variables changed by the code.  
-  You can utilize `readonly (-f) snake_case` to mark variable or function as read-only when it won't be changed anymore.
+  You can utilize `readonly (-f) snake_case` to mark variable or function as read-only when it won't be changed anymore for safety.
 - Use `readonly SCREAMING_SNAKE_CASE` for variables that are set once and stay unchanged.
-- For functions that are set once and stay unchanged, make a function & in next line set: `readonly -f function_name`.
+- For functions that are set once and stay unchanged, make a function & in next line set:  
+  `readonly -f FUNCTION_NAME`.
 - Use `"${variable_name}"` when you want to expose information from the variable & to ensure that variables are properly parsed as strings.
 - If you want to insert another regular string as a suffix or prefix to the `"${variable_name}"`, you should do that in this format: `"prefix-${variable_name}-suffix"`
 - Use `set -euo pipefail` at the start of the script, to ensure that module will fail the image build if error is caught.
