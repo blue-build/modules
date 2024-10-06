@@ -5,10 +5,6 @@ ENABLE_AKMODS_REPO() {
   sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
 }
 
-SET_HIGHER_PRIORITY_AKMODS_REPO() {
-  echo "priority=90" >> /etc/yum.repos.d/_copr_ublue-os-akmods.repo
-}
-
 INSTALL_RPM_FUSION() {
   rpm-ostree install \
       https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
@@ -31,23 +27,11 @@ INSTALL_PATH=("${INSTALL_PATH[@]/%/*.rpm}")
 INSTALL_STR=$(echo "${INSTALL_PATH[*]}" | tr -d '\n')
 
 # Universal Blue switched from RPMFusion to negativo17 repos
-# Determine if RPMFusion for akmod is needed or not (WL & V4L2Loopback akmods currently require RPMFusion)
-
-rpm_fusion_dependent=false
-for akmod in "${INSTALL[@]}"; do
-    if [[ "${akmod}" =~ ^(wl|v4l2loopback)$ ]]; then
-        rpm_fusion_dependent=true
-    fi
-done
+# WL & V4L2Loopback akmods currently require RPMFusion repo, so we temporarily install then uninstall it
 
 echo "Installing akmods"
 echo "Installing: $(echo "${INSTALL[*]}" | tr -d '\n')"
-SET_HIGHER_PRIORITY_AKMODS_REPO
 ENABLE_AKMODS_REPO
-if "${rpm_fusion_dependent}"; then
-  INSTALL_RPM_FUSION
-  rpm-ostree install ${INSTALL_STR}
-  UNINSTALL_RPM_FUSION
-else
-  rpm-ostree install ${INSTALL_STR}
-fi
+INSTALL_RPM_FUSION
+rpm-ostree install ${INSTALL_STR}
+UNINSTALL_RPM_FUSION
