@@ -22,6 +22,19 @@ if ! command -v gcc &> /dev/null; then
   fi  
 fi
 
+# Check if zstd is installed & install it if it's not
+if ! command -v zstd &> /dev/null; then
+  if command -v rpm-ostree &> /dev/null; then
+    echo "Installing \"zstd\" package, which is necessary for Brew to function"
+    rpm-ostree install zstd
+  else
+    echo "ERROR: \"zstd\" package could not be found"
+    echo "       Brew's installer depends on \"zstd\" in order to function"
+    echo "       Please include \"zstd\" in the list of packages to install with the system package manager"
+    exit 1
+  fi  
+fi
+
 # Module-specific directories and paths
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 
