@@ -209,7 +209,7 @@ if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
   cat > /etc/profile.d/brew.sh <<EOF
 #!/usr/bin/env bash
-[[ -d /home/linuxbrew/.linuxbrew && $- == *i* ]] && eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+[[ -d /home/linuxbrew/.linuxbrew && \$- == *i* ]] && eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 EOF
 fi
 
