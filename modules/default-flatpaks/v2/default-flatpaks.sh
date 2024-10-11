@@ -2,7 +2,7 @@
 
 const flathubURL = "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
-const defaultInstallation = {
+const defaultConfiguration = {
     notify: true
     scope: user
     repo: {
@@ -19,11 +19,11 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 def main [configStr: string] {
     let config = $configStr | from yaml
     
-    let installations = $config.installations | each {|installation|
-        mut merged = $defaultInstallation | merge $installation
-        $merged.repo = $defaultInstallation.repo | merge $merged.repo # make sure all repo properties exist
+    let configurations = $config.configurations | each {|configuration|
+        mut merged = $defaultConfiguration | merge $configuration
+        $merged.repo = $defaultConfiguration.repo | merge $merged.repo # make sure all repo properties exist
 
-        print $"Validating installation of (ansi default_italic)($merged.install | length)(ansi reset) Flatpaks from (ansi default_italic)($merged.repo.title)(ansi reset)"
+        print $"Validating configuration of (ansi default_italic)($merged.install | length)(ansi reset) Flatpaks from (ansi default_italic)($merged.repo.title)(ansi reset)"
 
         if (not ($merged.scope == "system" or $merged.scope == "user")) {
             print $"(ansi red_bold)Scope must be either(ansi reset) (ansi blue_italic)system(ansi reset) (ansi red_bold)or(ansi reset) (ansi blue_italic)user(ansi reset)"
@@ -51,11 +51,11 @@ def main [configStr: string] {
     }
 
     open $configPath
-        | append $installations
+        | append $configurations
         | to yaml | save -f $configPath
 
-    print $"(ansi green_bold)Successfully generated following installations:(ansi reset)"
-    print ($installations | to yaml)
+    print $"(ansi green_bold)Successfully generated following configurations:(ansi reset)"
+    print ($configurations | to yaml)
 
     print "Setting up Flatpak setup services..."
 

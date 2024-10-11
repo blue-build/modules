@@ -1,1 +1,34 @@
 #!/usr/bin/env nu
+
+const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
+const configPath = $"($usrSharePath)/configuration.yaml"
+
+def main [] {
+    let configFile = open $configPath
+
+    if (flatpak remotes | str contains fedora) {
+        flatpak remote-delete --user fedora --force
+        flatpak remote-delete --user fedora-testing --force
+    }
+
+    $configFile.configurations | where scope == user | each { |config|
+        flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
+
+        if ($config.notify) {
+            (notify-send 
+                --app-name "Automatic Flatpak Installation Service"
+                $"Starting automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)..."
+            )
+        }
+
+        flatpak install --user $config.repo.name ...$config.install
+
+        if ($config.notify) {
+            (notify-send 
+                --app-name "Automatic Flatpak Installation Service"
+                $"Finished automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)!"
+                ($config.install | str join ', ')
+            )
+        }
+    }
+}

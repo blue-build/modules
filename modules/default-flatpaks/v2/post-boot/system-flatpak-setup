@@ -1,1 +1,41 @@
 #!/usr/bin/env nu
+
+const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
+const configPath = $"($usrSharePath)/configuration.yaml"
+
+def main [] {
+    let configFile = open $configPath
+
+    if (flatpak remotes | str contains fedora) {
+        /usr/bin/gnome-software --quit
+        /usr/lib/fedora-third-party/fedora-third-party-opt-out
+        /usr/bin/fedora-third-party disable
+
+        flatpak remote-delete --system fedora --force
+        flatpak remote-delete --system fedora-testing --force
+
+        # TODO remove Fedora Flatpaks
+    }
+
+    $configFile.configurations | where scope == system | each { |config|
+        flatpak remote-add --system --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
+
+        if ($config.notify) {
+            # TODO implement notification sending
+            # (notify-send 
+            #     --app-name "Automatic Flatpak Installation Service"
+            #     $"Starting automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)..."
+            # )
+        }
+
+        flatpak install --system $config.repo.name ...$config.install
+
+        if ($config.notify) {
+            # (notify-send 
+            #     --app-name "Automatic Flatpak Installation Service"
+            #     $"Finished automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)!"
+            #     ($config.install | str join ', ')
+            # )
+        }
+    }
+}
