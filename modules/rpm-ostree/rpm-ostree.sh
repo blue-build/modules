@@ -67,11 +67,12 @@ LOCAL_INSTALL=false
 # Install and remove RPM packages
 # Sort classic, URL & local packages
 if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
-  for PKG in "${INSTALL_PKGS[@]}"; do
+  for i in "${!INSTALL_PKGS[@]}"; do
+      PKG="${INSTALL_PKGS[$i]}"
       if [[ "${PKG}" =~ ^https?:\/\/.* ]]; then
-        PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
+        INSTALL_PKGS[$i]="${PKG//%OS_VERSION%/${OS_VERSION}}"
         HTTPS_INSTALL=true
-        HTTPS_PKGS+=("${PKG}")
+        HTTPS_PKGS+=("${INSTALL_PKGS[$i]}")
       elif [[ ! "${PKG}" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
         LOCAL_INSTALL=true
         LOCAL_PKGS+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
