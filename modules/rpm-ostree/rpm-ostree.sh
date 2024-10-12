@@ -69,9 +69,9 @@ LOCAL_INSTALL=false
 if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
   for PKG in "${INSTALL_PKGS[@]}"; do
       if [[ "${PKG}" =~ ^https?:\/\/.* ]]; then
-        VERSION_SUBSTITUTED_PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
+        PKG="${PKG//%OS_VERSION%/${OS_VERSION}}"    
         HTTPS_INSTALL=true
-        HTTPS_PKGS+=("${VERSION_SUBSTITUTED_PKG}")
+        HTTPS_PKGS+=("${PKG}")
       elif [[ ! "${PKG}" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
         LOCAL_INSTALL=true
         LOCAL_PKGS+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
