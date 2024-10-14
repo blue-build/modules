@@ -1,10 +1,67 @@
 #!/usr/bin/env bash
 
-# Remove Fedora's flatpak repo, if it exists
-if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
+# Remove Fedora's flatpak user repos, if they exist
+FLATPAK_USER_REMOTES=($(flatpak --user remotes))
+
+fedora_user=false
+fedora_testing_user=false
+
+for user_remote in "${FLATPAK_USER_REMOTES[@]}"; do
+  if [[ "${user_remote}" == "fedora" ]]; then
+    fedora_user=true  
+  elif [[ "${user_remote}" == "fedora-testing" ]]; then
+    fedora_testing_user=true
+  fi  
+done
+
+if "${fedora_user}"; then
+  echo "Removing user flatpak remote 'fedora'"
   flatpak remote-delete --user fedora --force
-  flatpak remote-delete --user fedora-testing --force
+else
+  echo "User flatpak remote 'fedora' is already removed"  
 fi
+if "${fedora_system_testing}"; then
+  echo "Removing flatpak remote 'fedora-testing'"
+  flatpak remote-delete --user fedora-testing --force
+else
+  echo "User flatpak remote 'fedora-testing' is already removed"  
+fi
+
+# Remove flatpak apps from user origin fedora
+FEDORA_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
+if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing user flatpak apps from 'fedora' remote"
+  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+else
+  echo "User flatpak apps from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from user origin fedora
+FEDORA_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing user flatpak runtimes from 'fedora' remote"
+  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+else
+  echo "User flatpak runtimes from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak apps from origin user origin fedora-testing
+FEDORA_TESTING_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora-testing" {print $1}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing user flatpak apps from 'fedora-testing' remote"
+  flatpak remove --user --noninteractive "${FEDORA_TESTING_FLATPAKS_APP[@]}"
+else
+  echo "User flatpak apps from 'fedora-testing' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from user origin fedora-testing
+FEDORA_TESTING_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora-testing" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing user flatpak runtimes from 'fedora-testing' remote"
+  flatpak remove --user --noninteractive "${FEDORA_TESTING_FLATPAKS_RUNTIME[@]}"
+else
+  echo "User flatpak runtimes from 'fedora-testing' remote are already removed"
+fi  
 
 REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
@@ -31,14 +88,17 @@ done
 
 # Set up per-user Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding remote $REPO_NAME from $REPO_URL"  
+  echo "Adding remote $REPO_NAME from $REPO_URL"
+  echo "Note that --if-not-exists flag doesn't prevent the repo from modifying repo URL"  
   flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
 fi
 
-# Change repository title to configured title, if not null
+# Change repository title to configured title, if not null & if not already changed
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
-  flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
   echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
+  flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
+elif [[ $REPO_TITLE != "null" ]] && ${no_title_modify}; then
+  echo "Custom flatpak remote title is already set"
 fi
 
 # Notifications config
