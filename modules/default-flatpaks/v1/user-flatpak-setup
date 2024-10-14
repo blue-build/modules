@@ -97,6 +97,8 @@ fi
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
   echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
   flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
+elif [[ $REPO_TITLE != "null" ]] && ${no_title_modify}; then
+  echo "Custom flatpak remote title is already set"
 fi
 
 # Notifications config
