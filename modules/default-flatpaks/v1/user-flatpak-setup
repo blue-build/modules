@@ -3,13 +3,13 @@
 # Remove Fedora's flatpak user repos, if they exist
 FLATPAK_USER_REMOTES=($(flatpak --user remotes))
 
+fedora_user=false
+fedora_testing_user=false
+
 for user_remote in "${FLATPAK_USER_REMOTES[@]}"; do
   if [[ "${user_remote}" == "fedora" ]]; then
-    fedora_user=true
-  fi  
-done
-for user_remote in "${FLATPAK_USER_REMOTES[@]}"; do
-  if [[ "${user_remote}" == "fedora-testing" ]]; then
+    fedora_user=true  
+  elif [[ "${user_remote}" == "fedora-testing" ]]; then
     fedora_testing_user=true
   fi  
 done

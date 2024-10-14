@@ -3,15 +3,15 @@
 # Opt out of and remove Fedora's system flatpak repos
 FLATPAK_SYSTEM_REMOTES=($(flatpak --system remotes))
 
+fedora_system=false
+fedora_testing_system=false
+
 for system_remote in "${FLATPAK_SYSTEM_REMOTES[@]}"; do
   if [[ "${system_remote}" == "fedora" ]]; then
     fedora_system=true
-  fi  
-done
-for system_remote in "${FLATPAK_SYSTEM_REMOTES[@]}"; do
-  if [[ "${system_remote}" == "fedora-testing" ]]; then
+  elif [[ "${system_remote}" == "fedora-testing" ]]; then
     fedora_testing_system=true
-  fi  
+  fi
 done
 
 if rpm -q fedora-third-party &>/dev/null; then
