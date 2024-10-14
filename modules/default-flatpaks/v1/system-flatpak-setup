@@ -33,7 +33,7 @@ if "${fedora_system}"; then
 else
   echo "System flatpak remote 'fedora' is already removed"  
 fi
-if "${fedora_system_testing}"; then
+if "${fedora_testing_system}"; then
   echo "Removing system flatpak remote 'fedora-testing'"
   flatpak remote-delete --system fedora-testing --force
 else

@@ -20,7 +20,7 @@ if "${fedora_user}"; then
 else
   echo "User flatpak remote 'fedora' is already removed"  
 fi
-if "${fedora_system_testing}"; then
+if "${fedora_testing_user}"; then
   echo "Removing flatpak remote 'fedora-testing'"
   flatpak remote-delete --user fedora-testing --force
 else
