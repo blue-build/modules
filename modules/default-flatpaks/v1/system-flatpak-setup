@@ -1,21 +1,80 @@
 #!/usr/bin/env bash
 
-# Opt out of and remove Fedora's flatpak repo
-if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
-  /usr/bin/gnome-software --quit
-  /usr/lib/fedora-third-party/fedora-third-party-opt-out
-  /usr/bin/fedora-third-party disable
-  flatpak remote-delete fedora --force
-  flatpak remote-delete fedora-testing --force
+# Opt out of and remove Fedora's system flatpak repos
+FLATPAK_SYSTEM_REMOTES=($(flatpak --system remotes))
 
-  # Remove flatpak apps from origin fedora
-  FEDORA_FLATPAKS=$(flatpak list --app --columns=application,origin | grep -w 'fedora' | awk '{print $1}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+for system_remote in "${FLATPAK_SYSTEM_REMOTES[@]}"; do
+  if [[ "${system_remote}" == "fedora" ]]; then
+    fedora_system=true
+  fi  
+done
+for system_remote in "${FLATPAK_SYSTEM_REMOTES[@]}"; do
+  if [[ "${system_remote}" == "fedora-testing" ]]; then
+    fedora_testing_system=true
+  fi  
+done
 
-  # Remove flatpak runtimes from origin fedora
-  FEDORA_FLATPAKS=$(flatpak list --runtime --columns=application,arch,branch,origin | grep -w 'fedora' | awk '{print $1"/"$2"/"$3}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+if rpm -q fedora-third-party &>/dev/null; then
+  if [[ ! "$(fedora-third-party query)" == *"disabled." ]]; then
+    echo "Disabling Fedora third-party repos..."
+    /usr/bin/gnome-software --quit
+    /usr/lib/fedora-third-party/fedora-third-party-opt-out
+    /usr/bin/fedora-third-party disable
+  else
+     echo "Fedora third-party repos are already disabled"
+  fi
+else
+  echo "ERROR: Cannot opt-out from Fedora third-party repos, because fedora-third-party package is not installed"
 fi
+
+if "${fedora_system}"; then
+  echo "Removing system flatpak remote 'fedora'"
+  flatpak remote-delete --system fedora --force
+else
+  echo "System flatpak remote 'fedora' is already removed"  
+fi
+if "${fedora_system_testing}"; then
+  echo "Removing system flatpak remote 'fedora-testing'"
+  flatpak remote-delete --system fedora-testing --force
+else
+  echo "System flatpak remote 'fedora-testing' is already removed"  
+fi
+
+# Remove flatpak apps from system origin fedora
+FEDORA_FLATPAKS_APP=($(flatpak list --system --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
+if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing system flatpak apps from 'fedora' remote"
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+else
+  echo "System flatpak apps from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from system origin fedora
+FEDORA_FLATPAKS_RUNTIME=($(flatpak list --system --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing system flatpak runtimes from 'fedora' remote"
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+else
+  echo "System flatpak runtimes from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak apps from system origin fedora-testing
+FEDORA_TESTING_FLATPAKS_APP=($(flatpak list --system --app --columns=application,origin | awk '$2 == "fedora-testing" {print $1}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing system flatpak apps from 'fedora-testing' remote"
+  flatpak remove --system --noninteractive "${FEDORA_TESTING_FLATPAKS_APP[@]}"
+else
+  echo "System flatpak apps from 'fedora-testing' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from system origin fedora-testing
+FEDORA_TESTING_FLATPAKS_RUNTIME=($(flatpak list --system --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora-testing" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing system flatpak runtimes from 'fedora-testing' remote"
+  flatpak remove --system --noninteractive "${FEDORA_TESTING_FLATPAKS_RUNTIME[@]}"
+else
+  echo "System flatpak runtimes from 'fedora-testing' remote are already removed"
+fi  
 
 REPO_INFO="/usr/share/bluebuild/default-flatpaks/system/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
@@ -43,20 +102,22 @@ done
 # Set up system-wide Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
   echo "Adding system-wide remote $REPO_NAME from $REPO_URL"  
+  echo "Note that --if-not-exists flag doesn't prevent the repo from modifying repo URL"  
   flatpak remote-add --if-not-exists --system "$REPO_NAME" "$REPO_URL"
 fi
 
 # If configured remote is flathub, enable it here.
-# Flathub is already installed on Fedora, but not enabled by default,
+# Flathub is already installed in Fedora, but not enabled by default,
 # so the above command won't add it again
 if [[ $REPO_NAME == "flathub" ]]; then
+  echo "Enabling specified 'flathub' remote, that is already installed, but disabled in Fedora"
   flatpak remote-modify --system "$REPO_NAME" --enable
 fi
 
-# Change repository title to configured title, if not null
+# Change repository title to configured title, if not null & if not already changed
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
+  echo "Setting title $REPO_TITLE for remote $REPO_NAME"
   flatpak remote-modify --system "$REPO_NAME" --title="$REPO_TITLE"
-  echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
 fi
 
 # Notifications config
