@@ -6,7 +6,7 @@ ENABLE_AKMODS_REPO() {
 }
 
 INSTALL_RPM_FUSION() {
-if [[ "$(rpm -q rpmfusion-free-release)" != "rpmfusion-free-release"* && "$(rpm -q rpmfusion-nonfree-release)" != "rpmfusion-nonfree-release"* ]]; then
+if ! rpm -q rpmfusion-free-release &>/dev/null && ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
   rpm-ostree install \
       https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
       https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm
