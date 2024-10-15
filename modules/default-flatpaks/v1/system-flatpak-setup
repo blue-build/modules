@@ -86,6 +86,7 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 # Flatpak add remote is ran for some reason, even with --if-not-exists flag, apparently, it modifies the URL
 # We cannot compare repo URLs properly
 # Flatpak outputs repo URL, while we have flatpakref URL, which is not the same
+no_title_modify=false
 readarray -t CURRENT_REPO_INFO < <(flatpak remotes --system --columns=name,url,title)
 for index in "${CURRENT_REPO_INFO[@]}"; do
     CURRENT_REPO_NAMES+=("$(echo "${index}" | awk '{print $1}')")
