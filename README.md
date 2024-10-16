@@ -131,7 +131,7 @@ System & local-user config is not there just for users, it is also directly util
 
 #### Config Example
 
-System config (`/usr/share/bluebuild/default-flatpaks/config.yml`):
+System config (`/usr/share/bluebuild/default-flatpaks/configuration.yml`):
 
 ```yaml
 # Information about the config file
@@ -155,7 +155,7 @@ user:
     - org.gnome.World.Secrets
 ```
 
-Local-user config (`/etc/bluebuild/default-flatpaks/config.yml`):
+Local-user config (`/etc/bluebuild/default-flatpaks/configuration.yml`):
 
 ```yaml
 # Information about the config file
