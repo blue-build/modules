@@ -1,0 +1,14 @@
+[Unit]
+Description=Configure Flatpaks for current user
+Wants=network-online.target
+After=system-flatpak-setup.service
+
+[Service]
+Type=simple
+ExecStart=/usr/share/bluebuild/default-flatpaks/user-flatpak-setup
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=0
+
+[Install]
+WantedBy=default.target
