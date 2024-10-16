@@ -118,16 +118,16 @@ In order to keep config files easy to read & reliable to parse, standardized `.y
 #### Config Directory Structure
 
 **System config:**  
-`/usr/share/bluebuild/module-name/config.yml`
+`/usr/share/bluebuild/module-name/configuration.yml`
 
 **System config** is a module config which is derived from `recipe.yml` module entry. It is placed in this read-only directory location in order to avoid local-users writing to it. So it is used to inform local-users about which modifications are done in `recipe.yml`, so they can potentially proceed with modifications on their own.
 
 **Local-user config:**  
-`/usr/etc/bluebuild/module-name/config.yml`
+`/usr/etc/bluebuild/module-name/configuration.yml`
 
 **Local-user config** is a module config which is derived from local-user config template. It is placed in `/usr/etc`, which is then automatically copied to `/etc`, which is writable to local-users. `/usr/etc` local-user config can be used to reset module config that is done in `/etc`.
 
-System & local-user config is not there just for users, it is also directly utilized by the module, which reads the `config.yml` file & further parses the data to allow the module to have local config functionality.
+System & local-user config is not there just for users, it is also directly utilized by the module, which reads the `configuration.yml` file & further parses the data to allow the module to have local config functionality.
 
 #### Config Example
 
@@ -139,7 +139,7 @@ System config (`/usr/share/bluebuild/default-flatpaks/configuration.yml`):
 # vendor: BlueBuild
 # module: default-flatpaks
 # description: System config file for `default-flatpaks` BlueBuild module, which is used to install + remove flatpak apps or modify flatpak repos.
-# instructions: Read this system config in order to know what is currently configured by the system & what to potentially modify in local-user config (/etc/bluebuild/default-flatpaks/config.yml).
+# instructions: Read this system config in order to know what is currently configured by the system & what to potentially modify in local-user config (/etc/bluebuild/default-flatpaks/configuration.yml).
 
 # Configuration section
 notify: true
