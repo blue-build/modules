@@ -11,4 +11,4 @@ RestartSec=30
 StartLimitInterval=0
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target
