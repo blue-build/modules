@@ -39,4 +39,7 @@ model BrewModule {
      * The Homebrew project uses analytics to anonymously collect the information about Brew usage & your system in order to improve the experience of Brew users.  
      */
     "brew-analytics"?: boolean = true;
+
+    /** List of Brew packages to install. */
+    "install"?: Array<string>;
 }

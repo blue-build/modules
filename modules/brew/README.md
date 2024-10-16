@@ -7,6 +7,7 @@ The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system
 - Sets up systemd services to automatically update Brew to the latest version.
 - Sets up systemd services to automatically upgrade Brew packages.
 - Sets up bash and fish completions for Brew.
+- Installs specific Brew packages if specified in the `install` configuration.
 
 ## How it works
 
@@ -50,6 +51,7 @@ The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system
 **Rest of the setup:**
 - `brew-update` runs at the specified time to update Brew to the latest version
 - `brew-upgrade` runs at the specified time to upgrade Brew packages
+- `brew-packages-setup` installs the specified packages if listed in the `install` configuration
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
