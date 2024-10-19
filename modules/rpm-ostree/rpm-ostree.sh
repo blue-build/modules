@@ -8,23 +8,22 @@ get_yaml_array REPOS '.repos[]' "$1"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
     echo "Adding repositories"
     for REPO in "${REPOS[@]}"; do
-    REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
+        REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
+        REPO="${REPO//[$'\t\r\n ']}"
+
         # If it's the COPR repo, then download the repo normally
         # If it's not, then download the repo with URL in it's filename, to avoid duplicate repo name issue
         if [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          REPO_URL="${REPO//[$'\t\r\n ']}"
-
-          echo "Downloading repo file ${REPO_URL}"
-          curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
-          echo "Downloaded repo file ${REPO_URL}"
+          echo "Downloading repo file ${REPO}"
+          curl -fLs --create-dirs -O "${REPO}" --output-dir "/etc/yum.repos.d/"
+          echo "Downloaded repo file ${REPO}"
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          REPO_URL="${REPO//[$'\t\r\n ']}"
-          CLEAN_REPO_NAME=$(echo "${REPO_URL}" | sed 's/^https\?:\/\///')
+          CLEAN_REPO_NAME=$(echo "${REPO}" | sed -E 's|^https?://([^?]+)(\?.*)?$|\1|')
           CLEAN_REPO_NAME="${CLEAN_REPO_NAME//\//.}"
           
-          echo "Downloading repo file ${REPO_URL}"
-          curl -fLs --create-dirs "${REPO_URL}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
-          echo "Downloaded repo file ${REPO_URL}"
+          echo "Downloading repo file ${REPO}"
+          curl -fLs --create-dirs "${REPO}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
+          echo "Downloaded repo file ${REPO}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
         fi  
@@ -153,7 +152,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         # Get info from repository URL
         MAINTAINER=$(awk -F'/' '{print $5}' <<< "${REPO}")
         REPO_NAME=$(awk -F'/' '{print $6}' <<< "${REPO}")
-        FILE_NAME=$(awk -F'/' '{print $9}' <<< "${REPO}")
+        FILE_NAME=$(awk -F'/' '{print $9}' <<< "${REPO}" | sed 's/\?.*//') # Remove params after '?'
 
         # Get packages to replace
         get_yaml_array PACKAGES '.packages[]' "${REPLACEMENT}"
