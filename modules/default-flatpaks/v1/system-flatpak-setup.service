@@ -8,7 +8,7 @@ Type=oneshot
 ExecStart=/usr/bin/system-flatpak-setup
 Restart=on-failure
 RestartSec=30
-StartLimitInterval=0
+StartLimitInterval=3
 
 [Install]
 WantedBy=multi-user.target
