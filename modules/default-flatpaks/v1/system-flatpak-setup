@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Check for available internet connection before proceeding (network-online.target doesn't work for some network connections)
-# Check it 3 times in 3 second interval, to avoid until loop
+# Check it 5 times in 3 second interval, to avoid until loop
 # Used when adding remotes & when installing flatpaks
 check_internet_connection() {
     local max_attempts=5
@@ -125,8 +125,7 @@ done
 
 # Set up system-wide Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding system-wide remote $REPO_NAME from $REPO_URL (requires internet)"  
-  echo "Note that --if-not-exists flag doesn't prevent the repo from modifying repo URL"
+  echo "Adding system-wide remote $REPO_NAME from $REPO_URL if it doesn't exist (requires internet)"  
   check_internet_connection
   if "${internet_connection}"; then
     echo "Internet connection is successful, applying the operation above"
