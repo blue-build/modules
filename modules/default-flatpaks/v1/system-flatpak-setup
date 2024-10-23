@@ -207,6 +207,20 @@ function notify-send-uninstall {
       sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
 
+# Remove flatpaks in list
+if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    echo "Removing system flatpaks from config list"
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    echo "Removing system flatpaks from config list"
+    notify-send-pre-uninstall
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+    notify-send-uninstall
+  fi
+fi
+
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
   if [[ -n $FLATPAK_LIST ]]; then
@@ -230,19 +244,5 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
       flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
       notify-send-install
     fi  
-  fi
-fi
-
-# Remove flatpaks in list
-if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
-  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
-  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    echo "Removing system flatpaks from config list"
-    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
-  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    echo "Removing system flatpaks from config list"
-    notify-send-pre-uninstall
-    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
-    notify-send-uninstall
   fi
 fi

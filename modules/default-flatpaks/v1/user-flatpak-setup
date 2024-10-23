@@ -158,6 +158,20 @@ MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INST
 COMBINED_INSTALL_LIST=$(cat <(echo "$MAINTAINER_INSTALL_LIST") "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 COMBINED_REMOVE_LIST=$(cat <(echo "$MAINTAINER_REMOVE_LIST") "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 
+# Remove flatpaks in list
+if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
+    notify-send "Flatpak Installer" "Started uninstall of some user flatpaks" --app-name="Flatpak Installer" -u NORMAL  
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
+    notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+  fi  
+fi
+
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
   if [[ -n $FLATPAK_LIST ]]; then
@@ -182,18 +196,4 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
       notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
     fi  
   fi
-fi
-
-# Remove flatpaks in list
-if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
-  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
-  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    echo "Removing user flatpaks from config list"
-    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
-  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    echo "Removing user flatpaks from config list"
-    notify-send "Flatpak Installer" "Started uninstall of some user flatpaks" --app-name="Flatpak Installer" -u NORMAL  
-    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
-    notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
-  fi  
 fi
