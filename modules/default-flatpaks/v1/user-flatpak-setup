@@ -4,7 +4,7 @@
 # Check it 3 times in 3 second interval, to avoid until loop
 # Used when adding remotes & when installing flatpaks
 check_internet_connection() {
-    local max_attempts=3
+    local max_attempts=5
     local sleep_time=3
     local attempt=1
 
@@ -112,20 +112,21 @@ done
 
 # Set up per-user Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding remote $REPO_NAME from $REPO_URL"
+  echo "Adding user-wide remote $REPO_NAME from $REPO_URL (requires internet)"
   echo "Note that --if-not-exists flag doesn't prevent the repo from modifying repo URL"  
   check_internet_connection
   if "${internet_connection}"; then
+    echo "Internet connection is successful, applying the operation above"
     flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
   fi  
 fi
 
 # Change repository title to configured title, if not null & if not already changed
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
-  echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
+  echo "Setting title $REPO_TITLE for user remote $REPO_NAME"  
   flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
 elif [[ $REPO_TITLE != "null" ]] && ${no_title_modify}; then
-  echo "Custom flatpak remote title is already set"
+  echo "Custom flatpak user remote title is already set"
 fi
 
 # Notifications config
@@ -166,15 +167,17 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
     INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    echo "Installing user flatpaks from config list"
+    echo "Installing user flatpaks from config list (requires internet)"
     check_internet_connection
     if "${internet_connection}"; then
+      echo "Internet connection is successful, applying the operation above"
       flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
     fi  
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    echo "Installing user flatpaks from config list"
+    echo "Installing user flatpaks from config list (requires internet)"
     check_internet_connection
     if "${internet_connection}"; then
+      echo "Internet connection is successful, applying the operation above"
       notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
       flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
       notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
