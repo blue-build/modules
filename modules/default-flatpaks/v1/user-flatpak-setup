@@ -1,5 +1,28 @@
 #!/usr/bin/env bash
 
+# Check for available internet connection before proceeding (network-online.target doesn't work for some network connections)
+# Check it 3 times in 3 second interval, to avoid until loop
+# Used when adding remotes & when installing flatpaks
+check_internet_connection() {
+    local max_attempts=3
+    local sleep_time=3
+    local attempt=1
+
+    while [[ ${attempt} -le ${max_attempts} ]]; do
+        if curl --silent --head --fail "https://fedoraproject.org/static/hotspot.txt" > /dev/null; then
+            internet_connection=true
+            return 0
+        else
+            internet_connection=false
+            echo "Internet connection is not available. Waiting..."
+            sleep ${sleep_time}
+            attempt=$((attempt + 1))
+        fi
+    done
+
+    echo "ERROR: Internet connection is not available. Skipping the operation above."
+}
+
 # Remove Fedora's flatpak user repos, if they exist
 FLATPAK_USER_REMOTES=($(flatpak --user remotes))
 
@@ -91,7 +114,10 @@ done
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
   echo "Adding remote $REPO_NAME from $REPO_URL"
   echo "Note that --if-not-exists flag doesn't prevent the repo from modifying repo URL"  
-  flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+  check_internet_connection
+  if "${internet_connection}"; then
+    flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+  fi  
 fi
 
 # Change repository title to configured title, if not null & if not already changed
@@ -140,11 +166,19 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
     INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    echo "Installing user flatpaks from config list"
+    check_internet_connection
+    if "${internet_connection}"; then
+      flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    fi  
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
-    flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
-    notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    echo "Installing user flatpaks from config list"
+    check_internet_connection
+    if "${internet_connection}"; then
+      notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
+      flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
+      notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    fi  
   fi
 fi
 
@@ -152,8 +186,10 @@ fi
 if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
   REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
   if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
     flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
   elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
     notify-send "Flatpak Installer" "Started uninstall of some user flatpaks" --app-name="Flatpak Installer" -u NORMAL  
     flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
     notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
