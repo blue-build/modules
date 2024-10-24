@@ -79,6 +79,11 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
     BREW_ANALYTICS=true
 fi
 
+INSTALL_PACKAGES=$(echo "${1}" | yq -I=0 ".install[]")
+if [[ -z "${INSTALL_PACKAGES}" || "${INSTALL_PACKAGES}" == "null" ]]; then
+    INSTALL_PACKAGES=()
+fi
+
 # Create necessary directories
 mkdir -p /var/home
 mkdir -p /var/roothome
@@ -275,6 +280,66 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
     echo "Disabling Brew analytics"
     echo "HOMEBREW_NO_ANALYTICS=1" > "/etc/environment"
   fi
+fi
+
+# Create directory for brew configuration
+mkdir -p /usr/share/bluebuild/brew
+
+# Create repo-info.yml file with install packages if specified
+if [[ -n "${INSTALL_PACKAGES}" ]]; then
+    echo "install:" > /usr/share/bluebuild/brew/repo-info.yml
+    echo "${INSTALL_PACKAGES}" | sed 's/^/  - /' >> /usr/share/bluebuild/brew/repo-info.yml
+    echo "The following Brew packages will be installed when the system is live:"
+    echo "${INSTALL_PACKAGES}" | sed 's/^/  - /'
+
+    # Write brew-packages-setup script
+    cat > /usr/bin/brew-packages-setup <<EOF
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Source the Brew environment
+eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Install the Brew packages
+if [[ -n "\${INSTALL_PACKAGES[@]}" ]]; then
+  echo "Installing Brew packages..."
+  for package in "\${INSTALL_PACKAGES[@]}"; do
+    if ! brew list --formula "\$package" &> /dev/null; then
+      brew install "\$package"
+    else
+      echo "Package \$package is already installed."
+    fi
+  done
+else
+  echo "No Brew packages specified for installation."
+fi
+EOF
+
+    chmod +x /usr/bin/brew-packages-setup
+
+    # Write brew-packages-setup service
+    cat > /usr/lib/systemd/system/brew-packages-setup.service <<EOF
+[Unit]
+Description=Setup Brew Packages
+After=brew-setup.service
+Requires=brew-setup.service
+ConditionPathExists=!/var/lib/brew-packages-setup.stamp
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/brew-packages-setup
+ExecStartPost=/usr/bin/touch /var/lib/brew-packages-setup.stamp
+User=1000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Enable the brew-packages-setup service
+    systemctl enable brew-packages-setup.service
+else
+    echo "No Brew packages specified for installation."
 fi
 
 echo "Brew setup completed"
