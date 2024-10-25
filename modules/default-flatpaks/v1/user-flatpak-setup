@@ -1,26 +1,24 @@
 #!/usr/bin/env bash
 
 # Check for available internet connection before proceeding (network-online.target doesn't work for some network connections)
-# Check it 5 times in 3 second interval, to avoid until loop
+# Check it 3 times in 2 second interval, to avoid until loop
 # Used when adding remotes & when installing flatpaks
 check_internet_connection() {
-    local max_attempts=5
-    local sleep_time=3
+    local max_attempts=3
+    local sleep_time=2
     local attempt=1
 
-    while [[ ${attempt} -le ${max_attempts} ]]; do
+    while (( attempt <= max_attempts )); do
         if curl --silent --head --fail "https://fedoraproject.org/static/hotspot.txt" > /dev/null; then
-            internet_connection=true
-            return 0
+          return 0
         else
-            internet_connection=false
-            echo "Internet connection is not available. Waiting..."
-            sleep ${sleep_time}
-            attempt=$((attempt + 1))
+          echo "Internet connection is not available. Waiting..."
+          sleep ${sleep_time}
+          (( attempt++ ))
         fi
     done
 
-    echo "ERROR: Internet connection is not available. Skipping the operation above."
+    return 1
 }
 
 # Remove Fedora's flatpak user repos, if they exist
@@ -112,11 +110,11 @@ done
 
 # Set up per-user Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding user-wide remote $REPO_NAME from $REPO_URL if it doesn't exist (requires internet)"
-  check_internet_connection
-  if "${internet_connection}"; then
-    echo "Internet connection is successful, applying the operation above"
+  if check_internet_connection; then
+    echo "Adding user-wide remote $REPO_NAME from $REPO_URL if it doesn't exist (requires internet)"
     flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+  else
+    echo "NOTE: Skipping the addition of user-wide remote, because there is no internet connection"  
   fi  
 fi
 
@@ -180,20 +178,22 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
     INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    echo "Installing user flatpaks from config list (requires internet)"
-    check_internet_connection
-    if "${internet_connection}"; then
-      echo "Internet connection is successful, applying the operation above"
+    if check_internet_connection; then
+      echo "Installing user flatpaks from config list (requires internet)"
       flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    else
+      echo "ERROR: Installation of user flatpaks was not performed, because there was no internet connection"
+      exit 1   
     fi  
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    echo "Installing user flatpaks from config list (requires internet)"
-    check_internet_connection
-    if "${internet_connection}"; then
-      echo "Internet connection is successful, applying the operation above"
+    if check_internet_connection; then
+      echo "Installing user flatpaks from config list (requires internet)"
       notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
       flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
       notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    else
+      echo "ERROR: Installation of user flatpaks was not performed, because there was no internet connection"
+      exit 1        
     fi  
   fi
 fi
