@@ -177,32 +177,54 @@ MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INST
 COMBINED_INSTALL_LIST=$(cat <(echo "$MAINTAINER_INSTALL_LIST") "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 COMBINED_REMOVE_LIST=$(cat <(echo "$MAINTAINER_REMOVE_LIST") "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 
+# Loginctl has different command for parsing json since v256 (F41), so handle that scenario here
+LOGINCTL_VERSION=$(loginctl --version | awk 'NR==1 {print $2}')
 function notify-send-pre-install {
-     user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
-     uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
      xdg_runtime_path="/run/user/$uid"
      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Started install of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-install {
-     user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
-     uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
      xdg_runtime_path="/run/user/$uid"
      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-pre-uninstall {
-     user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
-     uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
      xdg_runtime_path="/run/user/$uid"
      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Started uninstall of some system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-uninstall {
-      user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
-      uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
-      xdg_runtime_path="/run/user/$uid"
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
+     xdg_runtime_path="/run/user/$uid"
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
 
 # Remove flatpaks in list
