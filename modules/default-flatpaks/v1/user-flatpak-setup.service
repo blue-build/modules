@@ -6,6 +6,3 @@ After=system-flatpak-setup.service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/user-flatpak-setup
-Restart=on-failure
-RestartSec=30
-StartLimitInterval=3
