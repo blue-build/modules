@@ -17,7 +17,7 @@ See `chezmoi`s documentation for [`--no-tty`](https://www.chezmoi.io/reference/c
 
 A systemd user service is installed that will initialize a `chezmoi` repository on chezmoi's default path (`~/.local/share/chezmoi`) for any user when it logs in, or at boot if it has lingering enabled.
 The service will only run if `~/.local/share/chezmoi` does not exist.
-Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`). You can also set `branch` if you want to use a branch different than `main`.
+Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`). You can also set `branch` if you want to use a branch different than the default.
 :::note
 The value of `repository` and `branch` will be passed directly to `chezmoi init --apply ${repository} --branch ${branch}`.
 See the [`chezmoi init` documentation](https://www.chezmoi.io/reference/commands/init/) for detailed syntax.
