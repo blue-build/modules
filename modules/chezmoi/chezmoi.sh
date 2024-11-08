@@ -17,6 +17,8 @@ fi
 
 # The repository with your chezmoi dotfiles. (default: null)
 DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
+# The chezmoi repository branch to use.
+DOTFILE_BRANCH=$(echo "$1" | yq -I=0 ".branch")
 
 # If true, chezmoi services will be enabled for all logged in users, and users with lingering enabled. (default: true)
 # If false, chezmoi services will not be enabled for any users, but can be enabled manually, after installation.
@@ -85,7 +87,6 @@ if [[ (-z $DOTFILE_REPOSITORY || $DOTFILE_REPOSITORY == "null") && $DISABLE_INIT
 	exit 1
 fi
 
-
 echo "Checking if /usr/bin/chezmoi exists"
 if [ -e /usr/bin/chezmoi ]; then
 	echo "chezmoi binary already exists, no need to redownload it"
@@ -104,18 +105,17 @@ else
 	fi
 fi
 
-
 if [[ $DISABLE_INIT == false ]]; then
 	# Write the service to initialize Chezmoi, and insert the repo url in the file
 	echo "Writing init service to user unit directory"
 	cat >>/usr/lib/systemd/user/chezmoi-init.service <<EOF
   [Unit]
   Description=Initializes Chezmoi if directory is missing
-  
+
   # This service will not execute for a user with an existing chezmoi directory
   ConditionPathExists=!%h/.local/share/chezmoi/.git/
   [Service]
-  ExecStart=/usr/bin/chezmoi init --apply ${DOTFILE_REPOSITORY}
+  ExecStart=/usr/bin/chezmoi init --apply ${DOTFILE_REPOSITORY} --branch ${DOTFILE_BRANCH}
   Type=oneshot
 
   [Install]
