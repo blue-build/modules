@@ -19,6 +19,11 @@ fi
 DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 # The chezmoi repository branch to use.
 DOTFILE_BRANCH=$(echo "$1" | yq -I=0 ".branch")
+if [[ -n ${DOTFILE_BRANCH} ]]; then
+	INIT_BRANCH_FLAG="--branch ${DOTFILE_BRANCH}"
+else
+	INIT_BRANCH_FLAG=""
+fi
 
 # If true, chezmoi services will be enabled for all logged in users, and users with lingering enabled. (default: true)
 # If false, chezmoi services will not be enabled for any users, but can be enabled manually, after installation.
@@ -115,7 +120,7 @@ if [[ $DISABLE_INIT == false ]]; then
   # This service will not execute for a user with an existing chezmoi directory
   ConditionPathExists=!%h/.local/share/chezmoi/.git/
   [Service]
-  ExecStart=/usr/bin/chezmoi init --apply ${DOTFILE_REPOSITORY} --branch ${DOTFILE_BRANCH}
+  ExecStart=/usr/bin/chezmoi init --apply ${DOTFILE_REPOSITORY} ${INIT_BRANCH_FLAG}
   Type=oneshot
 
   [Install]

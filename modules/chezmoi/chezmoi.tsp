@@ -12,7 +12,7 @@ model ChezmoiModule {
     repository: string;
 
     /** Git branch of the chezmoi repository. */
-    branch?: string = "main";
+    branch?: string = "";
 
     /** Whether to enable the modules services globally for all users, if false users need to enable services manually. */
     "all-users"?: boolean = true;
