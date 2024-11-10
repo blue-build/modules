@@ -62,15 +62,15 @@ def main [configStr: string] {
 
     cp -r ($"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/*" | into glob) $usrSharePath
 
-    cp $"($usrSharePath)/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
-    cp $"($usrSharePath)/system-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
-    cp $"($usrSharePath)/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
-    cp $"($usrSharePath)/user-flatpak-setup.timer" /usr/lib/systemd/system/user-flatpak-setup.timer
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.timer" /usr/lib/systemd/system/user-flatpak-setup.timer
     systemctl enable --force system-flatpak-setup.timer
     systemctl enable --force --global user-flatpak-setup.timer
 
-    cp $"($usrSharePath)/system-flatpak-setup" $"($libExecPath)/system-flatpak-setup" 
-    cp $"($usrSharePath)/user-flatpak-setup" $"($libExecPath)/user-flatpak-setup" 
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup" $"($libExecPath)/system-flatpak-setup" 
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup" $"($libExecPath)/user-flatpak-setup" 
     chmod +x $"($libExecPath)/system-flatpak-setup"
     chmod +x $"($libExecPath)/user-flatpak-setup"
 }
