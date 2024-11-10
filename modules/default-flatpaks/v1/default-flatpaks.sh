@@ -9,6 +9,9 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/system-flatpak-setup /usr/bin/system-
 cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup /usr/bin/user-flatpak-setup
 cp -r "$MODULE_DIRECTORY"/default-flatpaks/system-flatpak-setup.service /usr/lib/systemd/system/system-flatpak-setup.service
 cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.service /usr/lib/systemd/user/user-flatpak-setup.service
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/system-flatpak-setup.timer /usr/lib/systemd/system/system-flatpak-setup.timer
+cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.timer /usr/lib/systemd/user/user-flatpak-setup.timer
+
 
 configure_flatpak_repo () {
     CONFIG_FILE=$1
@@ -146,8 +149,8 @@ check_flatpak_id_validity_from_flathub () {
 echo "Enabling flatpaks module"
 mkdir -p /usr/share/bluebuild/default-flatpaks/{system,user}
 mkdir -p /etc/bluebuild/default-flatpaks/{system,user}
-systemctl enable -f system-flatpak-setup.service
-systemctl enable -f --global user-flatpak-setup.service
+systemctl enable -f system-flatpak-setup.timer
+systemctl enable -f --global user-flatpak-setup.timer
 
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
 if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then

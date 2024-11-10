@@ -4,11 +4,5 @@ Wants=network-online.target
 After=system-flatpak-setup.service
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/usr/bin/user-flatpak-setup
-Restart=on-failure
-RestartSec=30
-StartLimitInterval=0
-
-[Install]
-WantedBy=default.target

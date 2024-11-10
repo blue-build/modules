@@ -3,13 +3,13 @@
 The `chezmoi` module takes care of installing, initializing and updating your dotfiles.
 Each feature can be enabled or disabled individually.
 
-Installation of the `chezmoi` binary happens at build time and is done by downloading the `amd64` binary from the latest release to `/usr/bin/chezmoi`. 
+Installation of the `chezmoi` binary happens at build time and is done by downloading the `amd64` binary from the latest release to `/usr/bin/chezmoi`.
 This can be disabled by setting `install` to false. (defaults: true)
 
-Choose how `chezmoi` handles conflicting files with `file-conflict-policy`. 
+Choose how `chezmoi` handles conflicting files with `file-conflict-policy`.
 The following values are valid:
-`"skip"` Will not take any action if the file has changed from what is in your dotfiles repository. 
-This executes `chezmoi update --no-tty --keep-going` under the hood. 
+`"skip"` Will not take any action if the file has changed from what is in your dotfiles repository.
+This executes `chezmoi update --no-tty --keep-going` under the hood.
 `"replace"` Will overwrite the file if it has changed from what is in your dotfiles repository.
 This executes `chezmoi update --no-tty --force` under the hood.
 
@@ -17,11 +17,11 @@ See `chezmoi`s documentation for [`--no-tty`](https://www.chezmoi.io/reference/c
 
 A systemd user service is installed that will initialize a `chezmoi` repository on chezmoi's default path (`~/.local/share/chezmoi`) for any user when it logs in, or at boot if it has lingering enabled.
 The service will only run if `~/.local/share/chezmoi` does not exist.
-Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`)
+Set `repository` to the URL of your dotfiles repository. (eg. `repository: https://example.org/user/dotfiles`). You can also set `branch` if you want to use a branch different than the default.
 :::note
-The value of `repository` will be passed directly to `chezmoi init --apply ${repository}`.
+The value of `repository` and `branch` will be passed directly to `chezmoi init --apply ${repository} --branch ${branch}`.
 See the [`chezmoi init` documentation](https://www.chezmoi.io/reference/commands/init/) for detailed syntax.
-::: 
+:::
 Set `disable-init` to `true` if you do not want to install the init service.
 
 :::caution
@@ -46,10 +46,10 @@ sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer
 To turn on lingering for a given user, run the following command with sudo:
 
 :::note
-By default, any systemd units in a user's namespace will run after the user logs in, and will close after the user closes their last session. 
+By default, any systemd units in a user's namespace will run after the user logs in, and will close after the user closes their last session.
 When you enable lingering for a user, that user's units will run at boot and will continue running even if the user has no active sessions.
 
-If your dotfiles only contain things used by humans, such as cosmetic settings and aliases, you shouldn't need this. 
+If your dotfiles only contain things used by humans, such as cosmetic settings and aliases, you shouldn't need this.
 If you understand the above implications, and decide you need this feature, you can enable it with the following command, after installation:
 :::
 

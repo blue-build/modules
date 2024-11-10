@@ -11,6 +11,9 @@ model ChezmoiModule {
     /** Git repository to initialize. */
     repository: string;
 
+    /** Git branch of the chezmoi repository. */
+    branch?: string = "";
+
     /** Whether to enable the modules services globally for all users, if false users need to enable services manually. */
     "all-users"?: boolean = true;
 
@@ -19,7 +22,7 @@ model ChezmoiModule {
 
     /** Dotfile updates will wait this long after a boot before running. */
     "wait-after-boot"?: string = "5m";
-    
+
     /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. */
     "disable-init"?: boolean = false;
 

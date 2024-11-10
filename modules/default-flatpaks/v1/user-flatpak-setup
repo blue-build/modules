@@ -1,10 +1,88 @@
 #!/usr/bin/env bash
 
-# Remove Fedora's flatpak repo, if it exists
-if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
+# Check for available internet connection before proceeding (network-online.target doesn't work for some network connections)
+# Check it 3 times in 2 second interval, to avoid until loop
+# Used when adding remotes & when installing flatpaks
+check_internet_connection() {
+    local max_attempts=3
+    local sleep_time=2
+    local attempt=1
+
+    while (( attempt <= max_attempts )); do
+        if curl --silent --head --fail "https://fedoraproject.org/static/hotspot.txt" > /dev/null; then
+          return 0
+        else
+          echo "Internet connection is not available. Waiting..."
+          sleep ${sleep_time}
+          (( attempt++ ))
+        fi
+    done
+
+    return 1
+}
+
+# Remove Fedora's flatpak user repos, if they exist
+FLATPAK_USER_REMOTES=($(flatpak --user remotes))
+
+fedora_user=false
+fedora_testing_user=false
+
+for user_remote in "${FLATPAK_USER_REMOTES[@]}"; do
+  if [[ "${user_remote}" == "fedora" ]]; then
+    fedora_user=true  
+  elif [[ "${user_remote}" == "fedora-testing" ]]; then
+    fedora_testing_user=true
+  fi  
+done
+
+if "${fedora_user}"; then
+  echo "Removing user flatpak remote 'fedora'"
   flatpak remote-delete --user fedora --force
-  flatpak remote-delete --user fedora-testing --force
+else
+  echo "User flatpak remote 'fedora' is already removed"  
 fi
+if "${fedora_testing_user}"; then
+  echo "Removing user flatpak remote 'fedora-testing'"
+  flatpak remote-delete --user fedora-testing --force
+else
+  echo "User flatpak remote 'fedora-testing' is already removed"  
+fi
+
+# Remove flatpak apps from user origin fedora
+FEDORA_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
+if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing user flatpak apps from 'fedora' remote"
+  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+else
+  echo "User flatpak apps from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from user origin fedora
+FEDORA_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing user flatpak runtimes from 'fedora' remote"
+  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+else
+  echo "User flatpak runtimes from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak apps from origin user origin fedora-testing
+FEDORA_TESTING_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora-testing" {print $1}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing user flatpak apps from 'fedora-testing' remote"
+  flatpak remove --user --noninteractive "${FEDORA_TESTING_FLATPAKS_APP[@]}"
+else
+  echo "User flatpak apps from 'fedora-testing' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from user origin fedora-testing
+FEDORA_TESTING_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora-testing" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing user flatpak runtimes from 'fedora-testing' remote"
+  flatpak remove --user --noninteractive "${FEDORA_TESTING_FLATPAKS_RUNTIME[@]}"
+else
+  echo "User flatpak runtimes from 'fedora-testing' remote are already removed"
+fi  
 
 REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
@@ -16,6 +94,7 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 # Flatpak add remote is ran for some reason, even with --if-not-exists flag, apparently, it modifies the URL
 # We cannot compare repo URLs properly
 # Flatpak outputs repo URL, while we have flatpakref URL, which is not the same
+no_title_modify=false
 readarray -t CURRENT_REPO_INFO < <(flatpak remotes --user --columns=name,url,title)
 for index in "${CURRENT_REPO_INFO[@]}"; do
     CURRENT_REPO_NAMES+=("$(echo "${index}" | awk '{print $1}')")
@@ -31,14 +110,20 @@ done
 
 # Set up per-user Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding remote $REPO_NAME from $REPO_URL"  
-  flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+  if check_internet_connection; then
+    echo "Adding user-wide remote $REPO_NAME from $REPO_URL if it doesn't exist (requires internet)"
+    flatpak remote-add --if-not-exists --user "$REPO_NAME" "$REPO_URL"
+  else
+    echo "NOTE: Skipping the addition of user-wide remote, because there is no internet connection"  
+  fi  
 fi
 
-# Change repository title to configured title, if not null
+# Change repository title to configured title, if not null & if not already changed
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
+  echo "Setting title $REPO_TITLE for user remote $REPO_NAME"  
   flatpak remote-modify --user "$REPO_NAME" --title="$REPO_TITLE"
-  echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
+elif [[ $REPO_TITLE != "null" ]] && ${no_title_modify}; then
+  echo "Custom flatpak user remote title is already set"
 fi
 
 # Notifications config
@@ -71,6 +156,20 @@ MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INST
 COMBINED_INSTALL_LIST=$(cat <(echo "$MAINTAINER_INSTALL_LIST") "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 COMBINED_REMOVE_LIST=$(cat <(echo "$MAINTAINER_REMOVE_LIST") "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 
+# Remove flatpaks in list
+if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    echo "Removing user flatpaks from config list"
+    notify-send "Flatpak Installer" "Started uninstall of some user flatpaks" --app-name="Flatpak Installer" -u NORMAL  
+    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
+    notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+  fi  
+fi
+
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
   if [[ -n $FLATPAK_LIST ]]; then
@@ -79,22 +178,22 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
     INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    if check_internet_connection; then
+      echo "Installing user flatpaks from config list (requires internet)"
+      flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    else
+      echo "ERROR: Installation of user flatpaks was not performed, because there was no internet connection"
+      exit 1   
+    fi  
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
-    flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
-    notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    if check_internet_connection; then
+      echo "Installing user flatpaks from config list (requires internet)"
+      notify-send "Flatpak Installer" "Started install of user flatpaks" --app-name="Flatpak Installer" -u NORMAL
+      flatpak install --user --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}  
+      notify-send "Flatpak Installer" "Finished install of user flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+    else
+      echo "ERROR: Installation of user flatpaks was not performed, because there was no internet connection"
+      exit 1        
+    fi  
   fi
-fi
-
-# Remove flatpaks in list
-if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
-  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
-  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}
-  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    notify-send "Flatpak Installer" "Started uninstall of some user flatpaks" --app-name="Flatpak Installer" -u NORMAL  
-    flatpak uninstall --user --noninteractive ${REMOVE_LIST[@]}  
-    notify-send "Flatpak Installer" "Finished uninstall of user flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
-  fi  
 fi

@@ -1,21 +1,101 @@
 #!/usr/bin/env bash
 
-# Opt out of and remove Fedora's flatpak repo
-if grep -qz 'fedora' <<< "$(flatpak remotes)"; then
-  /usr/bin/gnome-software --quit
-  /usr/lib/fedora-third-party/fedora-third-party-opt-out
-  /usr/bin/fedora-third-party disable
-  flatpak remote-delete fedora --force
-  flatpak remote-delete fedora-testing --force
+# Check for available internet connection before proceeding (network-online.target doesn't work for some network connections)
+# Check it 3 times in 2 second interval, to avoid until loop
+# Used when adding remotes & when installing flatpaks
+check_internet_connection() {
+    local max_attempts=3
+    local sleep_time=2
+    local attempt=1
 
-  # Remove flatpak apps from origin fedora
-  FEDORA_FLATPAKS=$(flatpak list --app --columns=application,origin | grep -w 'fedora' | awk '{print $1}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+    while (( attempt <= max_attempts )); do
+        if curl --silent --head --fail "https://fedoraproject.org/static/hotspot.txt" > /dev/null; then
+          return 0
+        else
+          echo "Internet connection is not available. Waiting..."
+          sleep ${sleep_time}
+          (( attempt++ ))
+        fi
+    done
 
-  # Remove flatpak runtimes from origin fedora
-  FEDORA_FLATPAKS=$(flatpak list --runtime --columns=application,arch,branch,origin | grep -w 'fedora' | awk '{print $1"/"$2"/"$3}')
-  flatpak remove --system --noninteractive ${FEDORA_FLATPAKS[@]}
+    return 1
+}
+
+# Opt out of and remove Fedora's system flatpak repos
+FLATPAK_SYSTEM_REMOTES=($(flatpak --system remotes))
+
+fedora_system=false
+fedora_testing_system=false
+
+for system_remote in "${FLATPAK_SYSTEM_REMOTES[@]}"; do
+  if [[ "${system_remote}" == "fedora" ]]; then
+    fedora_system=true
+  elif [[ "${system_remote}" == "fedora-testing" ]]; then
+    fedora_testing_system=true
+  fi
+done
+
+if rpm -q fedora-third-party &>/dev/null; then
+  if [[ ! "$(fedora-third-party query)" == *"disabled." ]]; then
+    echo "Disabling Fedora third-party repos..."
+    /usr/bin/gnome-software --quit
+    /usr/lib/fedora-third-party/fedora-third-party-opt-out
+    /usr/bin/fedora-third-party disable
+  else
+     echo "Fedora third-party repos are already disabled"
+  fi
+else
+  echo "ERROR: Cannot opt-out from Fedora third-party repos, because fedora-third-party package is not installed"
 fi
+
+if "${fedora_system}"; then
+  echo "Removing system flatpak remote 'fedora'"
+  flatpak remote-delete --system fedora --force
+else
+  echo "System flatpak remote 'fedora' is already removed"  
+fi
+if "${fedora_testing_system}"; then
+  echo "Removing system flatpak remote 'fedora-testing'"
+  flatpak remote-delete --system fedora-testing --force
+else
+  echo "System flatpak remote 'fedora-testing' is already removed"  
+fi
+
+# Remove flatpak apps from system origin fedora
+FEDORA_FLATPAKS_APP=($(flatpak list --system --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
+if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing system flatpak apps from 'fedora' remote"
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+else
+  echo "System flatpak apps from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from system origin fedora
+FEDORA_FLATPAKS_RUNTIME=($(flatpak list --system --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing system flatpak runtimes from 'fedora' remote"
+  flatpak remove --system --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+else
+  echo "System flatpak runtimes from 'fedora' remote are already removed"
+fi  
+
+# Remove flatpak apps from system origin fedora-testing
+FEDORA_TESTING_FLATPAKS_APP=($(flatpak list --system --app --columns=application,origin | awk '$2 == "fedora-testing" {print $1}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_APP[@]} -gt 0 ]]; then
+  echo "Removing system flatpak apps from 'fedora-testing' remote"
+  flatpak remove --system --noninteractive "${FEDORA_TESTING_FLATPAKS_APP[@]}"
+else
+  echo "System flatpak apps from 'fedora-testing' remote are already removed"
+fi  
+
+# Remove flatpak runtimes from system origin fedora-testing
+FEDORA_TESTING_FLATPAKS_RUNTIME=($(flatpak list --system --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora-testing" {print $1"/"$2"/"$3}'))
+if [[ ${#FEDORA_TESTING_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+  echo "Removing system flatpak runtimes from 'fedora-testing' remote"
+  flatpak remove --system --noninteractive "${FEDORA_TESTING_FLATPAKS_RUNTIME[@]}"
+else
+  echo "System flatpak runtimes from 'fedora-testing' remote are already removed"
+fi  
 
 REPO_INFO="/usr/share/bluebuild/default-flatpaks/system/repo-info.yml"
 REPO_URL=$(yq '.repo-url' $REPO_INFO)
@@ -27,6 +107,7 @@ REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 # Flatpak add remote is ran for some reason, even with --if-not-exists flag, apparently, it modifies the URL
 # We cannot compare repo URLs properly
 # Flatpak outputs repo URL, while we have flatpakref URL, which is not the same
+no_title_modify=false
 readarray -t CURRENT_REPO_INFO < <(flatpak remotes --system --columns=name,url,title)
 for index in "${CURRENT_REPO_INFO[@]}"; do
     CURRENT_REPO_NAMES+=("$(echo "${index}" | awk '{print $1}')")
@@ -42,21 +123,28 @@ done
 
 # Set up system-wide Flatpak repository
 if [[ $REPO_URL != "null" && $REPO_NAME != "null" ]]; then
-  echo "Adding system-wide remote $REPO_NAME from $REPO_URL"  
-  flatpak remote-add --if-not-exists --system "$REPO_NAME" "$REPO_URL"
+  if check_internet_connection; then
+    echo "Adding system-wide remote $REPO_NAME from $REPO_URL if it doesn't exist (requires internet)"  
+    flatpak remote-add --if-not-exists --system "$REPO_NAME" "$REPO_URL"
+  else
+    echo "NOTE: Skipping the addition of system-wide remote, because there is no internet connection"  
+  fi  
 fi
 
 # If configured remote is flathub, enable it here.
-# Flathub is already installed on Fedora, but not enabled by default,
+# Flathub is already installed in Fedora, but not enabled by default,
 # so the above command won't add it again
 if [[ $REPO_NAME == "flathub" ]]; then
+  echo "Enabling specified 'flathub' remote, that is already installed, but disabled in Fedora"
   flatpak remote-modify --system "$REPO_NAME" --enable
 fi
 
-# Change repository title to configured title, if not null
+# Change repository title to configured title, if not null & if not already changed
 if [[ $REPO_TITLE != "null" ]] && ! ${no_title_modify}; then
+  echo "Setting title $REPO_TITLE for system remote $REPO_NAME"
   flatpak remote-modify --system "$REPO_NAME" --title="$REPO_TITLE"
-  echo "Setting title $REPO_TITLE for remote $REPO_NAME"  
+elif [[ $REPO_TITLE != "null" ]] && ${no_title_modify}; then
+  echo "Custom flatpak system remote title is already set"  
 fi
 
 # Notifications config
@@ -89,37 +177,69 @@ MAINTAINER_REMOVE_LIST=$(comm -23 <(sort "$REMOVE_LIST_FILE") <(sort "$USER_INST
 COMBINED_INSTALL_LIST=$(cat <(echo "$MAINTAINER_INSTALL_LIST") "$USER_INSTALL_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 COMBINED_REMOVE_LIST=$(cat <(echo "$MAINTAINER_REMOVE_LIST") "$USER_REMOVE_LIST_FILE" | grep -v -E '^#|^$' | awk '!seen[$0]++')
 
+# Loginctl has different command for parsing json since v256 (F41), so handle that scenario here
+LOGINCTL_VERSION=$(loginctl --version | awk 'NR==1 {print $2}')
 function notify-send-pre-install {
-     user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
-     uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
      xdg_runtime_path="/run/user/$uid"
-     display_var=$(printenv DISPLAY)
-     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started install of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Started install of system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-install {
-     user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
-     uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
      xdg_runtime_path="/run/user/$uid"
-     display_var=$(printenv DISPLAY)
-     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished install of system flatpaks:\n$INSTALL_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-pre-uninstall {
-      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
-      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
-      xdg_runtime_path="/run/user/$uid"
-      display_var=$(printenv DISPLAY)      
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Started uninstall of some system flatpaks" --app-name="Flatpak Installer" -u NORMAL
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
+     xdg_runtime_path="/run/user/$uid"
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Started uninstall of some system flatpaks" --app-name="Flatpak Installer" -u NORMAL
 }
 
 function notify-send-uninstall {
-      user_name=$(loginctl list-sessions --output=json | jq -r '.[].user')
-      uid=$(loginctl list-sessions --output=json | jq -r '.[].uid')
-      xdg_runtime_path="/run/user/$uid"
-      display_var=$(printenv DISPLAY)      
-      sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus DISPLAY="$display_var" notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
+     if [[ ${LOGINCTL_VERSION} -ge 256 ]]; then
+       user_name=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users -j | jq -r '.[] | select(.state == "active") | .uid')
+     else
+       user_name=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .user')
+       uid=$(loginctl list-users --output=json | jq -r '.[] | select(.state == "active") | .uid')
+     fi
+     xdg_runtime_path="/run/user/$uid"
+     sudo -u "$user_name" DBUS_SESSION_BUS_ADDRESS=unix:path="$xdg_runtime_path"/bus notify-send "Flatpak Installer" "Finished uninstall of system flatpaks:\n$REMOVE_LIST" --app-name="Flatpak Installer" -u NORMAL
 }
+
+# Remove flatpaks in list
+if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
+  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
+  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
+    echo "Removing system flatpaks from config list"
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
+    echo "Removing system flatpaks from config list"
+    notify-send-pre-uninstall
+    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
+    notify-send-uninstall
+  fi
+fi
 
 # Install flatpaks in list
 if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
@@ -129,22 +249,22 @@ if [[ -f $INSTALL_LIST_FILE ]] || [[ -f $USER_INSTALL_LIST_FILE ]]; then
     INSTALL_LIST="$COMBINED_INSTALL_LIST"
   fi
   if [[ -n $INSTALL_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    if check_internet_connection; then
+      echo "Installing system flatpaks from config list (requires internet)"
+      flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+    else
+      echo "ERROR: Installation of system flatpaks was not performed, because there was no internet connection"
+      exit 1   
+    fi  
   elif  [[ -n $INSTALL_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    notify-send-pre-install
-    flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
-    notify-send-install
-  fi
-fi
-
-# Remove flatpaks in list
-if [[ -f $REMOVE_LIST_FILE ]] || [[ -f $USER_REMOVE_LIST_FILE ]]; then
-  REMOVE_LIST=$(comm -12 <(echo "$COMBINED_REMOVE_LIST" | sort) <(echo "$FLATPAK_LIST" | sort))
-  if [[ -n $REMOVE_LIST ]] && [[ ! $NOTIFICATIONS == "true" ]]; then
-    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
-  elif [[ -n $REMOVE_LIST ]] && [[ $NOTIFICATIONS == "true" ]]; then
-    notify-send-pre-uninstall
-    flatpak uninstall --system --noninteractive ${REMOVE_LIST[@]}
-    notify-send-uninstall
+    if check_internet_connection; then
+      echo "Installing system flatpaks from config list (requires internet)"
+      notify-send-pre-install
+      flatpak install --system --noninteractive "$REPO_NAME" ${INSTALL_LIST[@]}
+      notify-send-install
+    else
+      echo "ERROR: Installation of system flatpaks was not performed, because there was no internet connection"
+      exit 1  
+    fi  
   fi
 fi

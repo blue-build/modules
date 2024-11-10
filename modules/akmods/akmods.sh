@@ -1,30 +1,44 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-function ENABLE_MULTIMEDIA_REPO {
+ENABLE_AKMODS_REPO() {
   sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
-  sed -i "0,/enabled/ s@enabled=0@enabled=1@g" /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 }
 
-function DISABLE_MULTIMEDIA_REPO {
-  sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+INSTALL_RPM_FUSION() {
+if ! rpm -q rpmfusion-free-release &>/dev/null && ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
+  rpm-ostree install \
+      https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
+      https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm
+  previously_not_installed_rpm_fusion=true
+else
+  previously_not_installed_rpm_fusion=false
+fi
 }
 
-function SET_HIGHER_PRIORITY_AKMODS_REPO {
-  echo "priority=90" >> /etc/yum.repos.d/_copr_ublue-os-akmods.repo
+UNINSTALL_RPM_FUSION() {
+if "${previously_not_installed_rpm_fusion}"; then
+  rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
+fi
 }
 
 get_yaml_array INSTALL '.install[]' "$1"
+
+if [[ ${#INSTALL[@]} -lt 1 ]]; then
+  echo "ERROR: You didn't specify any akmod for installation!"
+  exit 1
+fi
 
 INSTALL_PATH=("${INSTALL[@]/#/\/tmp/rpms/kmods/*}")
 INSTALL_PATH=("${INSTALL_PATH[@]/%/*.rpm}")
 INSTALL_STR=$(echo "${INSTALL_PATH[*]}" | tr -d '\n')
 
-if [[ ${#INSTALL[@]} -gt 0 ]]; then
-  echo "Installing akmods"
-  echo "Installing: $(echo "${INSTALL[*]}" | tr -d '\n')"
-  SET_HIGHER_PRIORITY_AKMODS_REPO
-  ENABLE_MULTIMEDIA_REPO
-  rpm-ostree install $INSTALL_STR
-  DISABLE_MULTIMEDIA_REPO
-fi    
+# Universal Blue switched from RPMFusion to negativo17 repos
+# WL & V4L2Loopback akmods currently require RPMFusion repo, so we temporarily install then uninstall it
+
+echo "Installing akmods"
+echo "Installing: $(echo "${INSTALL[*]}" | tr -d '\n')"
+ENABLE_AKMODS_REPO
+INSTALL_RPM_FUSION
+rpm-ostree install ${INSTALL_STR}
+UNINSTALL_RPM_FUSION
