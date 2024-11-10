@@ -26,21 +26,27 @@ def main [] {
         flatpak remote-add --system --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
 
         if ($config.notify) {
-            # TODO implement notification sending
-            # (notify-send 
-            #     --app-name "Automatic Flatpak Installation Service"
-            #     $"Starting automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)..."
-            # )
+            (notify-send-as-user
+                "--app-name" "Automatic Flatpak Installation Service"
+                $"Starting automated installation of ($config.install | length) system Flatpak\(s) from ($config.repo.title)..."
+            )
         }
 
         flatpak install --system $config.repo.name ...$config.install
 
         if ($config.notify) {
-            # (notify-send 
-            #     --app-name "Automatic Flatpak Installation Service"
-            #     $"Finished automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)!"
-            #     ($config.install | str join ', ')
-            # )
+            (notify-send-as-user
+                "--app-name" "Automatic Flatpak Installation Service"
+                $"Finished automated installation of ($config.install | length) system Flatpak\(s) from ($config.repo.title)!"
+                ($config.install | str join ', ')
+            )
         }
     }
+}
+
+def notify-send-as-user [...args] {
+    let user_name = (loginctl list-sessions --json=short | from json | get user | get 0)
+    let uid = (loginctl list-sessions --json=short | from json | get uid | get 0)
+    let xdg_runtime_path = $"/run/user/($uid)"
+    sudo -u $user_name DBUS_SESSION_BUS_ADDRESS=unix:path=($xdg_runtime_path)/bus DISPLAY=($env.DISPLAY) notify-send ...$args
 }

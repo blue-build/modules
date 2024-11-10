@@ -21,7 +21,7 @@ def main [] {
         if ($config.notify) {
             (notify-send 
                 --app-name "Automatic Flatpak Installation Service"
-                $"Starting automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)..."
+                $"Starting automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)..."
             )
         }
 
@@ -30,7 +30,7 @@ def main [] {
         if ($config.notify) {
             (notify-send 
                 --app-name "Automatic Flatpak Installation Service"
-                $"Finished automated installation of ($config.install | length) Flatpak\(s) from ($config.repo.title)!"
+                $"Finished automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)!"
                 ($config.install | str join ', ')
             )
         }
