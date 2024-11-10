@@ -65,7 +65,7 @@ def main [configStr: string] {
     cp $"($usrSharePath)/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
     cp $"($usrSharePath)/system-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
     cp $"($usrSharePath)/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
-    cp $"($usrSharePath)/user-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
+    cp $"($usrSharePath)/user-flatpak-setup.timer" /usr/lib/systemd/system/user-flatpak-setup.timer
     systemctl enable --force system-flatpak-setup.timer
     systemctl enable --force --global user-flatpak-setup.timer
 
