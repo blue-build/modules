@@ -13,7 +13,7 @@ Just is a command runner (kind of like make) that can be used to supply arbitrar
 For more information, refer to these links:
 
 * [Official just documentation](https://just.systems/man/en)
-* [Universal Blue documentation](https://docs.projectbluefin.io/administration#community-aliases-and-workarounds)
+* [Universal Blue documentation](https://docs.bazzite.gg/Installing_and_Managing_Software/ujust/)
 * [BlueBuild documentation](https://blue-build.org/learn/universal-blue/#custom-just-recipes)
 
 ## What the module does
