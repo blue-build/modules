@@ -48,5 +48,5 @@ def notify-send-as-user [...args] {
     let user_name = (loginctl list-sessions --json=short | from json | get user | get 0)
     let uid = (loginctl list-sessions --json=short | from json | get uid | get 0)
     let xdg_runtime_path = $"/run/user/($uid)"
-    sudo -u $user_name DBUS_SESSION_BUS_ADDRESS=unix:path=($xdg_runtime_path)/bus DISPLAY=($env.DISPLAY) notify-send ...$args
+    sudo -u $user_name DBUS_SESSION_BUS_ADDRESS=unix:path=($xdg_runtime_path)/bus notify-send ...$args
 }
