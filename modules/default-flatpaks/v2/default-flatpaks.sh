@@ -60,8 +60,6 @@ def main [configStr: string] {
 
     print "Setting up Flatpak setup services..."
 
-    cp -r ($"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/*" | into glob) $usrSharePath
-
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
