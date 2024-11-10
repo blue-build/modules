@@ -5,10 +5,4 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/share/bluebuild/default-flatpaks/system-flatpak-setup
-Restart=on-failure
-RestartSec=30
-StartLimitInterval=0
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=/usr/libexec/bluebuild/default-flatpaks/system-flatpak-setup
