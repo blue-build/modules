@@ -14,6 +14,7 @@ const defaultConfiguration = {
 }
 
 const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
+const libExecPath = "/usr/libexec/bluebuild/default-flatpaks"
 const configPath = $"($usrSharePath)/configuration.yaml"
 
 def main [configStr: string] {
@@ -66,8 +67,10 @@ def main [configStr: string] {
     systemctl enable --force system-flatpak-setup.service
     systemctl enable --force --global user-flatpak-setup.service
 
-    chmod +x $"($usrSharePath)/system-flatpak-setup"
-    chmod +x $"($usrSharePath)/user-flatpak-setup"
+    cp $"($usrSharePath)/system-flatpak-setup" $"($libExecPath)/system-flatpak-setup" 
+    cp $"($usrSharePath)/user-flatpak-setup" $"($libExecPath)/user-flatpak-setup" 
+    chmod +x $"($libExecPath)/system-flatpak-setup"
+    chmod +x $"($libExecPath)/user-flatpak-setup"
 }
 
 def checkFlathub [packages: list<string>] {
