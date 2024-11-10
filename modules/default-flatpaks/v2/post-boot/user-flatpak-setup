@@ -6,10 +6,14 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 def main [] {
     let configFile = open $configPath
 
-    if (flatpak remotes | str contains fedora) {
+    let userRemotes = (flatpak remotes --user --columns name | split row "\n")
+    if ($userRemotes | any {|remote| $remote == "fedora"}) {
         flatpak remote-delete --user fedora --force
+    }
+    if ($userRemotes | any {|remote| $remote == "fedora-testing"}) {
         flatpak remote-delete --user fedora-testing --force
     }
+
 
     $configFile.configurations | where scope == user | each { |config|
         flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
