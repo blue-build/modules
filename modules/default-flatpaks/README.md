@@ -20,7 +20,7 @@ This module stores the Flatpak remote configuration and Flatpak install/remove l
 
 This module also supports disabling & enabling notifications. If not specified in the recipe, notifications are disabled by default.
 
-If you wish to continue the use of Fedora flatpak remote & it's installed apps on booted system, you just need to specify the remote in the recipe (`repo-name` + `repo-url`) & remote + all apps won't be removed (note that only `fedora` remote is supported, while `fedora-testing` isn't). When you do that, you can further customize flatpaks you want to install or remove from Fedora flatpak remote.
+If you wish to continue the use of Fedora flatpak remote & it's installed apps on booted system, you just need to specify the remote in the recipe (`repo-name: fedora` + `repo-url: oci+https://registry.fedoraproject.org`) & remote + all apps won't be removed (note that only `fedora` remote is supported, while `fedora-testing` isn't). When you do that, you can further customize flatpaks you want to install or remove from Fedora flatpak remote.
 
 ## Local modification
 
