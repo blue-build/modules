@@ -21,6 +21,11 @@ check_internet_connection() {
     return 1
 }
 
+REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.yml"
+REPO_URL=$(yq '.repo-url' $REPO_INFO)
+REPO_NAME=$(yq '.repo-name' $REPO_INFO)
+REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
+
 # Remove Fedora's flatpak user repos, if they exist
 FLATPAK_USER_REMOTES=($(flatpak --user remotes))
 
@@ -35,12 +40,18 @@ for user_remote in "${FLATPAK_USER_REMOTES[@]}"; do
   fi  
 done
 
-if "${fedora_user}"; then
-  echo "Removing user flatpak remote 'fedora'"
-  flatpak remote-delete --user fedora --force
+# Remove fedora user remote, unless fedora remote is strictly specified
+if [[ ! "${REPO_URL}" == "oci+https://registry.fedoraproject.org" ]]; then
+  if "${fedora_user}"; then
+    echo "Removing user flatpak remote 'fedora'"
+    flatpak remote-delete --user fedora --force
+  else
+    echo "User flatpak remote 'fedora' is already removed"  
+  fi
 else
-  echo "User flatpak remote 'fedora' is already removed"  
+  echo "Not removing the user flatpak remote 'fedora', as it's specified for use in config"  
 fi
+
 if "${fedora_testing_user}"; then
   echo "Removing user flatpak remote 'fedora-testing'"
   flatpak remote-delete --user fedora-testing --force
@@ -49,22 +60,30 @@ else
 fi
 
 # Remove flatpak apps from user origin fedora
-FEDORA_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
-if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
-  echo "Removing user flatpak apps from 'fedora' remote"
-  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+if [[ ! "${REPO_URL}" == "oci+https://registry.fedoraproject.org" ]]; then
+  FEDORA_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora" {print $1}'))
+  if [[ ${#FEDORA_FLATPAKS_APP[@]} -gt 0 ]]; then
+    echo "Removing user flatpak apps from 'fedora' remote"
+    flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_APP[@]}"
+  else
+    echo "User flatpak apps from 'fedora' remote are already removed"
+  fi  
 else
-  echo "User flatpak apps from 'fedora' remote are already removed"
-fi  
+  echo "Not automatically removing all flatpak apps from user remote 'fedora', as it's specified for use in config"
+fi
 
-# Remove flatpak runtimes from user origin fedora
-FEDORA_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
-if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
-  echo "Removing user flatpak runtimes from 'fedora' remote"
-  flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+# Remove flatpak runtimes from user origin fedora, unless fedora remote is strictly specified
+if [[ ! "${REPO_URL}" == "oci+https://registry.fedoraproject.org" ]]; then
+  FEDORA_FLATPAKS_RUNTIME=($(flatpak list --user --runtime --columns=application,arch,branch,origin | awk '$4 == "fedora" {print $1"/"$2"/"$3}'))
+  if [[ ${#FEDORA_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
+    echo "Removing user flatpak runtimes from 'fedora' remote"
+    flatpak remove --user --noninteractive "${FEDORA_FLATPAKS_RUNTIME[@]}"
+  else
+    echo "User flatpak runtimes from 'fedora' remote are already removed"
+  fi  
 else
-  echo "User flatpak runtimes from 'fedora' remote are already removed"
-fi  
+  echo "Not automatically removing all flatpak runtimes from user remote 'fedora', as it's specified for use in config"
+fi
 
 # Remove flatpak apps from origin user origin fedora-testing
 FEDORA_TESTING_FLATPAKS_APP=($(flatpak list --user --app --columns=application,origin | awk '$2 == "fedora-testing" {print $1}'))
@@ -83,11 +102,6 @@ if [[ ${#FEDORA_TESTING_FLATPAKS_RUNTIME[@]} -gt 0 ]]; then
 else
   echo "User flatpak runtimes from 'fedora-testing' remote are already removed"
 fi  
-
-REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.yml"
-REPO_URL=$(yq '.repo-url' $REPO_INFO)
-REPO_NAME=$(yq '.repo-name' $REPO_INFO)
-REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
 
 # General conditions for not running the unnecessary flatpak setup
 # Currently, we don't modify remote title if it's already modified
