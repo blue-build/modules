@@ -22,7 +22,7 @@ To use this module, you need to include your gschema.override file(s) in this lo
 
 `files/gschema-overrides/`
 
-Then you can just `type: gschema-overrides` & be good to go.  
+Then you can just set `type: gschema-overrides` in module recipe & be good to go.  
 Optionally, you can include only specific file(s) in the module recipe, if you don't want every gschema override, like in example configuration.
 
 It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
