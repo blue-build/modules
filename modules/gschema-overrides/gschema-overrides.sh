@@ -35,12 +35,11 @@ if [[ ${#INCLUDE[@]} -gt 0 ]]; then
       fi
     done
     if [[ "${match_found}" == false ]]; then
-      echo "ERROR: Module failed because '${input}' file specified in module recipe doesn't match any of the included files."
+      echo "ERROR: Module failed because '${input}' file specified in module recipe doesn't match any of the included files in '${SCHEMA_INCLUDE_LOCATION/#\/tmp/}/' location inside the repo"
       exit 1
     fi
   done
 fi
-
 
 # Apply gschema-override when all conditions above are satisfied
 
