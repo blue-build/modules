@@ -19,10 +19,10 @@ fi
 DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 # The chezmoi repository branch to use.
 DOTFILE_BRANCH=$(echo "$1" | yq -I=0 ".branch")
-if [[ -n ${DOTFILE_BRANCH} ]]; then
-	INIT_BRANCH_FLAG="--branch ${DOTFILE_BRANCH}"
+if ! [[ -z "${DOTFILE_BRANCH}" ]] || [[ "${DOTFILE_BRANCH}" == "null" ]]; then
+  INIT_BRANCH_FLAG="--branch ${DOTFILE_BRANCH}"
 else
-	INIT_BRANCH_FLAG=""
+  INIT_BRANCH_FLAG=""
 fi
 
 # If true, chezmoi services will be enabled for all logged in users, and users with lingering enabled. (default: true)
