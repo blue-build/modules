@@ -9,5 +9,5 @@ model BlingModule {
     type: "bling";
 
     /** List of bling submodules to run / things to install onto your system. */
-    install: Array<"ublue-update" | "1password" | "dconf-update-service" | "gnome-vrr">;
+    install: Array<"rpmfusion" | "negativo17" | "ublue-update" | "1password" | "dconf-update-service" | "gnome-vrr">;
 }
