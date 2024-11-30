@@ -19,7 +19,7 @@ fi
 DOTFILE_REPOSITORY=$(echo "$1" | yq -I=0 ".repository") # (string)
 # The chezmoi repository branch to use.
 DOTFILE_BRANCH=$(echo "$1" | yq -I=0 ".branch")
-if ! [[ -z "${DOTFILE_BRANCH}" ]] || [[ "${DOTFILE_BRANCH}" == "null" ]]; then
+if [[ -n "${DOTFILE_BRANCH}" && "${DOTFILE_BRANCH}" != "null" ]]; then
   INIT_BRANCH_FLAG="--branch ${DOTFILE_BRANCH}"
 else
   INIT_BRANCH_FLAG=""
