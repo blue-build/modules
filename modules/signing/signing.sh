@@ -38,15 +38,15 @@ jq --arg image_registry "$IMAGE_REGISTRY" \
    --arg image_name "$IMAGE_NAME" \
    --arg image_name_file "$IMAGE_NAME_FILE" \
    '.transports.docker |= 
-    {($image_registry + "/" + $image_name): [
+    { ($image_registry + "/" + $image_name): [
         {
             "type": "sigstoreSigned",
-            "keyPath": "/etc/pki/containers/" + $image_name_file + ".pub",
+            "keyPath": ("/etc/pki/containers/" + $image_name_file + ".pub"),
             "signedIdentity": {
                 "type": "matchRepository"
             }
         }
-    ]} + .' "$POLICY_FILE" > /tmp/tmp-policy.json && mv /tmp/tmp-policy.json "$POLICY_FILE"
+    ] } + .' "$POLICY_FILE" > /tmp/tmp-policy.json && mv /tmp/tmp-policy.json "$POLICY_FILE"
 
 mv "$MODULE_DIRECTORY/signing/registry-config.yaml" "$CONTAINER_DIR/registries.d/$IMAGE_NAME_FILE.yaml"
 sed -i "s ghcr.io/IMAGENAME $IMAGE_REGISTRY g" "$CONTAINER_DIR/registries.d/$IMAGE_NAME_FILE.yaml"
