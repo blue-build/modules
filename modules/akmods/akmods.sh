@@ -22,7 +22,7 @@ if "${previously_not_installed_rpm_fusion}"; then
 fi
 }
 
-get_yaml_array INSTALL '.install[]' "$1"
+get_json_array INSTALL '.install[]' "$1"
 
 if [[ ${#INSTALL[@]} -lt 1 ]]; then
   echo "ERROR: You didn't specify any akmod for installation!"

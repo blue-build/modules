@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-get_yaml_array CONFIG_SELECTION '.include[]' "$1"
-VALIDATE="$(echo "$1" | yq -I=0 ".validate")"
+get_json_array CONFIG_SELECTION '.include[]' "$1"
+VALIDATE="$(echo "$1" | jq -r '.["validate"]')"
 
 IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
 CONFIG_FOLDER="${CONFIG_DIRECTORY}/justfiles"

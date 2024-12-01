@@ -3,7 +3,7 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_yaml_array INSTALL '.install[]' "$1"
+get_json_array INSTALL '.install[]' "$1"
 
 cd "/tmp/modules/bling/installers"
 

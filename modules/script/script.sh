@@ -3,8 +3,8 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_yaml_array SCRIPTS '.scripts[]' "$1"
-get_yaml_array SNIPPETS '.snippets[]' "$1"
+get_json_array SCRIPTS '.scripts[]' "$1"
+get_json_array SNIPPETS '.snippets[]' "$1"
 
 # shellcheck disable=SC2153
 if [[ ${#SCRIPTS[@]} -gt 0  ]]; then
