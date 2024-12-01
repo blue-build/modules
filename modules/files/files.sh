@@ -28,8 +28,8 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
         FILE="$PWD/$(echo $pair | jq -r 'to_entries | .[0].key')"
         DEST=$(echo $pair | jq -r 'to_entries | .[0].value')
       else
-        FILE="$PWD/$(echo $pair | jq -r 'try .["source"]')"
-        DEST=$(echo $pair | jq -r 'try .["destination"]')
+        FILE="$PWD/$(echo "$pair" | jq -r 'try .["source"]')"
+        DEST=$(echo "$pair" | jq -r 'try .["destination"]')
       fi 
         if [ -d "$FILE" ]; then
             if [ ! -d "$DEST" ]; then
