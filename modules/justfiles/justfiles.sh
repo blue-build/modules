@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-get_json_array CONFIG_SELECTION 'try .include[]' "$1"
-VALIDATE="$(echo "$1" | jq -r 'try .validate')"
+get_json_array CONFIG_SELECTION 'try .["include"][]' "$1"
+VALIDATE="$(echo "$1" | jq -r 'try .["validate"]')"
 
 IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
 CONFIG_FOLDER="${CONFIG_DIRECTORY}/justfiles"

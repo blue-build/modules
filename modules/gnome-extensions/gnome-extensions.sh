@@ -4,8 +4,8 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_json_array INSTALL 'try .install[]' "$1"
-get_json_array UNINSTALL 'try .uninstall[]' "$1"
+get_json_array INSTALL 'try .["install"][]' "$1"
+get_json_array UNINSTALL 'try .["uninstall"][]' "$1"
 
 if [[ ${#INSTALL[@]} -lt 1 ]] && [[ ${#UNINSTALL[@]} -lt 1 ]]; then
   echo "ERROR: You did not specify the extension to install or uninstall in module recipe file"

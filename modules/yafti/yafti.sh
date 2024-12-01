@@ -52,7 +52,7 @@ fi
 
 YAFTI_FILE="${FIRSTBOOT_DATA}/yafti.yml"
 
-get_json_array FLATPAKS 'try .custom-flatpaks[]' "$1"
+get_json_array FLATPAKS 'try .["custom-flatpaks"][]' "$1"
 if [[ ${#FLATPAKS[@]} -gt 0 ]]; then
     echo "Adding Flatpaks to yafti.yml"
     sed -i '/^  Custom:/,/^  / s/description: .*/description: "Flatpaks suggested by the image maintainer."/' "${YAFTI_FILE}"

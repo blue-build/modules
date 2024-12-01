@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-get_json_array INCLUDE 'try .include[]' "$1"
+get_json_array INCLUDE 'try .["include"][]' "$1"
 
 SCHEMA_INCLUDE_LOCATION="${CONFIG_DIRECTORY}/gschema-overrides"
 SCHEMA_TEST_LOCATION="/tmp/bluebuild-schema-test"

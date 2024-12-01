@@ -24,9 +24,9 @@ configure_flatpak_repo () {
     if [[ -f $REPO_INFO ]]; then
         echo "Existing $INSTALL_LEVEL configuration found:"
         cat $REPO_INFO
-        CONFIG_URL=$(jq -r 'try .repo-url' "$REPO_INFO")
-        CONFIG_NAME=$(jq -r 'try .repo-name' "$REPO_INFO")
-        CONFIG_TITLE=$(jq -r 'try .repo-title' "$REPO_INFO")
+        CONFIG_URL=$(jq -r 'try .["repo-url"]' "$REPO_INFO")
+        CONFIG_NAME=$(jq -r 'try .["repo-name"]' "$REPO_INFO")
+        CONFIG_TITLE=$(jq -r 'try .["repo-title"]' "$REPO_INFO")
     else
         CONFIG_URL="null"
         CONFIG_NAME="null"
@@ -155,7 +155,7 @@ systemctl enable -f system-flatpak-setup.timer
 systemctl enable -f --global user-flatpak-setup.timer
 
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
-if [[ ! $(echo "$1" | jq -r 'try .system') == "null" ]]; then
+if [[ $(echo "$1" | jq -r 'try .["system"]') != "null" ]]; then
     configure_flatpak_repo "$1" "system"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
@@ -167,7 +167,7 @@ if [[ ! $(echo "$1" | jq -r 'try .system') == "null" ]]; then
 fi
 
 # Check that `user` is present before configuring. Also copy template list files before writing Flatpak IDs.
-if [[ ! $(echo "$1" | jq -r 'try .user') == "null" ]]; then
+if [[ $(echo "$1" | jq -r 'try .["user"]') != "null" ]]; then
     configure_flatpak_repo "$1" "user"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
@@ -183,7 +183,7 @@ check_flatpak_id_validity_from_flathub "${1}" "system"
 check_flatpak_id_validity_from_flathub "${1}" "user"
 
 echo "Configuring default-flatpaks notifications"
-NOTIFICATIONS=$(echo "$1" | jq -r 'try .notify')
+NOTIFICATIONS=$(echo "$1" | jq -r 'try .["notify"]')
 CONFIG_NOTIFICATIONS="/usr/share/bluebuild/default-flatpaks/notifications"
 cp -r "${MODULE_DIRECTORY}/default-flatpaks/config/notifications" "${CONFIG_NOTIFICATIONS}"
 if [[ -z "${NOTIFICATIONS}" ]] || [[ "${NOTIFICATIONS}" == "null" ]]; then
