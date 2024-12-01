@@ -34,9 +34,9 @@ configure_flatpak_repo () {
     fi
 
     echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
-    REPO_URL=$(echo "$CONFIG_FILE" | jq -r "try .$INSTALL_LEVEL.repo-url")
-    REPO_NAME=$(echo "$CONFIG_FILE" | jq -r "try .$INSTALL_LEVEL.repo-name")
-    REPO_TITLE=$(echo "$CONFIG_FILE" | jq -r "try .$INSTALL_LEVEL.repo-title")
+    REPO_URL=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-url"])')
+    REPO_NAME=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-name"])')
+    REPO_TITLE=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-title"])')
 
     # If repo-name isn't configured, use flathub as fallback
     # Checked separately from URL to allow custom naming
@@ -70,9 +70,9 @@ configure_flatpak_repo () {
     # so the below lines are intentionally un-indented
 cat > $REPO_INFO <<EOF
 {
-  "repo-url": "$REPO_URL",
-  "repo-name": "$REPO_NAME",
-  "repo-title": "$REPO_TITLE"
+    "repo-url": "$REPO_URL",
+    "repo-name": "$REPO_NAME",
+    "repo-title": "$REPO_TITLE"
 }
 EOF
 
@@ -107,12 +107,12 @@ configure_lists () {
 
 check_flatpak_id_validity_from_flathub () {
       if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.json" ]]; then
-        SYSTEM_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/system/repo-info.json")
+        SYSTEM_FLATHUB_REPO=$(jq -r 'try .["repo-url"]' "/usr/share/bluebuild/default-flatpaks/system/repo-info.json")
       else
         SYSTEM_FLATHUB_REPO=""
       fi  
       if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.json" ]]; then
-        USER_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/user/repo-info.json")
+        USER_FLATHUB_REPO=$(jq -r 'try .["repo-url"]' "/usr/share/bluebuild/default-flatpaks/user/repo-info.json")
       else
         USER_FLATHUB_REPO=""
       fi  
