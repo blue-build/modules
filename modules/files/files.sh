@@ -3,7 +3,7 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_json_array FILES '.files[]' "$1"
+get_json_array FILES 'try .files[]' "$1"
 
 # Support for legacy "/tmp/config/" to satisfy transition period to "/tmp/files/"
 if [[ "${CONFIG_DIRECTORY}" == "/tmp/config" ]]; then

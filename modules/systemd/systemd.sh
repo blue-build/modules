@@ -23,14 +23,14 @@ if [[ -d "$USER_UNIT_INCLUDE" ]]; then
 fi  
 
 # Systemd units configuration (enable, disable, unmask & mask)
-get_json_array ENABLED '.system.enabled[]' "$1"
-get_json_array DISABLED '.system.disabled[]' "$1"
-get_json_array UNMASKED '.system.unmasked[]' "$1"
-get_json_array MASKED '.system.masked[]' "$1"
-get_json_array USER_ENABLED '.user.enabled[]' "$1"
-get_json_array USER_DISABLED '.user.disabled[]' "$1"
-get_json_array USER_UNMASKED '.user.unmasked[]' "$1"
-get_json_array USER_MASKED '.user.masked[]' "$1"
+get_json_array ENABLED 'try .system.enabled[]' "$1"
+get_json_array DISABLED 'try .system.disabled[]' "$1"
+get_json_array UNMASKED 'try .system.unmasked[]' "$1"
+get_json_array MASKED 'try .system.masked[]' "$1"
+get_json_array USER_ENABLED 'try .user.enabled[]' "$1"
+get_json_array USER_DISABLED 'try .user.disabled[]' "$1"
+get_json_array USER_UNMASKED 'try .user.unmasked[]' "$1"
+get_json_array USER_MASKED 'try .user.masked[]' "$1"
 
 if [[ ${#ENABLED[@]} -gt 0 ]]; then
     for unit in "${ENABLED[@]}"; do

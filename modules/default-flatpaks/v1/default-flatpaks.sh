@@ -17,7 +17,7 @@ configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
     REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
-    get_json_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
+    get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
     # Checks pre-configured repo info, if exists
@@ -85,8 +85,8 @@ configure_lists () {
     INSTALL_LEVEL=$2
     INSTALL_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
     REMOVE_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
-    get_json_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
-    get_json_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
+    get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
+    get_json_array REMOVE "try .$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
     echo "Creating $INSTALL_LEVEL Flatpak install list at $INSTALL_LIST"
     if [[ ${#INSTALL[@]} -gt 0 ]]; then
@@ -120,8 +120,8 @@ check_flatpak_id_validity_from_flathub () {
       URL="https://flathub.org/apps"
       CONFIG_FILE="${1}"
       INSTALL_LEVEL="${2}"
-      get_json_array INSTALL ".$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
-      get_json_array REMOVE ".$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
+      get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
+      get_json_array REMOVE "try .$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
       if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
         echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
         if [[ ${#INSTALL[@]} -gt 0 ]]; then

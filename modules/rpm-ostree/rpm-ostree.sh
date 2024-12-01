@@ -4,7 +4,7 @@
 set -euo pipefail
 
 # Pull in repos
-get_json_array REPOS '.repos[]' "$1"
+get_json_array REPOS 'try .repos[]' "$1"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
     echo "Adding repositories"
     for REPO in "${REPOS[@]}"; do
@@ -30,7 +30,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
     done
 fi
 
-get_json_array KEYS '.keys[]' "$1" 
+get_json_array KEYS 'try .keys[]' "$1" 
 if [[ ${#KEYS[@]} -gt 0 ]]; then
     echo "Adding keys"
     for KEY in "${KEYS[@]}"; do
@@ -40,7 +40,7 @@ if [[ ${#KEYS[@]} -gt 0 ]]; then
 fi
 
 # Create symlinks to fix packages that create directories in /opt
-get_json_array OPTFIX '.optfix[]' "$1"
+get_json_array OPTFIX 'try .optfix[]' "$1"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
@@ -56,8 +56,8 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     done
 fi
 
-get_json_array INSTALL_PKGS '.install[]' "$1"
-get_json_array REMOVE_PKGS '.remove[]' "$1"
+get_json_array INSTALL_PKGS 'try .install[]' "$1"
+get_json_array REMOVE_PKGS 'try .remove[]' "$1"
 
 CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
@@ -133,7 +133,7 @@ elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     rpm-ostree override remove "${REMOVE_PKGS[@]}"
 fi
 
-get_json_array REPLACE '.replace[]' "$1"
+get_json_array REPLACE 'try .replace[]' "$1"
 
 # Override-replace RPM packages
 if [[ ${#REPLACE[@]} -gt 0 ]]; then
@@ -155,7 +155,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         FILE_NAME=$(awk -F'/' '{print $9}' <<< "${REPO}" | sed 's/\?.*//') # Remove params after '?'
 
         # Get packages to replace
-        get_json_array PACKAGES '.packages[]' "${REPLACEMENT}"
+        get_json_array PACKAGES 'try .packages[]' "${REPLACEMENT}"
         REPLACE_STR="$(echo "${PACKAGES[*]}" | tr -d '\n')"
 
         # Ensure packages are provided
