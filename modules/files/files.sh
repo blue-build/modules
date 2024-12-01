@@ -19,7 +19,7 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
     echo "Adding files to image"
     for pair in "${FILES[@]}"; do
       # Support for legacy recipe format to satisfy transition period to new source/destination recipe format
-      if [[ $(echo $pair | jq -r 'try .["source"]') == "null" || -z $(echo $pair | jq -r 'try .["source"]') ]] && [[ $(echo $pair | jq -r 'try .["destination"]') == "null" || -z $(echo $pair | jq -r 'try .["destination"]') ]]; then
+      if [[ $(echo $pair | jq -r 'try .source') == "null" || -z $(echo $pair | jq -r 'try .source') ]] && [[ $(echo $pair | jq -r 'try .destination') == "null" || -z $(echo $pair | jq -r 'try .destination') ]]; then
         echo "ATTENTION: You are using the legacy module recipe format"
         echo "           It is advised to switch to new module recipe format,"
         echo "           which contains 'source' & 'destination' YAML keys"
@@ -28,8 +28,8 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
         FILE="$PWD/$(echo $pair | jq -r 'to_entries | .[0].key')"
         DEST=$(echo $pair | jq -r 'to_entries | .[0].value')
       else
-        FILE="$PWD/$(echo $pair | jq -r 'try .["source"]')"
-        DEST=$(echo $pair | jq -r 'try .["destination"]')
+        FILE="$PWD/$(echo $pair | jq -r 'try .source')"
+        DEST=$(echo $pair | jq -r 'try .destination')
       fi 
         if [ -d "$FILE" ]; then
             if [ ! -d "$DEST" ]; then
