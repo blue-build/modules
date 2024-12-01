@@ -155,7 +155,7 @@ systemctl enable -f system-flatpak-setup.timer
 systemctl enable -f --global user-flatpak-setup.timer
 
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
-if [[ ! $(echo "$1" | jq -r '.["system"]' == "null" ]]; then
+if [[ ! $(echo "$1" | jq -r '.["system"]') == "null" ]]; then
     configure_flatpak_repo "$1" "system"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
