@@ -140,7 +140,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
     for REPLACEMENT in "${REPLACE[@]}"; do
 
         # Get repository
-        REPO=$(echo "${REPLACEMENT}" | jq -r '.["from-repo"]')
+        REPO=$(echo "${REPLACEMENT}" | jq -r 'try .["from-repo"]')
         REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
 
         # Ensure repository is provided
