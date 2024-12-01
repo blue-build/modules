@@ -16,7 +16,7 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.timer /usr/lib/sys
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
+    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.json"
     get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
@@ -106,13 +106,13 @@ configure_lists () {
 }
 
 check_flatpak_id_validity_from_flathub () {
-      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml" ]]; then
-        SYSTEM_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.json" ]]; then
+        SYSTEM_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/system/repo-info.json")
       else
         SYSTEM_FLATHUB_REPO=""
       fi  
-      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml" ]]; then
-        USER_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.json" ]]; then
+        USER_FLATHUB_REPO=$(jq -r 'try .repo-url' "/usr/share/bluebuild/default-flatpaks/user/repo-info.json")
       else
         USER_FLATHUB_REPO=""
       fi  

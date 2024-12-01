@@ -21,7 +21,7 @@ check_internet_connection() {
     return 1
 }
 
-REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.yml"
+REPO_INFO="/usr/share/bluebuild/default-flatpaks/user/repo-info.json"
 REPO_URL=$(jq -r 'try .repo-url' $REPO_INFO)
 REPO_NAME=$(jq -r 'try .repo-name' $REPO_INFO)
 REPO_TITLE=$(jq -r 'try .repo-title' $REPO_INFO)
