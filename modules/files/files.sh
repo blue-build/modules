@@ -3,7 +3,7 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-get_yaml_array FILES '.files[]' "$1"
+get_json_array FILES 'try .["files"][]' "$1"
 
 # Support for legacy "/tmp/config/" to satisfy transition period to "/tmp/files/"
 if [[ "${CONFIG_DIRECTORY}" == "/tmp/config" ]]; then
@@ -19,17 +19,17 @@ if [[ ${#FILES[@]} -gt 0 ]]; then
     echo "Adding files to image"
     for pair in "${FILES[@]}"; do
       # Support for legacy recipe format to satisfy transition period to new source/destination recipe format
-      if [[ $(echo $pair | yq '.source') == "null" || -z $(echo $pair | yq '.source') ]] && [[ $(echo $pair | yq '.destination') == "null" || -z $(echo $pair | yq '.destination') ]]; then
+      if [[ $(echo "$pair" | jq -r 'try .["source"]') == "null" || -z $(echo "$pair" | jq -r 'try .["source"]') ]] && [[ $(echo "$pair" | jq -r 'try .["destination"]') == "null" || -z $(echo "$pair" | jq -r 'try .["destination"]') ]]; then
         echo "ATTENTION: You are using the legacy module recipe format"
         echo "           It is advised to switch to new module recipe format,"
         echo "           which contains 'source' & 'destination' YAML keys"
         echo "           For more details, please visit 'files' module documentation:"
         echo "           https://blue-build.org/reference/modules/files/"
-        FILE="$PWD/$(echo $pair | yq 'to_entries | .[0].key')"
-        DEST=$(echo $pair | yq 'to_entries | .[0].value')
+        FILE="$PWD/$(echo $pair | jq -r 'to_entries | .[0].key')"
+        DEST=$(echo $pair | jq -r 'to_entries | .[0].value')
       else
-        FILE="$PWD/$(echo $pair | yq '.source')"
-        DEST=$(echo $pair | yq '.destination')
+        FILE="$PWD/$(echo "$pair" | jq -r 'try .["source"]')"
+        DEST=$(echo "$pair" | jq -r 'try .["destination"]')
       fi 
         if [ -d "$FILE" ]; then
             if [ ! -d "$DEST" ]; then

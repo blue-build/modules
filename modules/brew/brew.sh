@@ -39,42 +39,42 @@ fi
 MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 
 # Configuration values
-AUTO_UPDATE=$(echo "${1}" | yq -I=0 ".auto-update")
+AUTO_UPDATE=$(echo "${1}" | jq -r 'try .["auto-update"]')
 if [[ -z "${AUTO_UPDATE}" || "${AUTO_UPDATE}" == "null" ]]; then
     AUTO_UPDATE=true
 fi
 
-UPDATE_INTERVAL=$(echo "${1}" | yq -I=0 ".update-interval")
+UPDATE_INTERVAL=$(echo "${1}" | jq -r 'try .["update-interval"]')
 if [[ -z "${UPDATE_INTERVAL}" || "${UPDATE_INTERVAL}" == "null" ]]; then
     UPDATE_INTERVAL="6h"
 fi
 
-UPDATE_WAIT_AFTER_BOOT=$(echo "${1}" | yq -I=0 ".update-wait-after-boot")
+UPDATE_WAIT_AFTER_BOOT=$(echo "${1}" | jq -r 'try .["update-wait-after-boot"]')
 if [[ -z "${UPDATE_WAIT_AFTER_BOOT}" || "${UPDATE_WAIT_AFTER_BOOT}" == "null" ]]; then
     UPDATE_WAIT_AFTER_BOOT="10min"
 fi
 
-AUTO_UPGRADE=$(echo "${1}" | yq -I=0 ".auto-upgrade")
+AUTO_UPGRADE=$(echo "${1}" | jq -r 'try .["auto-upgrade"]')
 if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
     AUTO_UPGRADE=true
 fi
 
-UPGRADE_INTERVAL=$(echo "$1" | yq -I=0 ".upgrade-interval")
+UPGRADE_INTERVAL=$(echo "$1" | jq -r 'try .["upgrade-interval"]')
 if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-UPGRADE_WAIT_AFTER_BOOT=$(echo "${1}" | yq -I=0 ".upgrade-wait-after-boot")
+UPGRADE_WAIT_AFTER_BOOT=$(echo "${1}" | jq -r 'try .["upgrade-wait-after-boot"]')
 if [[ -z "${UPGRADE_WAIT_AFTER_BOOT}" || "${UPGRADE_WAIT_AFTER_BOOT}" == "null" ]]; then
     UPGRADE_WAIT_AFTER_BOOT="30min"
 fi
 
-NOFILE_LIMITS=$(echo "${1}" | yq -I=0 ".nofile-limits")
+NOFILE_LIMITS=$(echo "${1}" | jq -r 'try .["nofile-limits"]')
 if [[ -z "${NOFILE_LIMITS}" || "${NOFILE_LIMITS}" == "null" ]]; then
     NOFILE_LIMITS=false
 fi
 
-BREW_ANALYTICS=$(echo "${1}" | yq -I=0 ".brew-analytics")
+BREW_ANALYTICS=$(echo "${1}" | jq -r 'try .["brew-analytics"]')
 if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
     BREW_ANALYTICS=true
 fi

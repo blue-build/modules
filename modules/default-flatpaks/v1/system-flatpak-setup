@@ -21,10 +21,10 @@ check_internet_connection() {
     return 1
 }
 
-REPO_INFO="/usr/share/bluebuild/default-flatpaks/system/repo-info.yml"
-REPO_URL=$(yq '.repo-url' $REPO_INFO)
-REPO_NAME=$(yq '.repo-name' $REPO_INFO)
-REPO_TITLE=$(yq '.repo-title' $REPO_INFO)
+REPO_INFO="/usr/share/bluebuild/default-flatpaks/system/repo-info.json"
+REPO_URL=$(jq -r 'try .["repo-url"]' $REPO_INFO)
+REPO_NAME=$(jq -r 'try .["repo-name"]' $REPO_INFO)
+REPO_TITLE=$(jq -r 'try .["repo-title"]' $REPO_INFO)
 
 # Opt out of and remove Fedora's system flatpak repos
 FLATPAK_SYSTEM_REMOTES=($(flatpak --system remotes))
