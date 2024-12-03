@@ -52,7 +52,7 @@ fi
 
 YAFTI_FILE="${FIRSTBOOT_DATA}/yafti.yml"
 
-get_yaml_array FLATPAKS '.custom-flatpaks[]' "$1"
+get_json_array FLATPAKS '.["custom-flatpaks"][]' "${1}"
 if [[ ${#FLATPAKS[@]} -gt 0 ]]; then
     echo "Adding Flatpaks to yafti.yml"
     sed -i -e '/- Boatswain for Streamdeck: com.feaneron.Boatswain/a \
