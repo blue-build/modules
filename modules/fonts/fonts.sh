@@ -8,7 +8,7 @@ for SOURCE in "$MODULE_DIRECTORY"/fonts/sources/*.sh; do
     # get array of fonts for current source
     FILENAME=$(basename -- "${SOURCE}")
     ARRAY_NAME="${FILENAME%.*}"    
-    readarray -t FONTS < <(echo "${1}" | jq -c -r --arg ARRAY_NAME "${ARRAY_NAME}" 'try .[$ARRAY_NAME][]')
+    readarray -t FONTS < <(echo "${1}" | jq -c -r --arg ARRAY_NAME "${ARRAY_NAME}" 'try .["fonts"].[$ARRAY_NAME][]')
 
     if [ ${#FONTS[@]} -gt 0 ]; then
         bash "${SOURCE}" "${FONTS[@]}"
