@@ -16,17 +16,17 @@ cp -r "$MODULE_DIRECTORY"/default-flatpaks/user-flatpak-setup.timer /usr/lib/sys
 configure_flatpak_repo () {
     CONFIG_FILE=$1
     INSTALL_LEVEL=$2
-    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.yml"
-    get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
+    REPO_INFO="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/repo-info.json"
+    get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
 
 
     # Checks pre-configured repo info, if exists
     if [[ -f $REPO_INFO ]]; then
         echo "Existing $INSTALL_LEVEL configuration found:"
         cat $REPO_INFO
-        CONFIG_URL=$(yq ".repo-url" "$REPO_INFO")
-        CONFIG_NAME=$(yq ".repo-name" "$REPO_INFO")
-        CONFIG_TITLE=$(yq ".repo-title" "$REPO_INFO")
+        CONFIG_URL=$(jq -r 'try .["repo-url"]' "$REPO_INFO")
+        CONFIG_NAME=$(jq -r 'try .["repo-name"]' "$REPO_INFO")
+        CONFIG_TITLE=$(jq -r 'try .["repo-title"]' "$REPO_INFO")
     else
         CONFIG_URL="null"
         CONFIG_NAME="null"
@@ -34,9 +34,9 @@ configure_flatpak_repo () {
     fi
 
     echo "Configuring $INSTALL_LEVEL repo in $REPO_INFO"
-    REPO_URL=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-url")
-    REPO_NAME=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-name")
-    REPO_TITLE=$(echo "$CONFIG_FILE" | yq -I=0 ".$INSTALL_LEVEL.repo-title")
+    REPO_URL=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-url"])')
+    REPO_NAME=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-name"])')
+    REPO_TITLE=$(echo "$CONFIG_FILE" | jq -r --arg INSTALL_LEVEL "$INSTALL_LEVEL" 'try getpath([$INSTALL_LEVEL, "repo-title"])')
 
     # If repo-name isn't configured, use flathub as fallback
     # Checked separately from URL to allow custom naming
@@ -68,10 +68,12 @@ configure_flatpak_repo () {
     touch $REPO_INFO
     # EOF breaks if the contents are indented,
     # so the below lines are intentionally un-indented
-    cat > $REPO_INFO <<EOF
-repo-url: "$REPO_URL"
-repo-name: "$REPO_NAME"
-repo-title: "$REPO_TITLE"
+cat > $REPO_INFO <<EOF
+{
+    "repo-url": "$REPO_URL",
+    "repo-name": "$REPO_NAME",
+    "repo-title": "$REPO_TITLE"
+}
 EOF
 
     # Show results of repo configuration
@@ -83,8 +85,8 @@ configure_lists () {
     INSTALL_LEVEL=$2
     INSTALL_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/install"
     REMOVE_LIST="/usr/share/bluebuild/default-flatpaks/$INSTALL_LEVEL/remove"
-    get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
-    get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
+    get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "$CONFIG_FILE"
+    get_json_array REMOVE "try .$INSTALL_LEVEL.remove[]" "$CONFIG_FILE"
 
     echo "Creating $INSTALL_LEVEL Flatpak install list at $INSTALL_LIST"
     if [[ ${#INSTALL[@]} -gt 0 ]]; then
@@ -104,13 +106,13 @@ configure_lists () {
 }
 
 check_flatpak_id_validity_from_flathub () {
-      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml" ]]; then
-        SYSTEM_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/system/repo-info.yml")
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/system/repo-info.json" ]]; then
+        SYSTEM_FLATHUB_REPO=$(jq -r 'try .["repo-url"]' "/usr/share/bluebuild/default-flatpaks/system/repo-info.json")
       else
         SYSTEM_FLATHUB_REPO=""
       fi  
-      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml" ]]; then
-        USER_FLATHUB_REPO=$(yq .repo-url "/usr/share/bluebuild/default-flatpaks/user/repo-info.yml")
+      if [[ -f "/usr/share/bluebuild/default-flatpaks/user/repo-info.json" ]]; then
+        USER_FLATHUB_REPO=$(jq -r 'try .["repo-url"]' "/usr/share/bluebuild/default-flatpaks/user/repo-info.json")
       else
         USER_FLATHUB_REPO=""
       fi  
@@ -118,8 +120,8 @@ check_flatpak_id_validity_from_flathub () {
       URL="https://flathub.org/apps"
       CONFIG_FILE="${1}"
       INSTALL_LEVEL="${2}"
-      get_yaml_array INSTALL ".$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
-      get_yaml_array REMOVE ".$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
+      get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
+      get_json_array REMOVE "try .$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
       if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
         echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
         if [[ ${#INSTALL[@]} -gt 0 ]]; then
@@ -153,7 +155,7 @@ systemctl enable -f system-flatpak-setup.timer
 systemctl enable -f --global user-flatpak-setup.timer
 
 # Check that `system` is present before configuring. Also copy template list files before writing Flatpak IDs.
-if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
+if [[ $(echo "$1" | jq -r 'try .["system"]') != "null" ]]; then
     configure_flatpak_repo "$1" "system"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/system/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/system/install /usr/share/bluebuild/default-flatpaks/system/install
@@ -165,7 +167,7 @@ if [[ ! $(echo "$1" | yq -I=0 ".system") == "null" ]]; then
 fi
 
 # Check that `user` is present before configuring. Also copy template list files before writing Flatpak IDs.
-if [[ ! $(echo "$1" | yq -I=0 ".user") == "null" ]]; then
+if [[ $(echo "$1" | jq -r 'try .["user"]') != "null" ]]; then
     configure_flatpak_repo "$1" "user"
     if [ ! -f "/usr/share/bluebuild/default-flatpaks/user/install" ]; then
       cp -r "$MODULE_DIRECTORY"/default-flatpaks/config/user/install /usr/share/bluebuild/default-flatpaks/user/install
@@ -181,7 +183,7 @@ check_flatpak_id_validity_from_flathub "${1}" "system"
 check_flatpak_id_validity_from_flathub "${1}" "user"
 
 echo "Configuring default-flatpaks notifications"
-NOTIFICATIONS=$(echo "$1" | yq -I=0 ".notify")
+NOTIFICATIONS=$(echo "$1" | jq -r 'try .["notify"]')
 CONFIG_NOTIFICATIONS="/usr/share/bluebuild/default-flatpaks/notifications"
 cp -r "${MODULE_DIRECTORY}/default-flatpaks/config/notifications" "${CONFIG_NOTIFICATIONS}"
 if [[ -z "${NOTIFICATIONS}" ]] || [[ "${NOTIFICATIONS}" == "null" ]]; then

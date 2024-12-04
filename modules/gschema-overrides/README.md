@@ -7,7 +7,7 @@ This module is similar to using `dconf` configuration, but is better because it 
 What does this module do?
 
 - It copies all content from `/usr/share/glib-2.0/schemas/`, except existing gschema.overrides to avoid conflicts, into temporary test location.
-- It copies your gschema.overrides you provided in this module from `files/gschema-overrides/` into temporary test location.
+- It copies all your included gschema.overrides by default or schemas you strictly specified in the module recipe from `files/gschema-overrides/` into temporary test location.
 - It tests them for errors in temporary test location by using `glib-compile-schemas` with `--strict` flag. If errors are found, build will fail.
 - If test is passed successfully, it copies your gschema.overrides to `/usr/share/glib-2.0/schemas/`.
 - It compiles gschema using `glib-compile-schemas` in `/usr/share/glib-2.0/schemas/` location to include your changes.
@@ -22,7 +22,9 @@ To use this module, you need to include your gschema.override file(s) in this lo
 
 `files/gschema-overrides/`
 
-Then you need to include those file(s) in recipe file, like in example configuration.
+Then you can just set `type: gschema-overrides` in module recipe & be good to go.
+
+Optionally, you can include only specific file(s) in the module recipe, if you don't want every gschema override, like in example configuration.
 
 It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.
 
