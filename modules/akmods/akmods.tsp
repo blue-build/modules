@@ -9,12 +9,16 @@ model AkmodsModule {
     type: "akmods";
 
     /** The kernel your images uses.
-     * - main: stock kernel / main and nvidia images
+     * - main: stock Fedora kernel / main and nvidia images
      * - asus: asus kernel / asus images
-     * - fsync: fsync kernel / bazzite images
+     * - fsync: fsync kernel / not used in any Universal Blue images
+     * - fsync-ba: fsync kernel, stable version / not used in any Universal Blue images
      * - surface: surface kernel / surface images
+     * - coreos-stable: stock CoreOS kernel / uCore stable images
+     * - coreos-testing: stock CoreOS Testing kernel / uCore testing images
+     * - bazzite: Bazzite's kernel / bazzite images
      */
-    base?: "main" | "asus" | "fsync" | "surface" = "main";
+    base?: "main" | "asus" | "fsync" | "fsync-ba" | "surface" | "coreos-stable" | "coreos-testing" | "bazzite" = "main";
 
     /** List of akmods to install.
      * See all available akmods here: https://github.com/ublue-os/akmods#kmod-packages
