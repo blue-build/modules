@@ -23,7 +23,7 @@ if ! [ -d "/etc/pki/containers" ]; then
 fi
 
 if ! [ -f "/etc/pki/containers/${IMAGE_NAME_FILE}.pub" ]; then
-  echo "ERROR: Cannot find '.pub' image key in '/etc/pki/containers/'"
+  echo "ERROR: Cannot find '${IMAGE_NAME_FILE}.pub' image key in '/etc/pki/containers/'"
   echo "       BlueBuild CLI should have copied it, but it didn't"
   exit 1
 fi
