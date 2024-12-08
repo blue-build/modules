@@ -19,9 +19,8 @@ if ! rpm -q rpmfusion-free-release &>/dev/null || ! rpm -q rpmfusion-nonfree-rel
     rpm-ostree install \
       "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm"
   fi
-  echo "Installing tainted RPMFusion repos"
   if ! rpm -q rpmfusion-free-release-tainted &>/dev/null || ! rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
-  echo "Running RPMFusion repo install..."
+  echo "Installing tainted RPMFusion repos"
   if ! rpm -q rpmfusion-free-release-tainted &>/dev/null && ! rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
     rpm-ostree install \
       rpmfusion-free-release-tainted \
