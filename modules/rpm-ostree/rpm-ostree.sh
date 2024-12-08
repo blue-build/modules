@@ -122,6 +122,15 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
       rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
       rpm-ostree install "${HTTPS_PKGS[@]}" "${LOCAL_PKGS[@]}"
+    elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      rpm-ostree override remove "${REMOVE_PKGS[@]}"
+      rpm-ostree install "${LOCAL_PKGS[@]}"
+    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+      rpm-ostree override remove "${REMOVE_PKGS[@]}"
+      rpm-ostree install "${HTTPS_PKGS[@]}"
+    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
+      rpm-ostree override remove "${REMOVE_PKGS[@]}"
+      rpm-ostree install "${HTTPS_PKGS[@]}" "${LOCAL_PKGS[@]}"
     fi  
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
