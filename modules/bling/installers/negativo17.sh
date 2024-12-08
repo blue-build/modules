@@ -4,8 +4,10 @@
 set -euo pipefail
 
 # Check if rpmfusion is installed before running
-if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release &>/dev/null; then
-  echo "Uninstalling RPMFusion repo..."
+if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release &>/dev/null || rpm -q rpmfusion-free-release-tainted &>/dev/null || rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+  if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release &>/dev/null; then
+    echo "Uninstalling RPMFusion repos..."
+  fi
   if rpm -q rpmfusion-free-release &>/dev/null && rpm -q rpmfusion-nonfree-release &>/dev/null; then
     rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
   elif rpm -q rpmfusion-free-release &>/dev/null; then
@@ -13,6 +15,18 @@ if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release
   elif rpm -q rpmfusion-nonfree-release &>/dev/null; then
     rpm-ostree uninstall rpmfusion-nonfree-release
   fi
+  if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release &>/dev/null; then
+    echo "Uninstalling tainted RPMFusion repos..."
+  fi
+  if rpm -q rpmfusion-free-release-tainted &>/dev/null && rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+    rpm-ostree uninstall rpmfusion-free-release-tainted rpmfusion-nonfree-release-tainted
+  elif rpm -q rpmfusion-free-release-tainted &>/dev/null; then
+    rpm-ostree uninstall rpmfusion-free-release-tainted
+  elif rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+    rpm-ostree uninstall rpmfusion-nonfree-release-tainted
+  fi
+else
+  "All RPMFusion repos are already uninstalled"
 fi 
 
 NEGATIVO_REPO_FILE="$(awk -F'=' '$1 == "name" && $2 == "negativo17 - Multimedia" {print FILENAME}' /etc/yum.repos.d/*)"
