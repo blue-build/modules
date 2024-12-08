@@ -32,7 +32,9 @@ TEMPLATE_POLICY="${MODULE_DIRECTORY}/signing/policy.json"
 # Copy policy.json to '/usr/etc/containers/' on Universal Blue based images
 # until they solve the issue by copying 'policy.json' to '/etc/containers/' instead
 if rpm -q ublue-os-signing &>/dev/null; then
-  mkdir -p "/usr/etc/containers/"
+  if ! [ -d "/usr/etc/containers/" ]; then
+    mkdir -p "/usr/etc/containers/"
+  fi
   POLICY_FILE="/usr/etc/containers/policy.json"
 else
   POLICY_FILE="${CONTAINER_DIR}/policy.json"
