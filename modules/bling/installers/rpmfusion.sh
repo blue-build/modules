@@ -14,11 +14,25 @@ if ! rpm -q rpmfusion-free-release &>/dev/null || ! rpm -q rpmfusion-nonfree-rel
       "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm"
   elif ! rpm -q rpmfusion-free-release &>/dev/null; then
     rpm-ostree install \
-      "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm"
+      "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm"
   elif ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
     rpm-ostree install \
       "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm"
   fi
+  echo "Installing tainted RPMFusion repos"
+  if ! rpm -q rpmfusion-free-release-tainted &>/dev/null || ! rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+  echo "Running RPMFusion repo install..."
+  if ! rpm -q rpmfusion-free-release-tainted &>/dev/null && ! rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+    rpm-ostree install \
+      rpmfusion-free-release-tainted \
+      rpmfusion-nonfree-release-tainted
+  elif ! rpm -q rpmfusion-free-release-tainted &>/dev/null; then
+    rpm-ostree install \
+      rpmfusion-free-release-tainted
+  elif ! rpm -q rpmfusion-nonfree-release-tainted &>/dev/null; then
+    rpm-ostree install \
+      rpmfusion-nonfree-release-tainted
+  fi 
   # check if negativo17 repo is installed
   if [[ -n "${NEGATIVO_REPO_FILE}" ]]; then
     echo "Making sure that Negativo17 repo is disabled"
