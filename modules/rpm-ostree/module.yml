@@ -9,6 +9,7 @@ example: |
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
   optfix:
     - Tabby # needed because tabby installs into /opt/Tabby
+    - brave.com
   install:
     - starship
     - brave-browser
