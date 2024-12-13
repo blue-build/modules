@@ -1,0 +1,4 @@
+name: initramfs
+shortdesc: The `initramfs` module is used to regenerate initramfs, needed for some boot modifications to apply.
+example: |
+  type: initramfs
