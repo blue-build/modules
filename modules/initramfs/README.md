@@ -8,7 +8,7 @@ Known modifications which require use of this module are:
 - `modprobe.d` config files
 - `modules-load.d` config files
 - `dracut.conf.d` config files
-- `plymouth` themes
+- `plymouth` theming
 - other unknown modifications
 
 It is recommended to set this module to be one of the last in module execution order, to assure that initramfs regeneration will cover all modifications that you did.
