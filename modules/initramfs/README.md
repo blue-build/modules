@@ -11,4 +11,4 @@ Known modifications which require use of this module are:
 - `plymouth` theming
 - other unknown modifications
 
-It is recommended to set this module as one of the last in module execution order, to assure that initramfs regeneration will cover all modifications that you did.
+It is recommended to set this module as one of the last in module execution order, to ensure that initramfs regeneration will cover all modifications that you did.
