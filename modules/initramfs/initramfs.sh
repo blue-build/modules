@@ -12,9 +12,11 @@ if [[ "${OS_VERSION}" -le 40 ]]; then
   exit 1
 fi
 
+# If images already installed cliwrap, use it. Only used in transition period, so it should be removed when base images like Ublue remove cliwrap
 if [[ -f "/usr/libexec/rpm-ostree/wrapped/dracut" ]]; then
-  echo "This module is not compatible with images which install depreciated rpm-ostree cliwrap"
-  exit 1
+  DRACUT="/usr/libexec/rpm-ostree/wrapped/dracut"
+else
+  DRACUT="/usr/bin/dracut"
 fi
 
 # NOTE!
@@ -37,5 +39,5 @@ fi
 
 echo "Initramfs regeneration is performing for kernel version: ${QUALIFIED_KERNEL[*]}"
 
-dracut --no-hostonly --kver "${QUALIFIED_KERNEL[*]}" --reproducible -v --add ostree -f "${INITRAMFS_IMAGE}"
+"${DRACUT}" --no-hostonly --kver "${QUALIFIED_KERNEL[*]}" --reproducible -v --add ostree -f "${INITRAMFS_IMAGE}"
 chmod 0600 "${INITRAMFS_IMAGE}"
