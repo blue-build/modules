@@ -9,7 +9,7 @@ fi
 
 if [[ "${OS_VERSION}" -le 40 ]]; then
   echo "This module is only compatible with Fedora 41+ images."
-  echo "While it is possible to make this module work by installing now-depreciated cliwrap,"
+  echo "While it is possible to make this module work with some older Fedora versions, by installing now-depreciated cliwrap,"
   echo "It is an unsupported functionality, which we don't want to enable."
   echo "If you wish to make this work, you would need to install cliwrap manually."
   exit 1
