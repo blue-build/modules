@@ -7,6 +7,7 @@ If you modify something related to kernel or boot, but you don't see any changes
 Known modifications which require use of this module are:
 - `modprobe.d` config files
 - `modules-load.d` config files
+- `dracut.conf.d` config files
 - `plymouth` themes
 - other unknown modifications
 
