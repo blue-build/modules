@@ -15,4 +15,4 @@ It is recommended to set this module as one of the last in module execution orde
 
 :::note
 Client-side initramfs regeneration like `rpm-ostree initramfs` & `rpm-ostree initramfs-etc` are for local-users only & not to be confused with this module's build-time initramfs regeneration.
-This module regenerates system initramfs during the build process, while `rpm-ostree initramfs` & `rpm-ostree initramfs-etc` regenerate local initramfs on top of the system one every update in the user's system.
+This module regenerates the system initramfs during the build process, while `rpm-ostree initramfs` & `rpm-ostree initramfs-etc` regenerate the local initramfs on top of the system one every update on the local-user's system.
