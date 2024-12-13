@@ -1,5 +1,9 @@
 # `initramfs`
 
+:::caution
+Only Fedora 41+ images support this module.
+:::
+
 The `initramfs` module is used to regenerate initramfs, needed for some boot modifications to apply.
 
 If you modify something related to kernel or boot, but you don't see any changes applied to the system, this is likely the module that you need to use.
