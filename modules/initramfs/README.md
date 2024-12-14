@@ -1,7 +1,7 @@
 # `initramfs`
 
 :::caution
-Only Fedora 41+ images support this module.
+This module is only supported for Fedora 41+ images.
 :::
 
 The `initramfs` module is used to regenerate initramfs, needed for some boot modifications to apply.
