@@ -15,7 +15,7 @@ You need to regenerate initramfs at least when doing any of the following:
 - customizing `plymouth` theming
 - other unknown modifications
 
-It is recommended to set this module as one of the last in module execution order, to ensure that initramfs regeneration will cover all modifications that you did.
+You only need to run the regeneration once per build, not separately for each modification requiring it. It is recommended to set this module as one of the last in your recipe, to ensure that initramfs regeneration will cover all the modifications done before it.
 
 :::note
 Client-side initramfs regeneration like `rpm-ostree initramfs` & `rpm-ostree initramfs-etc` are for local-users only & not to be confused with this module's build-time initramfs regeneration.
