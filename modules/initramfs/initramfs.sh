@@ -37,7 +37,7 @@ if [[ "${#QUALIFIED_KERNEL[@]}" -gt 1 ]]; then
   exit 1
 fi
 
-echo "Initramfs regeneration is performing for kernel version: ${QUALIFIED_KERNEL[*]}"
+echo "Starting initramfs regeneration is for kernel version: ${QUALIFIED_KERNEL[*]}"
 
 "${DRACUT}" --no-hostonly --kver "${QUALIFIED_KERNEL[*]}" --reproducible -v --add ostree -f "${INITRAMFS_IMAGE}"
 chmod 0600 "${INITRAMFS_IMAGE}"
