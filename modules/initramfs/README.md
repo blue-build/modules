@@ -8,11 +8,11 @@ The `initramfs` module is used to regenerate initramfs, needed for some boot mod
 
 If you modify something related to kernel or boot, but you don't see any changes applied to the system, this is likely the module that you need to use.
 
-Known modifications which require use of this module are:
-- `modprobe.d` config files
-- `modules-load.d` config files
-- `dracut.conf.d` config files
-- `plymouth` theming
+You need to regenerate initramfs at least when doing any of the following:
+- modifying `modprobe.d` config files
+- modifying `modules-load.d` config files
+- modifying `dracut.conf.d` config files
+- customizing `plymouth` theming
 - other unknown modifications
 
 It is recommended to set this module as one of the last in module execution order, to ensure that initramfs regeneration will cover all modifications that you did.
