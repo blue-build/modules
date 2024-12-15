@@ -4,7 +4,7 @@
 This module is only supported for Fedora 41+ images.
 :::
 
-The `initramfs` module is used to regenerate initramfs, which is the temporary file system loaded into ram as part of the Linux startup process, used by many things happening during boot. 
+The `initramfs` module is used to regenerate initramfs, which is the temporary file system loaded into RAM, as part of the early Linux startup process, used by many things happening during boot. 
 
 If you are trying to modify something related to the kernel or boot sequence (such as plymouth), but you don't see any changes applied to the system, you'll likely need to use this module.
 
