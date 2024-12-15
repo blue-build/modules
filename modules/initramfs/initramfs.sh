@@ -27,7 +27,6 @@ fi
 
 KERNEL_MODULES_PATH="/usr/lib/modules"
 readarray -t QUALIFIED_KERNEL < <(find "${KERNEL_MODULES_PATH}" -mindepth 1 -maxdepth 1 -type d -printf "%f\n")
-INITRAMFS_IMAGE="${KERNEL_MODULES_PATH}/${QUALIFIED_KERNEL[*]}/initramfs.img"
 
 if [[ "${#QUALIFIED_KERNEL[@]}" -gt 1 ]]; then
   echo "ERROR: There are several versions of kernel's initramfs."
@@ -36,6 +35,8 @@ if [[ "${#QUALIFIED_KERNEL[@]}" -gt 1 ]]; then
   echo "       Please only include 1 kernel in the image to solve this issue."
   exit 1
 fi
+
+INITRAMFS_IMAGE="${KERNEL_MODULES_PATH}/${QUALIFIED_KERNEL[*]}/initramfs.img"
 
 echo "Starting initramfs regeneration for kernel version: ${QUALIFIED_KERNEL[*]}"
 
