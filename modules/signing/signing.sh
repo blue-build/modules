@@ -29,6 +29,7 @@ if ! [ -f "/etc/pki/containers/${IMAGE_NAME_FILE}.pub" ]; then
 fi
 
 TEMPLATE_POLICY="${MODULE_DIRECTORY}/signing/policy.json"
+
 # Copy policy.json to '/usr/etc/containers/' on Universal Blue based images
 # until they solve the issue by copying 'policy.json' to '/etc/containers/' instead
 if rpm -q ublue-os-signing &>/dev/null; then
@@ -38,6 +39,10 @@ if rpm -q ublue-os-signing &>/dev/null; then
   POLICY_FILE="/usr/etc/containers/policy.json"
 else
   POLICY_FILE="${CONTAINER_DIR}/policy.json"
+fi
+
+if ! [ -f "${POLICY_FILE}" ]; then
+  cp "${TEMPLATE_POLICY}" "${POLICY_FILE}"
 fi
 
 jq --arg image_registry "${IMAGE_REGISTRY}" \
@@ -52,7 +57,9 @@ jq --arg image_registry "${IMAGE_REGISTRY}" \
                 "type": "matchRepository"
             }
         }
-    ] } + .' "${TEMPLATE_POLICY}" > "${POLICY_FILE}"
+    ] } + .' "${POLICY_FILE}" > "/tmp/POLICY.tmp"
+
+mv "/tmp/POLICY.tmp" "${POLICY_FILE}"
 
 mv "${MODULE_DIRECTORY}/signing/registry-config.yaml" "${CONTAINER_DIR}/registries.d/${IMAGE_NAME_FILE}.yaml"
 sed -i "s ghcr.io/IMAGENAME ${IMAGE_REGISTRY} g" "${CONTAINER_DIR}/registries.d/${IMAGE_NAME_FILE}.yaml"
