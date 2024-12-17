@@ -41,7 +41,14 @@ else
   POLICY_FILE="${CONTAINER_DIR}/policy.json"
 fi
 
+# If there is no policy.json file, then copy the template policy
 if ! [ -f "${POLICY_FILE}" ]; then
+  cp "${TEMPLATE_POLICY}" "${POLICY_FILE}"
+fi
+
+# If the already existing policy.json file doesn't have 'reject' as default policy,
+# then signing is effectively disabled & template policy.json should be copied in that case also
+if [[ "$(jq -r '.default[0].type' "${POLICY_FILE}")" == "insecureAcceptAnything" ]]; then
   cp "${TEMPLATE_POLICY}" "${POLICY_FILE}"
 fi
 
