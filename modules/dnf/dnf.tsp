@@ -30,4 +30,7 @@ model RpmOstreeModule {
         /** List of packages to replace using packages from the defined repo. */
         packages: Array<string>,
     }>;
+
+    /** Whether to install weak dependencies during install operation or not. */
+    "weak-dependencies"?: boolean = true;
 }

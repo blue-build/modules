@@ -16,6 +16,15 @@ if ! rpm -q dnf5-plugins &>/dev/null; then
   exit 1
 fi
 
+# Check if option for weak dependencies is enabled or disabled
+WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["weak-dependencies"]')
+
+if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
+elif [[ "${WEAK_DEPENDENCIES}" == false ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
+fi
+
 # Pull in repos
 get_json_array REPOS 'try .["repos"][]' "${1}"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
@@ -128,16 +137,16 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
-    dnf -y remove "${REMOVE_PKGS[@]}"
-    dnf -y install "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" remove "${REMOVE_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    dnf -y install "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    dnf -y remove "${REMOVE_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" remove "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"
@@ -169,7 +178,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${REPLACE_STR}"
 
-        dnf -y distro-sync --refresh --repo "${REPO}" "${PACKEGES[@]}"
+        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh --repo "${REPO}" "${PACKEGES[@]}"
 
     done
 fi
