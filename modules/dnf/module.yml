@@ -5,6 +5,7 @@ example: |
   install-weak-dependencies: true
   repos:
     - COPR atim/starship
+    - COPR trixieua/mutter-patched
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
