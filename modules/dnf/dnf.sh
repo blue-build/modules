@@ -17,7 +17,7 @@ if ! rpm -q dnf5-plugins &>/dev/null; then
 fi
 
 # Pull in repos
-get_json_array REPOS 'try .["repos"][]' "$1"
+get_json_array REPOS 'try .["repos"][]' "${1}"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
   echo "Adding repositories"
   # Substitute %OS_VERSION% & remove newlines/whitespaces from all repo entries
@@ -47,7 +47,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
   done
 fi
 
-get_json_array KEYS 'try .["keys"][]' "$1" 
+get_json_array KEYS 'try .["keys"][]' "${1}" 
 if [[ ${#KEYS[@]} -gt 0 ]]; then
     echo "Adding keys"
     for KEY in "${KEYS[@]}"; do
@@ -57,7 +57,7 @@ if [[ ${#KEYS[@]} -gt 0 ]]; then
 fi
 
 # Create symlinks to fix packages that create directories in /opt
-get_json_array OPTFIX 'try .["optfix"][]' "$1"
+get_json_array OPTFIX 'try .["optfix"][]' "${1}"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
@@ -73,8 +73,8 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     done
 fi
 
-get_json_array INSTALL_PKGS 'try .["install"][]' "$1"
-get_json_array REMOVE_PKGS 'try .["remove"][]' "$1"
+get_json_array INSTALL_PKGS 'try .["install"][]' "${1}"
+get_json_array REMOVE_PKGS 'try .["remove"][]' "${1}"
 
 CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
@@ -152,11 +152,11 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    rpm-ostree install "${INSTALL_PKGS[@]}"
+    dnf -y install "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    rpm-ostree override remove "${REMOVE_PKGS[@]}"
+    dnf -y remove "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"
