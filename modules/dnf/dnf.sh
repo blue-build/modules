@@ -34,6 +34,12 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       repo="${REPOS[$i]}"
       repo="${repo//%OS_VERSION%/${OS_VERSION}}"
       REPOS[$i]="${repo//[$'\t\r\n ']}"
+      # Remove spaces/newlines for all repos other than COPR
+      if [[ "${repo}" != "COPR "* ]]; then
+        REPOS[$i]="${repo//[$'\t\r\n ']}"
+      else
+        REPOS[$i]="${repo}"
+      fi
   done
   # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
   for repo in "${REPOS[@]}"; do
