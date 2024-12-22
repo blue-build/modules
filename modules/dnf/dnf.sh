@@ -47,6 +47,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
   done
 fi
 
+# Install RPM keys if they are provided
 get_json_array KEYS 'try .["keys"][]' "${1}" 
 if [[ ${#KEYS[@]} -gt 0 ]]; then
     echo "Adding keys"
@@ -141,13 +142,14 @@ fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"
 
-# Override-replace RPM packages
+# Replace RPM packages from any repository
 if [[ ${#REPLACE[@]} -gt 0 ]]; then
     for REPLACEMENT in "${REPLACE[@]}"; do
 
         # Get repository
         REPO=$(echo "${REPLACEMENT}" | jq -r 'try .["from-repo"]')
         REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
+        REPO="${REPO//[$'\t\r\n ']}"
 
         # Ensure repository is provided
         if [[ "${REPO}" == "null" ]]; then
@@ -155,32 +157,19 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
             exit 1
         fi
 
-        # Get info from repository URL
-        MAINTAINER=$(awk -F'/' '{print $5}' <<< "${REPO}")
-        REPO_NAME=$(awk -F'/' '{print $6}' <<< "${REPO}")
-        FILE_NAME=$(awk -F'/' '{print $9}' <<< "${REPO}" | sed 's/\?.*//') # Remove params after '?'
-
         # Get packages to replace
         get_json_array PACKAGES 'try .["packages"][]' "${REPLACEMENT}"
-        REPLACE_STR="$(echo "${PACKAGES[*]}" | tr -d '\n')"
 
         # Ensure packages are provided
         if [[ ${#PACKAGES[@]} == 0 ]]; then
-            echo "Error: No packages were provided for repository '${REPO_NAME}'."
+            echo "Error: No packages were provided for repository '${REPO}'."
             exit 1
         fi
 
-        echo "Replacing packages from COPR repository: '${REPO_NAME}' owned by '${MAINTAINER}'"
+        echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${REPLACE_STR}"
 
-        REPO_URL="${REPO//[$'\t\r\n ']}"
-
-        echo "Downloading repo file ${REPO_URL}"
-        curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
-        echo "Downloaded repo file ${REPO_URL}"
-
-        rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" ${REPLACE_STR}
-        rm "/etc/yum.repos.d/${FILE_NAME}"
+        dnf -y distro-sync --refresh --repo "${REPO}" "${PACKEGES[@]}"
 
     done
 fi

@@ -14,7 +14,7 @@ Specific COPR repositories can also be specified in `copr: user/project` format 
 
 If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
-Then the module installs the packages declared under `install:` using `dnf install`, it removes the packages declared under `remove:` using `dnf remove`. If there are packages declared under both `install:` and `remove:` then removal is performed 1st & install 2nd.
+Then the module installs the packages declared under `install:` using `dnf -y install`, it removes the packages declared under `remove:` using `dnf -y remove`. If there are packages declared under both `install:` and `remove:` then removal is performed 1st & install 2nd.
 
 Installing RPM packages directly from a `http(s)` url that points to the RPM file is also supported, you can just put the URLs under `install:` and they'll be installed along with the other packages. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) like with the `repos:` property.
 
@@ -23,7 +23,7 @@ If an RPM is not available in a repository or as an URL, you can also install it
 install:
    - weird-package.rpm # tries to install files/dnf/weird-package.rpm
 ```
-The module can also replace base RPM packages with packages from COPR repo. Under `replace:`, the module finds every pair of keys `- from-repo:` and `packages:`. (Multiple pairs are supported.) The module downloads the COPR repository file declared by `- from-repo:` into `/etc/yum.repos.d/`, and from that repository replaces packages declared under `packages:` using the command `dnf replace`. The COPR repository file is then deleted. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) as already said above. At the moment, only COPR repo is supported.
+The module can also replace base RPM packages with packages from any repo. Under `replace:`, the module finds every pair of keys `- from-repo:` and `packages:`. (Multiple pairs are supported.) The module uses `- from-repo:` key to gather the repo for package replacement, then it replaces packages declared under `packages:` using the command `dnf -y distro-sync --refresh --repo "${repo}" "${packages}"`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) as already said above. You need to assure that you provided the repo in `repos:` before using replacement functionality. To gather the repo ID that you need to input, you can use `dnf repo list` command.
 
 :::note
 [Removed packages are still present in the underlying ostree repository](https://coreos.github.io/rpm-ostree/administrator-handbook/#removing-a-base-package), what `remove` does is kind of like hiding them from the system, it doesn't free up storage space.

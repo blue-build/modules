@@ -18,7 +18,7 @@ example: |
     - firefox
     - firefox-langpacks
   replace:
-    - from-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
+    - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
       packages:
         - mutter
         - mutter-common
