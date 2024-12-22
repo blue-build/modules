@@ -62,7 +62,7 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
     mkdir -p "/var/opt"
-    ln -snf "/var/opt"  "/opt"
+    ln -snf "/var/opt" "/opt"
     # Create symlinks for each directory specified in recipe.yml
     for OPTPKG in "${OPTFIX[@]}"; do
         OPTPKG="${OPTPKG%\"}"
@@ -80,8 +80,7 @@ CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
 LOCAL_INSTALL=false
 
-# Install and remove RPM packages
-# Sort classic, URL & local packages
+# Sort classic, URL & local install packages
 if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
   for i in "${!INSTALL_PKGS[@]}"; do
       PKG="${INSTALL_PKGS[$i]}"
@@ -99,6 +98,7 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
   done
 fi
 
+# Function to inform the user about which type of packages is he installing
 echo_rpm_install() {
     if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
       echo "Installing: ${CLASSIC_PKGS[*]}"
@@ -122,8 +122,9 @@ echo_rpm_install() {
     fi
 }
 
+# Remove & install RPM packages
 if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
-    echo "Installing & Removing RPMs"
+    echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
     dnf -y remove "${REMOVE_PKGS[@]}"
