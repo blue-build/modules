@@ -8,6 +8,9 @@ model RpmOstreeModule {
      */
     type: "dnf";
 
+    /** Whether to install weak dependencies during install operation or not. */
+    "install-weak-dependencies"?: boolean = true;
+
     /** List of links to .repo files to download into /etc/yum.repos.d/. */
     repos?: Array<string>;
 
@@ -17,17 +20,17 @@ model RpmOstreeModule {
     /** List of folder names under /opt/ to enable for installing into. */
     optfix?: Array<string>;
 
-    /** List of RPM packages to install. */
-    install?: Array<string>;
-
-    /** List of RPM packages to remove. */
-    remove?: Array<string>;
+    /** List of RPM groups to remove. */
+    "group-remove"?: Array<string>;
 
     /** List of RPM groups to install. */
     "group-install"?: Array<string>;
 
-    /** List of RPM groups to remove. */
-    "group-remove"?: Array<string>;
+    /** List of RPM packages to remove. */
+    remove?: Array<string>;
+
+    /** List of RPM packages to install. */
+    install?: Array<string>;
 
     /** List of configurations for `rpm-ostree override replace`ing packages. */
     replace?: Array<{
@@ -36,7 +39,4 @@ model RpmOstreeModule {
         /** List of packages to replace using packages from the defined repo. */
         packages: Array<string>,
     }>;
-
-    /** Whether to install weak dependencies during install operation or not. */
-    "install-weak-dependencies"?: boolean = true;
 }
