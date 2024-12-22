@@ -24,8 +24,13 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
   for i in "${!REPOS[@]}"; do
       repo="${REPOS[$i]}"
       repo="${repo//%OS_VERSION%/${OS_VERSION}}"
-      REPOS[$i]="${repo//[$'\t\r\n ']}"
-  done
+      # Extract copr repo array element properly here without JSON brackets (jq doesn't extract elements with spaces properly like yq does)
+      if [[ "${repo}" == "{\"copr\":\""*"\"}" ]]; then
+        REPOS[$i]="$(echo "copr: $(echo "${repo}" | jq -r '.copr')")"
+      else
+        # Trim all whitespaces/newlines for other repos
+        REPOS[$i]="${repo//[$'\t\r\n ']}"
+      fi    done
   # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
   for repo in "${REPOS[@]}"; do
       if [[ "${repo}" =~ ^https?:\/\/.* ]]; then
