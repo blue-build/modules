@@ -30,7 +30,8 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       else
         # Trim all whitespaces/newlines for other repos
         REPOS[$i]="${repo//[$'\t\r\n ']}"
-      fi    done
+      fi
+  done
   # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
   for repo in "${REPOS[@]}"; do
       if [[ "${repo}" =~ ^https?:\/\/.* ]]; then
