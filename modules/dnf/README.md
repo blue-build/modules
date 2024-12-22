@@ -32,4 +32,4 @@ The module can also replace base RPM packages with packages from any repo. Under
 [Removed packages are still present in the underlying ostree repository](https://coreos.github.io/rpm-ostree/administrator-handbook/#removing-a-base-package), what `remove` does is kind of like hiding them from the system, it doesn't free up storage space.
 :::
 
-There is also a 'weak-dependencies:' option to enable or disable installation of weak dependencies for every install operation. Weak dependencies are installed by default. Which kind of dependencies are considered weak can be seen [here](https://docs.fedoraproject.org/en-US/packaging-guidelines/WeakDependencies/).
+There is also a `weak-dependencies:` option to enable or disable installation of weak dependencies for every install operation. Weak dependencies are installed by default. Which kind of dependencies are considered weak can be seen [here](https://docs.fedoraproject.org/en-US/packaging-guidelines/WeakDependencies/).
