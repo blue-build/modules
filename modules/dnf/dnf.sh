@@ -33,12 +33,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
   for i in "${!REPOS[@]}"; do
       repo="${REPOS[$i]}"
       repo="${repo//%OS_VERSION%/${OS_VERSION}}"
-      # Extract copr repo array element properly here without JSON brackets (jq doesn't extract elements with spaces properly like yq does)
-      if [[ "${repo}" == "{\"copr\":\""*"\"}" ]]; then
-        REPOS[$i]="copr: $(echo "${repo}" | jq -r '.copr')"
-      else
-        # Trim all whitespaces/newlines for other repos
-        REPOS[$i]="${repo//[$'\t\r\n ']}"
+      REPOS[$i]="${repo//[$'\t\r\n ']}"
       fi
   done
   # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
@@ -49,9 +44,9 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       elif [[ "${repo}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/dnf/${repo}" ]]; then
         echo "Adding repository file: '${repo}'"    
         dnf -y config-manager addrepo --from-repofile="${repo}"
-      elif [[ "${repo}" == "copr: "* ]]; then
-        echo "Adding COPR repository: '${repo#copr: }'"
-        dnf -y copr enable "${repo#copr: }"
+      elif [[ "${repo}" == "COPR "* ]]; then
+        echo "Adding COPR repository: '${repo#COPR }'"
+        dnf -y copr enable "${repo#COPR }"
       fi    
   done
 fi

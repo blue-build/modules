@@ -4,7 +4,7 @@ example: |
   type: dnf
   install-weak-dependencies: true
   repos:
-    - copr: atim/starship
+    - COPR atim/starship
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc

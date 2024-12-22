@@ -10,7 +10,7 @@ repos:
    - my-repository.repo # copies in .repo file from files/dnf/my-repository.repo to /etc/yum.repos.d/
 ```
 
-Specific COPR repositories can also be specified in `copr: user/project` format & is prefered over using direct COPR URL.
+Specific COPR repositories can also be specified in `COPR user/project` format & is prefered over using direct COPR URL.
 
 If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
