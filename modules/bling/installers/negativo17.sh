@@ -26,7 +26,7 @@ if rpm -q rpmfusion-free-release &>/dev/null || rpm -q rpmfusion-nonfree-release
     rpm-ostree uninstall rpmfusion-nonfree-release-tainted
   fi
 else
-  "All RPMFusion repos are already uninstalled"
+  echo "All RPMFusion repos are already uninstalled"
 fi 
 
 NEGATIVO_REPO_FILE="$(awk -F'=' '$1 == "name" && $2 == "negativo17 - Multimedia" {print FILENAME}' /etc/yum.repos.d/*)"
