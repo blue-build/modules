@@ -13,7 +13,7 @@ example: |
     - brave.com
   group-install: 
     - cosmic-desktop
-    - cosmic-desktop-apps # Install Cosmic desktop environment
+    - cosmic-desktop-apps # Installs Cosmic desktop environment
     - window-managers
   install:
     - starship
