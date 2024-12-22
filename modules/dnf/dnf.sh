@@ -17,7 +17,7 @@ if ! rpm -q dnf5-plugins &>/dev/null; then
 fi
 
 # Check if option for weak dependencies is enabled or disabled
-WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["weak-dependencies"]')
+WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["install-weak-dependencies"]')
 
 if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
   WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
@@ -138,11 +138,11 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
     dnf -y "${WEAK_DEPS_FLAG}" remove "${REMOVE_PKGS[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" install "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    dnf -y "${WEAK_DEPS_FLAG}" install "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"

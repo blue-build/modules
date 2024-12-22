@@ -2,14 +2,14 @@ name: dnf
 shortdesc: The dnf module offers pseudo-declarative package and repository management using dnf.
 example: |
   type: dnf
-  weak-dependencies: true
+  install-weak-dependencies: true
   repos:
     - copr: atim/starship
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
   optfix:
-    - Tabby # needed because tabby installs into /opt/Tabby
+    - Tabby # needed because tabby installs into /opt/Tabby/
     - brave.com
   install:
     - starship

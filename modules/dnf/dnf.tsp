@@ -32,5 +32,5 @@ model RpmOstreeModule {
     }>;
 
     /** Whether to install weak dependencies during install operation or not. */
-    "weak-dependencies"?: boolean = true;
+    "install-weak-dependencies"?: boolean = true;
 }
