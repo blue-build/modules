@@ -26,7 +26,7 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       repo="${repo//%OS_VERSION%/${OS_VERSION}}"
       # Extract copr repo array element properly here without JSON brackets (jq doesn't extract elements with spaces properly like yq does)
       if [[ "${repo}" == "{\"copr\":\""*"\"}" ]]; then
-        REPOS[$i]="$(echo "copr: $(echo "${repo}" | jq -r '.copr')")"
+        REPOS[$i]="copr: $(echo "${repo}" | jq -r '.copr')"
       else
         # Trim all whitespaces/newlines for other repos
         REPOS[$i]="${repo//[$'\t\r\n ']}"
