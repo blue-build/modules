@@ -83,6 +83,26 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     done
 fi
 
+# Install & remove group packages
+get_json_array GROUP_INSTALL 'try .["group-install"][]' "${1}"
+get_json_array GROUP_REMOVE 'try .["group-remove"][]' "${1}"
+
+if [[ ${#GROUP_INSTALL[@]} -gt 0 && ${#GROUP_REMOVE[@]} -gt 0 ]]; then
+    echo "Removing & Installing RPM groups"
+    echo "Removing: ${GROUP_REMOVE[*]}"
+    echo "Installing: ${GROUP_INSTALL[*]}"
+    dnf -y group remove "${GROUP_REMOVE[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${GROUP_INSTALL[@]}"
+elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
+    echo "Installing RPM groups"
+    echo "Installing: ${GROUP_INSTALL[*]}"
+    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${GROUP_INSTALL[@]}"
+elif [[ ${#GROUP_REMOVE[@]} -gt 0 ]]; then
+    echo "Removing RPM groups"
+    echo "Removing: ${GROUP_REMOVE[*]}"
+    dnf -y remove "${GROUP_REMOVE[@]}"
+fi
+
 get_json_array INSTALL_PKGS 'try .["install"][]' "${1}"
 get_json_array REMOVE_PKGS 'try .["remove"][]' "${1}"
 
@@ -137,7 +157,7 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
-    dnf -y "${WEAK_DEPS_FLAG}" remove "${REMOVE_PKGS[@]}"
+    dnf -y remove "${REMOVE_PKGS[@]}"
     dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
@@ -146,7 +166,7 @@ elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    dnf -y "${WEAK_DEPS_FLAG}" remove "${REMOVE_PKGS[@]}"
+    dnf -y remove "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"

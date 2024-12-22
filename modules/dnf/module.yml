@@ -11,6 +11,10 @@ example: |
   optfix:
     - Tabby # needed because tabby installs into /opt/Tabby/
     - brave.com
+  group-install: 
+    - cosmic-desktop
+    - cosmic-desktop-apps # Install Cosmic desktop environment
+    - window-managers
   install:
     - starship
     - brave-browser
