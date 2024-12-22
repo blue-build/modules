@@ -14,7 +14,7 @@ Specific COPR repositories can also be specified in `copr: user/project` format 
 
 If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
-Then the module installs the packages declared under `install:` using `dnf install`, it removes the packages declared under `remove:` using `dnf remove`. If there are packages declared under both `install:` and `remove:` a hybrid command `dnf remove <packages> --install <packages>` is used, which should allow you to switch required packages for other ones.
+Then the module installs the packages declared under `install:` using `dnf install`, it removes the packages declared under `remove:` using `dnf remove`. If there are packages declared under both `install:` and `remove:` then removal is performed 1st & install 2nd.
 
 Installing RPM packages directly from a `http(s)` url that points to the RPM file is also supported, you can just put the URLs under `install:` and they'll be installed along with the other packages. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version) like with the `repos:` property.
 
