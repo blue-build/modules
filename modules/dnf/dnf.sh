@@ -35,13 +35,13 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
   for repo in "${REPOS[@]}"; do
       if [[ "${repo}" =~ ^https?:\/\/.* ]]; then
         echo "Adding repository URL: '${repo}'"
-        dnf config-manager addrepo --from-repofile="${repo}"
+        dnf -y config-manager addrepo --from-repofile="${repo}"
       elif [[ "${repo}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/dnf/${repo}" ]]; then
         echo "Adding repository file: '${repo}'"    
-        dnf config-manager addrepo --from-repofile="${repo}"
+        dnf -y config-manager addrepo --from-repofile="${repo}"
       elif [[ "${repo}" == "copr: "* ]]; then
         echo "Adding COPR repository: '${repo#copr: }'"
-        dnf copr enable "${repo#copr: }"
+        dnf -y copr enable "${repo#copr: }"
       fi    
   done
 fi
