@@ -2,7 +2,7 @@
 
 The [`dnf`](https://docs.fedoraproject.org/en-US/quick-docs/dnf/) module offers pseudo-declarative package and repository management using `dnf`.
 
-The module first downloads the repository files from URLs declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
+The module first downloads the repository files from URLs declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` can be substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories which have fixed Fedora version in the URL.
 
 You can also add repository files directly into your git repository if URLs are not provided. For example:
 ```yml
