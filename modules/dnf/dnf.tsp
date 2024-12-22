@@ -2,7 +2,7 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/dnf.json")
-model RpmOstreeModule {
+model DnfModule {
     /** The dnf module offers pseudo-declarative package and repository management using dnf.
      * https://blue-build.org/reference/modules/dnf/
      */
