@@ -62,7 +62,7 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
     mkdir -p "/var/opt"
-    ln -s "/var/opt"  "/opt"
+    ln -snf "/var/opt"  "/opt"
     # Create symlinks for each directory specified in recipe.yml
     for OPTPKG in "${OPTFIX[@]}"; do
         OPTPKG="${OPTPKG%\"}"
@@ -124,31 +124,10 @@ echo_rpm_install() {
 
 if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Installing & Removing RPMs"
-    echo_rpm_install
     echo "Removing: ${REMOVE_PKGS[*]}"
-    # Doing both actions in one command allows for replacing required packages with alternatives
-    # When --install= flag is used, URLs & local packages are not supported
-    if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
-    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
-      rpm-ostree install "${HTTPS_PKGS[@]}"
-    elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")    
-      rpm-ostree install "${LOCAL_PKGS[@]}"
-    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}" $(printf -- "--install=%s " "${CLASSIC_PKGS[@]}")
-      rpm-ostree install "${HTTPS_PKGS[@]}" "${LOCAL_PKGS[@]}"
-    elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}"
-      rpm-ostree install "${LOCAL_PKGS[@]}"
-    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}"
-      rpm-ostree install "${HTTPS_PKGS[@]}"
-    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      rpm-ostree override remove "${REMOVE_PKGS[@]}"
-      rpm-ostree install "${HTTPS_PKGS[@]}" "${LOCAL_PKGS[@]}"
-    fi  
+    echo_rpm_install
+    dnf -y remove "${REMOVE_PKGS[@]}"
+    dnf -y install "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
