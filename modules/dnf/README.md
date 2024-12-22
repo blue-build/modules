@@ -9,6 +9,9 @@ You can also add repository files directly into your git repository if URLs are 
 repos:
    - my-repository.repo # copies in .repo file from files/dnf/my-repository.repo to /etc/yum.repos.d/
 ```
+
+Specific COPR repositories can also be specified in `copr: user/project` format.
+
 If you use a repo that requires adding custom keys (eg. Brave Browser), you can import the keys by declaring the key URLs under `keys:`. The magic string acts the same as it does in `repos`.
 
 Then the module installs the packages declared under `install:` using `dnf install`, it removes the packages declared under `remove:` using `dnf remove`. If there are packages declared under both `install:` and `remove:` a hybrid command `dnf remove <packages> --install <packages>` is used, which should allow you to switch required packages for other ones.

@@ -3,7 +3,7 @@ shortdesc: The dnf module offers pseudo-declarative package and repository manag
 example: |
   type: dnf
   repos:
-    - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo # when including COPR repos, use the %OS_VERSION% magic string
+    - copr: atim/starship
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc

@@ -3,31 +3,42 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
+# Fail the build if dnf5 isn't installed
+if ! rpm -q dnf5 &>/dev/null; then
+  echo "ERROR: Main dependency 'dnf5' is not installed. Install 'dnf5' before using this module to solve this error."
+  exit 1
+fi
+
+# Fail the build if dnf5 plugins aren't installed
+if ! rpm -q dnf5-plugins &>/dev/null; then
+  echo "ERROR: Dependency 'dnf5-plugins' is not installed. It is needed for cleanly adding COPR repositories.
+  echo "       Install 'dnf5-plugins' before using this module to solve this error."
+  exit 1
+fi
+
 # Pull in repos
 get_json_array REPOS 'try .["repos"][]' "$1"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
-    echo "Adding repositories"
-    for REPO in "${REPOS[@]}"; do
-        REPO="${REPO//%OS_VERSION%/${OS_VERSION}}"
-        REPO="${REPO//[$'\t\r\n ']}"
-
-        # If it's the COPR repo, then download the repo normally
-        # If it's not, then download the repo with URL in it's filename, to avoid duplicate repo name issue
-        if [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          echo "Downloading repo file ${REPO}"
-          curl -fLs --create-dirs -O "${REPO}" --output-dir "/etc/yum.repos.d/"
-          echo "Downloaded repo file ${REPO}"
-        elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
-          CLEAN_REPO_NAME=$(echo "${REPO}" | sed -E 's|^https?://([^?]+)(\?.*)?$|\1|')
-          CLEAN_REPO_NAME="${CLEAN_REPO_NAME//\//.}"
-          
-          echo "Downloading repo file ${REPO}"
-          curl -fLs --create-dirs "${REPO}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
-          echo "Downloaded repo file ${REPO}"
-        elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
-          cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
-        fi  
-    done
+  echo "Adding repositories"
+  # Substitute %OS_VERSION% & remove newlines/whitespaces from all repo entries
+  for i in "${!REPOS[@]}"; do
+      repo="${REPOS[$i]}"
+      repo="${repo//%OS_VERSION%/${OS_VERSION}}"
+      REPOS[$i]="${repo//[$'\t\r\n ']}"
+  done
+  # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
+  for repo in "${REPOS[@]}"; do
+      if [[ "${repo}" =~ ^https?:\/\/.* ]]; then
+        echo "Adding repository URL: '${repo}'"
+        dnf config-manager addrepo --from-repofile="${repo}"
+      elif [[ "${repo}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/dnf/${repo}" ]]; then
+        echo "Adding repository file: '${repo}'"    
+        dnf config-manager addrepo --from-repofile="${repo}"
+      elif [[ "${repo}" == "copr: "* ]]; then
+        echo "Adding COPR repository: '${repo#copr: }'"
+        dnf copr enable "${repo#copr: }"
+      fi    
+  done
 fi
 
 get_json_array KEYS 'try .["keys"][]' "$1" 
