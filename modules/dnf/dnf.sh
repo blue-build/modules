@@ -11,7 +11,7 @@ fi
 
 # Fail the build if dnf5 plugins aren't installed
 if ! rpm -q dnf5-plugins &>/dev/null; then
-  echo "ERROR: Dependency 'dnf5-plugins' is not installed. It is needed for cleanly adding COPR repositories.
+  echo "ERROR: Dependency 'dnf5-plugins' is not installed. It is needed for cleanly adding COPR repositories."
   echo "       Install 'dnf5-plugins' before using this module to solve this error."
   exit 1
 fi
