@@ -32,7 +32,7 @@ model DnfModule {
     /** List of RPM packages to install. */
     install?: Array<string>;
 
-    /** List of configurations for `rpm-ostree override replace`ing packages. */
+    /** List of configurations for replacing packages from another repo. */
     replace?: Array<{
         /** URL to the source COPR repo for the new packages. */
         "from-repo": string,
