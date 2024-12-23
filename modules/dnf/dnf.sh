@@ -121,24 +121,13 @@ fi
 
 # Function to inform the user about which type of packages is he installing
 echo_rpm_install() {
-    if ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+    if ${CLASSIC_INSTALL}; then
       echo "Installing: ${CLASSIC_PKGS[*]}"
-    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
+    fi
+    if ${HTTPS_INSTALL}; then
       echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
-    elif ! ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
-    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ! ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKGS[*]}"
-      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
-    elif ${CLASSIC_INSTALL} && ! ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKGS[*]}"
-      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
-    elif ! ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"    
-      echo "Installing local package(s): ${LOCAL_PKGS[*]}"
-    elif ${CLASSIC_INSTALL} && ${HTTPS_INSTALL} && ${LOCAL_INSTALL}; then
-      echo "Installing: ${CLASSIC_PKGS[*]}"
-      echo "Installing package(s) directly from URL: ${HTTPS_PKGS[*]}"
+    fi
+    if ${LOCAL_INSTALL}; then
       echo "Installing local package(s): ${LOCAL_PKGS[*]}"
     fi
 }
