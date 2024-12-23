@@ -190,15 +190,15 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         get_json_array PACKAGES 'try .["packages"][]' "${REPLACEMENT}"
 
         # Ensure packages are provided
-        if [[ ${#PACKAGES[@]} == 0 ]]; then
+        if [[ ${#PACKAGES[@]} -eq 0 ]]; then
             echo "Error: No packages were provided for repository '${REPO}'."
             exit 1
         fi
 
         echo "Replacing packages from repository: '${REPO}'"
-        echo "Replacing: ${REPLACE_STR}"
+        echo "Replacing: ${PACKAGES[*]}"
 
-        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh --repo "${REPO}" "${PACKEGES[@]}"
+        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh --repo "${REPO}" "${PACKAGES[@]}"
 
     done
 fi
