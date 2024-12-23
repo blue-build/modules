@@ -16,15 +16,6 @@ if ! rpm -q dnf5-plugins &>/dev/null; then
   exit 1
 fi
 
-# Check if option for weak dependencies is enabled or disabled
-WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["install-weak-dependencies"]')
-
-if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
-  WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
-elif [[ "${WEAK_DEPENDENCIES}" == false ]]; then
-  WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
-fi
-
 # Pull in repos
 get_json_array REPOS 'try .["repos"][]' "${1}"
 if [[ ${#REPOS[@]} -gt 0 ]]; then
@@ -92,11 +83,11 @@ if [[ ${#GROUP_INSTALL[@]} -gt 0 && ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing: ${GROUP_REMOVE[*]}"
     echo "Installing: ${GROUP_INSTALL[*]}"
     dnf -y group remove "${GROUP_REMOVE[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${GROUP_INSTALL[@]}"
+    dnf -y group install --refresh "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPM groups"
     echo "Installing: ${GROUP_INSTALL[*]}"
-    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${GROUP_INSTALL[@]}"
+    dnf -y group install --refresh "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPM groups"
     echo "Removing: ${GROUP_REMOVE[*]}"
@@ -158,11 +149,11 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
     dnf -y remove "${REMOVE_PKGS[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${INSTALL_PKGS[@]}"
+    dnf -y install --refresh "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${INSTALL_PKGS[@]}"
+    dnf -y install --refresh "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
@@ -195,10 +186,46 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
             exit 1
         fi
 
+        # Get if 'install-weak-dependencies' is provided
+        WEAK_DEPENDENCIES=$(echo "${REPLACEMENT}" | jq -r 'try .["install-weak-dependencies"]')
+
+        if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
+          WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
+        elif [[ "${WEAK_DEPENDENCIES}" == "false" ]]; then
+          WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
+        fi
+
+        # Get if 'skip-unavailable-packages' is provided
+        SKIP_UNAVAILABLE=$(echo "${REPLACEMENT}" | jq -r 'try .["skip-unavailable-packages"]')
+
+        if [[ -z "${SKIP_UNAVAILABLE}" ]] || [[ "${SKIP_UNAVAILABLE}" == "null" ]] || [[ "${SKIP_UNAVAILABLE}" == "false" ]]; then
+          SKIP_UNAVAILABLE_FLAG=""
+        elif [[ "${SKIP_UNAVAILABLE}" == "true" ]]; then
+          SKIP_UNAVAILABLE_FLAG="--skip-unavailable"
+        fi
+
+        # Get if 'skip-broken-packages' is provided
+        SKIP_BROKEN=$(echo "${REPLACEMENT}" | jq -r 'try .["skip-broken-packages"]')
+
+        if [[ -z "${SKIP_BROKEN}" ]] || [[ "${SKIP_BROKEN}" == "null" ]] || [[ "${SKIP_BROKEN}" == "false" ]]; then
+          SKIP_BROKEN_FLAG=""
+        elif [[ "${SKIP_BROKEN}" == "true" ]]; then
+          SKIP_BROKEN_FLAG="--skip-broken"
+        fi       
+
+        # Get if 'allow-erasing-packages' is provided
+        ALLOW_ERASING=$(echo "${REPLACEMENT}" | jq -r 'try .["allow-erasing-packages"]')
+
+        if [[ -z "${ALLOW_ERASING}" ]] || [[ "${ALLOW_ERASING}" == "null" ]] || [[ "${ALLOW_ERASING}" == "false" ]]; then
+          ALLOW_ERASING_FLAG=""
+        elif [[ "${ALLOW_ERASING}" == "true" ]]; then
+          ALLOW_ERASING_FLAG="--allowerasing"
+        fi   
+
         echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${PACKAGES[*]}"
 
-        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh --repo "${REPO}" "${PACKAGES[@]}"
+        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" --repo "${REPO}" "${PACKAGES[@]}"
 
     done
 fi

@@ -8,9 +8,6 @@ model DnfModule {
      */
     type: "dnf";
 
-    /** Whether to install weak dependencies during install operation or not. */
-    "install-weak-dependencies"?: boolean = true;
-
     /** List of links to .repo files to download into /etc/yum.repos.d/. */
     repos?: Array<string>;
 
@@ -38,5 +35,13 @@ model DnfModule {
         "from-repo": string,
         /** List of packages to replace using packages from the defined repo. */
         packages: Array<string>,
+        /** Whether to install weak dependencies during the replacement or not. */
+        "install-weak-dependencies"?: boolean = true,
+        /** Whether to continue with the replacement if there are no packages available on the system to replace. */
+        "skip-unavailable-packages"?: boolean = false,
+        /** Whether to continue with the replacement if there are broken packages in the system during the replacement. */
+        "skip-broken-packages"?: boolean = false,
+        /** Whether to allow erasing (removal) of packages in case of dependency problems during the replacement. */
+        "allow-erasing-packages"?: boolean = false;        
     }>;
 }
