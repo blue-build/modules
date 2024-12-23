@@ -181,8 +181,8 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         REPO="${REPO//[$'\t\r\n ']}"
 
         # Ensure repository is provided
-        if [[ "${REPO}" == "null" ]]; then
-            echo "Error: Key 'from-repo' was declared, but repository URL was not provided."
+        if [[ "${REPO}" == "null" ]] || [[ -z "${REPO}" ]]; then
+            echo "ERROR: Key 'from-repo' was declared, but repository URL was not provided."
             exit 1
         fi
 
@@ -191,7 +191,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
 
         # Ensure packages are provided
         if [[ ${#PACKAGES[@]} -eq 0 ]]; then
-            echo "Error: No packages were provided for repository '${REPO}'."
+            echo "ERROR: No packages were provided for repository '${REPO}'."
             exit 1
         fi
 
