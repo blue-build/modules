@@ -169,6 +169,15 @@ elif [[ "${ALLOW_ERASING}" == "true" ]]; then
   ALLOW_ERASING_FLAG="--allowerasing"
 fi
 
+# Get if 'remove-unused-dependencies' is provided for package removal
+REMOVE_UNUSED_DEPS=$(echo "${1}" | jq -r 'try .["remove"].["remove-unused-dependencies"]')
+
+if [[ -z "${REMOVE_UNUSED_DEPS}" ]] || [[ "${REMOVE_UNUSED_DEPS}" == "null" ]] || [[ "${REMOVE_UNUSED_DEPS}" == "true" ]]; then
+  REMOVE_UNUSED_DEPS_FLAG=""
+elif [[ "${REMOVE_UNUSED_DEPS}" == "false" ]]; then
+  REMOVE_UNUSED_DEPS_FLAG="--no-autoremove"
+fi
+
 CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
 LOCAL_INSTALL=false
@@ -209,7 +218,7 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
-    dnf -y remove "${REMOVE_PKGS[@]}"
+    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
     dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
@@ -218,7 +227,7 @@ elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    dnf -y remove "${REMOVE_PKGS[@]}"
+    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"

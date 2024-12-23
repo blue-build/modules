@@ -34,23 +34,37 @@ The module can also replace base RPM packages with packages from any repo. Under
 [Removed packages are still present in the underlying ostree repository](https://coreos.github.io/rpm-ostree/administrator-handbook/#removing-a-base-package), what `remove` does is kind of like hiding them from the system, it doesn't free up storage space.
 :::
 
-## Package manager behavior options
+## `dnf` behavior options
 
-There are several options that can be enabled during the package/group install & during package replace, which modify the behavior of the package manager during those operations.
+There are several options that can be enabled during the package/group install + removal & during package replace, which modify the behavior of the package manager during those operations.
+
 Those include:
+
+Install operation:
   - `install-weak-dependencies` (`--setopt=install_weak_deps=True/False` flag)
   - `skip-unavailable-packages` (`--skip-unavailable` flag)
   - `skip-broken-packages` (`--skip-broken` flag)
   - `allow-erasing-packages` (`--allowerasing` flag)
 
-### `install-weak-dependencies`
+Remove operation:
+  - `remove-unused-dependencies` (`--no-autoremove` flag)
+
+
+### `dnf` install/replace behavior options
+
+#### `install-weak-dependencies`
 `install-weak-dependencies` option is used to enable or disable installation of weak dependencies for every install & replace operation. By default, this option is true, which means that weak dependencies are installed by default. Which kind of dependencies are considered weak can be seen [here](https://docs.fedoraproject.org/en-US/packaging-guidelines/WeakDependencies/).
 
-### `skip-unavailable-packages`
+#### `skip-unavailable-packages`
 `skip-unavailable-packages` option is used to continue or abort install/replace operation if there are no packages available in the repo in install operation, or if they are not available in the system in replace operation. By default, this option is false, which means that install/replace operation aborts in case of unavailable packages.
 
-### `skip-broken-packages`
+#### `skip-broken-packages`
 `skip-broken-packages` option is used to continue or abort install/replace operation if there are broken packages in the system. By default, this option is false, which means that install/replace operation aborts in case of broken packages.
 
-### `allow-erasing-packages`
+#### `allow-erasing-packages`
 `allow-erasing-packages` option is used to allow erasing/removing problematic packages if they cause issues in install/replace operation. By default, this option is false, which means that problematic packages won't be removed & operation will be aborted.
+
+### `dnf` package (non-group) removal behavior options
+
+#### `remove-unused-dependencies`
+`remove-unused-dependencies` option is used to control the behavior of removing unused dependencies when some main packages are removed. By default, this option is true. Only compatible with removing packages, not compatible with removing RPM groups.
