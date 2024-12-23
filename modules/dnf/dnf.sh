@@ -75,27 +75,99 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
 fi
 
 # Install & remove group packages
-get_json_array GROUP_INSTALL 'try .["group-install"][]' "${1}"
-get_json_array GROUP_REMOVE 'try .["group-remove"][]' "${1}"
+get_json_array GROUP_INSTALL 'try .["group-install"].["packages"][]' "${1}"
+get_json_array GROUP_REMOVE 'try .["group-remove"].["packages"][]' "${1}"
+
+# Get if 'install-weak-dependencies' is provided for group-install
+WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["group-install"].["install-weak-dependencies"]')
+
+if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
+elif [[ "${WEAK_DEPENDENCIES}" == "false" ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
+fi
+
+# Get if 'skip-unavailable-packages' is provided for group-install
+SKIP_UNAVAILABLE=$(echo "${1}" | jq -r 'try .["group-install"].["skip-unavailable-packages"]')
+
+if [[ -z "${SKIP_UNAVAILABLE}" ]] || [[ "${SKIP_UNAVAILABLE}" == "null" ]] || [[ "${SKIP_UNAVAILABLE}" == "false" ]]; then
+  SKIP_UNAVAILABLE_FLAG=""
+elif [[ "${SKIP_UNAVAILABLE}" == "true" ]]; then
+  SKIP_UNAVAILABLE_FLAG="--skip-unavailable"
+fi
+
+# Get if 'skip-broken-packages' is provided for group-install
+SKIP_BROKEN=$(echo "${1}" | jq -r 'try .["group-install"].["skip-broken-packages"]')
+
+if [[ -z "${SKIP_BROKEN}" ]] || [[ "${SKIP_BROKEN}" == "null" ]] || [[ "${SKIP_BROKEN}" == "false" ]]; then
+  SKIP_BROKEN_FLAG=""
+elif [[ "${SKIP_BROKEN}" == "true" ]]; then
+  SKIP_BROKEN_FLAG="--skip-broken"
+fi
+
+# Get if 'allow-erasing-packages' is provided for group-install
+ALLOW_ERASING=$(echo "${1}" | jq -r 'try .["group-install"].["allow-erasing-packages"]')
+
+if [[ -z "${ALLOW_ERASING}" ]] || [[ "${ALLOW_ERASING}" == "null" ]] || [[ "${ALLOW_ERASING}" == "false" ]]; then
+  ALLOW_ERASING_FLAG=""
+elif [[ "${ALLOW_ERASING}" == "true" ]]; then
+  ALLOW_ERASING_FLAG="--allowerasing"
+fi
 
 if [[ ${#GROUP_INSTALL[@]} -gt 0 && ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing & Installing RPM groups"
     echo "Removing: ${GROUP_REMOVE[*]}"
     echo "Installing: ${GROUP_INSTALL[*]}"
     dnf -y group remove "${GROUP_REMOVE[@]}"
-    dnf -y group install --refresh "${GROUP_INSTALL[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPM groups"
     echo "Installing: ${GROUP_INSTALL[*]}"
-    dnf -y group install --refresh "${GROUP_INSTALL[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPM groups"
     echo "Removing: ${GROUP_REMOVE[*]}"
     dnf -y remove "${GROUP_REMOVE[@]}"
 fi
 
-get_json_array INSTALL_PKGS 'try .["install"][]' "${1}"
-get_json_array REMOVE_PKGS 'try .["remove"][]' "${1}"
+get_json_array INSTALL_PKGS 'try .["install"].["packages"][]' "${1}"
+get_json_array REMOVE_PKGS 'try .["remove"].["packages"][]' "${1}"
+
+# Get if 'install-weak-dependencies' is provided for package install
+WEAK_DEPENDENCIES=$(echo "${1}" | jq -r 'try .["install"].["install-weak-dependencies"]')
+
+if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=True"
+elif [[ "${WEAK_DEPENDENCIES}" == "false" ]]; then
+  WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
+fi
+
+# Get if 'skip-unavailable-packages' is provided for package install
+SKIP_UNAVAILABLE=$(echo "${1}" | jq -r 'try .["install"].["skip-unavailable-packages"]')
+
+if [[ -z "${SKIP_UNAVAILABLE}" ]] || [[ "${SKIP_UNAVAILABLE}" == "null" ]] || [[ "${SKIP_UNAVAILABLE}" == "false" ]]; then
+  SKIP_UNAVAILABLE_FLAG=""
+elif [[ "${SKIP_UNAVAILABLE}" == "true" ]]; then
+  SKIP_UNAVAILABLE_FLAG="--skip-unavailable"
+fi
+
+# Get if 'skip-broken-packages' is provided for package install
+SKIP_BROKEN=$(echo "${1}" | jq -r 'try .["install"].["skip-broken-packages"]')
+
+if [[ -z "${SKIP_BROKEN}" ]] || [[ "${SKIP_BROKEN}" == "null" ]] || [[ "${SKIP_BROKEN}" == "false" ]]; then
+  SKIP_BROKEN_FLAG=""
+elif [[ "${SKIP_BROKEN}" == "true" ]]; then
+  SKIP_BROKEN_FLAG="--skip-broken"
+fi
+
+# Get if 'allow-erasing-packages' is provided for package install
+ALLOW_ERASING=$(echo "${1}" | jq -r 'try .["install"].["allow-erasing-packages"]')
+
+if [[ -z "${ALLOW_ERASING}" ]] || [[ "${ALLOW_ERASING}" == "null" ]] || [[ "${ALLOW_ERASING}" == "false" ]]; then
+  ALLOW_ERASING_FLAG=""
+elif [[ "${ALLOW_ERASING}" == "true" ]]; then
+  ALLOW_ERASING_FLAG="--allowerasing"
+fi
 
 CLASSIC_INSTALL=false
 HTTPS_INSTALL=false
@@ -138,11 +210,11 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
     dnf -y remove "${REMOVE_PKGS[@]}"
-    dnf -y install --refresh "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    dnf -y install --refresh "${INSTALL_PKGS[@]}"
+    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
@@ -175,7 +247,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
             exit 1
         fi
 
-        # Get if 'install-weak-dependencies' is provided
+        # Get if 'install-weak-dependencies' is provided for package replace
         WEAK_DEPENDENCIES=$(echo "${REPLACEMENT}" | jq -r 'try .["install-weak-dependencies"]')
 
         if [[ -z "${WEAK_DEPENDENCIES}" ]] || [[ "${WEAK_DEPENDENCIES}" == "null" ]] || [[ "${WEAK_DEPENDENCIES}" == "true" ]]; then
@@ -184,7 +256,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
           WEAK_DEPS_FLAG="--setopt=install_weak_deps=False"
         fi
 
-        # Get if 'skip-unavailable-packages' is provided
+        # Get if 'skip-unavailable-packages' is provided for package replace
         SKIP_UNAVAILABLE=$(echo "${REPLACEMENT}" | jq -r 'try .["skip-unavailable-packages"]')
 
         if [[ -z "${SKIP_UNAVAILABLE}" ]] || [[ "${SKIP_UNAVAILABLE}" == "null" ]] || [[ "${SKIP_UNAVAILABLE}" == "false" ]]; then
@@ -193,23 +265,23 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
           SKIP_UNAVAILABLE_FLAG="--skip-unavailable"
         fi
 
-        # Get if 'skip-broken-packages' is provided
+        # Get if 'skip-broken-packages' is provided for package replace
         SKIP_BROKEN=$(echo "${REPLACEMENT}" | jq -r 'try .["skip-broken-packages"]')
 
         if [[ -z "${SKIP_BROKEN}" ]] || [[ "${SKIP_BROKEN}" == "null" ]] || [[ "${SKIP_BROKEN}" == "false" ]]; then
           SKIP_BROKEN_FLAG=""
         elif [[ "${SKIP_BROKEN}" == "true" ]]; then
           SKIP_BROKEN_FLAG="--skip-broken"
-        fi       
+        fi
 
-        # Get if 'allow-erasing-packages' is provided
+        # Get if 'allow-erasing-packages' is provided for package replace
         ALLOW_ERASING=$(echo "${REPLACEMENT}" | jq -r 'try .["allow-erasing-packages"]')
 
         if [[ -z "${ALLOW_ERASING}" ]] || [[ "${ALLOW_ERASING}" == "null" ]] || [[ "${ALLOW_ERASING}" == "false" ]]; then
           ALLOW_ERASING_FLAG=""
         elif [[ "${ALLOW_ERASING}" == "true" ]]; then
           ALLOW_ERASING_FLAG="--allowerasing"
-        fi   
+        fi
 
         echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${PACKAGES[*]}"

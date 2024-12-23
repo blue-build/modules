@@ -17,17 +17,45 @@ model DnfModule {
     /** List of folder names under /opt/ to enable for installing into. */
     optfix?: Array<string>;
 
-    /** List of RPM groups to remove. */
-    "group-remove"?: Array<string>;
+    /** Configuration of RPM groups removal. */
+    "group-remove"?: {
+        /** List of RPM groups to remove. */
+        packages?: string;
+    };
 
-    /** List of RPM groups to install. */
-    "group-install"?: Array<string>;
+    /** Configuration of RPM groups install. */
+    "group-install"?: {
+        /** List of RPM groups to install. */
+        packages?: string,
+        /** Whether to install weak dependencies during the RPM group install or not. */
+        "install-weak-dependencies"?: boolean = true,
+        /** Whether to continue with the RPM group install if there are no packages available in the repository. */
+        "skip-unavailable-packages"?: boolean = false,
+        /** Whether to continue with the RPM group install if there are broken packages. */
+        "skip-broken-packages"?: boolean = false,
+        /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM group install. */
+        "allow-erasing-packages"?: boolean = false;        
+    };
 
-    /** List of RPM packages to remove. */
-    remove?: Array<string>;
+    /** Configuration of RPM packages removal. */
+    "remove"?: {
+        /** List of RPM packages to remove. */
+        packages?: string;
+    };
 
-    /** List of RPM packages to install. */
-    install?: Array<string>;
+    /** Configuration of RPM packages install. */
+    "install"?: {
+        /** List of RPM packages to install. */
+        packages?: string,
+        /** Whether to install weak dependencies during the RPM package install or not. */
+        "install-weak-dependencies"?: boolean = true,
+        /** Whether to continue with the RPM package install if there are no packages available in the repository. */
+        "skip-unavailable-packages"?: boolean = false,
+        /** Whether to continue with the RPM package install if there are broken packages. */
+        "skip-broken-packages"?: boolean = false,
+        /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM package install. */
+        "allow-erasing-packages"?: boolean = false;        
+    };
 
     /** List of configurations for replacing packages from another repo. */
     replace?: Array<{
