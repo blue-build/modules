@@ -48,7 +48,7 @@ model DnfModule {
     /** Configuration of RPM packages install. */
     "install"?: {
         /** List of RPM packages to install. */
-        packages?: string,
+        packages: Array<string>,
         /** Whether to install weak dependencies during the RPM package install or not. */
         "install-weak-dependencies"?: boolean = true,
         /** Whether to continue with the RPM package install if there are no packages available in the repository. */
