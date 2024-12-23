@@ -26,7 +26,7 @@ model DnfModule {
     /** Configuration of RPM groups install. */
     "group-install"?: {
         /** List of RPM groups to install. */
-        packages?: string,
+        packages: Array<string>,
         /** Whether to install weak dependencies during the RPM group install or not. */
         "install-weak-dependencies"?: boolean = true,
         /** Whether to continue with the RPM group install if there are no packages available in the repository. */
