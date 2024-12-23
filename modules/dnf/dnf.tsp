@@ -20,7 +20,7 @@ model DnfModule {
     /** Configuration of RPM groups removal. */
     "group-remove"?: {
         /** List of RPM groups to remove. */
-        packages?: string;
+        packages: Array<string>;
     };
 
     /** Configuration of RPM groups install. */
