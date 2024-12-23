@@ -40,7 +40,7 @@ model DnfModule {
     /** Configuration of RPM packages removal. */
     "remove"?: {
         /** List of RPM packages to remove. */
-        packages?: string,
+        packages: Array<string>,
         /** Whether to remove unused dependencies during removal operation. */
         "remove-unused-dependencies"?: boolean = true;        
     };
