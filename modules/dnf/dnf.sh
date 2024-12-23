@@ -47,8 +47,8 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
         echo "Adding repository URL: '${repo}'"
         dnf -y config-manager addrepo --from-repofile="${repo}"
       elif [[ "${repo}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/dnf/${repo}" ]]; then
-        echo "Adding repository file: '${repo}'"    
-        dnf -y config-manager addrepo --from-repofile="${repo}"
+        echo "Adding repository file: '${repo##*/}'"
+        dnf -y config-manager addrepo --from-repofile="${CONFIG_DIRECTORY}/dnf/${repo}"
       elif [[ "${repo}" == "COPR "* ]]; then
         echo "Adding COPR repository: '${repo#COPR }'"
         dnf -y copr enable "${repo#COPR }"
