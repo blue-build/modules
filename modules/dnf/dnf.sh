@@ -120,7 +120,7 @@ elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
 elif [[ ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPM groups"
     echo "Removing: ${GROUP_REMOVE[*]}"
-    dnf -y remove "${GROUP_REMOVE[@]}"
+    dnf -y group remove "${GROUP_REMOVE[@]}"
 fi
 
 get_json_array INSTALL_PKGS 'try .["install"].["packages"][]' "${1}"
