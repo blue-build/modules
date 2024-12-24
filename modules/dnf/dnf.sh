@@ -112,7 +112,7 @@ if [[ ${#GROUP_INSTALL[@]} -gt 0 && ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing: ${GROUP_REMOVE[*]}"
     echo "Installing: ${GROUP_INSTALL[*]}"
     dnf -y group remove "${GROUP_REMOVE[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${GROUP_INSTALL[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} group install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPM groups"
     echo "Installing: ${GROUP_INSTALL[*]}"
