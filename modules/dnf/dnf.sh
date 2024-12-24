@@ -2,6 +2,7 @@
 
 # Tell build process to exit if there are any errors.
 set -euo pipefail
+set -x
 
 # Fail the build if dnf5 isn't installed
 if ! rpm -q dnf5 &>/dev/null; then
@@ -112,11 +113,11 @@ if [[ ${#GROUP_INSTALL[@]} -gt 0 && ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing: ${GROUP_REMOVE[*]}"
     echo "Installing: ${GROUP_INSTALL[*]}"
     dnf -y group remove "${GROUP_REMOVE[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${GROUP_INSTALL[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} group install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_INSTALL[@]} -gt 0 ]]; then
     echo "Installing RPM groups"
     echo "Installing: ${GROUP_INSTALL[*]}"
-    dnf -y "${WEAK_DEPS_FLAG}" group install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${GROUP_INSTALL[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} group install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} "${GROUP_INSTALL[@]}"
 elif [[ ${#GROUP_REMOVE[@]} -gt 0 ]]; then
     echo "Removing RPM groups"
     echo "Removing: ${GROUP_REMOVE[*]}"
@@ -211,16 +212,16 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
-    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
+    dnf -y remove ${REMOVE_UNUSED_DEPS_FLAG} "${REMOVE_PKGS[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
-    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
+    dnf -y remove ${REMOVE_UNUSED_DEPS_FLAG} "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"
@@ -288,7 +289,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${PACKAGES[*]}"
 
-        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" --repo "${REPO}" "${PACKAGES[@]}"
+        dnf -y ${WEAK_DEPS_FLAG} distro-sync --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} --repo "${REPO}" "${PACKAGES[@]}"
 
     done
 fi
