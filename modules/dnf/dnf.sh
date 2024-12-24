@@ -220,7 +220,7 @@ elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
 elif [[ ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
-    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
+    dnf -y remove ${REMOVE_UNUSED_DEPS_FLAG} "${REMOVE_PKGS[@]}"
 fi
 
 get_json_array REPLACE 'try .["replace"][]' "$1"
