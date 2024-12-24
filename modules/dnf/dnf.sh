@@ -288,7 +288,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         echo "Replacing packages from repository: '${REPO}'"
         echo "Replacing: ${PACKAGES[*]}"
 
-        dnf -y "${WEAK_DEPS_FLAG}" distro-sync --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" --repo "${REPO}" "${PACKAGES[@]}"
+        dnf -y ${WEAK_DEPS_FLAG} distro-sync --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} --repo "${REPO}" "${PACKAGES[@]}"
 
     done
 fi
