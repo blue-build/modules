@@ -211,8 +211,8 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 && ${#REMOVE_PKGS[@]} -gt 0 ]]; then
     echo "Removing & Installing RPMs"
     echo "Removing: ${REMOVE_PKGS[*]}"
     echo_rpm_install
-    dnf -y remove "${REMOVE_UNUSED_DEPS_FLAG}" "${REMOVE_PKGS[@]}"
-    dnf -y "${WEAK_DEPS_FLAG}" install --refresh "${SKIP_UNAVAILABLE_FLAG}" "${SKIP_BROKEN_FLAG}" "${ALLOW_ERASING_FLAG}" "${INSTALL_PKGS[@]}"
+    dnf -y remove ${REMOVE_UNUSED_DEPS_FLAG} "${REMOVE_PKGS[@]}"
+    dnf -y ${WEAK_DEPS_FLAG} install --refresh ${SKIP_UNAVAILABLE_FLAG} ${SKIP_BROKEN_FLAG} ${ALLOW_ERASING_FLAG} "${INSTALL_PKGS[@]}"
 elif [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
     echo "Installing RPMs"
     echo_rpm_install
