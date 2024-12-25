@@ -3,9 +3,10 @@ shortdesc: The dnf module offers pseudo-declarative package and repository manag
 example: |
   type: dnf
   repos:
-    - COPR atim/starship
-    - COPR trixieua/mutter-patched
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+  copr:
+    - atim/starship
+    - trixieua/mutter-patched
   keys:
     - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
   optfix:

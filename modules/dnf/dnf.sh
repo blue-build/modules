@@ -18,14 +18,8 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       repo="${REPOS[$i]}"
       repo="${repo//%OS_VERSION%/${OS_VERSION}}"
       REPOS[$i]="${repo//[$'\t\r\n ']}"
-      # Remove spaces/newlines for all repos other than COPR
-      if [[ "${repo}" != "COPR "* ]]; then
-        REPOS[$i]="${repo//[$'\t\r\n ']}"
-      else
-        REPOS[$i]="${repo}"
-      fi
   done
-  # dnf config-manager & dnf copr don't support adding multiple repositories at once, hence why for/done loop is used
+  # dnf config-manager doesn't support adding multiple repositories at once, hence why for/done loop is used
   for repo in "${REPOS[@]}"; do
       if [[ "${repo}" =~ ^https?:\/\/.* ]]; then
         echo "Adding repository URL: '${repo}'"
@@ -33,9 +27,21 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
       elif [[ "${repo}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/dnf/${repo}" ]]; then
         echo "Adding repository file: '${repo##*/}'"
         dnf -y config-manager addrepo --from-repofile="${CONFIG_DIRECTORY}/dnf/${repo}"
-      elif [[ "${repo}" == "COPR "* ]]; then
-        echo "Adding COPR repository: '${repo#COPR }'"
-        dnf -y copr enable "${repo#COPR }"
+      fi
+  done
+fi
+
+# Pull in COPR repos
+get_json_array COPR_REPOS 'try .["copr"][]' "${1}"
+if [[ ${#COPR_REPOS[@]} -gt 0 ]]; then
+  echo "Adding COPR repositories"
+  for repo in "${COPR_REPOS[@]}"; do
+      if [[ "${repo}" == *"/"* ]]; then
+        echo "Adding COPR repository: '${repo}'"
+        dnf copr enable "${repo}"
+      else
+        echo "ERROR: You didn't provide COPR repository in proper format, it should be in 'user/project' format."
+        exit 1
       fi    
   done
 fi

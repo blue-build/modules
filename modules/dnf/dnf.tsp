@@ -11,6 +11,9 @@ model DnfModule {
     /** List of links to .repo files to download into /etc/yum.repos.d/. */
     repos?: Array<string>;
 
+    /** List of COPR project repos to download into /etc/yum.repos.d/. */
+    copr?: Array<string>;
+
     /** List of links to key files to import for installing from custom repositories. */
     keys?: Array<string>;
 
