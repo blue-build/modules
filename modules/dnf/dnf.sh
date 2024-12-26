@@ -38,7 +38,7 @@ if [[ ${#COPR_REPOS[@]} -gt 0 ]]; then
   for repo in "${COPR_REPOS[@]}"; do
       if [[ "${repo}" == *"/"* ]]; then
         echo "Adding COPR repository: '${repo}'"
-        dnf copr enable "${repo}"
+        dnf -y copr enable "${repo}"
       else
         echo "ERROR: You didn't provide COPR repository in proper format, it should be in 'user/project' format."
         exit 1
