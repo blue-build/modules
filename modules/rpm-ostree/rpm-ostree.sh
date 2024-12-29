@@ -42,16 +42,32 @@ fi
 # Create symlinks to fix packages that create directories in /opt
 get_json_array OPTFIX 'try .["optfix"][]' "$1"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
+    LIB_EXEC_DIR="/usr/libexec/bluebuild"
+    SYSTEMD_DIR="/etc/systemd/system"
+    MODULE_DIR="/tmp/modules/rpm-ostree"
+
+    if ! [ -x "${LIB_EXEC_DIR}/optfix.sh" ]; then
+        mkdir -p "${LIB_EXEC_DIR}"
+        cp "${MODULE_DIR}/optfix.sh" "${LIB_EXEC_DIR}/"
+        chmod +x "${LIB_EXEC_DIR}/optfix.sh"
+    fi
+
+    if ! [ -f "${SYSTEMD_DIR}/bluebuild-optfix.service" ]; then
+        cp "${MODULE_DIR}/bluebuild-optfix.service" "${SYSTEMD_DIR}/"
+        systemctl enable bluebuild-optfix.service
+    fi
+
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
     mkdir -p "/var/opt"
-    ln -s "/var/opt"  "/opt"
+    ln -fs "/var/opt"  "/opt"
+
     # Create symlinks for each directory specified in recipe.yml
     for OPTPKG in "${OPTFIX[@]}"; do
         OPTPKG="${OPTPKG%\"}"
         OPTPKG="${OPTPKG#\"}"
         mkdir -p "/usr/lib/opt/${OPTPKG}"
-        ln -s "../../usr/lib/opt/${OPTPKG}" "/var/opt/${OPTPKG}"
+        ln -fs "/usr/lib/opt/${OPTPKG}" "/var/opt/${OPTPKG}"
         echo "Created symlinks for ${OPTPKG}"
     done
 fi
