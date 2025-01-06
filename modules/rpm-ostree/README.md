@@ -26,7 +26,7 @@ The module can also replace base RPM packages with packages from COPR repo. Unde
 [Removed packages are still present in the underlying ostree repository](https://coreos.github.io/rpm-ostree/administrator-handbook/#removing-a-base-package), what `remove` does is kind of like hiding them from the system, it doesn't free up storage space.
 :::
 
-Additionally, the `rpm-ostree` module supports a temporary (waiting for `rpm-ostree` issue [#233](https://github.com/coreos/rpm-ostree/issues/233)) fix for packages that install into `/opt/`. Installation for packages that install into folder names declared under `optfix:` are fixed using some symlinks.
+Additionally, the `rpm-ostree` module supports a temporary (waiting for `rpm-ostree` issue [#233](https://github.com/coreos/rpm-ostree/issues/233)) fix for packages that install into `/opt/`. Installation for packages that install into folder names declared under `optfix:` are fixed using some symlinks. Directory path in `/opt/` for those packages should be provided in recipe, like in Example Configuration.
 
 ## Known issues
 

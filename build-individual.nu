@@ -66,7 +66,7 @@ let images = ls modules | each { |moduleDir|
         let latest = ($versioned | last)
         ($versioned
             | update (($versioned | length) - 1) # update the last / latest item in list
-            ($latest | update "tags" ($latest.tags | append latest_tag)) # append tag which should only be given to the latest version
+            ($latest | update "tags" ($latest.tags | append $latest_tag)) # append tag which should only be given to the latest version
         )
 
     }

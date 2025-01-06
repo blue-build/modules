@@ -11,7 +11,7 @@ model GnomeExtensionsModule {
     /** List of GNOME extensions to install. 
      * (case sensitive extension names or extension IDs from https://extensions.gnome.org/)
     */
-    install?: Array<string>;
+    install?: Array<string | integer>;
 
     /** List of system GNOME extensions to uninstall. 
      * Only use this to remove extensions not installed by your package manager. Those extensions should be uninstalled using the package manager instead.
