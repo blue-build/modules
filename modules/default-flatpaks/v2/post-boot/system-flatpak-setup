@@ -1,4 +1,4 @@
-#!/usr/bin/env nu
+#!/usr/libexec/bluebuild/nu/nu
 
 const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
 const configPath = $"($usrSharePath)/configuration.yaml"

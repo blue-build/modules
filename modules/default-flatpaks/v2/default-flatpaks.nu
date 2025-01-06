@@ -1,4 +1,4 @@
-#!/usr/bin/env nu
+#!/usr/libexec/bluebuild/nu/nu
 
 const flathubURL = "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
