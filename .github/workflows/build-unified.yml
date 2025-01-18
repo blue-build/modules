@@ -1,6 +1,8 @@
 name: build-unified
 on:
   push:
+    branches:
+      - main
     paths-ignore: # don't rebuild if only documentation has changed
       - "**.md"
   pull_request:
