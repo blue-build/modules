@@ -60,22 +60,22 @@ model DefaultFlatpaksV2 {
     type: "default-flatpaks@v2" | "default-flatpaks@latest" | "default-flatpaks";
 
     configurations: Array<{
-        /** Whether to notify users about Flatpak installation (default: true). */
-        notify?: boolean;
+        /** Whether to notify users about Flatpak installation. */
+        notify?: boolean = true;
 
-        /** Whether to perform this configuration for system-wide or separately for each user (default: user). */
-        scope?: "system" | "user";
+        /** Whether to perform this configuration for system-wide or separately for each user. */
+        scope?: "system" | "user" = "user";
 
-        /** Details of the Flatpak repository to set up. (default: flathub) */
+        /** Details of the Flatpak repository to set up. If omitted, Flathub will be used by default. */
         repo?: {
-            /** Flatpak repository URL (default: https://dl.flathub.org/repo/flathub.flatpakrepo). */
-            url?: string;
+            /** Flatpak repository URL. */
+            url?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo";
 
-            /** Flatpak repository name (default: flathub). */
-            name?: string;
+            /** Flatpak repository name. */
+            name?: string = "flathub";
 
-            /** Flatpak repository formatted title (default: Flathub). */
-            title?: string;
+            /** Flatpak repository formatted title. */
+            title?: string = "Flathub";
         };
 
         /** List of Flatpak IDs to install from the repo. */
