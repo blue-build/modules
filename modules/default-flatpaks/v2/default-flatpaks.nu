@@ -63,7 +63,7 @@ def main [configStr: string] {
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.service" /usr/lib/systemd/system/system-flatpak-setup.service
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/system-flatpak-setup.timer" /usr/lib/systemd/system/system-flatpak-setup.timer
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.service" /usr/lib/systemd/user/user-flatpak-setup.service
-    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.timer" /usr/lib/systemd/system/user-flatpak-setup.timer
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup.timer" /usr/lib/systemd/user/user-flatpak-setup.timer
     systemctl enable --force system-flatpak-setup.timer
     systemctl enable --force --global user-flatpak-setup.timer
 
