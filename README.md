@@ -1,4 +1,4 @@
-# BlueBuild Modules &nbsp; [![build-ublue](https://github.com/blue-build/modules/actions/workflows/build.yml/badge.svg)](https://github.com/blue-build/modules/actions/workflows/build.yml)
+# BlueBuild Modules &nbsp; [![build-individual](https://github.com/blue-build/modules/actions/workflows/build-individual.yml/badge.svg)](https://github.com/blue-build/modules/actions/workflows/build-individual.yml)
 
 This repository contains the default official module repository for [BlueBuild](https://blue-build.org/). See [./modules/](./modules/) for the module source code. See the [website](https://blue-build.org/reference/module/) for module documentation. See [How to make a custom module](https://blue-build.org/how-to/making-modules/) and [Contributing](https://blue-build.org/learn/contributing/) for help with making custom modules and contributing.
 
