@@ -6,12 +6,16 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 def main [] {
     let configFile = open $configPath
 
+    let keepFedora = configFile.configurations | where scope == system | any {|config|
+        $config.repo.url == "oci+https://registry.fedoraproject.org"
+    }
+
     let systemRemotes = (flatpak remotes --system --columns name | split row "\n")
-    if ($systemRemotes | any {|remote| $remote == "fedora" or $remote == "fedora-testing"}) {
+    if (not $keepFedora and $systemRemotes | any {|remote| $remote == "fedora" or $remote == "fedora-testing"}) {
         /usr/bin/gnome-software --quit
         /usr/lib/fedora-third-party/fedora-third-party-opt-out
         /usr/bin/fedora-third-party disable
-
+        
         if ($systemRemotes | any {|remote| $remote == "fedora"}) {
             flatpak remote-delete --system fedora --force
         }
@@ -19,7 +23,15 @@ def main [] {
             flatpak remote-delete --system fedora-testing --force
         }
 
-        # TODO remove Fedora Flatpaks
+        let fedoraApps = flatpak list --system --app --columns=origin,application | detect columns --no-headers | where column0 == fedora | get column1
+        if ($fedoraApps | length > 0) {
+            flatpak remove --system --noninteractive ...$fedoraApps
+        }
+
+        let fedoraRuntimes = flatpak list --system --runtime --columns=origin,application,arch,branch | detect columns --no-headers | where column0 == fedora | each {|i| $"($i.column1)/($i.column2)/($i.column3)" }
+        if ($fedoraRuntimes | length > 0) {
+            flatpak remove --system --noninteractive ...$fedoraRuntimes
+        }
     }
 
     $configFile.configurations | where scope == system | each { |config|
