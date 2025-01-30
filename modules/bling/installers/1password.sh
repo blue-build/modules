@@ -89,14 +89,15 @@ if [ -d /usr/share/applications ]; then
   # xdg-desktop-menu will only be available if xdg-utils is installed, which is likely but not guaranteed
   if [ -n "$(which xdg-desktop-menu)" ]; then
     xdg-desktop-menu install --mode system --novendor /usr/lib/1Password/resources/1password.desktop
+    xdg-desktop-menu forceupdate
   else
     install -m0644 /usr/lib/1Password/resources/1password.desktop /usr/share/applications
   fi
 fi
 if [ -d /usr/share/icons ]; then
   cp -rf /usr/lib/1Password/resources/icons/* /usr/share/icons/
-  # Update theme mtime to indicate update
-  touch /usr/share/icons/hicolor
+  # Update icon cache
+  gtk-update-icon-cache -f -t /usr/share/icons/hicolor/
 fi
 
 chgrp "${GID_ONEPASSWORD}" "${BROWSER_SUPPORT_PATH}"
