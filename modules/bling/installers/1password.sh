@@ -83,6 +83,22 @@ chmod 4755 /usr/lib/1Password/chrome-sandbox
 # It only hardens it against environmental tampering.
 BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
 
+
+# Add .desktop file and icons
+if [ -d /usr/share/applications ]; then
+  # xdg-desktop-menu will only be available if xdg-utils is installed, which is likely but not guaranteed
+  if [ -n "$(which xdg-desktop-menu)" ]; then
+    xdg-desktop-menu install --mode system --novendor /usr/lib/1Password/resources/1password.desktop
+  else
+    install -m0644 /usr/lib/1Password/resources/1password.desktop /usr/share/applications
+  fi
+fi
+if [ -d /usr/share/icons ]; then
+  cp -rf /usr/lib/1Password/resources/icons/* /usr/share/icons/
+  # Update theme mtime to indicate update
+  touch /usr/share/icons/hicolor
+fi
+
 chgrp "${GID_ONEPASSWORD}" "${BROWSER_SUPPORT_PATH}"
 chmod g+s "${BROWSER_SUPPORT_PATH}"
 
