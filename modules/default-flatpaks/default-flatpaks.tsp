@@ -1,9 +1,13 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/default-flatpaks-v1.json")
 @jsonSchema("/modules/default-flatpaks-latest.json")
-model DefaultFlatpaksModule {
+model DefaultFlatpaksModuleLatest {
+  ...DefaultFlatpaksModuleV1;
+}
+
+@jsonSchema("/modules/default-flatpaks-v1.json")
+model DefaultFlatpaksModuleV1 {
   /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
    * https://blue-build.org/reference/modules/default-flatpaks/
    */

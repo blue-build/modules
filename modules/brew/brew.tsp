@@ -1,9 +1,13 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/brew-v1.json")
 @jsonSchema("/modules/brew-latest.json")
-model BrewModule {
+model BrewModuleLatest {
+  ...BrewModuleV1;
+}
+
+@jsonSchema("/modules/brew-v1.json")
+model BrewModuleV1 {
   /** The brew module installs Homebrew / Linuxbrew at build time and ensures the package manager remains up-to-date.
    * https://blue-build.org/reference/modules/brew/
    */

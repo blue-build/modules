@@ -1,9 +1,13 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/rpm-ostree-v1.json")
 @jsonSchema("/modules/rpm-ostree-latest.json")
-model RpmOstreeModule {
+model RpmOstreeModuleLatest {
+  ...RpmOstreeModuleV1;
+}
+
+@jsonSchema("/modules/rpm-ostree-v1.json")
+model RpmOstreeModuleV1 {
   /** The rpm-ostree module offers pseudo-declarative package and repository management using rpm-ostree.
    * https://blue-build.org/reference/modules/rpm-ostree/
    */
