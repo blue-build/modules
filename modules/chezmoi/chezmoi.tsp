@@ -1,34 +1,39 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/chezmoi.json")
-model ChezmoiModule {
-    /** The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
-     * https://blue-build.org/reference/modules/chezmoi/
-    */
-    type: "chezmoi";
+@jsonSchema("/modules/chezmoi-latest.json")
+model ChezmoiModuleLatest {
+  ...ChezmoiModuleV1;
+}
 
-    /** Git repository to initialize. */
-    repository: string;
+@jsonSchema("/modules/chezmoi-v1.json")
+model ChezmoiModuleV1 {
+  /** The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
+   * https://blue-build.org/reference/modules/chezmoi/
+   */
+  type: "chezmoi" | "chezmoi@v1" | "chezmoi@latest";
 
-    /** Git branch of the chezmoi repository. */
-    branch?: string = "";
+  /** Git repository to initialize. */
+  repository: string;
 
-    /** Whether to enable the modules services globally for all users, if false users need to enable services manually. */
-    "all-users"?: boolean = true;
+  /** Git branch of the chezmoi repository. */
+  branch?: string = "";
 
-    /** Dotfiles will be updated with this interval. */
-    "run-every"?: string = "1d";
+  /** Whether to enable the modules services globally for all users, if false users need to enable services manually. */
+  `all-users`?: boolean = true;
 
-    /** Dotfile updates will wait this long after a boot before running. */
-    "wait-after-boot"?: string = "5m";
+  /** Dotfiles will be updated with this interval. */
+  `run-every`?: string = "1d";
 
-    /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. */
-    "disable-init"?: boolean = false;
+  /** Dotfile updates will wait this long after a boot before running. */
+  `wait-after-boot`?: string = "5m";
 
-    /** Disable the timer that updates chezmoi with the set interval. */
-    "disable-update"?: boolean = false;
+  /** Disable the service that initializes `repository` on users that are logged in or have linger enabled UI. */
+  `disable-init`?: boolean = false;
 
-    /** What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace". */
-    "file-conflict-policy"?: "skip" | "replace" = "skip";
+  /** Disable the timer that updates chezmoi with the set interval. */
+  `disable-update`?: boolean = false;
+
+  /** What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace". */
+  `file-conflict-policy`?: "skip" | "replace" = "skip";
 }

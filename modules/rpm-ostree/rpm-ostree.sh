@@ -90,8 +90,9 @@ if [[ ${#INSTALL_PKGS[@]} -gt 0 ]]; then
         HTTPS_INSTALL=true
         HTTPS_PKGS+=("${INSTALL_PKGS[$i]}")
       elif [[ ! "${PKG}" =~ ^https?:\/\/.* ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${PKG}" ]]; then
+        INSTALL_PKGS[$i]="${CONFIG_DIRECTORY}/rpm-ostree/${PKG}"
         LOCAL_INSTALL=true
-        LOCAL_PKGS+=("${CONFIG_DIRECTORY}/rpm-ostree/${PKG}")
+        LOCAL_PKGS+=("${INSTALL_PKGS[$i]}")
       else
         CLASSIC_INSTALL=true
         CLASSIC_PKGS+=("${PKG}")

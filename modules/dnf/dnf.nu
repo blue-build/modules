@@ -1,51 +1,78 @@
 #!/usr/bin/env nu
 
-def repos [$repos: record]: nothing -> nothing {
+# Handle adding/removing repo files and COPR repos.
+# 
+# This command returns an object containing the repos
+# that were added to allow for cleaning up afterwards.
+def repos [$repos: record]: nothing -> record {
   let repos = $repos
     | default [] keys
 
-  match $repos.files? {
+  let cleanup_repos = match $repos.files? {
+    # Add repos if it's a list
     [..$files] => {
-      add_repos $files
+      add_repos ($files | default [])
     }
-    { add: [..$add] } => {
-      add_repos $add
-    }
-    { remove: [..$remove] } => {
-      remove_repos $remove
-    }
+    # Add and remove repos
     {
       add: [..$add]
       remove: [..$remove]
     } => {
-      add_repos $add
-      remove_repos $remove
+      let repos = add_repos ($add | default [])
+      remove_repos ($remove | default [])
+      $repos
     }
+    # Add repos
+    { add: [..$add] } => {
+      add_repos ($add | default [])
+    }
+    # Remove repos
+    { remove: [..$remove] } => {
+      remove_repos ($remove | default [])
+      []
+    }
+    _ => []
   }
 
-  match $repos.copr? {
+  let cleanup_coprs = match $repos.copr? {
+    # Enable repos if it's a list
     [..$coprs] => {
-      add_coprs $coprs
+      add_coprs ($coprs | default [])
     }
-    { enable: [..$enable] } => {
-      add_coprs $enable
-    }
-    { disable: [..$disable] } => {
-      disable_coprs $disable
-    }
+    # Enable and disable repos
     {
       enable: [..$enable]
       disable: [..$disable]
     } => {
-      add_coprs $enable
-      disable_coprs $disable
+      let coprs = add_coprs ($enable | default [])
+      disable_coprs ($disable | default [])
+      $coprs
     }
+    # Enable repos
+    { enable: [..$enable] } => {
+      add_coprs ($enable | default [])
+    }
+    # Disable repos
+    { disable: [..$disable] } => {
+      disable_coprs ($disable | default [])
+      []
+    }
+    _ => []
   }
 
   add_keys $repos.keys
+
+  {
+    copr: $cleanup_coprs
+    files:  $cleanup_repos
+  }
 }
 
-def add_repos [$repos: list]: nothing -> nothing {
+# Adds a list of repo files for `dnf` to use
+# for installing packages.
+#
+# Returns a list of IDs of the repos added
+def add_repos [$repos: list]: nothing -> list<string> {
   if ($repos | is-not-empty) {
     print $'(ansi green)Adding repositories:(ansi reset)'
 
@@ -61,15 +88,16 @@ def add_repos [$repos: list]: nothing -> nothing {
       }
 
     for $repo in $repos {
+      let repo_path = [$env.CONFIG_DIRECTORY dnf $repo] | path join
       let repo = if ($repo | str starts-with 'https://') or ($repo | str starts-with 'http://') {
         print $"Adding repository URL: (ansi cyan)'($repo)'(ansi reset)"
         $repo
-      } else if ($repo | str ends-with '.repo') and ($'($env.CONFIG_DIRECTORY)/dnf/($repo)' | path exists) {
+      } else if ($repo | str ends-with '.repo') and ($repo_path | path exists) {
         print $"Adding repository file: (ansi cyan)'($repo)'(ansi reset)"
-        $env.CONFIG_DIRECTORY | path join dnf $repo
+        $repo_path
       } else {
         return (error make {
-          msg: $"(ansi red)Urecognized repo (ansi cyan)'($repo)'(ansi reset)"
+          msg: $"(ansi red)Unrecognized repo (ansi cyan)'($repo)'(ansi reset)"
           label: {
             span: (metadata $repo).span
             text: 'Found in config'
@@ -78,19 +106,40 @@ def add_repos [$repos: list]: nothing -> nothing {
       }
 
       try {
-        ^dnf -y config-manager addrepo --from-repofile $repo
+        ^dnf5 -y config-manager addrepo --from-repofile $repo
       }
     }
   }
+
+  # Get a list of paths of all new repo files added
+  let repo_files = $repos
+    | each {|repo|
+      [/ etc yum.repos.d ($repo | path basename)] | path join 
+    }
+
+  # Get a list of info for every repo installed
+  let repo_info = try { ^dnf5 repo list --json }
+    | from json
+    | get id
+    | par-each {|repo|
+      try { ^dnf5 repo info --json $repo }
+        | from json
+    }
+    | flatten
+
+  # Return the IDs of all repos that were added
+  $repo_info
+    | filter {|repo|
+      $repo.repo_file_path in $repo_files
+    }
+    | get id
 }
 
+# Remove a list of repos. The list must be the IDs of the repos.
 def remove_repos [$repos: list]: nothing -> nothing {
   if ($repos | is-not-empty) {
     print $'(ansi green)Removing repositories:(ansi reset)'
-    let repos = $repos
-      | each {
-        str trim
-      }
+    let repos = $repos | str trim
     $repos
       | each {
         print $'- (ansi cyan)($in)(ansi reset)'
@@ -98,16 +147,37 @@ def remove_repos [$repos: list]: nothing -> nothing {
 
     for $repo in $repos {
       let repo = try {
-        ^dnf repo info --json $repo | from json
+        ^dnf5 repo info --json $repo | from json
       }
 
-      print $'Removing file: (ansi cyan)($repo.repo_file_path)(ansi reset)'
-      rm -f ($repo.repo_file_path)
+      for $file in $repo.repo_file_path {
+        print $'Removing file: (ansi cyan)($file)(ansi reset)'
+        rm -f $file
+      }
     }
   }
 }
 
-def add_coprs [$copr_repos: list]: nothing -> nothing {
+def check_copr []: string -> string {
+  let is_copr = ($in | split row / | length) == 2
+
+  if not $is_copr {
+    return (error make {
+      msg: $"(ansi red)The string '(ansi cyan)($in)(ansi red)' is not recognized as a COPR repo(ansi reset)"
+      label: {
+        span: (metadata $is_copr).span
+        text: 'Checks if string is a COPR repo'
+      }
+    })
+  }
+
+  $in
+}
+
+# Enable a list of COPR repos. The COPR repo ID has a '/' in the name.
+#
+# This will error if a COPR repo ID is invalid.
+def add_coprs [$copr_repos: list]: nothing -> list<string> {
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
     $copr_repos
@@ -116,26 +186,18 @@ def add_coprs [$copr_repos: list]: nothing -> nothing {
       }
 
     for $copr in $copr_repos {
-      let is_copr = ($copr | split row / | length) == 2
-
-      if not $is_copr {
-        return (error make {
-          msg: $"(ansi red)The string '(ansi cyan)($copr)(ansi red)' is not recognized as a COPR repo(ansi reset)"
-          label: {
-            span: (metadata $is_copr).span
-            text: 'Checks if string is a COPR repo'
-          }
-        })
-      }
-
       print $"Adding COPR repository: (ansi cyan)'($copr)'(ansi reset)"
       try {
-        ^dnf -y copr enable $copr
+        ^dnf5 -y copr enable ($copr | check_copr)
       }
     }
   }
+  $copr_repos
 }
 
+# Disable a list of COPR repos. The COPR repo ID has a '/' in the name.
+#
+# This will error if a COPR repo ID is invalid.
 def disable_coprs [$copr_repos: list]: nothing -> nothing {
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
@@ -145,26 +207,15 @@ def disable_coprs [$copr_repos: list]: nothing -> nothing {
       }
 
     for $copr in $copr_repos {
-      let is_copr = ($copr | split row / | length) == 2
-
-      if not $is_copr {
-        return (error make {
-          msg: $"(ansi red)The string '(ansi cyan)($copr)(ansi red)' is not recognized as a COPR repo(ansi reset)"
-          label: {
-            span: (metadata $is_copr).span
-            text: 'Checks if string is a COPR repo'
-          }
-        })
-      }
-
       print $"Disabling COPR repository: (ansi cyan)'($copr)'(ansi reset)"
       try {
-        ^dnf -y copr disable $copr
+        ^dnf5 -y copr disable ($copr| check_copr)
       }
     }
   }
 }
 
+# Add a list of keys for integrity checking repos.
 def add_keys [$keys: list]: nothing -> nothing {
   if ($keys | is-not-empty) {
     print $'(ansi green)Adding keys:(ansi reset)'
@@ -185,6 +236,11 @@ def add_keys [$keys: list]: nothing -> nothing {
   }
 }
 
+# Setup /opt directory symlinks to allow certain packages to install.
+#
+# Each entry must be the directory name that the application expects
+# to install into /opt. A systemd unit will be installed to setup
+# symlinks on boot of the OS.
 def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
   const LIB_EXEC_DIR = '/usr/libexec/bluebuild'
   const SYSTEMD_DIR = '/etc/systemd/system'
@@ -224,11 +280,13 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
     }
 
     for $opt in $optfix_pkgs {
-      let lib_dir = $LIB_OPT_DIR | path join $opt
+      let lib_dir = [$LIB_OPT_DIR $opt] | path join
+      let var_opt_dir = [$VAR_OPT_DIR $opt] | path join
+
       mkdir $lib_dir
 
       try {
-        ^ln -sf $lib_dir ($VAR_OPT_DIR | path join $opt)
+        ^ln -sf $lib_dir $var_opt_dir
       }
 
       print $"Created symlinks for '(ansi cyan)($opt)(ansi reset)'"
@@ -236,6 +294,7 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
   }
 }
 
+# Remove group packages.
 def group_remove [remove: record]: nothing -> nothing {
   let remove_list = $remove
     | default [] packages
@@ -249,24 +308,26 @@ def group_remove [remove: record]: nothing -> nothing {
       }
 
     try {
-      ^dnf -y group remove ...($remove_list)
+      ^dnf5 -y group remove ...($remove_list)
     }
   }
 }
 
+# Install group packages.
 def group_install [install: record]: nothing -> nothing {
   let install = $install
-    | default true install-weak-dependencies
-    | default false skip-unavailable-packages
-    | default false skip-broken-packages
-    | default false allow-erasing-packages
+    | default true install-weak-deps
+    | default false skip-unavailable
+    | default false skip-broken
+    | default false allow-erasing
+    | default false with-optional
     | default [] packages
   let install_list = $install
     | get packages
     | each { str trim }
 
   if ($install_list | is-not-empty) {
-    print $'(ansi cyan)Installing group packages:(ansi reset)'
+    print $'(ansi green)Installing group packages:(ansi reset)'
     $install_list
       | each {
         print $'- (ansi cyan)($in)(ansi reset)'
@@ -274,34 +335,39 @@ def group_install [install: record]: nothing -> nothing {
 
     mut args = []
 
-    let weak_arg = if $install.install-weak-dependencies {
+    let weak_arg = if $install.install-weak-deps {
       '--setopt=install_weak_deps=True'
     } else {
       '--setopt=install_weak_deps=False'
     }
 
-    if $install.skip-unavailable-packages {
+    if $install.skip-unavailable {
       $args = $args | append '--skip-unavailable'
     }
 
-    if $install.skip-broken-packages {
+    if $install.skip-broken {
       $args = $args | append '--skip-broken'
     }
 
-    if $install.allow-erasing-packages {
+    if $install.allow-erasing {
       $args = $args | append '--allowerasing'
     }
 
+    if $install.with-optional {
+      $args = $args | appent '--with-optional'
+    }
+
     try {
-      ^dnf -y $weak_arg group install --refresh ...($args) ...($install_list)
+      ^dnf5 -y $weak_arg group install --refresh ...($args) ...($install_list)
     }
   }
 }
 
+# Remove packages.
 def remove_pkgs [remove: record]: nothing -> nothing {
   let remove = $remove
     | default [] packages
-    | default true remove-unused-dependencies
+    | default true auto-remove
 
   if ($remove.packages | is-not-empty) {
     print $'(ansi green)Removing packages:(ansi reset)'
@@ -312,40 +378,76 @@ def remove_pkgs [remove: record]: nothing -> nothing {
 
     mut args = []
 
-    if not $remove.remove-unused-dependencies {
+    if not $remove.auto-remove {
       $args = $args | append '--no-autoremove'
     }
 
     try {
-      ^dnf -y remove ...($args) ...($remove.packages)
+      ^dnf5 -y remove ...($args) ...($remove.packages)
     }
   }
 }
 
+# Install packages.
+#
+# You can specify a list of packages to install, and you can
+# specify a list of packages for a specific repo to install.
 def install_pkgs [install: record]: nothing -> nothing {
   let install = $install
-    | default true install-weak-dependencies
-    | default false skip-unavailable-packages
-    | default false skip-broken-packages
-    | default false allow-erasing-packages
+    | default true install-weak-deps
+    | default false skip-unavailable
+    | default false skip-broken
+    | default false allow-erasing
     | default [] packages
 
+  # Build up args to use on `dnf`
+  mut args = []
+
+  let weak_arg = if $install.install-weak-deps {
+    '--setopt=install_weak_deps=True'
+  } else {
+    '--setopt=install_weak_deps=False'
+  }
+
+  if $install.skip-unavailable {
+    $args = $args | append '--skip-unavailable'
+  }
+
+  if $install.skip-broken {
+    $args = $args | append '--skip-broken'
+  }
+
+  if $install.allow-erasing {
+    $args = $args | append '--allowerasing'
+  }
+
+  # Gather lists of the various ways a package is installed
+  # to report back to the user.
   let install_list = $install.packages
-    | each { str replace --all '%OS_VERSION%' $env.OS_VERSION | str trim }
+    | filter {|pkg|
+      ($pkg | describe) == 'string'
+    }
+    | str replace --all '%OS_VERSION%' $env.OS_VERSION
+    | str trim
   let http_list = $install_list
     | filter {|pkg|
       ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
     }
   let local_list = $install_list
+    | each {|pkg|
+      [$env.CONFIG_DIRECTORY dnf $pkg] | path join
+    }
     | filter {|pkg|
-      ($env.CONFIG_DIRECTORY | path join dnf $pkg | path exists)
+      ($pkg | path exists)
     }
   let normal_list = $install_list
     | filter {|pkg|
       not (
         ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
       ) and not (
-        ($env.CONFIG_DIRECTORY | path join dnf $pkg | path exists)
+        [$env.CONFIG_DIRECTORY dnf $pkg]
+          | path join
+          | path exists
       )
     }
 
@@ -374,41 +476,52 @@ def install_pkgs [install: record]: nothing -> nothing {
         }
     }
 
-    mut args = []
+    try {
+      (^dnf5
+        -y
+        $weak_arg
+        install
+        --refresh
+        ...($args)
+        ...($http_list)
+        ...($local_list)
+        ...($normal_list))
+    }
+  }
 
-    let weak_arg = if $install.weak-deps {
-      '--setopt=install_weak_deps=True'
-    } else {
-      '--setopt=install_weak_deps=False'
+  # Get all the entries that have a repo specified.
+  let repo_install_list = $install.packages
+    | filter {|pkg|
+      'repo' in $pkg and 'packages' in $pkg
     }
 
-    if $install.skip-unav {
-      $args = $args | append '--skip-unavailable'
-    }
+  for $repo_install in $repo_install_list {
+    let repo = $repo_install.repo
+    let packages = $repo_install.packages
 
-    if $install.skip-broken {
-      $args = $args | append '--skip-broken'
-    }
-
-    if $install.allow-erase {
-      $args = $args | append '--allowerasing'
-    }
+    print $'(ansi green)Installing packages for repo (ansi cyan)($repo)(ansi green):(ansi reset)'
+    $packages
+      | each {
+        print $'- (ansi cyan)($in)(ansi reset)'
+      }
 
     try {
-      ^dnf -y $weak_arg install --refresh ...($args) ...($install_list)
+      ^dnf5 -y $weak_arg install --refresh --repoid $repo ...($args) ...($packages)
     }
   }
 }
 
+# Perform a replace operation for a list of packages that
+# you want to replace from a specific repo.
 def replace_pkgs [replace_list: list]: nothing -> nothing {
   if ($replace_list | is-not-empty) {
     for $replacement in $replace_list {
       let replacement = $replacement
         | default [] packages
-        | default true install-weak-dependencies
-        | default false skip-unavailable-packages
-        | default false skip-broken-packages
-        | default false allow-erasing-packages
+        | default true install-weak-deps
+        | default false skip-unavailable
+        | default false skip-broken
+        | default false allow-erasing
 
       if ($replacement.packages | is-not-empty) {
         let has_from_repo = 'from-repo' in $replacement
@@ -434,13 +547,13 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
 
         mut args = []
 
-        let weak_arg = if $replacement.weak-deps {
+        let weak_arg = if $replacement.install-weak-deps {
           '--setopt=install_weak_deps=True'
         } else {
           '--setopt=install_weak_deps=False'
         }
 
-        if $replacement.skip-unav {
+        if $replacement.skip-unavailable {
           $args = $args | append '--skip-unavailable'
         }
 
@@ -448,12 +561,12 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
           $args = $args | append '--skip-broken'
         }
 
-        if $replacement.allow-erase {
+        if $replacement.allow-erasing {
           $args = $args | append '--allowerasing'
         }
 
         try {
-          ^dnf -y $weak_arg distro-sync --refresh ...($args) --repo $from_repo ...($replacement.packages)
+          ^dnf5 -y $weak_arg distro-sync --refresh ...($args) --repo $from_repo ...($replacement.packages)
         }
       }
     }
@@ -468,8 +581,12 @@ def main [config: string]: nothing -> nothing {
     | default {} group-install
     | default {} remove
     | default {} install
+    | default [] optfix
     | default [] replace
   let has_dnf5 = ^rpm -q dnf5 | complete
+  let should_cleanup = $config.repos
+    | default false cleanup
+    | get cleanup
 
   if $has_dnf5.exit_code != 0 {
     return (error make {
@@ -481,10 +598,17 @@ def main [config: string]: nothing -> nothing {
     })
   }
 
-  repos $config.repos
+  let cleanup_repos = repos $config.repos
+  run_optfix $config.optfix
   group_remove $config.group-remove
   group_install $config.group-install
   remove_pkgs $config.remove
   install_pkgs $config.install
   replace_pkgs $config.replace
+
+  if $should_cleanup {
+    print $'(ansi green)Cleaning up added repos(ansi reset)'
+    remove_repos $cleanup_repos.files
+    disable_coprs $cleanup_repos.copr
+  }
 }

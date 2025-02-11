@@ -1,49 +1,54 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/default-flatpaks.json")
-model DefaultFlatpaksModule {
-    /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
-     * https://blue-build.org/reference/modules/default-flatpaks/
-    */
-    type: "default-flatpaks";
+@jsonSchema("/modules/default-flatpaks-latest.json")
+model DefaultFlatpaksModuleLatest {
+  ...DefaultFlatpaksModuleV1;
+}
 
-    /** Whether to send a notification after the install/uninstall is finished. */
-    notify?: boolean = false;
+@jsonSchema("/modules/default-flatpaks-v1.json")
+model DefaultFlatpaksModuleV1 {
+  /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
+   * https://blue-build.org/reference/modules/default-flatpaks/
+   */
+  type: "default-flatpaks" | "default-flatpaks@v1" | "default-flatpaks@latest";
 
-    /** Configuration for system flatpaks. */
-    system?: {
-        /** URL of the repo to add. Defaults to Flathub's URL. */
-        "repo-url"?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+  /** Whether to send a notification after the install/uninstall is finished. */
+  notify?: boolean = false;
 
-        /** Name for the repo to add. */
-        "repo-name"?: string = "flathub";
+  /** Configuration for system flatpaks. */
+  system?: {
+    /** URL of the repo to add. Defaults to Flathub's URL. */
+    `repo-url`?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo";
 
-        /** Pretty title for the repo to add. Not set by default. */
-        "repo-title"?: string;
+    /** Name for the repo to add. */
+    `repo-name`?: string = "flathub";
 
-        /** List of Flatpak IDs to install from the repo. */
-        install?: Array<string>;
+    /** Pretty title for the repo to add. Not set by default. */
+    `repo-title`?: string;
 
-        /** List of Flatpak IDs to remove. */
-        remove?: Array<string>;
-    };
+    /** List of Flatpak IDs to install from the repo. */
+    install?: Array<string>;
 
-    /** Configuration for user flatpaks. */
-    user?: {
-        /** URL of the repo to add. Defaults to Flathub's URL. */
-        "repo-url"?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+    /** List of Flatpak IDs to remove. */
+    remove?: Array<string>;
+  };
 
-        /** Name for the repo to add. */
-        "repo-name"?: string = "flathub";
+  /** Configuration for user flatpaks. */
+  user?: {
+    /** URL of the repo to add. Defaults to Flathub's URL. */
+    `repo-url`?: string = "https://dl.flathub.org/repo/flathub.flatpakrepo";
 
-        /** Pretty title for the repo to add. Not set by default. */
-        "repo-title"?: string;
+    /** Name for the repo to add. */
+    `repo-name`?: string = "flathub";
 
-        /** List of Flatpak IDs to install from the repo. */
-        install?: Array<string>;
+    /** Pretty title for the repo to add. Not set by default. */
+    `repo-title`?: string;
 
-        /** List of Flatpak IDs to remove. */
-        remove?: Array<string>;
-    };
+    /** List of Flatpak IDs to install from the repo. */
+    install?: Array<string>;
+
+    /** List of Flatpak IDs to remove. */
+    remove?: Array<string>;
+  };
 }

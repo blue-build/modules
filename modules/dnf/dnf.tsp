@@ -15,43 +15,46 @@ model DnfModuleV1 {
   type: "dnf" | "dnf@v1" | "dnf@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
-  repos?: DnfRepo;
+  repos?: Repo;
 
   /** List of folder names under /opt/ to enable for installing into. */
   optfix?: Array<string>;
 
   /** Configuration of RPM groups removal. */
-  `group-remove`?: DnfGroupRemove;
+  `group-remove`?: GroupRemove;
 
   /** Configuration of RPM groups install. */
-  `group-install`?: DnfGroupInstall;
+  `group-install`?: GroupInstall;
 
   /** Configuration of RPM packages removal. */
-  remove?: DnfRemove;
+  remove?: Remove;
 
   /** Configuration of RPM packages install. */
-  install?: DnfInstall;
+  install?: Install;
 
   /** List of configurations for replacing packages from another repo. */
-  replace?: Array<DnfReplace>;
+  replace?: Array<Replace>;
 }
 
-model DnfRepo {
+model Repo {
+  /** Cleans up the repos added in the same step after packages are installed. */
+  cleanup?: boolean = false;
+
   /** List of paths or URLs to .repo files to import */
-  files?: Array<string> | DnfRepoFiles;
+  files?: Array<string> | RepoFiles;
 
   /**
    * List of COPR project repos to add.
    * You can also specify 2 lists
    * instead to 'enable' or 'disable' COPR repos.
    */
-  copr?: Array<string> | DnfRepoCopr;
+  copr?: Array<string> | RepoCopr;
 
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
 }
 
-model DnfRepoFiles {
+model RepoFiles {
   /** List of repo files/URLs to add. */
   add?: Array<string>;
 
@@ -63,7 +66,7 @@ model DnfRepoFiles {
   remove?: Array<string>;
 }
 
-model DnfRepoCopr {
+model RepoCopr {
   /** List of COPR repos to enable */
   enable?: Array<string>;
 
@@ -71,24 +74,14 @@ model DnfRepoCopr {
   disable?: Array<string>;
 }
 
-model DnfInstall {
+model Install {
   /** List of RPM packages to install. */
-  packages: Array<string | DnfInstallRepo>;
+  packages: Array<string | InstallRepo>;
 
-  /** Whether to install weak dependencies during the RPM package install or not. */
-  `install-weak-dependencies`?: boolean = true;
-
-  /** Whether to continue with the RPM package install if there are no packages available in the repository. */
-  `skip-unavailable-packages`?: boolean = false;
-
-  /** Whether to continue with the RPM package install if there are broken packages. */
-  `skip-broken-packages`?: boolean = false;
-
-  /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM package install. */
-  `allow-erasing-packages`?: boolean = false;
+  ...InstallCommon;
 }
 
-model DnfInstallRepo {
+model InstallRepo {
   /** The repo to use when installing packages */
   repo: string;
 
@@ -96,52 +89,49 @@ model DnfInstallRepo {
   packages: Array<string>;
 }
 
-model DnfRemove {
+model Remove {
   /** List of RPM packages to remove. */
   packages: Array<string>;
 
   /** Whether to remove unused dependencies during removal operation. */
-  `remove-unused-dependencies`?: boolean = true;
+  `auto-remove`?: boolean = true;
 }
 
-model DnfReplace {
+model Replace {
   /** URL to the source COPR repo for the new packages. */
   `from-repo`: string;
 
   /** List of packages to replace using packages from the defined repo. */
   packages: Array<string>;
 
-  /** Whether to install weak dependencies during the replacement or not. */
-  `install-weak-dependencies`?: boolean = true;
-
-  /** Whether to continue with the replacement if there are no packages available on the system to replace. */
-  `skip-unavailable-packages`?: boolean = false;
-
-  /** Whether to continue with the replacement if there are broken packages in the system during the replacement. */
-  `skip-broken-packages`?: boolean = false;
-
-  /** Whether to allow erasing (removal) of packages in case of dependency problems during the replacement. */
-  `allow-erasing-packages`?: boolean = false;
+  ...InstallCommon;
 }
 
-model DnfGroupInstall {
+model GroupInstall {
   /** List of RPM groups to install. */
   packages: Array<string>;
 
-  /** Whether to install weak dependencies during the RPM group install or not. */
-  `install-weak-dependencies`?: boolean = true;
+  /** Include optional packages from group. */
+  `with-optional`?: boolean = false;
 
-  /** Whether to continue with the RPM group install if there are no packages available in the repository. */
-  `skip-unavailable-packages`?: boolean = false;
-
-  /** Whether to continue with the RPM group install if there are broken packages. */
-  `skip-broken-packages`?: boolean = false;
-
-  /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM group install. */
-  `allow-erasing-packages`?: boolean = false;
+  ...InstallCommon;
 }
 
-model DnfGroupRemove {
+model GroupRemove {
   /** List of RPM groups to remove. */
   packages: Array<string>;
+}
+
+model InstallCommon {
+  /** Whether to install weak dependencies during the RPM group install or not. */
+  `install-weak-deps`?: boolean = true;
+
+  /** Whether to continue with the RPM group install if there are no packages available in the repository. */
+  `skip-unavailable`?: boolean = false;
+
+  /** Whether to continue with the RPM group install if there are broken packages. */
+  `skip-broken`?: boolean = false;
+
+  /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM group install. */
+  `allow-erasing`?: boolean = false;
 }
