@@ -126,7 +126,7 @@ check_flatpak_id_validity_from_flathub () {
         echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
         if [[ ${#INSTALL[@]} -gt 0 ]]; then
           for id in "${INSTALL[@]}"; do
-            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+            if ! wget --spider "${URL}/${id}" >/dev/null 2>&1; then
               echo "ERROR: This ${INSTALL_LEVEL} install flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
               exit 1
             fi
@@ -134,7 +134,7 @@ check_flatpak_id_validity_from_flathub () {
         fi
         if [[ ${#REMOVE[@]} -gt 0 ]]; then  
           for id in "${REMOVE[@]}"; do
-            if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
+            if ! wget --spider "${URL}/${id}" >/dev/null 2>&1; then
               echo "ERROR: This ${INSTALL_LEVEL} removal flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
               exit 1
             fi
