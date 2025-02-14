@@ -117,7 +117,7 @@ check_flatpak_id_validity_from_flathub () {
         USER_FLATHUB_REPO=""
       fi  
       FLATHUB_REPO_LINK="https://dl.flathub.org/repo/flathub.flatpakrepo"
-      URL="https://flathub.org/apps"
+      URL="https://flathub.org/api/v2/stats"
       CONFIG_FILE="${1}"
       INSTALL_LEVEL="${2}"
       get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
