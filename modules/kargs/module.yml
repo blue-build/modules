@@ -2,7 +2,7 @@ name: kargs
 shortdesc: The kargs module injects kernel arguments into the image.
 example: |
   type: kargs
-  arch: x86_64, aarch64
+  arch: x86_64, aarch64 # only injects kernel arguments to those specific OS architectures
   kargs:
     - console=ttyS0,114800n8
     - mitigations=on
