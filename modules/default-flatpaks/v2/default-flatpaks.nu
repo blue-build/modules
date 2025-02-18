@@ -84,7 +84,7 @@ def checkFlathub [packages: list<string>] {
     print "Checking if configured packages exist on Flathub..."
     let unavailablePackages = $packages | each { |package| 
         try {
-            http get $"https://flathub.org/api/v2/stats/($package)"
+            let _ = http get $"https://flathub.org/api/v2/stats/($package)"
         } catch {
             $package
         }
