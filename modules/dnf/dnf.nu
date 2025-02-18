@@ -329,7 +329,7 @@ def group_install [install: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    mut args = [...($install | install_args)]
+    mut args = $install | install_args
 
     if $install.with-optional {
       $args = $args | appent '--with-optional'
