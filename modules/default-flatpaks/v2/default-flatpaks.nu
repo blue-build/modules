@@ -75,12 +75,18 @@ def main [configStr: string] {
 
 def checkFlathub [packages: list<string>] {
     print "Checking if configured packages exist on Flathub..."
-    $packages | each { |package| 
+    let unavailablePackages = $packages | each { |package| 
         try {
-            let _ = http get $"https://flathub.org/apps/($package)"
+            http get $"https://flathub.org/api/v2/stats/($package)"
         } catch {
-            print $"(ansi red_bold)Package(ansi reset) (ansi default_italic)($package)(ansi reset) (ansi red_bold)does not exist on Flathub, which is the specified repository for it to be installed from.(ansi reset)"
-            exit 1
+            $package
         }
+    }
+    if ($unavailablePackages | length) > 0 {
+        print $"(ansi red_bold)The following packages are not available on Flathub, which is the specified repository for them to be installed from:(ansi reset) "
+        for package in $unavailablePackages {
+            print $"(ansi default_italic)($package)(ansi reset)"
+        }
+        exit 1
     }
 }
