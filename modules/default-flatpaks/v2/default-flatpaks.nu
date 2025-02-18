@@ -19,6 +19,13 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 
 def main [configStr: string] {
     let config = $configStr | from yaml
+
+    let columns = $config | columns
+    if ($columns | where $it == "system" | length) > 0 or ($columns | where $it == "user" | length) > 0 {
+        print $"(ansi yellow_reverse)HINT(ansi reset) It seems like you are trying to run the new (ansi default_italic)default-flatpaks@v2(ansi reset) module with configuration made for the older version."
+        print $"You can read the docs to migrate to the new and improved module, or just change your configuration to use (ansi default_italic)default-flatpaks@v1(ansi reset) instead."
+        exit 1
+    }
     
     let configurations = $config.configurations | each {|configuration|
         mut merged = $defaultConfiguration | merge $configuration
