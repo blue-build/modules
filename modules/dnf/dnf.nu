@@ -316,10 +316,6 @@ def group_remove [remove: record]: nothing -> nothing {
 # Install group packages.
 def group_install [install: record]: nothing -> nothing {
   let install = $install
-    | default true install-weak-deps
-    | default false skip-unavailable
-    | default false skip-broken
-    | default false allow-erasing
     | default false with-optional
     | default [] packages
   let install_list = $install
@@ -333,32 +329,21 @@ def group_install [install: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    mut args = []
-
-    let weak_arg = if $install.install-weak-deps {
-      '--setopt=install_weak_deps=True'
-    } else {
-      '--setopt=install_weak_deps=False'
-    }
-
-    if $install.skip-unavailable {
-      $args = $args | append '--skip-unavailable'
-    }
-
-    if $install.skip-broken {
-      $args = $args | append '--skip-broken'
-    }
-
-    if $install.allow-erasing {
-      $args = $args | append '--allowerasing'
-    }
+    mut args = [...($install | install_args)]
 
     if $install.with-optional {
       $args = $args | appent '--with-optional'
     }
 
     try {
-      ^dnf5 -y $weak_arg group install --refresh ...($args) ...($install_list)
+      (^dnf5
+        -y
+        ($install | weak_arg)
+        group
+        install
+        --refresh
+        ...($args)
+        ...($install_list))
     }
   }
 }
@@ -388,26 +373,14 @@ def remove_pkgs [remove: record]: nothing -> nothing {
   }
 }
 
-# Install packages.
-#
-# You can specify a list of packages to install, and you can
-# specify a list of packages for a specific repo to install.
-def install_pkgs [install: record]: nothing -> nothing {
-  let install = $install
-    | default true install-weak-deps
+# Build up args to use on `dnf`
+def install_args []: record -> list<string> {
+  let install = $in
     | default false skip-unavailable
     | default false skip-broken
     | default false allow-erasing
-    | default [] packages
 
-  # Build up args to use on `dnf`
   mut args = []
-
-  let weak_arg = if $install.install-weak-deps {
-    '--setopt=install_weak_deps=True'
-  } else {
-    '--setopt=install_weak_deps=False'
-  }
 
   if $install.skip-unavailable {
     $args = $args | append '--skip-unavailable'
@@ -420,6 +393,29 @@ def install_pkgs [install: record]: nothing -> nothing {
   if $install.allow-erasing {
     $args = $args | append '--allowerasing'
   }
+
+  $args
+}
+
+# Generate a weak deps argument
+def weak_arg []: record -> string {
+  let install =
+    | default true install-weak-deps
+
+  if $install.install-weak-deps {
+    '--setopt=install_weak_deps=True'
+  } else {
+    '--setopt=install_weak_deps=False'
+  }
+}
+
+# Install packages.
+#
+# You can specify a list of packages to install, and you can
+# specify a list of packages for a specific repo to install.
+def install_pkgs [install: record]: nothing -> nothing {
+  let install = $install
+    | default [] packages
 
   # Gather lists of the various ways a package is installed
   # to report back to the user.
@@ -479,10 +475,10 @@ def install_pkgs [install: record]: nothing -> nothing {
     try {
       (^dnf5
         -y
-        $weak_arg
+        ($install | weak_arg)
         install
         --refresh
-        ...($args)
+        ...($install | install_args)
         ...($http_list)
         ...($local_list)
         ...($normal_list))
@@ -506,7 +502,15 @@ def install_pkgs [install: record]: nothing -> nothing {
       }
 
     try {
-      ^dnf5 -y $weak_arg install --refresh --repoid $repo ...($args) ...($packages)
+      (^dnf5
+        -y
+        ($repo_install | weak_arg)
+        install
+        --refresh
+        --repoid
+        $repo
+        ...($repo_install | install_args)
+        ...($packages))
     }
   }
 }
@@ -518,10 +522,6 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
     for $replacement in $replace_list {
       let replacement = $replacement
         | default [] packages
-        | default true install-weak-deps
-        | default false skip-unavailable
-        | default false skip-broken
-        | default false allow-erasing
 
       if ($replacement.packages | is-not-empty) {
         let has_from_repo = 'from-repo' in $replacement
@@ -545,28 +545,15 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
             print $'- (ansi cyan)($in)(ansi reset)'
           }
 
-        mut args = []
-
-        let weak_arg = if $replacement.install-weak-deps {
-          '--setopt=install_weak_deps=True'
-        } else {
-          '--setopt=install_weak_deps=False'
-        }
-
-        if $replacement.skip-unavailable {
-          $args = $args | append '--skip-unavailable'
-        }
-
-        if $replacement.skip-broken {
-          $args = $args | append '--skip-broken'
-        }
-
-        if $replacement.allow-erasing {
-          $args = $args | append '--allowerasing'
-        }
-
         try {
-          ^dnf5 -y $weak_arg distro-sync --refresh ...($args) --repo $from_repo ...($replacement.packages)
+          (^dnf5
+            -y
+            ($replacement | weak_arg)
+            distro-sync
+            --refresh
+            ...($replacement | install_args)
+            --repo $from_repo
+            ...($replacement.packages))
         }
       }
     }
