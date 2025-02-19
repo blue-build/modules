@@ -1,5 +1,9 @@
 #!/usr/bin/env nu
 
+const NEGATIVO = 'negativo17-multimedia'
+const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-multimedia.repo'
+const RPMFUSION = 'rpmfusion'
+
 # Handle adding/removing repo files and COPR repos.
 # 
 # This command returns an object containing the repos
@@ -16,10 +20,10 @@ def repos [$repos: record]: nothing -> record {
     # Add and remove repos
     {
       add: [..$add]
-      remove: [..$remove]
+      disable: [..$remove]
     } => {
       let repos = add_repos ($add | default [])
-      remove_repos ($remove | default [])
+      disable_repos ($remove | default [])
       $repos
     }
     # Add repos
@@ -28,7 +32,7 @@ def repos [$repos: record]: nothing -> record {
     }
     # Remove repos
     { remove: [..$remove] } => {
-      remove_repos ($remove | default [])
+      disable_repos ($remove | default [])
       []
     }
     _ => []
@@ -60,11 +64,151 @@ def repos [$repos: record]: nothing -> record {
     _ => []
   }
 
+  nonfree_repos $repos.nonfree?
   add_keys $repos.keys
 
   {
     copr: $cleanup_coprs
-    files:  $cleanup_repos
+    files: $cleanup_repos
+  }
+}
+
+# Setup nonfree repos for rpmfusion or negativo17-multimedia.
+def nonfree_repos [repo_type?: string]: nothing -> list<string> {
+  match $repo_type {
+    $repo if $repo == $RPMFUSION => {
+      disable_negativo
+      enable_rpmfusion
+    }
+    $repo if $repo == $NEGATIVO => {
+      disable_rpmfusion
+      enable_negativo
+    }
+    null => [],
+    _ => {
+      error make {
+        msg: $"The only valid values are '($NEGATIVO)' and '($RPMFUSION)'"
+        label: {
+          text: 'Passed in value'
+          span: ($repo_type | metadata).span
+        }
+      }
+    }
+  }
+}
+
+# Enable rpmfusion repos
+def enable_rpmfusion []: nothing -> nothing {
+  print $'(ansi green)Enabling rpmfusion repos(ansi reset)'
+
+  if (^rpm -q rpmfusion-free-release | complete).exit_code != 0 {
+    try {
+      ^dnf5 -y install $'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-($env.OS_VERSION).noarch.rpm'
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-nonfree-release | complete).exit_code != 0 {
+    try {
+      ^dnf5 -y install $'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-($env.OS_VERSION).noarch.rpm'
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-free-release-tainted | complete).exit_code != 0 {
+    try {
+      ^dnf5 -y install rpmfusion-free-release-tainted
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-nonfree-release-tainted | complete).exit_code != 0 {
+    try {
+      ^dnf5 -y install rpmfusion-nonfree-release-tainted
+    } catch {
+      exit 1
+    }
+  }
+}
+
+# Disable rpmfusion repos
+def disable_rpmfusion []: nothing -> nothing {
+  print $'(ansi green)Removing rpmfusion repos(ansi reset)'
+
+  if (^rpm -q rpmfusion-free-release | complete).exit_code == 0 {
+    try {
+      ^dnf5 -y remove rpmfusion-free-release
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-nonfree-release | complete).exit_code == 0 {
+    try {
+      ^dnf5 -y remove rpmfusion-nonfree-release
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-free-release-tainted | complete).exit_code == 0 {
+    try {
+      ^dnf5 -y remove rpmfusion-free-release-tainted
+    } catch {
+      exit 1
+    }
+  }
+
+  if (^rpm -q rpmfusion-nonfree-release-tainted | complete).exit_code == 0 {
+    try {
+      ^dnf5 -y remove rpmfusion-nonfree-release-tainted
+    } catch {
+      exit 1
+    }
+  }
+}
+
+def negativo_repo_path []: nothing -> path {
+  [/ etc yum.repos.d ($NEGATIVO_URL | path basename)] | path join
+}
+
+# Enable negativo17-multimedia repos
+def enable_negativo []: nothing -> nothing {
+  print $'(ansi green)Enabling negativo17 repos(ansi reset)'
+
+  if not (negativo_repo_path | path exists) {
+    add_repos [$NEGATIVO_URL]
+  }
+
+  try {
+    ^dnf5 repo list --all --json
+  } catch {
+    exit 1
+  }
+    | from json
+    | find negativo17
+    | get id
+    | ansi strip
+    | each {|id|
+      [$'($id).enabled=1' $'($id).priority=90']
+    }
+    | flatten
+    | try {
+      ^dnf5 -y config-manager setopt ...($in)
+    } catch {
+      exit 1
+    }
+}
+
+# Disable negativo17-multimedia repos
+def disable_negativo []: nothing -> nothing {
+  print $'(ansi green)Disabling negativo17 repos(ansi reset)'
+
+  if (negativo_repo_path | path exists) {
+    rm -f (negativo_repo_path)
   }
 }
 
@@ -107,6 +251,8 @@ def add_repos [$repos: list]: nothing -> list<string> {
 
       try {
         ^dnf5 -y config-manager addrepo --from-repofile $repo
+      } catch {
+        exit 1
       }
     }
   }
@@ -118,25 +264,45 @@ def add_repos [$repos: list]: nothing -> list<string> {
     }
 
   # Get a list of info for every repo installed
-  let repo_info = try { ^dnf5 repo list --json }
+  let repo_info = try {
+    ^dnf5 repo list --all --json
+  } catch {
+    exit 1
+  }
     | from json
     | get id
     | par-each {|repo|
-      try { ^dnf5 repo info --json $repo }
+      try {
+        ^dnf5 repo info --json $repo
+      } catch {
+        exit 1
+      }
         | from json
     }
     | flatten
 
   # Return the IDs of all repos that were added
-  $repo_info
+  let repo_ids = $repo_info
     | filter {|repo|
       $repo.repo_file_path in $repo_files
     }
     | get id
+
+  $repo_ids
+    | each {
+      $'($in).enabled=1'
+    }
+    | try {
+      ^dnf5 -y config-manager setopt ...($in)
+    } catch {
+      exit 1
+    }
+
+  $repo_ids
 }
 
 # Remove a list of repos. The list must be the IDs of the repos.
-def remove_repos [$repos: list]: nothing -> nothing {
+def disable_repos [$repos: list]: nothing -> nothing {
   if ($repos | is-not-empty) {
     print $'(ansi green)Removing repositories:(ansi reset)'
     let repos = $repos | str trim
@@ -146,13 +312,11 @@ def remove_repos [$repos: list]: nothing -> nothing {
       }
 
     for $repo in $repos {
-      let repo = try {
-        ^dnf5 repo info --json $repo | from json
-      }
-
-      for $file in $repo.repo_file_path {
-        print $'Removing file: (ansi cyan)($file)(ansi reset)'
-        rm -f $file
+      print $'Disabling repo ($repo)'
+      try {
+        ^dnf5 config-manager setopt $'($repo).enabled=0'
+      } catch {
+        exit 1
       }
     }
   }
@@ -189,6 +353,8 @@ def add_coprs [$copr_repos: list]: nothing -> list<string> {
       print $"Adding COPR repository: (ansi cyan)'($copr)'(ansi reset)"
       try {
         ^dnf5 -y copr enable ($copr | check_copr)
+      } catch {
+        exit 1
       }
     }
   }
@@ -210,6 +376,8 @@ def disable_coprs [$copr_repos: list]: nothing -> nothing {
       print $"Disabling COPR repository: (ansi cyan)'($copr)'(ansi reset)"
       try {
         ^dnf5 -y copr disable ($copr| check_copr)
+      } catch {
+        exit 1
       }
     }
   }
@@ -231,6 +399,8 @@ def add_keys [$keys: list]: nothing -> nothing {
 
       try {
         ^rpm --import $key
+      } catch {
+        exit 1
       }
     }
   }
@@ -256,7 +426,9 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
       cp ($MODULE_DIR | path join $OPTFIX_SCRIPT) $'($LIB_EXEC_DIR)/'
 
       try {
-        chmod +x $'($LIB_EXEC_DIR | path join $OPTFIX_SCRIPT)'
+        ^chmod +x $'($LIB_EXEC_DIR | path join $OPTFIX_SCRIPT)'
+      } catch {
+        exit 1
       }
     }
 
@@ -265,6 +437,8 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
 
       try {
         ^systemctl enable $SERV_UNIT
+      } catch {
+        exit 1
       }
     }
 
@@ -277,6 +451,8 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
     mkdir $VAR_OPT_DIR
     try {
       ^ln -snf $VAR_OPT_DIR /opt
+    } catch {
+      exit 1
     }
 
     for $opt in $optfix_pkgs {
@@ -287,6 +463,8 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
 
       try {
         ^ln -sf $lib_dir $var_opt_dir
+      } catch {
+        exit 1
       }
 
       print $"Created symlinks for '(ansi cyan)($opt)(ansi reset)'"
@@ -309,6 +487,8 @@ def group_remove [remove: record]: nothing -> nothing {
 
     try {
       ^dnf5 -y group remove ...($remove_list)
+    } catch {
+      exit 1
     }
   }
 }
@@ -344,6 +524,8 @@ def group_install [install: record]: nothing -> nothing {
         --refresh
         ...($args)
         ...($install_list))
+    } catch {
+      exit 1
     }
   }
 }
@@ -369,6 +551,8 @@ def remove_pkgs [remove: record]: nothing -> nothing {
 
     try {
       ^dnf5 -y remove ...($args) ...($remove.packages)
+    } catch {
+      exit 1
     }
   }
 }
@@ -482,6 +666,8 @@ def install_pkgs [install: record]: nothing -> nothing {
         ...($http_list)
         ...($local_list)
         ...($normal_list))
+    } catch {
+      exit 1
     }
   }
 
@@ -511,6 +697,8 @@ def install_pkgs [install: record]: nothing -> nothing {
         $repo
         ...($repo_install | install_args)
         ...($packages))
+    } catch {
+      exit 1
     }
   }
 }
@@ -554,6 +742,8 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
             ...($replacement | install_args)
             --repo $from_repo
             ...($replacement.packages))
+        } catch {
+          exit 1
         }
       }
     }
@@ -595,7 +785,17 @@ def main [config: string]: nothing -> nothing {
 
   if $should_cleanup {
     print $'(ansi green)Cleaning up added repos(ansi reset)'
-    remove_repos $cleanup_repos.files
+    disable_repos $cleanup_repos.files
     disable_coprs $cleanup_repos.copr
+
+    match $config.repos.nonfree? {
+      $repo if $repo == $RPMFUSION => {
+        disable_rpmfusion
+      }
+      $repo if $repo == $NEGATIVO => {
+        disable_negativo
+      }
+      _ => {},
+    }
   }
 }

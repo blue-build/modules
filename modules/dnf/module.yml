@@ -15,6 +15,7 @@ example: |
       - trixieua/mutter-patched
     keys: # Add keys for repos
       - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    nonfree: rpmfusion # Enable either the `rpmfusion` or `negativo17-multimedia` repo
   # Performs symlinking for `/opt/` to allow certain packages to install
   optfix:
     - Tabby # needed because tabby installs into `/opt/Tabby/`
@@ -77,7 +78,7 @@ example: |
       add:
         - https://pkgs.tailscale.com/stable/fedora/tailscale.repo
       # Remove repos by specifying the repo ID
-      remove:
+      disable:
         - docker-ce-stable
     copr:
       # Enable COPR repos like the examples above
