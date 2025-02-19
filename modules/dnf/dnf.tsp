@@ -52,6 +52,15 @@ model Repo {
 
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
+
+  /**
+   * Enable one of the nonfree repos.
+   *
+   * This allows you to enable one of the nonfree repos.
+   * However, only one can be enabled at a time so if one
+   * is enabled, the other will be disabled if it is already enabled.
+   */
+  nonfree?: "negativo17-multimedia" | "rpmfusion";
 }
 
 model RepoFiles {
@@ -59,11 +68,11 @@ model RepoFiles {
   add?: Array<string>;
 
   /**
-   * List of repos to remove.
+   * List of repos to disable.
    * This must be the ID of the repo
    * as seen in `dnf5 repolist`.
    */
-  remove?: Array<string>;
+  disable?: Array<string>;
 }
 
 model RepoCopr {
