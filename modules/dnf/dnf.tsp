@@ -60,7 +60,7 @@ model Repo {
    * However, only one can be enabled at a time so if one
    * is enabled, the other will be disabled if it is already enabled.
    */
-  nonfree?: "negativo17-multimedia" | "rpmfusion";
+  nonfree?: "negativo17" | "rpmfusion";
 }
 
 model RepoFiles {
@@ -111,9 +111,17 @@ model Replace {
   `from-repo`: string;
 
   /** List of packages to replace using packages from the defined repo. */
-  packages: Array<string>;
+  packages: Array<string | Swap>;
 
   ...InstallCommon;
+}
+
+model Swap {
+  /** The package to be replaced. */
+  old: string;
+
+  /** The package to replace with. */
+  new: string;
 }
 
 model GroupInstall {
