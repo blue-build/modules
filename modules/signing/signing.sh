@@ -68,5 +68,5 @@ jq --arg image_registry "${IMAGE_REGISTRY}" \
 
 mv "/tmp/POLICY.tmp" "${POLICY_FILE}"
 
-mv "${MODULE_DIRECTORY}/signing/registry-config.yaml" "${CONTAINER_DIR}/registries.d/${IMAGE_REGISTRY}-${IMAGE_NAME_FILE}.yaml"
-sed -i "s ghcr.io/IMAGENAME ${IMAGE_REGISTRY}/${IMAGE_NAME} g" "${CONTAINER_DIR}/registries.d/${IMAGE_REGISTRY}-${IMAGE_NAME_FILE}.yaml"
+mv "${MODULE_DIRECTORY}/signing/registry-config.yaml" "${CONTAINER_DIR}/registries.d/${IMAGE_REGISTRY##*/}-${IMAGE_NAME_FILE}.yaml"
+sed -i "s ghcr.io/IMAGENAME ${IMAGE_REGISTRY}/${IMAGE_NAME} g" "${CONTAINER_DIR}/registries.d/${IMAGE_REGISTRY##*/}-${IMAGE_NAME_FILE}.yaml"
