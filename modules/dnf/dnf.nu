@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 
-const NEGATIVO = 'negativo17-multimedia'
-const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-multimedia.repo'
+const NEGATIVO = 'negativo17'
+const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-negativo17.repo'
 const RPMFUSION = 'rpmfusion'
 
 # Handle adding/removing repo files and COPR repos.
@@ -20,10 +20,10 @@ def repos [$repos: record]: nothing -> record {
     # Add and remove repos
     {
       add: [..$add]
-      disable: [..$remove]
+      remove: [..$remove]
     } => {
       let repos = add_repos ($add | default [])
-      disable_repos ($remove | default [])
+      remove_repos ($remove | default [])
       $repos
     }
     # Add repos
@@ -32,7 +32,7 @@ def repos [$repos: record]: nothing -> record {
     }
     # Remove repos
     { remove: [..$remove] } => {
-      disable_repos ($remove | default [])
+      remove_repos ($remove | default [])
       []
     }
     _ => []
@@ -90,7 +90,7 @@ def nonfree_repos [repo_type?: string]: nothing -> list<string> {
         msg: $"The only valid values are '($NEGATIVO)' and '($RPMFUSION)'"
         label: {
           text: 'Passed in value'
-          span: ($repo_type | metadata).span
+          span: (metadata $repo_type).span
         }
       }
     }
@@ -98,39 +98,30 @@ def nonfree_repos [repo_type?: string]: nothing -> list<string> {
 }
 
 # Enable rpmfusion repos
+#
+# See https://rpmfusion.org/Configuration
 def enable_rpmfusion []: nothing -> nothing {
+  const CISCO_REPO = 'fedora-cisco-openh264'
+
   print $'(ansi green)Enabling rpmfusion repos(ansi reset)'
 
+  mut repos = []
+
   if (^rpm -q rpmfusion-free-release | complete).exit_code != 0 {
-    try {
-      ^dnf5 -y install $'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-($env.OS_VERSION).noarch.rpm'
-    } catch {
-      exit 1
-    }
+    $repos = $repos | append $'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-($env.OS_VERSION).noarch.rpm'
   }
 
   if (^rpm -q rpmfusion-nonfree-release | complete).exit_code != 0 {
-    try {
-      ^dnf5 -y install $'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-($env.OS_VERSION).noarch.rpm'
-    } catch {
-      exit 1
-    }
+    $repos = $repos | append $'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-($env.OS_VERSION).noarch.rpm'
   }
 
-  if (^rpm -q rpmfusion-free-release-tainted | complete).exit_code != 0 {
-    try {
-      ^dnf5 -y install rpmfusion-free-release-tainted
-    } catch {
-      exit 1
-    }
-  }
+  install_pkgs { packages: $repos }
 
-  if (^rpm -q rpmfusion-nonfree-release-tainted | complete).exit_code != 0 {
-    try {
-      ^dnf5 -y install rpmfusion-nonfree-release-tainted
-    } catch {
-      exit 1
-    }
+  print $"(ansi green)Enabling '(ansi cyan)($CISCO_REPO)(ansi green)' repo for RPMFusion compatibility(ansi reset)"
+  try {
+    ^dnf5 config-manager setopt $'($CISCO_REPO).enabled=1'
+  } catch {
+    exit 1
   }
 }
 
@@ -138,50 +129,51 @@ def enable_rpmfusion []: nothing -> nothing {
 def disable_rpmfusion []: nothing -> nothing {
   print $'(ansi green)Removing rpmfusion repos(ansi reset)'
 
+  mut repos = []
+
   if (^rpm -q rpmfusion-free-release | complete).exit_code == 0 {
-    try {
-      ^dnf5 -y remove rpmfusion-free-release
-    } catch {
-      exit 1
-    }
+    $repos = $repos | append 'rpmfusion-free-release'
   }
 
   if (^rpm -q rpmfusion-nonfree-release | complete).exit_code == 0 {
-    try {
-      ^dnf5 -y remove rpmfusion-nonfree-release
-    } catch {
-      exit 1
-    }
+    $repos = $repos | append 'rpmfusion-nonfree-release'
   }
 
-  if (^rpm -q rpmfusion-free-release-tainted | complete).exit_code == 0 {
-    try {
-      ^dnf5 -y remove rpmfusion-free-release-tainted
-    } catch {
-      exit 1
-    }
-  }
-
-  if (^rpm -q rpmfusion-nonfree-release-tainted | complete).exit_code == 0 {
-    try {
-      ^dnf5 -y remove rpmfusion-nonfree-release-tainted
-    } catch {
-      exit 1
-    }
-  }
+  remove_pkgs { packages: $repos }
 }
 
-def negativo_repo_path []: nothing -> path {
-  [/ etc yum.repos.d ($NEGATIVO_URL | path basename)] | path join
+def negativo_repo_list []: nothing -> list<path> {
+  try {
+    ^dnf5 -y repo list --all --json | from json
+  } catch {
+    exit 1
+  }
+    | find negativo17
+    | get id
+    | ansi strip
+    | par-each {|repo|
+      try {
+        ^dnf5 -y repo info $repo --all --json | from json
+      } catch {
+        exit 1
+      }
+    }
+    | flatten
+    | get id
+    | uniq
 }
 
 # Enable negativo17-multimedia repos
 def enable_negativo []: nothing -> nothing {
   print $'(ansi green)Enabling negativo17 repos(ansi reset)'
 
-  if not (negativo_repo_path | path exists) {
-    add_repos [$NEGATIVO_URL]
+  let current_repo_list = negativo_repo_list
+
+  if ($current_repo_list | is-not-empty) {
+    print $'(ansi green)Cleaning up existing negativo17 repos(ansi reset)'
+    remove_repos $current_repo_list
   }
+  add_repos [$NEGATIVO_URL]
 
   try {
     ^dnf5 repo list --all --json
@@ -207,9 +199,7 @@ def enable_negativo []: nothing -> nothing {
 def disable_negativo []: nothing -> nothing {
   print $'(ansi green)Disabling negativo17 repos(ansi reset)'
 
-  if (negativo_repo_path | path exists) {
-    rm -f (negativo_repo_path)
-  }
+  remove_repos (negativo_repo_list)
 }
 
 # Adds a list of repo files for `dnf` to use
@@ -250,7 +240,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
       }
 
       try {
-        ^dnf5 -y config-manager addrepo --from-repofile $repo
+        ^dnf5 -y config-manager addrepo --overwrite --from-repofile $repo
       } catch {
         exit 1
       }
@@ -302,7 +292,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
 }
 
 # Remove a list of repos. The list must be the IDs of the repos.
-def disable_repos [$repos: list]: nothing -> nothing {
+def remove_repos [$repos: list]: nothing -> nothing {
   if ($repos | is-not-empty) {
     print $'(ansi green)Removing repositories:(ansi reset)'
     let repos = $repos | str trim
@@ -311,14 +301,21 @@ def disable_repos [$repos: list]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    for $repo in $repos {
-      print $'Disabling repo ($repo)'
-      try {
-        ^dnf5 config-manager setopt $'($repo).enabled=0'
-      } catch {
-        exit 1
+    $repos
+      | par-each {|repo|
+        try {
+          ^dnf5 -y repo info $repo --all --json | from json
+        } catch {
+          exit 1
+        }
       }
-    }
+      | flatten
+      | get repo_file_path
+      | uniq
+      | each {|file|
+        print $"Removing repo file '(ansi cyan)($file)(ansi reset)'"
+        rm -f $file
+      }
   }
 }
 
@@ -785,7 +782,7 @@ def main [config: string]: nothing -> nothing {
 
   if $should_cleanup {
     print $'(ansi green)Cleaning up added repos(ansi reset)'
-    disable_repos $cleanup_repos.files
+    remove_repos $cleanup_repos.files
     disable_coprs $cleanup_repos.copr
 
     match $config.repos.nonfree? {
@@ -797,5 +794,6 @@ def main [config: string]: nothing -> nothing {
       }
       _ => {},
     }
+    print $'(ansi green)Finished cleaning up repos(ansi reset)'
   }
 }

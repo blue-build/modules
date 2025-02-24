@@ -60,7 +60,7 @@ model Repo {
    * However, only one can be enabled at a time so if one
    * is enabled, the other will be disabled if it is already enabled.
    */
-  nonfree?: "negativo17-multimedia" | "rpmfusion";
+  nonfree?: "negativo17" | "rpmfusion";
 }
 
 model RepoFiles {
