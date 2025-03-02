@@ -8,3 +8,7 @@ https://containers.github.io/bootc/building/kernel-arguments.html
 Because the kargs are managed by `bootc`, to use this module it is required to be have it installed and to be using it for example for updating the image. This means that instead of `rpm-ostree update`, you need to use `bootc update` for kargs to get applied on the next boot.  
 
 To see which kargs are currently applied, you can issue `rpm-ostree kargs` command in a local terminal.
+
+To see which kargs are supported in the kernel, you can see [this detailed documentation](https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/kernel-parameters.txt?h=linux-6.13.y).  
+Switch the branch accordingly to the kernel version your image is on to get the updated version of the documentation.  
+Take a note it's possible that some working kargs are not in the documentation.
