@@ -9,6 +9,6 @@ Because the kargs are managed by `bootc`, to use this module it is required to b
 
 To see which kargs are currently applied, you can issue `rpm-ostree kargs` command in a local terminal.
 
-To see which kargs are supported in the kernel, you can see [this detailed documentation](https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/kernel-parameters.txt?h=linux-6.13.y).  
-Switch the branch accordingly to the kernel version your image is on to get the updated version of the documentation.  
+To see which kargs are supported in the kernel, you can see [this detailed documentation](https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/kernel-parameters.txt).  
+Switch the branch accordingly to the kernel version your image is on to get the more accurate version of the documentation.  
 Take a note it's possible that some working kargs are not in the documentation.
