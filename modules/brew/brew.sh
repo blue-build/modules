@@ -11,15 +11,18 @@ fi
 # Check if gcc is installed & install it if it's not
 # (add VanillaOS package manager in the future when it gets supported)
 if ! command -v gcc &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"gcc\" package, which is necessary for Brew to function"
+    dnf5 -y install gcc
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
-  else
-    echo "ERROR: \"gcc\" package could not be found"
-    echo "       Brew depends on \"gcc\" in order to function"
-    echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
-    exit 1
   fi  
+else
+  echo "ERROR: \"gcc\" package could not be found"
+  echo "       Brew depends on \"gcc\" in order to function"
+  echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
+  exit 1
 fi
 
 # Check if zstd is installed & install it if it's not
