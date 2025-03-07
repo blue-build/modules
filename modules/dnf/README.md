@@ -1,67 +1,182 @@
-# `dnf`
+# **`dnf` Module**
 
-The [`dnf`](https://docs.fedoraproject.org/en-US/quick-docs/dnf/) module offers pseudo-declarative package and repository management using `dnf5`.
+The `dnf` module offers pseudo-declarative package and repository management using `dnf5`.
 
-## Package installation
+## Package Installation
 
-- `install: packages:`
-- types of packages
-- `%OS_VERSION`
-- flags
-- from specific repos
-- https://packages.fedoraproject.org/
+### Install Packages
 
-## Package removal
+* Specify packages to install in the `install.packages` field
+* Use the `repo` parameter to specify a specific repository for installation
+* Use the `%OS_VERSION%` variable to automatically determine the operating system version
+* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
 
-- `remove: packages:` 
-- flags
+Example:
+```yaml
+type: dnf
+install:
+  packages:
+    - repo: brave-browser
+      packages:
+        - brave-browser
+    - starship
+```
 
-## Package group installation
+### Install Packages from URL or File
 
-- define
-- `group-install:` `packages:`
-- flags
-- from specific repos(?)
-- `dnf5 group list --hidden`
+* Specify a URL or file path in the `packages` field to install packages from a specific repository
+* Use the `%OS_VERSION%` variable to automatically determine the operating system version
 
-## Package group removal
+Example:
+```yaml
+type: dnf
+install:
+  packages:
+    - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
+```
 
-- `group-remove: packages:` 
-- flags
+### Install Packages from Specific Repositories
 
-## Package replacement
+* Specify a repository in the `repo` field to install packages from that repository
+* Use the `%OS_VERSION%` variable to automatically determine the operating system version
 
-- define
-- `replace:`
-- flags
+Example:
+```yaml
+type: dnf
+install:
+  packages:
+    - repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+      packages:
+        - mutter
+```
 
-## Repository management
+## Package Removal
 
-- define
-- `cleanup:`
+### Remove Packages
 
-### Adding COPR repos
+* Specify packages to remove in the `remove.packages` field
+* Use flags such as `auto-remove` to customize package removal
 
-- `copr:`
+Example:
+```yaml
+type: dnf
+remove:
+  packages:
+    - firefox
+    - firefox-langpacks
+```
 
-### Adding repo files
+## Package Group Installation
 
-- `files:`
-- from url and from file
-- `%OS_VERSION`
+### Define Packages Groups
 
-### Disabling repositories
+* Specify a package group in the `group-install.packages` field
+* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
 
-- `enable:`
-- `disable:`
+Example:
+```yaml
+type: dnf
+group-install:
+  packages:
+    - cosmic-desktop
+    - window-managers
+```
 
-### Adding repo keys
+## Package Group Removal
 
-- define
-- `keys:`
-- example
+### Remove Packages Groups
 
-### Optfix
+* Specify a package group in the `group-remove.packages` field
 
-- define
-- `optfix:`
+Example:
+```yaml
+type: dnf
+group-remove:
+  packages:
+    - development-tools
+```
+
+## Package Replacement
+
+### Replace Packages
+
+* Specify a replacement package in the `replace.from-repo` field
+* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
+
+Example:
+```yaml
+type: dnf
+replace:
+  - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+    packages:
+      - mutter
+```
+
+## Repository Management
+
+### Add COPR Repositories
+
+* Specify a list of COPR repositories in the `copr` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  copr:
+    - atim/starship
+    - trixieua/mutter-patched
+```
+
+### Add Repository Files
+
+* Specify a URL or file path in the `files` field to add repository files
+* Use flags such as `cleanup` to customize repository management
+
+Example:
+```yaml
+type: dnf
+repos:
+  files:
+    - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+```
+
+### Disable Repositories
+
+* Specify a list of repositories to disable in the `enable` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  enable:
+    - repo1
+    - repo2
+```
+
+### Add Repository Keys
+
+* Specify a list of repository keys in the `keys` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  keys:
+    - key1
+    - key2
+```
+
+## Optfix
+
+### Fix Optfix
+
+* Specify a list of packages to fix optfix issues in the `optfix` field
+
+Example:
+```yaml
+type: dnf
+optfix:
+  packages:
+    - package1
+    - package2
+```
