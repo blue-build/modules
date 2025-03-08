@@ -17,12 +17,12 @@ if ! command -v gcc &> /dev/null; then
   elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
-  fi  
-else
-  echo "ERROR: \"gcc\" package could not be found"
-  echo "       Brew depends on \"gcc\" in order to function"
-  echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
-  exit 1
+  else
+    echo "ERROR: \"gcc\" package could not be found"
+    echo "       Brew depends on \"gcc\" in order to function"
+    echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
+    exit 1
+  fi
 fi
 
 # Check if zstd is installed & install it if it's not
@@ -35,7 +35,7 @@ if ! command -v zstd &> /dev/null; then
     echo "       Brew's installer depends on \"zstd\" in order to function"
     echo "       Please include \"zstd\" in the list of packages to install with the system package manager"
     exit 1
-  fi  
+  fi
 fi
 
 # Module-specific directories and paths
@@ -266,7 +266,7 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/etc/environment")
   if [[ -n "${CURRENT_ENVIRONMENT}" ]]; then
     if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
-      echo "Disabling Brew analytics"  
+      echo "Disabling Brew analytics"
       sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/etc/environment"
     elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
       echo "Disabling Brew analytics"
