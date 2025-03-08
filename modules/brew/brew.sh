@@ -27,7 +27,10 @@ fi
 
 # Check if zstd is installed & install it if it's not
 if ! command -v zstd &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"zstd\" package, which is necessary for Brew to function"
+    dnf5 -y install zstd
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"zstd\" package, which is necessary for Brew to function"
     rpm-ostree install zstd
   else
