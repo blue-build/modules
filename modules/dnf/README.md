@@ -180,3 +180,8 @@ optfix:
     - package1
     - package2
 ```
+
+## Known issues
+
+Replacing the kernel with `dnf` module is not done cleanly & some remaints of old kernel will be present.  
+Please use `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
