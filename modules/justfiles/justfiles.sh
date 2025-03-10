@@ -71,13 +71,17 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
         IMPORT_LINE="import \"${DEST_FOLDER}/${JUSTFILE}\""
         
         # Skip the import line if it already exists, else append it to import file
-        if grep -wq "${IMPORT_LINE}" "${IMPORT_FILE}"; then
-            echo "- Skipped: '${IMPORT_LINE}' (already present)"
-        else
-            echo "${IMPORT_LINE}" >> "${IMPORT_FILE}"
+        if [[ -f "${IMPORT_FILE}" ]]; then
+          if grep -wq "${IMPORT_LINE}" "${IMPORT_FILE}"; then
+              echo "- Skipped: '${IMPORT_LINE}' (already present)"
+          else
+              echo "${IMPORT_LINE}" >> "${IMPORT_FILE}"
+              echo "- Added: '${IMPORT_LINE}'"
+          fi
+        else  
+            echo "${IMPORT_LINE}" > "${IMPORT_FILE}"
             echo "- Added: '${IMPORT_LINE}'"
-        fi
-
+        fi  
     done
 
 done
