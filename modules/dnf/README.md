@@ -2,6 +2,61 @@
 
 The `dnf` module offers pseudo-declarative package and repository management using `dnf5`.
 
+## Repository Management
+
+### Add COPR Repositories
+
+* Specify a list of COPR repositories in the `copr` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  copr:
+    - atim/starship
+    - trixieua/mutter-patched
+```
+
+### Add Repository Files
+
+* Specify a URL or file path in the `files` field to add repository files
+* Use flags such as `cleanup` to customize repository management
+
+Example:
+```yaml
+type: dnf
+repos:
+  files:
+    - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+    - custom-file.repo # file path for /files/dnf/custom-file.repo
+```
+
+### Disable Repositories
+
+* Specify a list of repositories to disable in the `enable` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  enable:
+    - repo1
+    - repo2
+```
+
+### Add Repository Keys
+
+* Specify a list of repository keys in the `keys` field
+
+Example:
+```yaml
+type: dnf
+repos:
+  keys:
+    - key1
+    - key2
+```
+
 ## Package Installation
 
 ### Install Packages
@@ -9,7 +64,7 @@ The `dnf` module offers pseudo-declarative package and repository management usi
 * Specify packages to install in the `install.packages` field
 * Use the `repo` parameter to specify a specific repository for installation
 * Use the `%OS_VERSION%` variable to automatically determine the operating system version
-* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
+* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
 
 Example:
 ```yaml
@@ -33,6 +88,7 @@ type: dnf
 install:
   packages:
     - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
+    - custom-file.rpm # file path for /files/dnf/custom-file.rpm
 ```
 
 ### Install Packages from Specific Repositories
@@ -71,7 +127,7 @@ remove:
 ### Define Packages Groups
 
 * Specify a package group in the `group-install.packages` field
-* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
+* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
 
 Example:
 ```yaml
@@ -110,60 +166,6 @@ replace:
   - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
     packages:
       - mutter
-```
-
-## Repository Management
-
-### Add COPR Repositories
-
-* Specify a list of COPR repositories in the `copr` field
-
-Example:
-```yaml
-type: dnf
-repos:
-  copr:
-    - atim/starship
-    - trixieua/mutter-patched
-```
-
-### Add Repository Files
-
-* Specify a URL or file path in the `files` field to add repository files
-* Use flags such as `cleanup` to customize repository management
-
-Example:
-```yaml
-type: dnf
-repos:
-  files:
-    - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-```
-
-### Disable Repositories
-
-* Specify a list of repositories to disable in the `enable` field
-
-Example:
-```yaml
-type: dnf
-repos:
-  enable:
-    - repo1
-    - repo2
-```
-
-### Add Repository Keys
-
-* Specify a list of repository keys in the `keys` field
-
-Example:
-```yaml
-type: dnf
-repos:
-  keys:
-    - key1
-    - key2
 ```
 
 ## Optfix
