@@ -159,7 +159,8 @@ group-remove:
 ### Replace Packages
 
 * Specify a replacement package in the `replace.from-repo` field
-* Use flags such as `skip-unavailable`, `install-weak-deps`, and `skip-broken` to customize package installation
+* If new package for replacement is named differently, you can use `old/new` format as outlined below
+* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
 
 Example:
 ```yaml
@@ -168,6 +169,10 @@ replace:
   - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
     packages:
       - mutter
+  - from-repo: fedora
+    packages:
+      - old: OpenCL-ICD-Loader
+        new: ocl-icd
 ```
 
 ## Optfix
