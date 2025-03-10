@@ -682,7 +682,7 @@ def install_pkgs [install: record]: nothing -> nothing {
     let repo = $repo_install.repo
     let packages = $repo_install.packages
 
-    print $'(ansi green)Installing packages for repo (ansi cyan)($repo)(ansi green):(ansi reset)'
+    print $'(ansi green)Installing packages from repo (ansi cyan)($repo)(ansi green):(ansi reset)'
     $packages
       | each {
         print $'- (ansi cyan)($in)(ansi reset)'
