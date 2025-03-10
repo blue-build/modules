@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 #shellcheck disable=all
-if status --is-interactive and if test $(/usr/bin/id -u) -ne 0
+if status --is-interactive; and test $(/usr/bin/id -u) -ne 0
     if [ -d /home/linuxbrew/.linuxbrew ]
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         if test -d (brew --prefix)/share/fish/completions
