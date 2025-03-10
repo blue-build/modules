@@ -31,17 +31,19 @@ repos:
     - custom-file.repo # file path for /files/dnf/custom-file.repo
 ```
 
-### Disable Repositories
+### Disable/Enable Repositories
 
-* Specify a list of repositories to disable in the `enable` field
+* Specify a list of repositories to disable or enable in the `disable` or `enable` field
 
 Example:
 ```yaml
 type: dnf
 repos:
-  enable:
+  disable:
     - repo1
     - repo2
+  enable:
+    - repo3
 ```
 
 ### Add Repository Keys
