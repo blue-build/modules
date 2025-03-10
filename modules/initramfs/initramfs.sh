@@ -29,16 +29,14 @@ KERNEL_MODULES_PATH="/usr/lib/modules"
 readarray -t QUALIFIED_KERNEL < <(find "${KERNEL_MODULES_PATH}" -mindepth 1 -maxdepth 1 -type d -printf "%f\n")
 
 if [[ "${#QUALIFIED_KERNEL[@]}" -gt 1 ]]; then
-  echo "ERROR: There are several versions of kernel's initramfs."
-  echo "       Cannot determine which one to regenerate."
-  echo "       There is a possibility that you have multiple kernels installed in the image."
-  echo "       Please only include 1 kernel in the image to solve this issue."
-  exit 1
+  echo "NOTE: There are several versions of kernel's initramfs."
+  echo "      There is a possibility that you have multiple kernels installed in the image."
+  echo "      It is most ideal to have only 1 kernel, to make initramfs regeneration faster."
 fi
 
-INITRAMFS_IMAGE="${KERNEL_MODULES_PATH}/${QUALIFIED_KERNEL[*]}/initramfs.img"
-
-echo "Starting initramfs regeneration for kernel version: ${QUALIFIED_KERNEL[*]}"
-
-"${DRACUT}" --no-hostonly --kver "${QUALIFIED_KERNEL[*]}" --reproducible -v --add ostree -f "${INITRAMFS_IMAGE}"
-chmod 0600 "${INITRAMFS_IMAGE}"
+for qual_kernel in "${QUALIFIED_KERNEL[@]}"; do
+  INITRAMFS_IMAGE="${KERNEL_MODULES_PATH}/${qual_kernel}/initramfs.img"
+  echo "Starting initramfs regeneration for kernel version: ${qual_kernel}"
+  "${DRACUT}" --no-hostonly --kver "${qual_kernel}" --reproducible -v --add ostree -f "${INITRAMFS_IMAGE}"
+  chmod 0600 "${INITRAMFS_IMAGE}"
+done

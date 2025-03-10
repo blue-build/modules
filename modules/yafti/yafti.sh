@@ -31,7 +31,11 @@ echo "Downloading repo file ${REPO_URL}"
 curl -fLs --create-dirs "${REPO_URL}" -o "${STAGING_REPO_PATH}"
 echo "Downloaded repo file ${REPO_URL}"
 
-rpm-ostree install libadwaita yafti
+if command -v dnf5 &> /dev/null; then
+  dnf5 -y install libadwaita yafti
+elif command -v rpm-ostree &> /dev/null; then
+  rpm-ostree install libadwaita yafti
+fi
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo
