@@ -7,10 +7,16 @@ ENABLE_AKMODS_REPO() {
 
 INSTALL_RPM_FUSION() {
 if ! rpm -q rpmfusion-free-release &>/dev/null && ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
-  rpm-ostree install \
-      https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
-      https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm
-  previously_not_installed_rpm_fusion=true
+  if command -v dnf5 &> /dev/null; then
+    dnf5 -y install \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm
+  elif command -v rpm-ostree &> /dev/null; then  
+    rpm-ostree install \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${OS_VERSION}.noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${OS_VERSION}.noarch.rpm
+  fi
+  previously_not_installed_rpm_fusion=true    
 else
   previously_not_installed_rpm_fusion=false
 fi
@@ -18,7 +24,11 @@ fi
 
 UNINSTALL_RPM_FUSION() {
 if "${previously_not_installed_rpm_fusion}"; then
-  rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
+  if command -v dnf5 &> /dev/null; then
+    dnf5 -y remove rpmfusion-free-release rpmfusion-nonfree-release
+  elif command -v rpm-ostree &> /dev/null; then
+    rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
+  fi
 fi
 }
 

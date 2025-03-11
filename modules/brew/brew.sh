@@ -11,7 +11,10 @@ fi
 # Check if gcc is installed & install it if it's not
 # (add VanillaOS package manager in the future when it gets supported)
 if ! command -v gcc &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"gcc\" package, which is necessary for Brew to function"
+    dnf5 -y install gcc
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
   else
@@ -19,12 +22,15 @@ if ! command -v gcc &> /dev/null; then
     echo "       Brew depends on \"gcc\" in order to function"
     echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
     exit 1
-  fi  
+  fi
 fi
 
 # Check if zstd is installed & install it if it's not
 if ! command -v zstd &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"zstd\" package, which is necessary for Brew to function"
+    dnf5 -y install zstd
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"zstd\" package, which is necessary for Brew to function"
     rpm-ostree install zstd
   else
@@ -32,7 +38,7 @@ if ! command -v zstd &> /dev/null; then
     echo "       Brew's installer depends on \"zstd\" in order to function"
     echo "       Please include \"zstd\" in the list of packages to install with the system package manager"
     exit 1
-  fi  
+  fi
 fi
 
 # Module-specific directories and paths
@@ -209,7 +215,9 @@ if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
   cat > /etc/profile.d/brew.sh <<EOF
 #!/usr/bin/env bash
-[[ -d /home/linuxbrew/.linuxbrew && \$- == *i* ]] && eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [[ -d /home/linuxbrew/.linuxbrew && \$- == *i* && "\$(/usr/bin/id -u)" != 0 ]]; then
+  eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 EOF
 fi
 
@@ -263,7 +271,7 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/etc/environment")
   if [[ -n "${CURRENT_ENVIRONMENT}" ]]; then
     if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
-      echo "Disabling Brew analytics"  
+      echo "Disabling Brew analytics"
       sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/etc/environment"
     elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
       echo "Disabling Brew analytics"

@@ -3,7 +3,7 @@
 # Completion is in sh to account for the zsh syntax & when zsh tries to source scripts from /etc/profiles
 
 # Check for interactive bash and that we haven't already been sourced.
-if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BREW_BASH_COMPLETION-}" = x ]; then
+if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BREW_BASH_COMPLETION-}" = x -a "$(/usr/bin/id -u)" != 0 ]; then
 
     # Check for recent enough version of bash.
     if [ "${BASH_VERSINFO[0]}" -gt 4 ] ||
