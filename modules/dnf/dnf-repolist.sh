@@ -1,6 +1,6 @@
 #!/bin/bash
 
-output=$(dnf repolist --all 2>/dev/null)
+output=$(dnf repolist -q --all 2>/dev/null)
 lines=$(echo "$output" | tail -n +3)
 first_entry=true
 
