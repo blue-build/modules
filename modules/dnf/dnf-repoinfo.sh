@@ -14,7 +14,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "{"
+echo "["
 echo "  \"$repo_id\": {"
 
   repo_id_val=$(echo "$repo_info" | grep -oP "^Repo-id *: *\K.*")
@@ -91,4 +91,4 @@ echo "  \"$repo_id\": {"
   fi
 
   echo "  }"
-echo "}"
+echo "]"
