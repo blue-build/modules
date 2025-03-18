@@ -12,7 +12,7 @@ A default version of the `yafti` configuration file, `yafti.yml`, is supplied by
 
 Yafti autostart doesn't work on WMs (Window Managers) like Sway or Hyprland due to them not implementing XDG-Autostart specification.
 
-https://github.com/swaywm/sway/issues/1423
+https://github.com/swaywm/sway/issues/1423  
 https://github.com/hyprwm/Hyprland/issues/5169
 
 Usage of [dex](https://github.com/jceb/dex) in the affected WMs can be considered to mitigate this issue.
