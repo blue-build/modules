@@ -1,14 +1,14 @@
-name: dnf
-shortdesc: The dnf module offers pseudo-declarative package and repository management using dnf.
+name: dnf4
+shortdesc: The dnf4 module offers pseudo-declarative package and repository management using dnf4.
 example: |
-  type: dnf
+  type: dnf4
   # Add repos, COPR repos, and repo keys
   repos:
     cleanup: false # (optional) Set to true to automatically remove added repos at the end of the module execution
     files:
       # Add a repo file from a URL
       - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-      # Add a repo file from the `files/dnf/` directory
+      # Add a repo file from the `files/dnf4/` directory
       - fury.repo
     copr: # Add a list of COPR repos
       - atim/starship
@@ -35,7 +35,7 @@ example: |
       - starship
       # Install a package from a URL
       - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
-      # Install an rpm file from the `files/dnf/` directory
+      # Install an rpm file from the `files/dnf4/` directory
       - kubectl.rpm
   # Remove packages
   remove:
@@ -71,7 +71,7 @@ example: |
       - development-tools
   ---
   # There's also another way to add/remove repos
-  type: dnf
+  type: dnf4
   repos:
     files:
       # Add repo files like the examples above

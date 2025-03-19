@@ -1,7 +1,7 @@
-# **`dnf` Module**
+# **`dnf4` Module**
 
-The `dnf` module offers pseudo-declarative package and repository management using `dnf`.
-This is a modified version of the original dnf module made to work with dnf4.
+The `dnf4` module offers pseudo-declarative package and repository management using `dnf4`.
+This is a modified version of the original dnf4 module made to work with dnf4.
 
 ## Repository Management
 
@@ -11,7 +11,7 @@ This is a modified version of the original dnf module made to work with dnf4.
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 repos:
   copr:
     - atim/starship
@@ -25,11 +25,11 @@ repos:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 repos:
   files:
     - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-    - custom-file.repo # file path for /files/dnf/custom-file.repo
+    - custom-file.repo # file path for /files/dnf4/custom-file.repo
 ```
 
 ### Disable/Enable Repositories
@@ -38,7 +38,7 @@ repos:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 repos:
   disable:
     - repo1
@@ -53,7 +53,7 @@ repos:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 repos:
   keys:
     - key1
@@ -71,7 +71,7 @@ repos:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 install:
   packages:
     - repo: brave-browser
@@ -87,11 +87,11 @@ install:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 install:
   packages:
     - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
-    - custom-file.rpm # file path for /files/dnf/custom-file.rpm
+    - custom-file.rpm # file path for /files/dnf4/custom-file.rpm
 ```
 
 ### Install Packages from Specific Repositories
@@ -101,7 +101,7 @@ install:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 install:
   packages:
     - repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
@@ -118,7 +118,7 @@ install:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 remove:
   packages:
     - firefox
@@ -134,7 +134,7 @@ remove:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 group-install:
   packages:
     - cosmic-desktop
@@ -149,7 +149,7 @@ group-install:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 group-remove:
   packages:
     - development-tools
@@ -165,7 +165,7 @@ group-remove:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 replace:
   - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
     packages:
@@ -184,7 +184,7 @@ replace:
 
 Example:
 ```yaml
-type: dnf
+type: dnf4
 optfix:
   packages:
     - package1
@@ -193,5 +193,5 @@ optfix:
 
 ## Known issues
 
-Replacing the kernel with `dnf` module is not done cleanly & some remaints of old kernel will be present.  
-Please use `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
+Replacing the kernel with `dnf4` module is not done cleanly & some remaints of old kernel will be present.  
+Please use `rpm-ostree` module for this purpose until this `dnf4` behavior is fixed.
