@@ -1,4 +1,5 @@
 #!/bin/bash
+# convert the output of dnf repolsit into json
 
 output=$(dnf repolist -q --all 2>/dev/null)
 lines=$(echo "$output" | tail -n +3)
