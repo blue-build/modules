@@ -54,6 +54,9 @@ example: |
         - mutter
         - mutter-common
         - gdm
+        # Replace a package with another specific package
+        - old: package-1
+          new: package-2
   # Install group packages
   group-install:
     skip-unavailable: false # (optional) Allow skipping unavailable packages
