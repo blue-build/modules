@@ -150,7 +150,7 @@ Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
 ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
-ExecStartPost=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink systemd dbus"
+ExecStartPost=/usr/bin/bash -c "if [[ -n \"\$(/home/linuxbrew/.linuxbrew/bin/brew list --formulae | awk '/(^|\\s)(dbus)($|\\s)/')\" ]]; then /home/linuxbrew/.linuxbrew/bin/brew unlink dbus; fi; if [[ -n \"\$(/home/linuxbrew/.linuxbrew/bin/brew list --formulae | awk '/(^|\\s)(systemd)($|\\s)/')\" ]]; then /home/linuxbrew/.linuxbrew/bin/brew unlink systemd; fi"
 EOF
 
 # Write systemd timer files dynamically
