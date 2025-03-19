@@ -99,7 +99,7 @@ echo "Setting '/usr/share/homebrew/' permissions to UID/GID 1000"
 chown -R 1000:1000 "/usr/share/homebrew/"
 
 # Write systemd service files dynamically
-echo "Writing brew-setup service to install Brew in run-time"
+echo "Writing brew-setup service"
 cat >/usr/lib/systemd/system/brew-setup.service <<EOF
 [Unit]
 Description=Setup Brew
@@ -228,7 +228,7 @@ d /var/home/linuxbrew 0755 1000 1000 - -
 EOF
 
 # Enable the setup service
-echo "Enabling brew-setup service"
+echo "Enabling brew-setup service to install Brew in run-time"
 systemctl enable brew-setup.service
 
 # Always enable or disable update and upgrade services for consistency
