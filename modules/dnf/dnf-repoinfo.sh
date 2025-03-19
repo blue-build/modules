@@ -1,4 +1,5 @@
 #!/bin/bash
+# convert the output of dnf repoinfo into json
 
 repo_id="$1"
 repo_info=$(dnf repoinfo -q "$repo_id")
