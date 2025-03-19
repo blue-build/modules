@@ -3,8 +3,7 @@
 The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system and ensures the package manager remains updated and maintained. This module also sets up systemd services to periodically update the installed Brew packages.
 
 ## Features
-- Downloads Brew at build-time.
-- Installs Brew in run-time.
+- Downloads Brew at build-time & installs it in run-time.
 - Sets up systemd services to automatically update Brew to the latest version.
 - Sets up systemd services to automatically upgrade Brew packages.
 - Sets up bash and fish completions for Brew.
