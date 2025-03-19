@@ -4,7 +4,7 @@ repo_id="$1"
 repo_info=$(dnf repoinfo -q "$repo_id")
 
 echo "["
-echo "  \"$repo_id\": {"
+echo "  {"
 
   repo_id_val=$(echo "$repo_info" | grep -oP "^Repo-id *: *\K.*")
   if [ -n "$repo_id_val" ]; then

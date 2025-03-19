@@ -27,6 +27,6 @@ echo "$lines" | while read -r line; do
     "is_enabled":$status
   },
 EOF
-done
+done | sed '$s/},/}/'
 
 echo "]"
