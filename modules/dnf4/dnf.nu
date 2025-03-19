@@ -144,7 +144,7 @@ def disable_rpmfusion []: nothing -> nothing {
 
 def negativo_repo_list []: nothing -> list<path> {
   try {
-    ^bash /tmp/modules/dnf/dnf-repolist.sh | from json
+    ^/tmp/modules/dnf4/dnf-repolist.sh | from json
   } catch {
     exit 1
   }
@@ -153,7 +153,7 @@ def negativo_repo_list []: nothing -> list<path> {
     | ansi strip
     | par-each {|repo|
       try {
-        ^bash /tmp/modules/dnf/dnf-repolist.sh | from json
+        ^/tmp/modules/dnf4/dnf-repoinfo $repo | from json
       } catch {
         exit 1
       }
@@ -176,7 +176,7 @@ def enable_negativo []: nothing -> nothing {
   add_repos [$NEGATIVO_URL]
 
   try {
-    ^bash /tmp/modules/dnf/dnf-repolist.sh
+    ^/tmp/modules/dnf4/dnf-repolist
   } catch {
     exit 1
   }
@@ -255,7 +255,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
 
   # Get a list of info for every repo installed
   let repo_info = try {
-    ^bash /tmp/modules/dnf/dnf-repolist.sh
+    ^/tmp/modules/dnf4/dnf-repolist
   } catch {
     exit 1
   }
@@ -263,7 +263,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
     | get id
     | par-each {|repo|
       try {
-        ^bash /tmp/modules/dnf/dnf-repoinfo.sh $repo
+        ^/tmp/modules/dnf4/dnf-repoinfo $repo
       } catch {
         exit 1
       }
@@ -291,8 +291,6 @@ def add_repos [$repos: list]: nothing -> list<string> {
   $repo_ids
 }
 
-# A SPECIFIC AND POSSIBLY IMPORTANT FUNCTION WAS REMOVED, REMEMBER TO RESOLVE
-
 # Remove a list of repos. The list must be the IDs of the repos.
 def remove_repos [$repos: list]: nothing -> nothing {
   if ($repos | is-not-empty) {
@@ -306,7 +304,7 @@ def remove_repos [$repos: list]: nothing -> nothing {
     $repos
       | par-each {|repo|
         try {
-          ^bash /tmp/modules/dnf/dnf-repoinfo.sh $repo
+          ^/tmp/modules/dnf4/dnf-repoinfo $repo | from json
         } catch {
           exit 1
         }
@@ -415,7 +413,7 @@ def add_keys [$keys: list]: nothing -> nothing {
 def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
   const LIB_EXEC_DIR = '/usr/libexec/bluebuild'
   const SYSTEMD_DIR = '/etc/systemd/system'
-  const MODULE_DIR = '/tmp/modules/dnf'
+  const MODULE_DIR = '/tmp/modules/dnf4'
   const LIB_OPT_DIR = '/usr/lib/opt'
   const VAR_OPT_DIR = '/var/opt'
   const OPTFIX_SCRIPT = 'optfix.sh'
@@ -557,7 +555,7 @@ def remove_pkgs [remove: record]: nothing -> nothing {
   }
 }
 
-# Build up args to use on `dnf`
+# Build up args to use on `dnf4`
 def install_args [...filter: string]: record -> list<string> {
   let install = $in
   mut args = []
@@ -795,17 +793,17 @@ def main [config: string]: nothing -> nothing {
     | default {} install
     | default [] optfix
     | default [] replace
-  let has_dnf = ^rpm -q dnf | complete
+  let has_dnf4 = ^rpm -q dnf | complete
   let should_cleanup = $config.repos
     | default false cleanup
     | get cleanup
 
-  if $has_dnf.exit_code != 0 {
+  if $has_dnf4.exit_code != 0 {
     return (error make {
-      msg: $"(ansi red)ERROR: Main dependency '(ansi cyan)dnf(ansi red)' is not installed. Install '(ansi cyan)dnf(ansi red)' before using this module to solve this error.(ansi reset)"
+      msg: $"(ansi red)ERROR: Main dependency '(ansi cyan)dnf4(ansi red)' is not installed. Install '(ansi cyan)dnf4(ansi red)' before using this module to solve this error.(ansi reset)"
       label: {
-        span: (metadata $has_dnf).span
-        text: 'Checks for dnf'
+        span: (metadata $has_dnf4).span
+        text: 'Checks for dnf4'
       }
     })
   }

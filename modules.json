@@ -10,6 +10,7 @@
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/gschema-overrides/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/justfiles/module.yml",  
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/rpm-ostree/module.yml",
+  "https://raw.githubusercontent.com/blue-build/modules/main/modules/dnf4/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/initramfs/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/script/module.yml",
   "https://raw.githubusercontent.com/blue-build/modules/main/modules/signing/module.yml",
