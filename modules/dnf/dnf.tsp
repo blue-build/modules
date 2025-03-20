@@ -1,18 +1,18 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/dnf4-latest.json")
-model Dnf4ModuleLatest {
-  ...Dnf4ModuleV1;
+@jsonSchema("/modules/dnf-latest.json")
+model DnfModuleLatest {
+  ...DnfModuleV1;
 }
 
-@jsonSchema("/modules/dnf4-v1.json")
-model Dnf4ModuleV1 {
+@jsonSchema("/modules/dnf-v1.json")
+model DnfModuleV1 {
   /**
    * The dnf module offers pseudo-declarative package and repository management using dnf.
    * https://blue-build.org/reference/modules/dnf/
    */
-  type: "dnf4" | "dnf4@v1" | "dnf4@latest";
+  type: "dnf" | "dnf@v1" | "dnf@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
   repos?: Repo;
@@ -70,7 +70,7 @@ model RepoFiles {
   /**
    * List of repos to disable.
    * This must be the ID of the repo
-   * as seen in `dnf4 repolist`.
+   * as seen in `dnf5 repolist`.
    */
   disable?: Array<string>;
 }
