@@ -110,7 +110,7 @@ ConditionPathExists=!/var/home/linuxbrew/.linuxbrew
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/cp -R -n /usr/share/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
+ExecStart=/usr/bin/cp -R --update=none /usr/share/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
 ExecStart=/usr/bin/chown -R 1000:1000 /var/home/linuxbrew
 ExecStart=/usr/bin/touch /etc/.linuxbrew
 
