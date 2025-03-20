@@ -144,7 +144,7 @@ def disable_rpmfusion []: nothing -> nothing {
 
 def negativo_repo_list []: nothing -> list<path> {
   try {
-    ^/tmp/modules/dnf4/dnf-repolist.sh | from json
+    ^/tmp/modules/dnf4/dnf-repolist | from json
   } catch {
     exit 1
   }

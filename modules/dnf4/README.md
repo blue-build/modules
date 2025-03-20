@@ -1,6 +1,8 @@
 # **`dnf` Module**
 
-The `dnf` module offers pseudo-declarative package and repository management using `dnf5`.
+The `dnf` module offers pseudo-declarative package and repository management using `dnf4`.
+This is a modified version of the original `dnf5` module, made to work with `dnf4`.
+All functionatlity is the same.
 
 ## Repository Management
 
