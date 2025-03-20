@@ -9,8 +9,8 @@ FIRSTBOOT_DATA="/usr/share/ublue-os/firstboot"
 
 mkdir -p "$FIRSTBOOT_DATA/launcher/"
 
-# doesn't overwrite user's yafti.yml (ignores error)
-cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" || true
+# doesn't overwrite user's yafti.yml
+cp --update=none "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml"
 cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA"
 
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
