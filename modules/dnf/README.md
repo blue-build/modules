@@ -39,11 +39,17 @@ Example:
 ```yaml
 type: dnf
 repos:
-  disable:
-    - repo1
-    - repo2
-  enable:
-    - repo3
+  files:
+    add:
+      - repo1
+      - repo2
+    remove:
+      - repo3
+  copr:
+    enable:
+      - ryanabx/cosmic-epoch
+    disable:
+      - kylegospo/oversteer
 ```
 
 ### Add Repository Keys
@@ -55,13 +61,13 @@ Example:
 type: dnf
 repos:
   keys:
-    - key1
-    - key2
+    - https://example.com/repo-1.asc
+    - key2.asc
 ```
 
-## Package Installation
+## Installation
 
-### Install Packages
+### Packages
 
 * Specify packages to install in the `install.packages` field
 * Use the `repo` parameter to specify a specific repository for installation
@@ -73,13 +79,14 @@ Example:
 type: dnf
 install:
   packages:
-    - repo: brave-browser
+    - repo: repo-1
       packages:
-        - brave-browser
-    - starship
+        - repo-1-package-1
+        - repo-1-package-2
+    - package-3
 ```
 
-### Install Packages from URL or File
+### Packages from URL or File
 
 * Specify a URL or file path in the `packages` field to install packages from a specific repository
 * Use the `%OS_VERSION%` variable to automatically determine the operating system version
@@ -89,7 +96,7 @@ Example:
 type: dnf
 install:
   packages:
-    - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
+    - https://example.com/package-%OS_VERSION%.rpm
     - custom-file.rpm # file path for /files/dnf/custom-file.rpm
 ```
 
@@ -103,9 +110,9 @@ Example:
 type: dnf
 install:
   packages:
-    - repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+    - repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
       packages:
-        - mutter
+        - package1
 ```
 
 ## Package Removal
@@ -120,8 +127,8 @@ Example:
 type: dnf
 remove:
   packages:
-    - firefox
-    - firefox-langpacks
+    - package1
+    - package-2
 ```
 
 ## Package Group Installation
@@ -136,8 +143,8 @@ Example:
 type: dnf
 group-install:
   packages:
-    - cosmic-desktop
-    - window-managers
+    - de-package-1
+    - wm-package-2
 ```
 
 ## Package Group Removal
@@ -151,7 +158,7 @@ Example:
 type: dnf
 group-remove:
   packages:
-    - development-tools
+    - de-package-2
 ```
 
 ## Package Replacement
@@ -166,13 +173,13 @@ Example:
 ```yaml
 type: dnf
 replace:
-  - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+  - from-repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
     packages:
-      - mutter
-  - from-repo: fedora
+      - package-1
+  - from-repo: repo-1
     packages:
-      - old: OpenCL-ICD-Loader
-        new: ocl-icd
+      - old: old-package-2
+        new: new-package-2
 ```
 
 ## Optfix
@@ -185,9 +192,8 @@ Example:
 ```yaml
 type: dnf
 optfix:
-  packages:
-    - package1
-    - package2
+  - package1
+  - package2
 ```
 
 ## Known issues
