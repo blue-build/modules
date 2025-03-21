@@ -1,0 +1,11 @@
+[Unit]
+Description=Create symbolic links for directories in /usr/lib/opt/ to /var/opt/
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bluebuild/optfix.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=default.target
