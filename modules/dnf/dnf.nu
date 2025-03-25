@@ -4,6 +4,15 @@ const NEGATIVO = 'negativo17'
 const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-negativo17.repo'
 const RPMFUSION = 'rpmfusion'
 
+# Handles installing necessary plugins for repo management.
+def check_dnf5_plugins []: nothing -> nothing {
+  if (^rpm -q dnf5-plugins | complete).exit_code != 0 {
+    print $'(ansi yellow1)Required dnf5 plugins are not installed. Installing plugins(ansi reset)'
+
+    install_pkgs { packages: [dnf5-plugins] }
+  }
+}
+
 # Handle adding/removing repo files and COPR repos.
 # 
 # This command returns an object containing the repos
@@ -75,6 +84,8 @@ def repos [$repos: record]: nothing -> record {
 
 # Setup nonfree repos for rpmfusion or negativo17-multimedia.
 def nonfree_repos [repo_type?: string]: nothing -> list<string> {
+  check_dnf5_plugins
+
   match $repo_type {
     $repo if $repo == $RPMFUSION => {
       disable_negativo
@@ -207,6 +218,8 @@ def disable_negativo []: nothing -> nothing {
 #
 # Returns a list of IDs of the repos added
 def add_repos [$repos: list]: nothing -> list<string> {
+  check_dnf5_plugins
+
   if ($repos | is-not-empty) {
     print $'(ansi green)Adding repositories:(ansi reset)'
 
@@ -341,6 +354,8 @@ def check_copr []: string -> string {
 #
 # This will error if a COPR repo ID is invalid.
 def add_coprs [$copr_repos: list]: nothing -> list<string> {
+  check_dnf5_plugins
+
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
     $copr_repos
@@ -364,6 +379,8 @@ def add_coprs [$copr_repos: list]: nothing -> list<string> {
 #
 # This will error if a COPR repo ID is invalid.
 def disable_coprs [$copr_repos: list]: nothing -> nothing {
+  check_dnf5_plugins
+
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
     $copr_repos
