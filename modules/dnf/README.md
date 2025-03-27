@@ -1,28 +1,28 @@
 # **`dnf` Module**
 
-The `dnf` module offers pseudo-declarative package and repository management using `dnf5`.
+The `dnf` module offers pseudo-declarative package and repository management using [`dnf5`](https://github.com/rpm-software-management/dnf).
 
-## Repository Management
+## Features
 
-### Add COPR Repositories
+This module is capable of:
 
-* Specify a list of COPR repositories in the `copr` field
-
-Example:
-```yaml
-type: dnf
-repos:
-  copr:
-    - atim/starship
-    - trixieua/mutter-patched
-```
+- Repository Management
+  - Adding repo files via url or local files
+  - Removing repos by specifying the repo name
+  - Automatically cleaning up any repos added in the module
+  - Adding keys for repos via url or local files
+  - Enabling/disabling COPR repos
+  - Adding non-free repos like `rpmfusion` and `negativo17`
+- Package Management
+  - Installing packages via url, local rpm files, or repo packaging
+  - Specifying repos from which to install packages
+  - Removing packages
+  - Replacing packages with ones from another repo
+- Optfix
+  - Setup symlinks to `/opt/` to allow certain packages to install
 
 ### Add Repository Files
 
-* Specify a URL or file path in the `files` field to add repository files
-* Use flags such as `cleanup` to customize repository management
-
-Example:
 ```yaml
 type: dnf
 repos:
@@ -31,11 +31,16 @@ repos:
     - custom-file.repo # file path for /files/dnf/custom-file.repo
 ```
 
+### Add COPR Repositories
+```yaml
+type: dnf
+repos:
+  copr:
+    - atim/starship
+    - trixieua/mutter-patched
+```
+
 ### Disable/Enable Repositories
-
-* Specify a list of repositories to disable or enable in the `disable` or `enable` field
-
-Example:
 ```yaml
 type: dnf
 repos:
@@ -53,10 +58,6 @@ repos:
 ```
 
 ### Add Repository Keys
-
-* Specify a list of repository keys in the `keys` field
-
-Example:
 ```yaml
 type: dnf
 repos:
@@ -65,16 +66,7 @@ repos:
     - key2.asc
 ```
 
-## Installation
-
 ### Packages
-
-* Specify packages to install in the `install.packages` field
-* Use the `repo` parameter to specify a specific repository for installation
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 install:
@@ -87,11 +79,6 @@ install:
 ```
 
 ### Packages from URL or File
-
-* Specify a URL or file path in the `packages` field to install packages from a specific repository
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
-
-Example:
 ```yaml
 type: dnf
 install:
@@ -101,11 +88,6 @@ install:
 ```
 
 ### Install Packages from Specific Repositories
-
-* Specify a repository in the `repo` field to install packages from that repository
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
-
-Example:
 ```yaml
 type: dnf
 install:
@@ -115,14 +97,7 @@ install:
         - package1
 ```
 
-## Package Removal
-
 ### Remove Packages
-
-* Specify packages to remove in the `remove.packages` field
-* Use flags such as `auto-remove` to customize package removal
-
-Example:
 ```yaml
 type: dnf
 remove:
@@ -131,14 +106,7 @@ remove:
     - package-2
 ```
 
-## Package Group Installation
-
 ### Define Packages Groups
-
-* Specify a package group in the `group-install.packages` field
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 group-install:
@@ -147,13 +115,7 @@ group-install:
     - wm-package-2
 ```
 
-## Package Group Removal
-
 ### Remove Packages Groups
-
-* Specify a package group in the `group-remove.packages` field
-
-Example:
 ```yaml
 type: dnf
 group-remove:
@@ -161,15 +123,7 @@ group-remove:
     - de-package-2
 ```
 
-## Package Replacement
-
 ### Replace Packages
-
-* Specify a replacement package in the `replace.from-repo` field
-* If new package for replacement is named differently, you can use `old/new` format as outlined below
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 replace:
@@ -182,13 +136,12 @@ replace:
         new: new-package-2
 ```
 
-## Optfix
+### Optfix
+- Optfix is a script used to work around problems with certain packages that install into `/opt/`
+  - These issues are caused by Fedora Atomic storing `/opt/` at the location `/var/opt/` by default, while `/var/` is only writeable on a live system
+  - The script works around these issues by moving the folder to `/usr/lib/opt/` and creating the proper symlinks at runtime
+- Specify a list of folders inside `/opt/`
 
-### Fix Optfix
-
-* Specify a list of packages to fix optfix issues in the `optfix` field
-
-Example:
 ```yaml
 type: dnf
 optfix:
