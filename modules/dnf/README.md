@@ -23,6 +23,9 @@ This module is capable of:
 
 ### Add Repository Files
 
+- Add repos from any `https://` or `http://` URL
+- Any `.repo` files located in `./files/dnf/` of your image repo
+
 ```yaml
 type: dnf
 repos:
