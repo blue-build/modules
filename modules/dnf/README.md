@@ -52,6 +52,7 @@ repos:
 ```
 
 ### Disable/Enable Repositories
+
 ```yaml
 type: dnf
 repos:
@@ -69,6 +70,7 @@ repos:
 ```
 
 ### Add Repository Keys
+
 ```yaml
 type: dnf
 repos:
@@ -80,6 +82,7 @@ repos:
 ## Package Management
 
 ### Packages from Any Repository
+
 ```yaml
 type: dnf
 install:
@@ -115,6 +118,7 @@ install:
 ```
 
 ### Remove Packages
+
 ```yaml
 type: dnf
 remove:
@@ -126,10 +130,12 @@ remove:
 ### Install Package Groups
 
 - See list of all package groups by running `dnf5 group list --hidden` on a live system
+- Set the option `with-optional` to `true` to enable installation of optional packages in package groups
 
 ```yaml
 type: dnf
 group-install:
+  with-optional: true
   packages:
     - de-package-1
     - wm-package-2
@@ -154,6 +160,40 @@ replace:
     packages:
       - old: old-package-2
         new: new-package-2
+```
+
+### Installation options
+
+The following options can specified in the package installation, group installation, and package replacement sections.
+
+- `install-weak-deps` enables installation of the weak dependencies of RPMs
+  - Enabled by default
+  - Corresponds to the [`--setopt=install_weak_deps=True` / `--setopt=install_weak_deps=False`](https://dnf5.readthedocs.io/en/latest/dnf5.conf.5.html#install-weak-deps-options-label) flag
+- `skip-unavailable` enables skipping packages unavailable in repositories without erroring out
+  - Disabled by default
+  - Corresponds to the [`--skip-unavailable`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+- `skip-broken` enables skipping broken packages without erroring out
+  - Disabled by default
+  - Corresponds to the [`--skip-broken`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+- `allow-erasing` allows removing packages in case of dependency problems during package installation
+  - Disabled by default
+  - Corresponds to the [`--allowerasing`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+
+```yaml
+type: dnf
+install:
+  skip-unavailable: true
+  packages:
+    ...
+group-install:
+  skip-unavailable: true
+  packages:
+    ...
+replace:
+  - from-repo: repo-1
+    allow-erasing: true
+    packages:
+      ...
 ```
 
 ## Optfix
