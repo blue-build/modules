@@ -21,6 +21,8 @@ This module is capable of:
 - Optfix
   - Setup symlinks to `/opt/` to allow certain packages to install
 
+## Repository Management
+
 ### Add Repository Files
 
 - Add repos from
@@ -75,17 +77,15 @@ repos:
     - key2.asc
 ```
 
-### Packages
+## Package Management
+
+### Packagse from Any Repository
 ```yaml
 type: dnf
 install:
   packages:
     - package-1
-    # you also can set packages to be installed from a specific repository
-    - repo: repo-1
-      packages:
-        - package-2
-        - package-3
+    - package-2
 ```
 
 ### Packages from URL or File
@@ -98,7 +98,7 @@ type: dnf
 install:
   packages:
     - https://example.com/package-%OS_VERSION%.rpm
-    - custom-file.rpm # file path for /files/dnf/custom-file.rpm
+    - custom-file.rpm # install files/dnf/custom-file.rpm from the image repository
 ```
 
 ### Install Packages from Specific Repositories
@@ -111,7 +111,7 @@ install:
   packages:
     - repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
       packages:
-        - package1
+        - package-1
 ```
 
 ### Remove Packages
@@ -119,7 +119,7 @@ install:
 type: dnf
 remove:
   packages:
-    - package1
+    - package-1
     - package-2
 ```
 
@@ -156,7 +156,8 @@ replace:
         new: new-package-2
 ```
 
-### Optfix
+## Optfix
+
 - Optfix is a script used to work around problems with certain packages that install into `/opt/`
   - These issues are caused by Fedora Atomic storing `/opt/` at the location `/var/opt/` by default, while `/var/` is only writeable on a live system
   - The script works around these issues by moving the folder to `/usr/lib/opt/` and creating the proper symlinks at runtime
@@ -171,5 +172,5 @@ optfix:
 
 ## Known issues
 
-Replacing the kernel with `dnf` module is not done cleanly & some remaints of old kernel will be present.  
-Please use `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
+Replacing the kernel with the `dnf` module is not done cleanly & some remaints of old kernel will be present.  
+Please use the `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
