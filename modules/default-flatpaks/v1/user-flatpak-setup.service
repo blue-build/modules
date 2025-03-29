@@ -6,3 +6,6 @@ After=system-flatpak-setup.service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/user-flatpak-setup
+
+[Install]
+WantedBy=graphical-session.target

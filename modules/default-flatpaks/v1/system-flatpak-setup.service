@@ -2,7 +2,12 @@
 Description=Manage system flatpaks
 Wants=network-online.target
 After=network-online.target
+After=systemd-user-sessions.service
+Before=user-flatpak-setup.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/system-flatpak-setup
+
+[Install]
+WantedBy=multi-user.target
