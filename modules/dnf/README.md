@@ -7,24 +7,27 @@ The `dnf` module offers pseudo-declarative package and repository management usi
 This module is capable of:
 
 - Repository Management
+  - Enabling/disabling COPR repos
   - Adding repo files via url or local files
   - Removing repos by specifying the repo name
   - Automatically cleaning up any repos added in the module
   - Adding keys for repos via url or local files
-  - Enabling/disabling COPR repos
   - Adding non-free repos like `rpmfusion` and `negativo17`
 - Package Management
-  - Installing packages via url, local rpm files, or repo packaging
-  - Specifying repos from which to install packages
+  - Installing packages from RPM urls, local RPM files, or package repositories
+  - Installing packages from a specific repository
   - Removing packages
-  - Replacing packages with ones from another repo
+  - Replacing installed packages with versions from another repository
 - Optfix
   - Setup symlinks to `/opt/` to allow certain packages to install
 
 ### Add Repository Files
 
-- Add repos from any `https://` or `http://` URL
-- Any `.repo` files located in `./files/dnf/` of your image repo
+- Add repos from
+  - any `https://` or `http://` URL
+  - any `.repo` files located in `./files/dnf/` of your image repo
+- If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
+  - The version is gathered from the `VERSION_ID` field of `/usr/lib/os-release`
 
 ```yaml
 type: dnf
@@ -35,6 +38,9 @@ repos:
 ```
 
 ### Add COPR Repositories
+
+- [COPR](https://copr.fedorainfracloud.org/) contains software repositories maintained by fellow Fedora users
+
 ```yaml
 type: dnf
 repos:
@@ -74,14 +80,19 @@ repos:
 type: dnf
 install:
   packages:
+    - package-1
+    # you also can set packages to be installed from a specific repository
     - repo: repo-1
       packages:
-        - repo-1-package-1
-        - repo-1-package-2
-    - package-3
+        - package-2
+        - package-3
 ```
 
 ### Packages from URL or File
+
+- If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
+  - The version is gathered from the `VERSION_ID` field of `/usr/lib/os-release`
+
 ```yaml
 type: dnf
 install:
@@ -91,6 +102,9 @@ install:
 ```
 
 ### Install Packages from Specific Repositories
+
+- Set `repo` to the name of the RPM repository, not the name or URL of the repo file
+
 ```yaml
 type: dnf
 install:
@@ -109,7 +123,10 @@ remove:
     - package-2
 ```
 
-### Define Packages Groups
+### Install Package Groups
+
+- See list of all package groups by running `dnf5 group list --hidden` on a live system
+
 ```yaml
 type: dnf
 group-install:
@@ -118,7 +135,7 @@ group-install:
     - wm-package-2
 ```
 
-### Remove Packages Groups
+### Remove Package Groups
 ```yaml
 type: dnf
 group-remove:
@@ -148,8 +165,8 @@ replace:
 ```yaml
 type: dnf
 optfix:
-  - package1
-  - package2
+  - brave.com
+  - foldername
 ```
 
 ## Known issues
