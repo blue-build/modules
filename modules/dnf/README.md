@@ -79,7 +79,7 @@ repos:
 
 ## Package Management
 
-### Packagse from Any Repository
+### Packages from Any Repository
 ```yaml
 type: dnf
 install:
