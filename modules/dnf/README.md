@@ -172,5 +172,5 @@ optfix:
 
 ## Known issues
 
-Replacing the kernel with the `dnf` module is not done cleanly & some remaints of old kernel will be present.  
+Replacing the kernel with the `dnf` module is not done cleanly at the moment & some remaints of old kernel will be present.  
 Please use the `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
