@@ -403,9 +403,17 @@ def disable_coprs [$copr_repos: list]: nothing -> nothing {
 def add_keys [$keys: list]: nothing -> nothing {
   if ($keys | is-not-empty) {
     print $'(ansi green)Adding keys:(ansi reset)'
-    $keys
-      | each {
-        print $'- (ansi cyan)($in)(ansi reset)'
+    let keys = $keys
+      | str replace --all '%OS_VERSION%' $env.OS_VERSION
+      | str trim
+      | each {|key|
+        let key = if ($key | str starts-with 'https://') or ($key | str starts-with 'http://') {
+          $key
+        } else {
+          [$env.CONFIG_DIRECTORY dnf $key] | path join
+        }
+        print $'- (ansi cyan)($key)(ansi reset)'
+        $key
       }
 
     for $key in $keys {
