@@ -581,8 +581,23 @@ def remove_pkgs [remove: record]: nothing -> nothing {
 }
 
 # Build up args to use on `dnf`
-def install_args [...filter: string]: record -> list<string> {
+def install_args [
+  --global-config: record
+  ...filter: string
+]: record -> list<string> {
   let install = $in
+    | default (
+      $global_config.skip-unavailable?
+        | default false
+    ) skip-unavailable
+    | default (
+      $global_config.skip-broken?
+        | default false
+    ) skip-broken
+    | default (
+      $global_config.allow-erasing?
+        | default false
+    ) allow-erasing
   mut args = []
   let check_filter = {|arg|
     let arg_exists = ($arg in $install)
@@ -609,9 +624,14 @@ def install_args [...filter: string]: record -> list<string> {
 }
 
 # Generate a weak deps argument
-def weak_arg []: record -> string {
+def weak_arg [
+  --global-config: record
+]: record -> string {
   let install =
-    | default true install-weak-deps
+    | default (
+      $global_config.install-weak-deps?
+        | default true
+    ) install-weak-deps
 
   if $install.install-weak-deps {
     '--setopt=install_weak_deps=True'
@@ -716,11 +736,11 @@ def install_pkgs [install: record]: nothing -> nothing {
     try {
       (^dnf5
         -y
-        ($repo_install | weak_arg)
+        ($repo_install | weak_arg --global-config $install)
         install
         --repoid
         $repo
-        ...($repo_install | install_args)
+        ...($repo_install | install_args --global-config $install)
         ...($packages))
     } catch {
       exit 1

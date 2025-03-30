@@ -96,6 +96,8 @@ model InstallRepo {
 
   /** List of RPM packages to install. */
   packages: Array<string>;
+
+  ...InstallCommon;
 }
 
 model Remove {
