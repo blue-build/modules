@@ -150,12 +150,25 @@ group-remove:
 ```
 
 ### Replace Packages
+- You can specify one or more packages that will be swapped from another repo
+- This process uses `distro-sync` to perform this operation
+- All packages not specifying `old:` and `new:` will be swapped in a single transaction
+
 ```yaml
 type: dnf
 replace:
   - from-repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
     packages:
       - package-1
+```
+
+- If a package has a different name in another repo, you can use the `old:` and `new:` properties
+- This process uses `swap` to perform this operation for each set
+- This process is ran before `distro-sync`
+
+```yaml
+type: dnf
+replace:
   - from-repo: repo-1
     packages:
       - old: old-package-2
