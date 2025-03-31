@@ -7,7 +7,7 @@ let images = ls modules | each { |moduleDir|
     cd $moduleDir.name
 
     # module is unversioned
-    if ($"($moduleDir.name | path basename).sh" | path exists) {
+    if (glob $"($moduleDir.name | path basename).{sh,nu}" | any { path exists }) {
 
         print $"(ansi cyan)Found(ansi reset) (ansi cyan_bold)unversioned(ansi reset) (ansi cyan)module:(ansi reset) ($moduleDir.name | path basename)"
 
