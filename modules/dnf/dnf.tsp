@@ -124,6 +124,9 @@ model Swap {
 
   /** The package to replace with. */
   new: string;
+
+  /** Whether to allow erasing (removal) of packages in case of dependency problems. */
+  `allow-erasing`?: boolean = false;
 }
 
 model GroupInstall {
@@ -142,15 +145,15 @@ model GroupRemove {
 }
 
 model InstallCommon {
-  /** Whether to install weak dependencies during the RPM group install or not. */
+  /** Whether to install weak dependencies. */
   `install-weak-deps`?: boolean = true;
 
-  /** Whether to continue with the RPM group install if there are no packages available in the repository. */
+  /** Whether to continue with the install if there are no packages available in the repository. */
   `skip-unavailable`?: boolean = false;
 
-  /** Whether to continue with the RPM group install if there are broken packages. */
+  /** Whether to continue with the install if there are broken packages. */
   `skip-broken`?: boolean = false;
 
-  /** Whether to allow erasing (removal) of packages in case of dependency problems during the RPM group install. */
+  /** Whether to allow erasing (removal) of packages in case of dependency problems. */
   `allow-erasing`?: boolean = false;
 }

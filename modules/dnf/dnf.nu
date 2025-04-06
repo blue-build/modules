@@ -536,7 +536,7 @@ def group_install [install: record]: nothing -> nothing {
     mut args = $install | install_args
 
     if $install.with-optional {
-      $args = $args | appent '--with-optional'
+      $args = $args | append '--with-optional'
     }
 
     try {
@@ -795,7 +795,7 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
               (^dnf5
                 -y
                 swap
-                ...($replacement | install_args allow-erasing)
+                ...($pkg_pair | install_args --global-config $replacement allow-erasing)
                 $pkg_pair.old
                 $pkg_pair.new)
             } catch {
