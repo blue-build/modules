@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: hustcer/setup-nu@e78fff18e25cbb326611c45cafbce078103b4df7 # v3.18
+      - uses: hustcer/setup-nu@9859855d6c1dfcd6d53ee7480b8e86c8c45298cb # v3.19
         with:
           version: v0.93
 
