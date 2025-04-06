@@ -81,7 +81,9 @@ repos:
 
 ## Package Management
 
-### Packages from Any Repository
+### Installing
+
+#### Packages from Any Repository
 
 ```yaml
 type: dnf
@@ -91,7 +93,7 @@ install:
     - package-2
 ```
 
-### Packages from URL or File
+#### Packages from URL or File
 
 - If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
   - The version is gathered from the `VERSION_ID` field of `/usr/lib/os-release`
@@ -104,7 +106,7 @@ install:
     - custom-file.rpm # install files/dnf/custom-file.rpm from the image repository
 ```
 
-### Install Packages from Specific Repositories
+#### Packages from Specific Repositories
 
 - Set `repo` to the name of the RPM repository, not the name or URL of the repo file
 
@@ -117,17 +119,7 @@ install:
         - package-1
 ```
 
-### Remove Packages
-
-```yaml
-type: dnf
-remove:
-  packages:
-    - package-1
-    - package-2
-```
-
-### Install Package Groups
+#### Package Groups
 
 - See list of all package groups by running `dnf5 group list --hidden` on a live system
 - Set the option `with-optional` to `true` to enable installation of optional packages in package groups
@@ -141,15 +133,7 @@ group-install:
     - wm-package-2
 ```
 
-### Remove Package Groups
-```yaml
-type: dnf
-group-remove:
-  packages:
-    - de-package-2
-```
-
-### Replace Packages
+#### Replace Packages
 - You can specify one or more packages that will be swapped from another repo
 - This process uses `distro-sync` to perform this operation
 - All packages not specifying `old:` and `new:` will be swapped in a single transaction
@@ -175,7 +159,7 @@ replace:
         new: new-package-2
 ```
 
-### Installation options
+#### Options
 
 The following options can specified in the package installation, group installation, and package replacement sections.
 
@@ -199,7 +183,7 @@ install:
   packages:
     ...
 group-install:
-  skip-unavailable: true
+  skip-broken: true
   packages:
     ...
 replace:
@@ -207,6 +191,29 @@ replace:
     allow-erasing: true
     packages:
       ...
+```
+
+### Removing
+
+#### Packages
+
+- You can set the `auto-remove` option to `false` to only remove the specific package and leave unused dependencies
+
+```yaml
+type: dnf
+remove:
+  auto-remove: false
+  packages:
+    - package-1
+    - package-2
+```
+
+#### Package Groups
+```yaml
+type: dnf
+group-remove:
+  packages:
+    - de-package-2
 ```
 
 ## Optfix
