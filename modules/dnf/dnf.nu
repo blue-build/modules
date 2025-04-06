@@ -1,5 +1,7 @@
 #!/usr/bin/env nu
 
+# use dnf_interface.nu *
+
 const NEGATIVO = 'negativo17'
 const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-negativo17.repo'
 const RPMFUSION = 'rpmfusion'
