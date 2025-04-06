@@ -1,30 +1,36 @@
 # **`dnf` Module**
 
-The `dnf` module offers pseudo-declarative package and repository management using `dnf4`.
-This is a modified version of the original `dnf5` module, made to work with `dnf4`.
-All functionatlity is the same.
+The `dnf` module offers pseudo-declarative package and repository management using [`dnf5`](https://github.com/rpm-software-management/dnf).
+
+## Features
+
+This module is capable of:
+
+- Repository Management
+  - Enabling/disabling COPR repos
+  - Adding repo files via url or local files
+  - Removing repos by specifying the repo name
+  - Automatically cleaning up any repos added in the module
+  - Adding keys for repos via url or local files
+  - Adding non-free repos like `rpmfusion` and `negativo17`
+- Package Management
+  - Installing packages from RPM urls, local RPM files, or package repositories
+  - Installing packages from a specific repository
+  - Removing packages
+  - Replacing installed packages with versions from another repository
+- Optfix
+  - Setup symlinks to `/opt/` to allow certain packages to install
 
 ## Repository Management
 
-### Add COPR Repositories
-
-* Specify a list of COPR repositories in the `copr` field
-
-Example:
-```yaml
-type: dnf
-repos:
-  copr:
-    - atim/starship
-    - trixieua/mutter-patched
-```
-
 ### Add Repository Files
 
-* Specify a URL or file path in the `files` field to add repository files
-* Use flags such as `cleanup` to customize repository management
+- Add repos from
+  - any `https://` or `http://` URL
+  - any `.repo` files located in `./files/dnf/` of your image repo
+- If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
+  - The version is gathered from the `VERSION_ID` field of `/usr/lib/os-release`
 
-Example:
 ```yaml
 type: dnf
 repos:
@@ -33,166 +39,195 @@ repos:
     - custom-file.repo # file path for /files/dnf/custom-file.repo
 ```
 
-### Disable/Enable Repositories
+### Add COPR Repositories
 
-* Specify a list of repositories to disable or enable in the `disable` or `enable` field
+- [COPR](https://copr.fedorainfracloud.org/) contains software repositories maintained by fellow Fedora users
 
-Example:
 ```yaml
 type: dnf
 repos:
-  disable:
-    - repo1
-    - repo2
-  enable:
-    - repo3
+  copr:
+    - atim/starship
+    - trixieua/mutter-patched
+```
+
+### Disable/Enable Repositories
+
+```yaml
+type: dnf
+repos:
+  files:
+    add:
+      - repo1
+      - repo2
+    remove:
+      - repo3
+  copr:
+    enable:
+      - ryanabx/cosmic-epoch
+    disable:
+      - kylegospo/oversteer
 ```
 
 ### Add Repository Keys
 
-* Specify a list of repository keys in the `keys` field
-
-Example:
 ```yaml
 type: dnf
 repos:
   keys:
-    - key1
-    - key2
+    - https://example.com/repo-1.asc
+    - key2.asc
 ```
 
-## Package Installation
+## Package Management
 
-### Install Packages
+### Packages from Any Repository
 
-* Specify packages to install in the `install.packages` field
-* Use the `repo` parameter to specify a specific repository for installation
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 install:
   packages:
-    - repo: brave-browser
-      packages:
-        - brave-browser
-    - starship
+    - package-1
+    - package-2
 ```
 
-### Install Packages from URL or File
+### Packages from URL or File
 
-* Specify a URL or file path in the `packages` field to install packages from a specific repository
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
+- If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
+  - The version is gathered from the `VERSION_ID` field of `/usr/lib/os-release`
 
-Example:
 ```yaml
 type: dnf
 install:
   packages:
-    - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
-    - custom-file.rpm # file path for /files/dnf/custom-file.rpm
+    - https://example.com/package-%OS_VERSION%.rpm
+    - custom-file.rpm # install files/dnf/custom-file.rpm from the image repository
 ```
 
 ### Install Packages from Specific Repositories
 
-* Specify a repository in the `repo` field to install packages from that repository
-* Use the `%OS_VERSION%` variable to automatically determine the operating system version
+- Set `repo` to the name of the RPM repository, not the name or URL of the repo file
 
-Example:
 ```yaml
 type: dnf
 install:
   packages:
-    - repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+    - repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
       packages:
-        - mutter
+        - package-1
 ```
-
-## Package Removal
 
 ### Remove Packages
 
-* Specify packages to remove in the `remove.packages` field
-* Use flags such as `auto-remove` to customize package removal
-
-Example:
 ```yaml
 type: dnf
 remove:
   packages:
-    - firefox
-    - firefox-langpacks
+    - package-1
+    - package-2
 ```
 
-## Package Group Installation
+### Install Package Groups
 
-### Define Packages Groups
+- See list of all package groups by running `dnf5 group list --hidden` on a live system
+- Set the option `with-optional` to `true` to enable installation of optional packages in package groups
 
-* Specify a package group in the `group-install.packages` field
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 group-install:
+  with-optional: true
   packages:
-    - cosmic-desktop
-    - window-managers
+    - de-package-1
+    - wm-package-2
 ```
 
-## Package Group Removal
-
-### Remove Packages Groups
-
-* Specify a package group in the `group-remove.packages` field
-
-Example:
+### Remove Package Groups
 ```yaml
 type: dnf
 group-remove:
   packages:
-    - development-tools
+    - de-package-2
 ```
 
-## Package Replacement
-
 ### Replace Packages
+- You can specify one or more packages that will be swapped from another repo
+- This process uses `distro-sync` to perform this operation
+- All packages not specifying `old:` and `new:` will be swapped in a single transaction
 
-* Specify a replacement package in the `replace.from-repo` field
-* If new package for replacement is named differently, you can use `old/new` format as outlined below
-* Use flags such as `skip-unavailable`, `install-weak-deps`, `skip-broken` and `allow-erasing` to customize package installation
-
-Example:
 ```yaml
 type: dnf
 replace:
-  - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+  - from-repo: copr:copr.fedorainfracloud.org:custom-user:custom-repo
     packages:
-      - mutter
-  - from-repo: fedora
+      - package-1
+```
+
+- If a package has a different name in another repo, you can use the `old:` and `new:` properties
+- This process uses `swap` to perform this operation for each set
+- This process is ran before `distro-sync`
+
+```yaml
+type: dnf
+replace:
+  - from-repo: repo-1
     packages:
-      - old: OpenCL-ICD-Loader
-        new: ocl-icd
+      - old: old-package-2
+        new: new-package-2
+```
+
+### Installation options
+
+The following options can specified in the package installation, group installation, and package replacement sections.
+
+- `install-weak-deps` enables installation of the weak dependencies of RPMs
+  - Enabled by default
+  - Corresponds to the [`--setopt=install_weak_deps=True` / `--setopt=install_weak_deps=False`](https://dnf5.readthedocs.io/en/latest/dnf5.conf.5.html#install-weak-deps-options-label) flag
+- `skip-unavailable` enables skipping packages unavailable in repositories without erroring out
+  - Disabled by default
+  - Corresponds to the [`--skip-unavailable`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+- `skip-broken` enables skipping broken packages without erroring out
+  - Disabled by default
+  - Corresponds to the [`--skip-broken`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+- `allow-erasing` allows removing packages in case of dependency problems during package installation
+  - Disabled by default
+  - Corresponds to the [`--allowerasing`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+
+```yaml
+type: dnf
+install:
+  skip-unavailable: true
+  packages:
+    ...
+group-install:
+  skip-unavailable: true
+  packages:
+    ...
+replace:
+  - from-repo: repo-1
+    allow-erasing: true
+    packages:
+      ...
 ```
 
 ## Optfix
 
-### Fix Optfix
+- Optfix is a script used to work around problems with certain packages that install into `/opt/`
+  - These issues are caused by Fedora Atomic storing `/opt/` at the location `/var/opt/` by default, while `/var/` is only writeable on a live system
+  - The script works around these issues by moving the folder to `/usr/lib/opt/` and creating the proper symlinks at runtime
+- Specify a list of folders inside `/opt/`
 
-* Specify a list of packages to fix optfix issues in the `optfix` field
-
-Example:
 ```yaml
 type: dnf
 optfix:
-  packages:
-    - package1
-    - package2
+  - brave.com
+  - foldername
 ```
 
 ## Known issues
 
-Replacing the kernel with `dnf` module is not done cleanly & some remaints of old kernel will be present.  
-Please use `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
+Replacing the kernel with the `dnf` module is not done cleanly at the moment & some remaints of old kernel will be present.  
+Please use the `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
+
+## Note
+
+This documentation page uses the installation of the Brave Browser as an example of a package that required a custom repository, with a custom key, and an optfix configuration to install properly. This is not an official endorsement of the Brave Browser by the BlueBuild project.

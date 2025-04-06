@@ -85,18 +85,24 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
     BREW_ANALYTICS=true
 fi
 
-# Download Brew
-BREW_TARBALL_LINK="$(curl -fLs https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
-echo "Downloading Brew tarball..."
-curl -fLs --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
-echo "Downloaded Brew tarball"
+# Create necessary directories
+mkdir -p /var/home
+mkdir -p /var/roothome
 
-# Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
-echo "Extracting Brew tarball to '/usr/share/homebrew/'"
-mkdir -p "/usr/share/homebrew/"
-tar -I zstd --preserve-permissions -xf "/tmp/homebrew-tarball.tar.zst" -C "/usr/share/homebrew/"
-echo "Setting '/usr/share/homebrew/' permissions to UID/GID 1000"
-chown -R 1000:1000 "/usr/share/homebrew/"
+# Convince the installer that we are in CI
+touch /.dockerenv
+
+# Always install Brew
+echo "Downloading and installing Brew..."
+curl -fLs --create-dirs https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install
+echo "Downloaded Brew install script"
+chmod +x /tmp/brew-install
+/tmp/brew-install
+
+# Move Brew installation and set ownership to default user (UID 1000)
+tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew/.linuxbrew
+cp -R /home/linuxbrew /usr/share/homebrew
+chown -R 1000:1000 /usr/share/homebrew
 
 # Write systemd service files dynamically
 echo "Writing brew-setup service"
@@ -110,8 +116,11 @@ ConditionPathExists=!/var/home/linuxbrew/.linuxbrew
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/cp -R --update=none /usr/share/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
+ExecStart=/usr/bin/mkdir -p /tmp/homebrew
+ExecStart=/usr/bin/tar --zstd -xvf /usr/share/homebrew.tar.zst -C /tmp/homebrew
+ExecStart=/usr/bin/cp -R -n /tmp/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
 ExecStart=/usr/bin/chown -R 1000:1000 /var/home/linuxbrew
+ExecStart=/usr/bin/rm -rf /tmp/homebrew
 ExecStart=/usr/bin/touch /etc/.linuxbrew
 
 [Install]
@@ -150,7 +159,6 @@ Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
 ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
-ExecStartPost=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink systemd dbus || true"
 EOF
 
 # Write systemd timer files dynamically
@@ -228,7 +236,7 @@ d /var/home/linuxbrew 0755 1000 1000 - -
 EOF
 
 # Enable the setup service
-echo "Enabling brew-setup service to install Brew in run-time"
+echo "Enabling brew-setup service"
 systemctl enable brew-setup.service
 
 # Always enable or disable update and upgrade services for consistency

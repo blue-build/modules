@@ -3,30 +3,35 @@
 The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system and ensures the package manager remains updated and maintained. This module also sets up systemd services to periodically update the installed Brew packages.
 
 ## Features
-- Downloads Brew in build-time & installs it in run-time.
+- Installs Brew at build-time.
 - Sets up systemd services to automatically update Brew to the latest version.
 - Sets up systemd services to automatically upgrade Brew packages.
 - Sets up bash and fish completions for Brew.
 
 ## How it works
 
+### Directory paths glossary:
+- `/home/` is a symlink to `/var/home/`  
+- `/root/` is a symlink to `/var/roothome/`
+
 ### Build-time:
 
-- Necessary Brew package dependency `gcc` & `zstd` is installed if not present in the base image.
-- Brew tarball is downloaded from [Universal Blue 'packages' GitHub releases](https://github.com/ublue-os/packages/releases).
-- Brew tarball is extracted to `/usr/share/homebrew/`.
-- `/usr/share/homebrew/` permissions are set to the default user (UID/GID 1000).
-- `brew-update` & `brew-upgrade` SystemD service timers are enabled (by default).
+- Necessary Brew package dependency `gcc` is installed if not present in the base image
+- Directories `/home/` & `/root/` are created
+- Empty `.dockerenv` file is created in the root of the image-builder, to convince official Brew installation script that we are **not** running as root
+- Official brew installation script is downloaded & executed
+- Brew is extracted to `/home/linuxbrew/` by the official script (`/root/` is needed, since image-builds are running as root)
+- Brew in `/home/linuxbrew/` is compressed in tar, copied to `/usr/share/homebrew/` & permissions to it are set to default user (UID 1000)
+- `brew-update` & `brew-upgrade` SystemD service timers are enabled (by default)
 - A fix for path conflicts between system & brew packages with the same name is applied by adding Brew to path only in interactive shells, unlike what Brew does by default.
-- Set option that Brew's shell environment can't be ran as root, respecting Homebrew's recommendation that only user with UID/GID 1000 can manage Brew.
-- Brew bash & fish shell completions are copied to `/etc/profile.d/brew-bash-completions.sh` & `/usr/share/fish/vendor_conf.d/brew-fish-completions.fish`.
+- Brew bash & fish shell completions are copied to `/etc/profile.d/brew-bash-completions.sh` & `/usr/share/fish/vendor_conf.d/brew-fish-completions.fish`
 - `tmpfiles.d` configuration `homebrew.conf` is written with these directory locations:
   - `/var/lib/homebrew/`
   - `/var/cache/homebrew/`
   - `/home/linuxbrew/`
-- `brew-setup` service is enabled.
+- `brew-setup` service is enabled
 
-### Run-time:
+### Boot-time:
 
 **`tmpfiles.d homebrew.conf`:**
 - This configuration is telling SystemD to: automatically create these necessary directories on every system boot if not available & to give them permissions of the default user (UID 1000):
@@ -35,16 +40,16 @@ The brew module installs [Homebrew / Linuxbrew](https://brew.sh/) on your system
   - `/home/linuxbrew/`
 
 **`brew-setup`:**
-- `brew-setup` installs `brew` in runtime.  
-  SystemD service checks if main directory used by Brew exists (`/home/linuxbrew/.linuxbrew/`) & if `brew-setup` state file exists (`/etc/.linuxbrew`).
-- If one of those paths don't exist, then extracted Brew tarball is copied from `/usr/share/homebrew/` to `/home/linuxbrew/`.
-- Permissions to `/home/linuxbrew/` are set to the default user (UID/GID 1000).
-- Empty file `/etc/.linuxbrew` is created, which indicates that brew-setup (installation) is successful & which allows setup to run again on next boot when removed.
+- `brew-setup` SystemD service checks if main directory used by Brew exists (`/home/linuxbrew/.linuxbrew/`)  
+  & if `brew-setup` state file exists (`/etc/.linuxbrew`)
+- If one of those paths don't exist, then Homebrew tar is extracted from `/usr/share/homebrew/homebrew.tar.zst` to `/tmp/homebrew/`
+- Extracted Homebrew is then copied from `/tmp/homebrew/` to `/home/linuxbrew/` & permissions to it are set to default user (UID 1000)
+- Temporary directory `/tmp/homebrew/` is removed
+- Empty file `/etc/.linuxbrew` is created, which indicates that brew-setup (installation) is successful & which allows setup to run again on next boot when removed
 
 **Rest of the setup:**
-- `brew-update` runs at the specified time to update Brew to the latest version.
-- `brew-upgrade` runs at the specified time to upgrade Brew packages.  
-  It additionally unlinks conflicting Brew dependencies if installed, like systemd & dbus, to prevent crucial system programs being preferred by Brew.
+- `brew-update` runs at the specified time to update Brew to the latest version
+- `brew-upgrade` runs at the specified time to upgrade Brew packages
 
 ## Development
 Setting `DEBUG=true` inside `brew.sh` will enable additional output for debugging purposes during development.
