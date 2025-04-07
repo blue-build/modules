@@ -28,7 +28,8 @@ Optionally, you can include only specific file(s) in the module recipe, if you d
 
 It is highly recommended to use `zz1-` prefix before your gschema.override name, to ensure that your changes are going to be applied.  
 Gschema overrides which rank higher in alphabetic filename order are the most preferred, hence the recommendation above.  
-So if you don't see some changes with `zz1-` prefixed gschema override applied, rename the prefix to the higher alphabetic order like `zz2-` or similar.
+So if you don't see some changes with `zz1-` prefixed gschema override applied, that's because some other gschema override is more preferred in alphabetic filename.  
+To solve this, rename the prefix to the higher alphabetic order like `zz2-` or similar.
 
 Also don't forget to rename your file(s) too with this prefix in `files/gschema-overrides/`.
 
