@@ -1,19 +1,10 @@
 #!/usr/bin/env nu
 
-# use dnf_interface.nu *
+use dnf_interface.nu *
 
 const NEGATIVO = 'negativo17'
 const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-negativo17.repo'
 const RPMFUSION = 'rpmfusion'
-
-# Handles installing necessary plugins for repo management.
-def check_dnf5_plugins []: nothing -> nothing {
-  if (^rpm -q dnf5-plugins | complete).exit_code != 0 {
-    print $'(ansi yellow1)Required dnf5 plugins are not installed. Installing plugins(ansi reset)'
-
-    install_pkgs { packages: [dnf5-plugins] }
-  }
-}
 
 # Handle adding/removing repo files and COPR repos.
 # 
@@ -86,8 +77,6 @@ def repos [$repos: record]: nothing -> record {
 
 # Setup nonfree repos for rpmfusion or negativo17-multimedia.
 def nonfree_repos [repo_type?: string]: nothing -> list<string> {
-  check_dnf5_plugins
-
   match $repo_type {
     $repo if $repo == $RPMFUSION => {
       disable_negativo
@@ -131,11 +120,7 @@ def enable_rpmfusion []: nothing -> nothing {
   install_pkgs { packages: $repos }
 
   print $"(ansi green)Enabling '(ansi cyan)($CISCO_REPO)(ansi green)' repo for RPMFusion compatibility(ansi reset)"
-  try {
-    ^dnf5 config-manager setopt $'($CISCO_REPO).enabled=1'
-  } catch {
-    exit 1
-  }
+  dnf config-manager setopt [$'($CISCO_REPO).enabled=1']
 }
 
 # Disable rpmfusion repos
@@ -156,20 +141,12 @@ def disable_rpmfusion []: nothing -> nothing {
 }
 
 def negativo_repo_list []: nothing -> list<path> {
-  try {
-    ^dnf5 -y repo list --all --json | from json
-  } catch {
-    exit 1
-  }
+  dnf repo list
     | find negativo17
     | get id
     | ansi strip
     | par-each {|repo|
-      try {
-        ^dnf5 -y repo info $repo --all --json | from json
-      } catch {
-        exit 1
-      }
+      dnf repo info $repo --all
     }
     | flatten
     | get id
@@ -188,12 +165,7 @@ def enable_negativo []: nothing -> nothing {
   }
   add_repos [$NEGATIVO_URL]
 
-  try {
-    ^dnf5 repo list --all --json
-  } catch {
-    exit 1
-  }
-    | from json
+  dnf repo list
     | find negativo17
     | get id
     | ansi strip
@@ -201,11 +173,7 @@ def enable_negativo []: nothing -> nothing {
       [$'($id).enabled=1' $'($id).priority=90']
     }
     | flatten
-    | try {
-      ^dnf5 -y config-manager setopt ...($in)
-    } catch {
-      exit 1
-    }
+    | dnf config-manager setopt $in
 }
 
 # Disable negativo17-multimedia repos
@@ -220,8 +188,6 @@ def disable_negativo []: nothing -> nothing {
 #
 # Returns a list of IDs of the repos added
 def add_repos [$repos: list]: nothing -> list<string> {
-  check_dnf5_plugins
-
   if ($repos | is-not-empty) {
     print $'(ansi green)Adding repositories:(ansi reset)'
 
@@ -254,11 +220,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
         })
       }
 
-      try {
-        ^dnf5 -y config-manager addrepo --overwrite --from-repofile $repo
-      } catch {
-        exit 1
-      }
+      dnf config-manager addrepo --from-repofile $repo
     }
   }
 
@@ -269,20 +231,11 @@ def add_repos [$repos: list]: nothing -> list<string> {
     }
 
   # Get a list of info for every repo installed
-  let repo_info = try {
-    ^dnf5 repo list --all --json
-  } catch {
-    exit 1
-  }
+  let repo_info = dnf repo list
     | from json
     | get id
     | par-each {|repo|
-      try {
-        ^dnf5 repo info --json $repo
-      } catch {
-        exit 1
-      }
-        | from json
+      dnf repo info $repo
     }
     | flatten
 
@@ -297,11 +250,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
     | each {
       $'($in).enabled=1'
     }
-    | try {
-      ^dnf5 -y config-manager setopt ...($in)
-    } catch {
-      exit 1
-    }
+    | dnf config-manager setopt $in
 
   $repo_ids
 }
@@ -318,11 +267,7 @@ def remove_repos [$repos: list]: nothing -> nothing {
 
     $repos
       | par-each {|repo|
-        try {
-          ^dnf5 -y repo info $repo --all --json | from json
-        } catch {
-          exit 1
-        }
+        dnf repo info $repo --all
       }
       | flatten
       | get repo_file_path
@@ -334,30 +279,10 @@ def remove_repos [$repos: list]: nothing -> nothing {
   }
 }
 
-# Checks to see if the string passed in is
-# a COPR repo string. Will error if it isn't
-def check_copr []: string -> string {
-  let is_copr = ($in | split row / | length) == 2
-
-  if not $is_copr {
-    return (error make {
-      msg: $"(ansi red)The string '(ansi cyan)($in)(ansi red)' is not recognized as a COPR repo(ansi reset)"
-      label: {
-        span: (metadata $is_copr).span
-        text: 'Checks if string is a COPR repo'
-      }
-    })
-  }
-
-  $in
-}
-
 # Enable a list of COPR repos. The COPR repo ID has a '/' in the name.
 #
 # This will error if a COPR repo ID is invalid.
 def add_coprs [$copr_repos: list]: nothing -> list<string> {
-  check_dnf5_plugins
-
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
     $copr_repos
@@ -367,11 +292,7 @@ def add_coprs [$copr_repos: list]: nothing -> list<string> {
 
     for $copr in $copr_repos {
       print $"Adding COPR repository: (ansi cyan)'($copr)'(ansi reset)"
-      try {
-        ^dnf5 -y copr enable ($copr | check_copr)
-      } catch {
-        exit 1
-      }
+      dnf copr enable $copr
     }
   }
   $copr_repos
@@ -381,10 +302,8 @@ def add_coprs [$copr_repos: list]: nothing -> list<string> {
 #
 # This will error if a COPR repo ID is invalid.
 def disable_coprs [$copr_repos: list]: nothing -> nothing {
-  check_dnf5_plugins
-
   if ($copr_repos | is-not-empty) {
-    print $'(ansi green)Adding COPR repositories:(ansi reset)'
+    print $'(ansi green)Disabling COPR repositories:(ansi reset)'
     $copr_repos
       | each {
         print $'- (ansi cyan)($in)(ansi reset)'
@@ -392,11 +311,7 @@ def disable_coprs [$copr_repos: list]: nothing -> nothing {
 
     for $copr in $copr_repos {
       print $"Disabling COPR repository: (ansi cyan)'($copr)'(ansi reset)"
-      try {
-        ^dnf5 -y copr disable ($copr| check_copr)
-      } catch {
-        exit 1
-      }
+      dnf copr disable $copr
     }
   }
 }
@@ -512,7 +427,7 @@ def group_remove [remove: record]: nothing -> nothing {
       }
 
     try {
-      ^dnf5 -y group remove ...($remove_list)
+      dnf group remove $remove_list
     } catch {
       exit 1
     }
@@ -535,23 +450,11 @@ def group_install [install: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    mut args = $install | install_args
-
-    if $install.with-optional {
-      $args = $args | append '--with-optional'
-    }
-
-    try {
-      (^dnf5
-        -y
-        ($install | weak_arg)
-        group
-        install
-        ...($args)
-        ...($install_list))
-    } catch {
-      exit 1
-    }
+    (dnf
+      group
+      install
+      --opts $install
+      $install_list)
   }
 }
 
@@ -568,77 +471,7 @@ def remove_pkgs [remove: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    mut args = []
-
-    if not $remove.auto-remove {
-      $args = $args | append '--no-autoremove'
-    }
-
-    try {
-      ^dnf5 -y remove ...($args) ...($remove.packages)
-    } catch {
-      exit 1
-    }
-  }
-}
-
-# Build up args to use on `dnf`
-def install_args [
-  --global-config: record
-  ...filter: string
-]: record -> list<string> {
-  let install = $in
-    | default (
-      $global_config.skip-unavailable?
-        | default false
-    ) skip-unavailable
-    | default (
-      $global_config.skip-broken?
-        | default false
-    ) skip-broken
-    | default (
-      $global_config.allow-erasing?
-        | default false
-    ) allow-erasing
-  mut args = []
-  let check_filter = {|arg|
-    let arg_exists = ($arg in $install)
-    if ($filter | is-empty) {
-      $arg_exists and ($install | get $arg)
-    } else {
-      $arg_exists and ($arg in $filter) and ($install | get $arg)
-    }
-  }
-
-  if (do $check_filter 'skip-unavailable') {
-    $args = $args | append '--skip-unavailable'
-  }
-
-  if (do $check_filter 'skip-broken') {
-    $args = $args | append '--skip-broken'
-  }
-
-  if (do $check_filter 'allow-erasing') {
-    $args = $args | append '--allowerasing'
-  }
-
-  $args
-}
-
-# Generate a weak deps argument
-def weak_arg [
-  --global-config: record
-]: record -> string {
-  let install =
-    | default (
-      $global_config.install-weak-deps?
-        | default true
-    ) install-weak-deps
-
-  if $install.install-weak-deps {
-    '--setopt=install_weak_deps=True'
-  } else {
-    '--setopt=install_weak_deps=False'
+    dnf remove --opts $remove ...($remove.packages)
   }
 }
 
@@ -705,18 +538,14 @@ def install_pkgs [install: record]: nothing -> nothing {
         }
     }
 
-    try {
-      (^dnf5
-        -y
-        ($install | weak_arg)
-        install
-        ...($install | install_args)
-        ...($http_list)
-        ...($local_list)
-        ...($normal_list))
-    } catch {
-      exit 1
-    }
+    (dnf
+      install
+      --opts $install
+      ([
+        $http_list
+        $local_list
+        $normal_list
+      ] | flatten))
   }
 
   # Get all the entries that have a repo specified.
@@ -735,18 +564,13 @@ def install_pkgs [install: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    try {
-      (^dnf5
-        -y
-        ($repo_install | weak_arg --global-config $install)
-        install
-        --repoid
-        $repo
-        ...($repo_install | install_args --global-config $install)
-        ...($packages))
-    } catch {
-      exit 1
-    }
+    (dnf
+      install
+      --repoid
+      $repo
+      --opts $repo_install
+      --global-opts $install
+      $packages)
   }
 }
 
@@ -793,16 +617,12 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
             }
 
           for $pkg_pair in $swap_packages {
-            try {
-              (^dnf5
-                -y
-                swap
-                ...($pkg_pair | install_args --global-config $replacement allow-erasing)
-                $pkg_pair.old
-                $pkg_pair.new)
-            } catch {
-              exit 1
-            }
+            (dnf
+              swap
+              --opts $pkg_pair
+              --global-opts $replacement
+              $pkg_pair.old
+              $pkg_pair.new)
           }
         }
 
@@ -813,17 +633,11 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
               print $'- (ansi cyan)($in)(ansi reset)'
             }
 
-          try {
-            (^dnf5
-              -y
-              ($replacement | weak_arg)
-              distro-sync
-              ...($replacement | install_args)
-              --repo $from_repo
-              ...($sync_packages))
-          } catch {
-            exit 1
-          }
+          (dnf
+            distro-sync
+            --opts $replacement
+            --repo $from_repo
+            $sync_packages)
         }
       }
     }
@@ -857,11 +671,7 @@ def main [config: string]: nothing -> nothing {
 
   let cleanup_repos = repos $config.repos
 
-  try {
-    ^dnf5 makecache --refresh
-  } catch {
-    exit 1
-  }
+  dnf makecache
 
   run_optfix $config.optfix
   group_remove $config.group-remove

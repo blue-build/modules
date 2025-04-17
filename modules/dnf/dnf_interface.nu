@@ -1,17 +1,247 @@
 export def "dnf install" [
   --opts: record
   --global-opts: record
-  packages: list<string>
+  --repoid: string
+  packages: list
 ]: nothing -> nothing {
-  
+  let dnf = dnf version
+
+  try {
+    (^$dnf.path
+        -y
+        ($opts | weak_arg --global-config $global_opts)
+        install
+        ...(if $repoid != null {
+          [--repoid $repoid]
+        } else {
+          []
+        })
+        ...($opts | install_args --global-config $global_opts)
+        ...$packages)
+  } catch {
+    exit 1
+  }
 }
 
-def versions []: nothing -> list<string> {
-  ["dnf5" "dnf4"]
+export def "dnf remove" [
+  --opts: record
+  packages: list
+]: nothing -> nothing {
+  let dnf = dnf version
+  
+  mut args = []
+
+  if not $opts.auto-remove {
+    $args = $args | append '--no-autoremove'
+  }
+
+  try {
+    (^$dnf.path
+      -y
+      remove
+      ...($args)
+      ...($packages))
+  } catch {
+    exit 1
+  }
 }
 
-def dnf_version []: nothing -> string@versions {
+export def "dnf config-manager addrepo" [
+  --from-repofile: string
+]: nothing -> nothing {
+  check_dnf_plugins
+  let dnf = dnf version
   
+  try {
+    ^$dnf.path -y config-manager addrepo --overwrite --from-repofile $from_repofile
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf config-manager setopt" [
+  opts: list
+]: nothing -> nothing {
+  check_dnf_plugins
+  let dnf = dnf version
+  
+  try {
+    ^$dnf.path -y config-manager setopt ...($opts)
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf copr enable" [copr: string]: nothing -> nothing {
+  check_dnf_plugins
+  let dnf = dnf version
+  
+  try {
+    ^$dnf.path -y copr enable ($copr | check_copr)
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf copr disable" [copr: string]: nothing -> nothing {
+  check_dnf_plugins
+  let dnf = dnf version
+  
+  try {
+    ^$dnf.path -y copr disable ($copr | check_copr)
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf swap" [
+  --opts: record
+  --global-opts: record
+  old: string
+  new: string
+]: nothing -> nothing {
+  let dnf = dnf version
+
+  try {
+    (^$dnf.path
+      -y
+      swap
+      ...($opts | install_args --global-config $global_opts 'allow-erasing')
+      $old
+      $new)
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf distro-sync" [
+  --opts: record
+  --repo: string
+  packages: list
+]: nothing -> nothing {
+  let dnf = dnf version
+  
+  try {
+    (^$dnf.path
+      -y
+      ($opts | weak_arg)
+      distro-sync
+      ...($opts | install_args)
+      --repo $repo
+      ...($packages))
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf group install" [
+  --opts: record
+  packages: list
+]: nothing -> nothing {
+  let dnf = dnf version
+  
+  mut args = $opts | install_args
+
+  if $opts.with-optional {
+    $args = $args | append '--with-optional'
+  }
+
+  try {
+    (^$dnf.path
+      -y
+      ($opts | weak_arg)
+      group
+      install
+      ...($args)
+      ...($packages))
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf group remove" [
+  packages: list
+]: nothing -> nothing {
+  let dnf = dnf version
+  
+  try {
+    (^$dnf.path -y group remove ...($packages))
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf repo list" []: nothing -> list {
+  let dnf = dnf version
+
+  try {
+    match $dnf.command {
+      "dnf4" => {
+        ^/tmp/modules/dnf4/dnf-repolist | from json
+      }
+      "dnf5" => {
+        ^dnf5 repo list --all --json | from json
+      }
+    }
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf repo info" [
+  repo: string
+  --all
+]: nothing -> record {
+  let dnf = dnf version
+
+  try {
+    match $dnf.command {
+      "dnf4" => {
+        ^/tmp/modules/dnf4/dnf-repoinfo $repo | from json
+      }
+      "dnf5" => {
+        (^dnf5
+          -y
+          repo
+          info
+          $repo
+          ...(if $all {
+            [--all]
+          } else {
+            []
+          })
+          --json)
+          | from json
+      }
+    }
+  } catch {
+    exit 1
+  }
+}
+
+export def "dnf makecache" []: nothing -> nothing {
+  let dnf = dnf version
+
+  try {
+    ^$dnf.path makecache --refresh
+  } catch {
+    exit 1
+  }
+}
+
+def "dnf version" []: nothing -> record {
+  let dnf4 = which dnf4
+  let dnf5 = which dnf5
+
+  if ($dnf4 | is-not-empty) {
+    $dnf4 | first | select command path
+  } else if ($dnf5 | is-not-empty) {
+    $dnf5 | first | select command path
+  } else {
+    error make {
+      msg: 'DNF not found!'
+    }
+  }
 }
 
 # Build up args to use on `dnf`
@@ -73,3 +303,44 @@ def weak_arg [
     '--setopt=install_weak_deps=False'
   }
 }
+
+# Handles installing necessary plugins for repo management.
+def check_dnf_plugins []: nothing -> nothing {
+  let dnf = dnf version
+
+  match $dnf.command {
+    "dnf4" => {
+      if (^rpm -q dnf-plugins-core | complete).exit_code != 0 {
+        print $'(ansi yellow1)Required dnf4 plugins are not installed. Installing plugins(ansi reset)'
+
+        dnf install [dnf-plugins-core]
+      }
+    }
+    "dnf5" => {
+      if (^rpm -q dnf5-plugins | complete).exit_code != 0 {
+        print $'(ansi yellow1)Required dnf5 plugins are not installed. Installing plugins(ansi reset)'
+
+        dnf install [dnf5-plugins]
+      }
+    }
+  }
+}
+
+# Checks to see if the string passed in is
+# a COPR repo string. Will error if it isn't
+def check_copr []: string -> string {
+  let is_copr = ($in | split row / | length) == 2
+
+  if not $is_copr {
+    return (error make {
+      msg: $"(ansi red)The string '(ansi cyan)($in)(ansi red)' is not recognized as a COPR repo(ansi reset)"
+      label: {
+        span: (metadata $is_copr).span
+        text: 'Checks if string is a COPR repo'
+      }
+    })
+  }
+
+  $in
+}
+
