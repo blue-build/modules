@@ -72,7 +72,7 @@ model RepoFiles {
    * This must be the ID of the repo
    * as seen in `dnf5 repolist`.
    */
-  disable?: Array<string>;
+  remove?: Array<string>;
 }
 
 model RepoCopr {

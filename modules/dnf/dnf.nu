@@ -232,7 +232,6 @@ def add_repos [$repos: list]: nothing -> list<string> {
 
   # Get a list of info for every repo installed
   let repo_info = dnf repo list
-    | from json
     | get id
     | par-each {|repo|
       dnf repo info $repo
