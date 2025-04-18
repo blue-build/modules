@@ -470,7 +470,7 @@ def remove_pkgs [remove: record]: nothing -> nothing {
         print $'- (ansi cyan)($in)(ansi reset)'
       }
 
-    dnf remove --opts $remove ...($remove.packages)
+    dnf remove --opts $remove $remove.packages
   }
 }
 
