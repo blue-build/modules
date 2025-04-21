@@ -55,7 +55,7 @@ export def "dnf config-manager addrepo" [
   try {
     match $dnf.command {
       "dnf4" => {
-        ^dnf4 -y config-manager --add-repo $from_repofile
+        ^dnf4 -v -y config-manager --add-repo $from_repofile
       }
       "dnf5" => {
         (^dnf5
