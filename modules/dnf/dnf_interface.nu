@@ -18,7 +18,8 @@ export def "dnf install" [
         })
         ...($opts | install_args --global-config $global_opts)
         ...$packages)
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -41,7 +42,8 @@ export def "dnf remove" [
       remove
       ...($args)
       ...($packages))
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -67,7 +69,8 @@ export def "dnf config-manager addrepo" [
           --from-repofile $from_repofile)
       }
     }
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -95,7 +98,8 @@ export def "dnf config-manager setopt" [
         ^dnf5 -y config-manager setopt ...($opts)
       }
     }
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -106,7 +110,8 @@ export def "dnf copr enable" [copr: string]: nothing -> nothing {
   
   try {
     ^$dnf.path -y copr enable ($copr | check_copr)
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -117,7 +122,8 @@ export def "dnf copr disable" [copr: string]: nothing -> nothing {
   
   try {
     ^$dnf.path -y copr disable ($copr | check_copr)
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -137,7 +143,8 @@ export def "dnf swap" [
       ...($opts | install_args --global-config $global_opts 'allow-erasing')
       $old
       $new)
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -157,7 +164,8 @@ export def "dnf distro-sync" [
       ...($opts | install_args)
       --repo $repo
       ...($packages))
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -182,7 +190,8 @@ export def "dnf group install" [
       install
       ...($args)
       ...($packages))
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -194,7 +203,8 @@ export def "dnf group remove" [
   
   try {
     (^$dnf.path -y group remove ...($packages))
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -211,7 +221,8 @@ export def "dnf repo list" []: nothing -> list {
         ^dnf5 repo list --all --json | from json
       }
     }
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -242,7 +253,8 @@ export def "dnf repo info" [
           | from json
       }
     }
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
@@ -252,7 +264,8 @@ export def "dnf makecache" []: nothing -> nothing {
 
   try {
     ^$dnf.path makecache --refresh
-  } catch {
+  } catch {|e|
+    print $e
     exit 1
   }
 }
