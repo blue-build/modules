@@ -53,7 +53,21 @@ export def "dnf config-manager addrepo" [
   let dnf = dnf version
   
   try {
-    ^$dnf.path -y config-manager addrepo --overwrite --from-repofile $from_repofile
+    match $dnf.command {
+      "dnf4" => {
+        ^dnf4 -y config-manager --set-enabled --add-repo $from_repofile
+      }
+      "dnf5" => {
+        (^dnf5
+          -y
+          config-manager
+          addrepo
+          --create-missing-dir
+          --overwrite
+          --set=enabled=true
+          --from-repofile $from_repofile)
+      }
+    }
   } catch {
     exit 1
   }
@@ -66,7 +80,16 @@ export def "dnf config-manager setopt" [
   let dnf = dnf version
   
   try {
-    ^$dnf.path -y config-manager setopt ...($opts)
+    match $dnf.command {
+      "dnf4" => {
+        for $opt in $opts {
+          ^dnf4 -y config-manager --save --set-opt $opt
+        }
+      }
+      "dnf5" => {
+        ^dnf5 -y config-manager setopt ...($opts)
+      }
+    }
   } catch {
     exit 1
   }
