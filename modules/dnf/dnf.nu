@@ -653,20 +653,11 @@ def main [config: string]: nothing -> nothing {
     | default {} install
     | default [] optfix
     | default [] replace
-  let has_dnf5 = ^rpm -q dnf5 | complete
   let should_cleanup = $config.repos
     | default false cleanup
     | get cleanup
 
-  if $has_dnf5.exit_code != 0 {
-    return (error make {
-      msg: $"(ansi red)ERROR: Main dependency '(ansi cyan)dnf5(ansi red)' is not installed. Install '(ansi cyan)dnf5(ansi red)' before using this module to solve this error.(ansi reset)"
-      label: {
-        span: (metadata $has_dnf5).span
-        text: 'Checks for dnf5'
-      }
-    })
-  }
+  dnf version
 
   let cleanup_repos = repos $config.repos
 

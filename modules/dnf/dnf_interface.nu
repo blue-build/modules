@@ -229,18 +229,21 @@ export def "dnf makecache" []: nothing -> nothing {
   }
 }
 
-def "dnf version" []: nothing -> record {
-  let dnf4 = which dnf4
-  let dnf5 = which dnf5
+export def "dnf version" []: nothing -> record {
+  let dnf = which dnf4 dnf5
 
-  if ($dnf4 | is-not-empty) {
-    $dnf4 | first | select command path
-  } else if ($dnf5 | is-not-empty) {
-    $dnf5 | first | select command path
+  if ("dnf5" in ($dnf | get command)) {
+    $dnf | filter { $in.command == "dnf5" } | first
+  } else if ("dnf4" in ($dnf | get command)) {
+    $dnf | filter { $in.command == "dnf4" } | first
   } else {
-    error make {
-      msg: 'DNF not found!'
-    }
+    return (error make {
+      msg: $"(ansi red)ERROR: Main dependency '(ansi cyan)dnf5/dnf4(ansi red)' is not installed. Install '(ansi cyan)dnf5/dnf4(ansi red)' before using this module to solve this error.(ansi reset)"
+      label: {
+        span: (metadata $dnf).span
+        text: 'Checks for dnf5/dnf4'
+      }
+    })
   }
 }
 
