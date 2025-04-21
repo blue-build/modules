@@ -208,7 +208,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
         print $"Adding repository URL: (ansi cyan)'($repo)'(ansi reset)"
         $repo
       } else if ($repo | str ends-with '.repo') and ($repo_path | path exists) {
-        print $"Adding repository file: (ansi cyan)'($repo)'(ansi reset)"
+        print $"Adding repository file: (ansi cyan)'($repo_path)'(ansi reset)"
         $repo_path
       } else {
         return (error make {

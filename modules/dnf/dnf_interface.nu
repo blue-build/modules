@@ -55,7 +55,7 @@ export def "dnf config-manager addrepo" [
   try {
     match $dnf.command {
       "dnf4" => {
-        ^dnf4 -y config-manager --set-enabled --add-repo $from_repofile
+        ^dnf4 -y config-manager --add-repo $from_repofile
       }
       "dnf5" => {
         (^dnf5
@@ -64,7 +64,6 @@ export def "dnf config-manager addrepo" [
           addrepo
           --create-missing-dir
           --overwrite
-          --set=enabled=true
           --from-repofile $from_repofile)
       }
     }
@@ -82,9 +81,15 @@ export def "dnf config-manager setopt" [
   try {
     match $dnf.command {
       "dnf4" => {
-        for $opt in $opts {
-          ^dnf4 -y config-manager --save --set-opt $opt
-        }
+        (^dnf4
+          -y
+          config-manager
+          --save
+          ...($opts
+            | each {|opt|
+              [--set-opt $opt]
+            }
+            | flatten))
       }
       "dnf5" => {
         ^dnf5 -y config-manager setopt ...($opts)
