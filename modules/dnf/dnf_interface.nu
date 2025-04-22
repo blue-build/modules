@@ -19,7 +19,7 @@ export def "dnf install" [
         ...($opts | install_args --global-config $global_opts)
         ...$packages)
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -43,7 +43,7 @@ export def "dnf remove" [
       ...($args)
       ...($packages))
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -70,7 +70,7 @@ export def "dnf config-manager addrepo" [
       }
     }
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -90,7 +90,7 @@ export def "dnf config-manager setopt" [
           --save
           ...($opts
             | each {|opt|
-              [--set-opt $opt]
+              [--setopt $opt]
             }
             | flatten))
       }
@@ -99,7 +99,7 @@ export def "dnf config-manager setopt" [
       }
     }
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -111,7 +111,7 @@ export def "dnf copr enable" [copr: string]: nothing -> nothing {
   try {
     ^$dnf.path -y copr enable ($copr | check_copr)
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -123,7 +123,7 @@ export def "dnf copr disable" [copr: string]: nothing -> nothing {
   try {
     ^$dnf.path -y copr disable ($copr | check_copr)
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -144,7 +144,7 @@ export def "dnf swap" [
       $old
       $new)
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -165,7 +165,7 @@ export def "dnf distro-sync" [
       --repo $repo
       ...($packages))
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -191,7 +191,7 @@ export def "dnf group install" [
       ...($args)
       ...($packages))
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -204,7 +204,7 @@ export def "dnf group remove" [
   try {
     (^$dnf.path -y group remove ...($packages))
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -215,14 +215,14 @@ export def "dnf repo list" []: nothing -> list {
   try {
     match $dnf.command {
       "dnf4" => {
-        ^/tmp/modules/dnf4/dnf-repolist | from json
+        ^/tmp/modules/dnf/dnf-repolist | from json
       }
       "dnf5" => {
         ^dnf5 repo list --all --json | from json
       }
     }
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -236,7 +236,7 @@ export def "dnf repo info" [
   try {
     match $dnf.command {
       "dnf4" => {
-        ^/tmp/modules/dnf4/dnf-repoinfo $repo | from json
+        ^/tmp/modules/dnf/dnf-repoinfo $repo | from json
       }
       "dnf5" => {
         (^dnf5
@@ -254,7 +254,7 @@ export def "dnf repo info" [
       }
     }
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
@@ -265,7 +265,7 @@ export def "dnf makecache" []: nothing -> nothing {
   try {
     ^$dnf.path makecache --refresh
   } catch {|e|
-    print $e
+    print $'($e.msg)'
     exit 1
   }
 }
