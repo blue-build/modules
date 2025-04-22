@@ -8,16 +8,16 @@ export def "dnf install" [
 
   try {
     (^$dnf.path
-        -y
-        ($opts | weak_arg --global-config $global_opts)
-        install
-        ...(if $repoid != null {
-          [--repoid $repoid]
-        } else {
-          []
-        })
-        ...($opts | install_args --global-config $global_opts)
-        ...$packages)
+      -y
+      ($opts | weak_arg --global-config $global_opts)
+      install
+      ...(if $repoid != null {
+        [--repoid $repoid]
+      } else {
+        []
+      })
+      ...($opts | install_args --global-config $global_opts)
+      ...$packages)
   } catch {|e|
     print $'($e.msg)'
     exit 1
@@ -293,7 +293,9 @@ def install_args [
   --global-config: record
   ...filter: string
 ]: record -> list<string> {
-  let install = $in
+  let opts = $in | default {}
+  let global_config = $global_config | default {}
+  let install = $opts
     | default (
       $global_config.skip-unavailable?
         | default false
@@ -335,7 +337,9 @@ def install_args [
 def weak_arg [
   --global-config: record
 ]: record -> string {
-  let install =
+  let opts = $in | default {}
+  let global_config = $global_config | default {}
+  let install = $opts
     | default (
       $global_config.install-weak-deps?
         | default true
