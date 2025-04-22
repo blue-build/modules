@@ -117,7 +117,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       # So that's why I made a check for directory
       # I made an additional check if language files are available, in case if extension is packaged with an empty folder, like with Default Workspace extension
       if [[ -d "${TMP_DIR}/locale" ]]; then
-          if ls "${TMP_DIR}/locale/"*.mo 1> /dev/null 2>&1; then
+          if find "${TMP_DIR}/locale/" -type f -name "*.mo" | grep -q .; then
             echo "Installing language extension files"
             install -d -m 0755 "/usr/share/locale/"
             cp -r "${TMP_DIR}/locale"/* "/usr/share/locale/"
@@ -226,7 +226,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       # So that's why I made a check for directory
       # I made an additional check if language files are available, in case if extension is packaged with an empty folder, like with Default Workspace extension
       if [[ -d "${TMP_DIR}/locale" ]]; then
-        if ls "${TMP_DIR}/locale/"*.mo 1> /dev/null 2>&1; then
+        if find "${TMP_DIR}/locale/" -type f -name "*.mo" | grep -q .; then
           echo "Installing language extension files"
           install -d -m 0755 "/usr/share/locale/"
           cp -r "${TMP_DIR}/locale"/* "/usr/share/locale/"
