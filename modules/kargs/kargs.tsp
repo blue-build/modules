@@ -13,7 +13,7 @@ model KargsModuleV1 {
    */
   type: "kargs" | "kargs@v1" | "kargs@latest";
 
-  /** Defines on which OS architectures are kargs applied. Defaults to all architectures if ommited. */
+  /** Defines on which OS architectures are kargs applied. Defaults to all architectures if omitted. */
   `arch`?: string;
 
   /** Kargs to inject in the image. */
