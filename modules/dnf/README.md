@@ -79,6 +79,31 @@ repos:
     - key2.asc
 ```
 
+### Add Non-free Repositories
+
+This allows you to add a commonly used non-free repository.
+You can choose between [negativo17](https://negativo17.org/) and [rpmfusion](https://rpmfusion.org/).
+Your choice will also disable the opposite repository if it was already enabled.
+
+```yaml
+type: dnf
+repos:
+  nonfree: negativo17
+```
+
+### Options
+
+There is currently only one option that can be specified in the repository management section.
+
+- `cleanup` automatically cleans up repositories added in this section
+  - Disabled by default
+
+```yaml
+type: dnf
+repos:
+  cleanup: true
+```
+
 ## Package Management
 
 ### Installing
