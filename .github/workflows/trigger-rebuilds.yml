@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'blue-build/modules'
     steps: 
+      - run: echo "website:" && curl -X POST -d {} ${{ secrets.WEBSITE_DEPLOY_HOOK }}
+      - run: sleep 3m
       - run: echo "schemas:" && curl -X POST -d {} ${{ secrets.SCHEMAS_DEPLOY_HOOK }}
-      - run: sleep 1m
+      - run: sleep 3m
       - run: echo "website:" && curl -X POST -d {} ${{ secrets.WEBSITE_DEPLOY_HOOK }}
