@@ -254,6 +254,7 @@ optfix:
   - brave.com
   - foldername
 ```
+
 ## Note
 
 This documentation page uses the installation of the Brave Browser as an example of a package that required a custom repository, with a custom key, and an optfix configuration to install properly. This is not an official endorsement of the Brave Browser by the BlueBuild project.
