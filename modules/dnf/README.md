@@ -254,12 +254,6 @@ optfix:
   - brave.com
   - foldername
 ```
-
-## Known issues
-
-Replacing the kernel with the `dnf` module is not done cleanly at the moment & some remaints of old kernel will be present.  
-Please use the `rpm-ostree` module for this purpose until this `dnf` behavior is fixed.
-
 ## Note
 
 This documentation page uses the installation of the Brave Browser as an example of a package that required a custom repository, with a custom key, and an optfix configuration to install properly. This is not an official endorsement of the Brave Browser by the BlueBuild project.
