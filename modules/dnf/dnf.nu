@@ -248,9 +248,8 @@ def add_repos [$repos: list]: nothing -> list<string> {
   $repo_ids
     | each {
       print $'Enabling repo (ansi cyan)($in)(ansi reset)'
-      $'($in).enabled=1'
+      dnf config-manager setopt [$'($in).enabled=1']
     }
-    | dnf config-manager setopt $in
 
   $repo_ids
 }
