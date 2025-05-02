@@ -6,6 +6,16 @@ export def "dnf install" [
 ]: nothing -> nothing {
   let dnf = dnf version
 
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
   try {
     (^$dnf.path
       -y
@@ -30,6 +40,16 @@ export def "dnf remove" [
 ]: nothing -> nothing {
   let dnf = dnf version
   
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
   mut args = []
 
   if not $opts.auto-remove {
@@ -81,6 +101,16 @@ export def "dnf config-manager setopt" [
   check_dnf_plugins
   let dnf = dnf version
   
+  if ($opts | is-empty) {
+    return (error make {
+      msg: 'At least one option is required'
+      label: {
+        text: 'Options'
+        span: (metadata $opts).span
+      }
+    })
+  }
+
   try {
     match $dnf.command {
       "dnf4" => {
@@ -156,6 +186,16 @@ export def "dnf distro-sync" [
 ]: nothing -> nothing {
   let dnf = dnf version
   
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
   try {
     (^$dnf.path
       -y
@@ -176,6 +216,16 @@ export def "dnf group install" [
 ]: nothing -> nothing {
   let dnf = dnf version
   
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
   mut args = $opts | install_args
 
   if $opts.with-optional {
@@ -201,6 +251,16 @@ export def "dnf group remove" [
 ]: nothing -> nothing {
   let dnf = dnf version
   
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
   try {
     (^$dnf.path -y group remove ...($packages))
   } catch {|e|
