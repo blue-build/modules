@@ -33,12 +33,16 @@ if [[ "${UNLOCK_REPOS}" == "true" ]]; then
   echo "Unlocking all available 'soar' repos in config"
   mkdir -p "/usr/share/bluebuild/soar"
   soar defconfig -c "/usr/share/bluebuild/soar/config.toml"
+  # Fix /root being ${HOME}
+  sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 else
   echo "Using the default 'bincache' repository in config"
   mkdir -p "/usr/share/bluebuild/soar"
   soar defconfig -c "/usr/share/bluebuild/soar/config.toml"
   # Remove all other repositories except bincache
   sed -i '/^\[\[repositories\]\]/{:a;N;/name = "bincache"/!{/\n[[:space:]]*$/!ba;d}}' "/usr/share/bluebuild/soar/config.toml"
+  # Fix /root being ${HOME}
+  sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
 
 # Adding 'soar' systemd service for auto-upgrading packages
