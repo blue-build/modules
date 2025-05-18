@@ -9,6 +9,7 @@ export -f soar
 if [[ ${-} == *i* && "$(/usr/bin/id -u)" != 0 ]]; then
   # Check if custom packages directory is specified for soar in config to source PATH from
   # If it is, export the PATH from that custom directory
+  finished=false
   if [[ -n "${XDG_CONFIG_HOME}" ]]; then
     config_dir="${XDG_CONFIG_HOME}"
   else
