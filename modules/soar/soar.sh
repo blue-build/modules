@@ -29,7 +29,7 @@ fi
 
 # Configuration for unlocking all default repos (outside of 'bincache')
 UNLOCK_REPOS=$(echo "${1}" | jq -r 'try .["unlock-repos"]')
-if [[ -z "${UNLOCK_REPOS}" || "${UNLOCK_REPOS}" == "null" ]]; then
+if [[ -z "${UNLOCK_REPOS}" || "${UNLOCK_REPOS}" == "null" || "${UNLOCK_REPOS}" == "false" ]]; then
   mkdir -p "/usr/share/bluebuild/soar"
   soar defconfig -c "/usr/share/bluebuild/soar/config.toml"
   # Remove all other repositories except bincache
