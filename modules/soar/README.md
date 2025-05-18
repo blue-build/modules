@@ -38,9 +38,9 @@ export -f soar
 
 Auto-upgrade `soar` timer also needs to be modified:  
 - by copying the service file:
-  - `sudo cp /usr/share/systemd/system/soar-upgrade-packages.service /etc/systemd/system/soar-upgrade-packages.service`
+  - `sudo cp /usr/lib/systemd/system/soar-upgrade-packages.service /etc/systemd/system/soar-upgrade-packages.service`
 - by copying the timer file:
-  - `sudo cp /usr/share/systemd/system/soar-upgrade-packages.timer /etc/systemd/system/soar-upgrade-packages.timer`
+  - `sudo cp /usr/lib/systemd/system/soar-upgrade-packages.timer /etc/systemd/system/soar-upgrade-packages.timer`
 - by modifying the systemd service in `/etc/` to contain the custom path to the config file in `Exec`
 
 If you specify the custom directory for `soar` packages, you also need to export that directory to `PATH`.
