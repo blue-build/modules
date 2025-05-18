@@ -25,9 +25,9 @@ if [[ ${-} == *i* && "$(/usr/bin/id -u)" != 0 ]]; then
   # If there's no config, export regular 'soar' packages directory to PATH
   if ! ${finished}; then
     if [[ -n "${XDG_DATA_HOME}" ]]; then
-      export PATH="${XDG_DATA_HOME}/soar:${PATH}"
+      export PATH="${XDG_DATA_HOME}/soar/bin:${PATH}"
     else
-      export PATH="${HOME}/.local/share/soar:${PATH}"
+      export PATH="${HOME}/.local/share/soar/bin:${PATH}"
     fi
   fi
 fi
