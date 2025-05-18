@@ -43,7 +43,8 @@ Auto-upgrade `soar` timer also needs to be modified:
   - `sudo cp /usr/lib/systemd/system/soar-upgrade-packages.timer /etc/systemd/system/soar-upgrade-packages.timer`
 - by modifying the systemd service in `/etc/` to contain the custom path to the config file in `Exec`
 
-If you specify the custom directory for `soar` packages, you also need to export that directory to `PATH`.
+If you specify the custom `bin_path` directory for `soar` packages & use custom config outside of `${XDG_CONFIG_HOME}/soar/config.toml`,  
+you also need to export that directory manually to `PATH`.
 
 For removing those modifications, simply revert the steps above.
 
