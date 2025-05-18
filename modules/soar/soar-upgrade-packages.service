@@ -1,0 +1,8 @@
+[Unit]
+Description=Auto-upgrade 'soar' packages
+After=local-fs.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Exec=/usr/bin/soar -c /usr/share/bluebuild/soar/config.toml update
