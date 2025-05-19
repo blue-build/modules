@@ -22,6 +22,6 @@ model SoarModuleV1 {
   /** Time delay after system boot before the first `soar` package upgrade runs. The string is passed directly to `OnBootSec` in systemd timer. (Syntax: ['1d', '6h', '10m']). */
   `upgrade-wait-after-boot`?: string = "30min";
 
-  /** Whether to unlock all available `sour` repos, including `pkgcache`, for installing portable AppImages & other similar formats. */
+  /** Whether to unlock all official `sour` & external repos, including `pkgcache`, for installing portable AppImages & other similar formats. */
   `unlock-repos`?: boolean = false;
 }
