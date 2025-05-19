@@ -27,12 +27,12 @@ if [[ -z "${UPGRADE_WAIT_AFTER_BOOT}" || "${UPGRADE_WAIT_AFTER_BOOT}" == "null" 
     UPGRADE_WAIT_AFTER_BOOT="30min"
 fi
 
-# Configuration for unlocking all default repos (outside of 'bincache')
+# Configuration for unlocking all default & external repos (outside of 'bincache')
 UNLOCK_REPOS=$(echo "${1}" | jq -r 'try .["unlock-repos"]')
 if [[ "${UNLOCK_REPOS}" == "true" ]]; then
   echo "Unlocking all available 'soar' repos in config"
   mkdir -p "/usr/share/bluebuild/soar"
-  soar defconfig -c "/usr/share/bluebuild/soar/config.toml"
+  soar defconfig --external -c "/usr/share/bluebuild/soar/config.toml"
   # Fix /root being ${HOME}
   sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 else
