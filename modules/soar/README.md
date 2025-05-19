@@ -62,11 +62,7 @@ Either a local-user can execute this script manually or the image-maintainer may
 #!/usr/bin/env bash
 
 # Check if paths are defined in local config
-if [[ -n "${XDG_CONFIG_HOME}" ]]; then
-  config_dir="${XDG_CONFIG_HOME}"
-else
-  config_dir="${HOME}/.config"
-fi
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
 if [[ -f "${config_dir}/soar/config.toml" ]]; then
   binpath="$(grep 'bin_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   dbpath="$(grep 'db_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
@@ -95,11 +91,7 @@ if [[ -f "${config_dir}/soar/config.toml" ]]; then
   fi
 fi
 
-if [[ -n "${XDG_DATA_HOME}" ]]; then
-  share_dir="${XDG_DATA_HOME}"
-else
-  share_dir="${HOME}/.local/share"
-fi
+share_dir="${XDG_DATA_HOME:-$HOME/.local/share}"
 if [[ -d "${share_dir}/soar/" ]]; then
   echo "Removing '${share_dir}/soar/' directory"
   rm -r "${share_dir}/soar/"
