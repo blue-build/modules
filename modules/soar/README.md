@@ -58,34 +58,34 @@ Either a local-user can execute this script manually or the image-maintainer may
 <details>
   <summary>Uninstallation script</summary>
     
-```bash
-#!/usr/bin/env bash
+```sh
+#!/bin/sh
 
 # Check if paths are defined in local config
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
-if [[ -f "${config_dir}/soar/config.toml" ]]; then
+if [ -f "${config_dir}/soar/config.toml" ]; then
   binpath="$(grep 'bin_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   dbpath="$(grep 'db_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   repospath="$(grep 'repositories_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   rootpath="$(grep 'root_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   packagespath="$(grep 'packages_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
-  if [[ -n "${binpath}" ]] && [[ -d "${binpath}" ]]; then
+  if [ -n "${binpath}" ] && [ -d "${binpath}" ]; then
     echo "Removing '${binpath}' directory"
     rm -r "${binpath}"  
   fi
-  if [[ -n "${dbpath}" ]] && [[ -d "${dbpath}" ]]; then
+  if [ -n "${dbpath}" ] && [ -d "${dbpath}" ]; then
     echo "Removing '${dbpath}' directory"
     rm -r "${dbpath}"  
   fi
-  if [[ -n "${repospath}" ]] && [[ -d "${repospath}" ]]; then
+  if [ -n "${repospath}" ] && [ -d "${repospath}" ]; then
     echo "Removing '${repospath}' directory"
     rm -r "${repospath}"  
   fi
-  if [[ -n "${rootpath}" ]] && [[ -d "${rootpath}" ]]; then
+  if [ -n "${rootpath}" ] && [ -d "${rootpath}" ]; then
     echo "Removing '${rootpath}' directory"
     rm -r "${rootpath}"  
   fi
-  if [[ -n "${packagespath}" ]] && [[ -d "${packagespath}" ]]; then
+  if [ -n "${packagespath}" ] && [ -d "${packagespath}" ]; then
     echo "Removing '${packagespath}' directory"
     rm -r "${packagespath}"  
   fi
@@ -94,7 +94,7 @@ if [[ -f "${config_dir}/soar/config.toml" ]]; then
 fi
 
 share_dir="${XDG_DATA_HOME:-$HOME/.local/share}"
-if [[ -d "${share_dir}/soar/" ]]; then
+if [ -d "${share_dir}/soar/" ]; then
   echo "Removing '${share_dir}/soar/' directory"
   rm -r "${share_dir}/soar/"
 else
