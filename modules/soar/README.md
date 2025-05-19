@@ -68,7 +68,7 @@ if [[ -f "${config_dir}/soar/config.toml" ]]; then
   dbpath="$(grep 'db_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   repospath="$(grep 'repositories_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   rootpath="$(grep 'root_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
-  packagespath=$(grep 'packages_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
+  packagespath="$(grep 'packages_path' "${config_dir}/soar/config.toml" | sed 's/.*=//; s/"//g; s/^[ \t]*//; s/[ \t]*$//')"
   if [[ -n "${binpath}" ]] && [[ -d "${binpath}" ]]; then
     echo "Removing '${binpath}' directory"
     rm -r "${binpath}"  
