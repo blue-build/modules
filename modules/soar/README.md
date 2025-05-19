@@ -89,6 +89,8 @@ if [[ -f "${config_dir}/soar/config.toml" ]]; then
     echo "Removing '${packagespath}' directory"
     rm -r "${packagespath}"  
   fi
+  echo "Removing soar config in '${config_dir}/soar/config.toml'"
+  rm "${config_dir}/soar/config.toml"
 fi
 
 share_dir="${XDG_DATA_HOME:-$HOME/.local/share}"
