@@ -3,3 +3,4 @@ shortdesc: The soar module installs & integrates soar package manager, as an alt
 example: |
   type: soar
   unlock-repos: true
+  unlock-path: true
