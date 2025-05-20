@@ -21,4 +21,8 @@ model SoarModuleV1 {
 
   /** Whether to unlock all official `sour` & external repos, including `pkgcache`, for installing portable AppImages & other similar formats. */
   `unlock-repos`?: boolean = false;
+
+  /** Whether to unlock the PATH for the directory of `soar` packages in all conditions. Useful if you want scripts to use `soar` packages directly.*/
+  `unlock-path`?: boolean = false;
+
 }
