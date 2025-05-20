@@ -5,4 +5,4 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-Exec=/usr/bin/soar -c /usr/share/bluebuild/soar/config.toml update
+ExecStart=/usr/bin/soar -c /usr/share/bluebuild/soar/config.toml update
