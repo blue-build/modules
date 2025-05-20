@@ -22,11 +22,6 @@ if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-UPGRADE_WAIT_AFTER_BOOT=$(echo "${1}" | jq -r 'try .["upgrade-wait-after-boot"]')
-if [[ -z "${UPGRADE_WAIT_AFTER_BOOT}" || "${UPGRADE_WAIT_AFTER_BOOT}" == "null" ]]; then
-    UPGRADE_WAIT_AFTER_BOOT="30min"
-fi
-
 # Configuration for unlocking all default & external repos (outside of 'bincache')
 UNLOCK_REPOS=$(echo "${1}" | jq -r 'try .["unlock-repos"]')
 if [[ "${UNLOCK_REPOS}" == "true" ]]; then
@@ -51,10 +46,6 @@ echo "Copying soar-upgrade-packages service"
 cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.service" "/usr/lib/systemd/user/soar-upgrade-packages.service"
 
 echo "Copying soar-upgrade-packages timer"
-if [[ -n "${UPGRADE_WAIT_AFTER_BOOT}" ]] && [[ "${UPGRADE_WAIT_AFTER_BOOT}" != "30min" ]]; then
-  echo "Applying custom 'wait-after-boot' value in '${UPGRADE_WAIT_AFTER_BOOT}' time interval for soar-upgrade-packages timer"
-  sed -i "s/^OnBootSec=.*/OnBootSec=${UPGRADE_WAIT_AFTER_BOOT}/" "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer"
-fi
 if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
   echo "Applying custom 'upgrade-interval' value in '${UPGRADE_INTERVAL}' time interval for soar-upgrade-packages timer"
   sed -i "s/^OnUnitInactiveSec=.*/OnUnitInactiveSec=${UPGRADE_INTERVAL}/" "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer"
