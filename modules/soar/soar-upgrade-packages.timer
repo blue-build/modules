@@ -1,9 +1,9 @@
 [Unit]
 Description=Timer for upgrading 'soar' packages
-Wants=network-online.target
 
 [Timer]
-OnBootSec=30min
+RandomizedDelaySec=10m
+OnBootSec=2min
 OnUnitInactiveSec=8h
 Persistent=true
 
