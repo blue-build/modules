@@ -67,10 +67,8 @@ fi
 if [[ ! -d "/etc/profile.d/" ]]; then
   mkdir -p "/etc/profile.d/"
 fi
-if [[ ! -f "/etc/profile.d/soar.sh" ]]; then
-  echo "Applying shell profile for exporting 'soar' packages directory to PATH"
-  cp "${MODULE_DIRECTORY}/soar/soar-profile.sh" "/etc/profile.d/soar.sh"
-fi
+echo "Applying shell profile for exporting 'soar' packages directory to PATH"
+cp "${MODULE_DIRECTORY}/soar/soar-profile.sh" "/etc/profile.d/soar.sh"
 
 if [[ "${UNLOCK_PATH}" == "true" ]]; then
   echo "Unlocking the PATH to be set in all conditions for 'soar' packages"
