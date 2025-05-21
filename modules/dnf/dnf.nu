@@ -353,7 +353,7 @@ def add_keys [$keys: list]: nothing -> nothing {
 # symlinks on boot of the OS.
 def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
   const LIB_EXEC_DIR = '/usr/libexec/bluebuild'
-  const SYSTEMD_DIR = '/etc/systemd/system'
+  const SYSTEMD_DIR = '/usr/lib/systemd/system'
   const MODULE_DIR = '/tmp/modules/dnf'
   const LIB_OPT_DIR = '/usr/lib/opt'
   const VAR_OPT_DIR = '/var/opt'
