@@ -376,7 +376,7 @@ def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
       cp ($MODULE_DIR | path join $SERV_UNIT) $'($SYSTEMD_DIR)/'
 
       try {
-        ^systemctl enable $SERV_UNIT
+        ^systemctl --system enable $SERV_UNIT
       } catch {
         exit 1
       }
