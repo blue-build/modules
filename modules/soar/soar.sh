@@ -40,9 +40,8 @@ else
   sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
 
-echo "Configuring auto-upgrades of 'soar' packages"
-
 if [[ "${AUTO_UPGRADE}" == true ]]; then
+  echo "Configuring auto-upgrades of 'soar' packages"
   echo "Copying soar-upgrade-packages service"
   cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.service" "/usr/lib/systemd/user/soar-upgrade-packages.service"
   if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
