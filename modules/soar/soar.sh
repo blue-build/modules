@@ -40,24 +40,21 @@ else
   sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
 
-# Adding 'soar' systemd service for auto-upgrading packages
 echo "Configuring auto-upgrades of 'soar' packages"
-echo "Copying soar-upgrade-packages service"
-cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.service" "/usr/lib/systemd/user/soar-upgrade-packages.service"
 
-echo "Copying soar-upgrade-packages timer"
-if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
-  echo "Applying custom 'upgrade-interval' value in '${UPGRADE_INTERVAL}' time interval for soar-upgrade-packages timer"
-  sed -i "s/^OnUnitInactiveSec=.*/OnUnitInactiveSec=${UPGRADE_INTERVAL}/" "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer"
-fi
-cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer" "/usr/lib/systemd/user/soar-upgrade-packages.timer"
-
-# Enable 'soar' auto-upgrade of packages timer
 if [[ "${AUTO_UPGRADE}" == true ]]; then
-    echo "Enabling auto-upgrades for 'soar' packages"
-    systemctl --global enable soar-upgrade-packages.timer
+  echo "Copying soar-upgrade-packages service"
+  cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.service" "/usr/lib/systemd/user/soar-upgrade-packages.service"
+  if [[ -n "${UPGRADE_INTERVAL}" ]] && [[ "${UPGRADE_INTERVAL}" != "8h" ]]; then
+    echo "Applying custom 'upgrade-interval' value in '${UPGRADE_INTERVAL}' time interval for soar-upgrade-packages timer"
+    sed -i "s/^OnUnitInactiveSec=.*/OnUnitInactiveSec=${UPGRADE_INTERVAL}/" "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer"
+  fi
+  echo "Copying soar-upgrade-packages timer"
+  cp "${MODULE_DIRECTORY}/soar/soar-upgrade-packages.timer" "/usr/lib/systemd/user/soar-upgrade-packages.timer"
+  echo "Enabling auto-upgrades for 'soar' packages"
+  systemctl --global enable soar-upgrade-packages.timer
 else
-    echo "Auto-upgrades for 'soar' packages are disabled"
+  echo "Auto-upgrades for 'soar' packages are disabled"
 fi
 
 # Add 'soar' packages to path only when it's interactive terminal session & non-root user, similar to brew
