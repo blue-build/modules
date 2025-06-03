@@ -29,17 +29,7 @@ if ! [ -f "/etc/pki/containers/${IMAGE_NAME_FILE}.pub" ]; then
 fi
 
 TEMPLATE_POLICY="${MODULE_DIRECTORY}/signing/policy.json"
-
-# Copy policy.json to '/usr/etc/containers/' on Universal Blue based images
-# until they solve the issue by copying 'policy.json' to '/etc/containers/' instead
-if rpm -q ublue-os-signing &>/dev/null; then
-  if ! [ -d "/usr/etc/containers/" ]; then
-    mkdir -p "/usr/etc/containers/"
-  fi
-  POLICY_FILE="/usr/etc/containers/policy.json"
-else
-  POLICY_FILE="${CONTAINER_DIR}/policy.json"
-fi
+POLICY_FILE="${CONTAINER_DIR}/policy.json"
 
 # If there is no policy.json file, then copy the template policy
 if ! [ -f "${POLICY_FILE}" ]; then
