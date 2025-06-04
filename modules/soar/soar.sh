@@ -33,9 +33,7 @@ if [[ "${UNLOCK_REPOS}" == "true" ]]; then
 else
   echo "Using the default 'bincache' repository in config"
   mkdir -p "/usr/share/bluebuild/soar"
-  soar defconfig -c "/usr/share/bluebuild/soar/config.toml"
-  # Remove all other repositories except bincache
-  sed -i '/^\[\[repositories\]\]/{:a;N;/name = "bincache"/!{/\n[[:space:]]*$/!ba;d}}' "/usr/share/bluebuild/soar/config.toml"
+  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache
   # Fix /root being ${HOME}
   sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
