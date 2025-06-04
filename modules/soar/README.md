@@ -28,7 +28,7 @@ https://soar.qaidvoid.dev/
 By default, `soar` utilizes BlueBuild's config (`/usr/share/bluebuild/soar/config.toml`).
 
 Local-user can have the custom `soar` config in standard or a custom directory & supply it to `soar` by providing `SOAR_CONFIG` environment variable in shell profile.  
-If you specify the custom `bin_path` directory for `soar` packages, you also need to export that directory manually to `PATH`.
+If you specify the custom `bin_path` directory for `soar` packages, you also need to export that directory manually to `PATH` also in shell profile.
 
 For removing those modifications, simply revert the steps above.
 
@@ -43,6 +43,7 @@ Either a local-user can execute this script manually or the image-maintainer may
   <summary>Uninstallation script</summary>
     
 ```sh
+#!/bin/sh
 if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/soar/config.toml" ]; then
   echo "Removing soar config in '${XDG_CONFIG_HOME:-$HOME/.config}/soar/' directory"
   rm -r "${XDG_CONFIG_HOME:-$HOME/.config}/soar/"
