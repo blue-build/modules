@@ -39,6 +39,7 @@ else
   # Fix /root being ${HOME}
   sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
+echo "SOAR_CONFIG=/usr/share/bluebuild/soar/config.toml" >> /etc/environment
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
   echo "Configuring auto-upgrades of 'soar' packages"
