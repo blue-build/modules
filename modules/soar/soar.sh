@@ -24,19 +24,17 @@ fi
 
 # Configuration for unlocking all default & external repos (outside of 'bincache')
 UNLOCK_REPOS=$(echo "${1}" | jq -r 'try .["unlock-repos"]')
+mkdir -p "/usr/share/bluebuild/soar"
 if [[ "${UNLOCK_REPOS}" == "true" ]]; then
   echo "Unlocking all available 'soar' repos in config"
-  mkdir -p "/usr/share/bluebuild/soar"
   soar defconfig --external -c "/usr/share/bluebuild/soar/config.toml"
-  # Fix /root being ${HOME}
-  sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 else
   echo "Using the default 'bincache' repository in config"
-  mkdir -p "/usr/share/bluebuild/soar"
   soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache
-  # Fix /root being ${HOME}
-  sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
 fi
+# Fix /root being ${HOME}
+sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
+# Add soar config to environment
 echo "SOAR_CONFIG=/usr/share/bluebuild/soar/config.toml" >> /etc/environment
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
