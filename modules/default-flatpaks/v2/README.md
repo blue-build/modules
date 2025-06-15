@@ -12,6 +12,7 @@ The `default-flatpaks` module can be used to install Flatpaks from a configurabl
   - Manually initiate the setup of Flatpaks
   - Disable the automatic Flatpak setup
   - Re-enable the automatic Flatpak setup
+  - _run the `bluebuild-flatpak-manager` command for help and documentation_
 
 ## Configuration
 
