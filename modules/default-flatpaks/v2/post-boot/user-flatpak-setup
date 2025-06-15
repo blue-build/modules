@@ -20,12 +20,12 @@ def main [] {
         }
 
         let fedoraApps = flatpak list --user --app --columns=origin,application | detect columns --no-headers | where column0 == fedora | get column1
-        if ($fedoraApps | length > 0) {
+        if (($fedoraApps | length) > 0) {
             flatpak remove --user --noninteractive ...$fedoraApps
         }
 
         let fedoraRuntimes = flatpak list --user --runtime --columns=origin,application,arch,branch | detect columns --no-headers | where column0 == fedora | each {|i| $"($i.column1)/($i.column2)/($i.column3)" }
-        if ($fedoraRuntimes | length > 0) {
+        if (($fedoraRuntimes | length) > 0) {
             flatpak remove --user --noninteractive ...$fedoraRuntimes
         }
     }
