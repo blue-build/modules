@@ -11,7 +11,10 @@ fi
 # Check if gcc is installed & install it if it's not
 # (add VanillaOS package manager in the future when it gets supported)
 if ! command -v gcc &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"gcc\" package, which is necessary for Brew to function"
+    dnf5 -y install gcc
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
   else
@@ -19,12 +22,15 @@ if ! command -v gcc &> /dev/null; then
     echo "       Brew depends on \"gcc\" in order to function"
     echo "       Please include \"gcc\" in the list of packages to install with the system package manager"
     exit 1
-  fi  
+  fi
 fi
 
 # Check if zstd is installed & install it if it's not
 if ! command -v zstd &> /dev/null; then
-  if command -v rpm-ostree &> /dev/null; then
+  if command -v dnf5 &> /dev/null; then
+    echo "Installing \"zstd\" package, which is necessary for Brew to function"
+    dnf5 -y install zstd
+  elif command -v rpm-ostree &> /dev/null; then
     echo "Installing \"zstd\" package, which is necessary for Brew to function"
     rpm-ostree install zstd
   else
@@ -32,7 +38,7 @@ if ! command -v zstd &> /dev/null; then
     echo "       Brew's installer depends on \"zstd\" in order to function"
     echo "       Please include \"zstd\" in the list of packages to install with the system package manager"
     exit 1
-  fi  
+  fi
 fi
 
 # Module-specific directories and paths
@@ -79,24 +85,18 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
     BREW_ANALYTICS=true
 fi
 
-# Create necessary directories
-mkdir -p /var/home
-mkdir -p /var/roothome
+# Download Brew
+BREW_TARBALL_LINK="$(curl -fLs https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
+echo "Downloading Brew tarball..."
+curl -fLs --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
+echo "Downloaded Brew tarball"
 
-# Convince the installer that we are in CI
-touch /.dockerenv
-
-# Always install Brew
-echo "Downloading and installing Brew..."
-curl -fLs --create-dirs https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install
-echo "Downloaded Brew install script"
-chmod +x /tmp/brew-install
-/tmp/brew-install
-
-# Move Brew installation and set ownership to default user (UID 1000)
-tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew/.linuxbrew
-cp -R /home/linuxbrew /usr/share/homebrew
-chown -R 1000:1000 /usr/share/homebrew
+# Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
+echo "Extracting Brew tarball to '/usr/share/homebrew/'"
+mkdir -p "/usr/share/homebrew/"
+tar -I zstd --preserve-permissions -xf "/tmp/homebrew-tarball.tar.zst" -C "/usr/share/homebrew/"
+echo "Setting '/usr/share/homebrew/' permissions to UID/GID 1000"
+chown -R 1000:1000 "/usr/share/homebrew/"
 
 # Write systemd service files dynamically
 echo "Writing brew-setup service"
@@ -110,11 +110,8 @@ ConditionPathExists=!/var/home/linuxbrew/.linuxbrew
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/mkdir -p /tmp/homebrew
-ExecStart=/usr/bin/tar --zstd -xvf /usr/share/homebrew.tar.zst -C /tmp/homebrew
-ExecStart=/usr/bin/cp -R -n /tmp/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
+ExecStart=/usr/bin/cp -R --update=none /usr/share/homebrew/home/linuxbrew/.linuxbrew /var/home/linuxbrew
 ExecStart=/usr/bin/chown -R 1000:1000 /var/home/linuxbrew
-ExecStart=/usr/bin/rm -rf /tmp/homebrew
 ExecStart=/usr/bin/touch /etc/.linuxbrew
 
 [Install]
@@ -153,6 +150,7 @@ Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
 ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
+ExecStartPost=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink systemd dbus || true"
 EOF
 
 # Write systemd timer files dynamically
@@ -209,7 +207,9 @@ if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
   cat > /etc/profile.d/brew.sh <<EOF
 #!/usr/bin/env bash
-[[ -d /home/linuxbrew/.linuxbrew && \$- == *i* ]] && eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [[ -d /home/linuxbrew/.linuxbrew && \$- == *i* && "\$(/usr/bin/id -u)" != 0 ]]; then
+  eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 EOF
 fi
 
@@ -228,7 +228,7 @@ d /var/home/linuxbrew 0755 1000 1000 - -
 EOF
 
 # Enable the setup service
-echo "Enabling brew-setup service"
+echo "Enabling brew-setup service to install Brew in run-time"
 systemctl enable brew-setup.service
 
 # Always enable or disable update and upgrade services for consistency
@@ -263,7 +263,7 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
   CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/etc/environment")
   if [[ -n "${CURRENT_ENVIRONMENT}" ]]; then
     if [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=0" ]]; then
-      echo "Disabling Brew analytics"  
+      echo "Disabling Brew analytics"
       sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/etc/environment"
     elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
       echo "Disabling Brew analytics"

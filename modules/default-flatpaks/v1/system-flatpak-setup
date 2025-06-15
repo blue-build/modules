@@ -43,14 +43,16 @@ done
 if rpm -q fedora-third-party &>/dev/null; then
   if [[ ! "$(fedora-third-party query)" == *"disabled." ]]; then
     echo "Disabling Fedora third-party repos..."
-    /usr/bin/gnome-software --quit
+    if command -v gnome-software &> /dev/null; then 
+      /usr/bin/gnome-software --quit
+    fi
     /usr/lib/fedora-third-party/fedora-third-party-opt-out
     /usr/bin/fedora-third-party disable
   else
      echo "Fedora third-party repos are already disabled"
   fi
 else
-  echo "ERROR: Cannot opt-out from Fedora third-party repos, because fedora-third-party package is not installed"
+  echo "There is no need to opt-out from Fedora 3rd party repos, because 'fedora-third-party' package is already removed."
 fi
 
 # Remove fedora system remote, unless fedora remote is strictly specified

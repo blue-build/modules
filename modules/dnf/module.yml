@@ -1,0 +1,47 @@
+name: dnf
+shortdesc: The dnf module offers pseudo-declarative package and repository management using dnf.
+example: |
+  type: dnf
+  repos:
+    cleanup: true # clean up added repos after module is done
+    files:
+      - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+      - fury.repo
+    copr:
+      - atim/starship
+      - trixieua/mutter-patched
+    keys:
+      - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    nonfree: rpmfusion
+  optfix: # performs symlinking for `/opt/` to allow certain packages to install
+    - Tabby # needed because tabby installs into `/opt/Tabby/`
+    - brave.com
+  install:
+    skip-unavailable: true # skip unavailable packages
+    packages:
+      - repo: brave-browser
+        packages:
+          - brave-browser
+      - starship
+      - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
+      - kubectl.rpm
+  remove:
+    packages:
+      - firefox
+      - firefox-langpacks
+  replace:
+    - from-repo: copr:copr.fedorainfracloud.org:trixieua:mutter-patched
+      skip-unavailable: true # skip unavailable packages
+      packages:
+        - mutter
+        - mutter-common
+        - gdm
+  group-install:
+    with-optional: true # install optional packages from group
+    packages:
+      - cosmic-desktop
+      - cosmic-desktop-apps
+      - window-managers
+  group-remove:
+    packages:
+      - development-tools

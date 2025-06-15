@@ -9,8 +9,8 @@ FIRSTBOOT_DATA="/usr/share/ublue-os/firstboot"
 
 mkdir -p "$FIRSTBOOT_DATA/launcher/"
 
-# doesn't overwrite user's yafti.yml (ignores error)
-cp -n "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml" || true
+# doesn't overwrite user's yafti.yml
+cp --update=none "$MODULE_DIRECTORY/yafti/yafti.yml" "$FIRSTBOOT_DATA/yafti.yml"
 cp -r "$MODULE_DIRECTORY/yafti/launcher/" "$FIRSTBOOT_DATA"
 
 FIRSTBOOT_SCRIPT="${FIRSTBOOT_DATA}/launcher/login-profile.sh"
@@ -31,7 +31,11 @@ echo "Downloading repo file ${REPO_URL}"
 curl -fLs --create-dirs "${REPO_URL}" -o "${STAGING_REPO_PATH}"
 echo "Downloaded repo file ${REPO_URL}"
 
-rpm-ostree install libadwaita yafti
+if command -v dnf5 &> /dev/null; then
+  dnf5 -y install libadwaita yafti
+elif command -v rpm-ostree &> /dev/null; then
+  rpm-ostree install libadwaita yafti
+fi
 
 # Remove ublue COPR
 rm /etc/yum.repos.d/ublue-os-staging-fedora-*.repo

@@ -43,7 +43,7 @@ fi
 get_json_array OPTFIX 'try .["optfix"][]' "$1"
 if [[ ${#OPTFIX[@]} -gt 0 ]]; then
     LIB_EXEC_DIR="/usr/libexec/bluebuild"
-    SYSTEMD_DIR="/etc/systemd/system"
+    SYSTEMD_DIR="/usr/lib/systemd/system"
     MODULE_DIR="/tmp/modules/rpm-ostree"
 
     if ! [ -x "${LIB_EXEC_DIR}/optfix.sh" ]; then
@@ -54,13 +54,14 @@ if [[ ${#OPTFIX[@]} -gt 0 ]]; then
 
     if ! [ -f "${SYSTEMD_DIR}/bluebuild-optfix.service" ]; then
         cp "${MODULE_DIR}/bluebuild-optfix.service" "${SYSTEMD_DIR}/"
-        systemctl enable bluebuild-optfix.service
+        systemctl --system enable bluebuild-optfix.service
     fi
 
     echo "Creating symlinks to fix packages that install to /opt"
     # Create symlink for /opt to /var/opt since it is not created in the image yet
     mkdir -p "/var/opt"
-    ln -fs "/var/opt"  "/opt"
+    ln -fs "/var/opt" "/opt"
+
 
     # Create symlinks for each directory specified in recipe.yml
     for OPTPKG in "${OPTFIX[@]}"; do

@@ -117,13 +117,15 @@ check_flatpak_id_validity_from_flathub () {
         USER_FLATHUB_REPO=""
       fi  
       FLATHUB_REPO_LINK="https://dl.flathub.org/repo/flathub.flatpakrepo"
-      URL="https://flathub.org/apps"
+      URL="https://flathub.org/api/v2/stats"
       CONFIG_FILE="${1}"
       INSTALL_LEVEL="${2}"
       get_json_array INSTALL "try .$INSTALL_LEVEL.install[]" "${CONFIG_FILE}"
       get_json_array REMOVE "try .$INSTALL_LEVEL.remove[]" "${CONFIG_FILE}"
       if [[ "${SYSTEM_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]] || [[ "${USER_FLATHUB_REPO}" == "${FLATHUB_REPO_LINK}" ]]; then
-        echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
+        if [[ ${#INSTALL[@]} -gt 0 ]] || [[ ${#REMOVE[@]} -gt 0 ]]; then
+          echo "Safe-checking if ${INSTALL_LEVEL} flatpak IDs are typed correctly. If test fails, build also fails"
+        fi  
         if [[ ${#INSTALL[@]} -gt 0 ]]; then
           for id in "${INSTALL[@]}"; do
             if ! curl --output /dev/null --silent --head --fail "${URL}/${id}"; then
