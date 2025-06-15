@@ -9,9 +9,10 @@ union DefaultFlatpaksModule {
 
 model DefaultFlatpaksV1 {
     /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
+     * using version: v1
      * https://blue-build.org/reference/modules/default-flatpaks/
      */
-    type: "default-flatpaks@v1";
+    type: "default-flatpaks@v1" | "default-flatpaks";
 
     /** Whether to send a notification after the install/uninstall is finished. */
     notify?: boolean = false;
@@ -55,6 +56,7 @@ model DefaultFlatpaksV1 {
 
 model DefaultFlatpaksV2 {
     /** The default-flatpaks module can be used to install Flatpaks from a configurable remote on every boot.
+     * using version: v2
      * https://blue-build.org/reference/modules/default-flatpaks/
      */
     type: "default-flatpaks@v2" | "default-flatpaks@latest" | "default-flatpaks";
