@@ -81,6 +81,9 @@ def main [configStr: string] {
     cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/user-flatpak-setup" $"($libExecPath)/user-flatpak-setup" 
     chmod +x $"($libExecPath)/system-flatpak-setup"
     chmod +x $"($libExecPath)/user-flatpak-setup"
+
+    cp $"($env.MODULE_DIRECTORY)/default-flatpaks/post-boot/bluebuild-flatpak-manager" "/usr/bin/bluebuild-flatpak-manager"
+    chmod +x "/usr/bin/bluebuild-flatpak-manager"
 }
 
 def checkFlathub [packages: list<string>] {
