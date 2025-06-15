@@ -30,7 +30,7 @@ def main [] {
         }
     }
 
-    $configFile | where scope == user | each { |config|
+    for config in ($configFile | where scope == user) {
         flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
 
         if ($config.notify) {
