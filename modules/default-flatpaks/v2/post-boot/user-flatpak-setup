@@ -6,7 +6,7 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 def main [] {
     let configFile = open $configPath
 
-    let keepFedora = $configFile.configurations | where scope == user | any {|config|
+    let keepFedora = $configFile | where scope == user | any {|config|
         $config.repo.url == "oci+https://registry.fedoraproject.org"
     }
 
@@ -30,7 +30,7 @@ def main [] {
         }
     }
 
-    $configFile.configurations | where scope == user | each { |config|
+    $configFile | where scope == user | each { |config|
         flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
 
         if ($config.notify) {
