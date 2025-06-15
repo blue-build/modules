@@ -6,7 +6,7 @@ const configPath = $"($usrSharePath)/configuration.yaml"
 def main [] {
     let configFile = open $configPath
 
-    let keepFedora = configFile.configurations | where scope == system | any {|config|
+    let keepFedora = $configFile.configurations | where scope == system | any {|config|
         $config.repo.url == "oci+https://registry.fedoraproject.org"
     }
 
