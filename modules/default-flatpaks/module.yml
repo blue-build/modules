@@ -4,7 +4,7 @@ versions:
   - version: v1
     example: |
       modules: # configured multiple times to highlight how options are overridden
-        - type: default-flatpaks
+        - type: default-flatpaks@v1
           notify: true # Send notification after install/uninstall is finished (true/false)
           system:
             # If no repo information is specified, Flathub will be used by default
@@ -41,15 +41,18 @@ versions:
     example: |
       - type: default-flatpaks
         configurations:
-          - notify: true
-            scope: user
+          - scope: user
             repo:
+              # you can override the title to make inclusion of both system and user repos clearer
               title: Flathub (user)
-            install:
-              - io.gitlab.leesonwai.Sums
-              - io.github.nokse22.minitext
           - notify: true
             scope: system
-            install:
-              - xyz.splashmapper.Splash
-              - xyz.safeworlds.hiit
+            repo:
+              title: Flathub (system)
+            install: # system flatpaks we want all users to have and not remove
+              - org.mozilla.firefox
+              - com.github.tchx84.Flatseal
+              - io.github.flattool.Warehouse
+              - io.missioncenter.MissionCenter
+              - com.github.rafostar.Clapper
+              - org.gnome.Loupe
