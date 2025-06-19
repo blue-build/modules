@@ -1,0 +1,8 @@
+[Unit]
+Description=Configure Flatpaks for current user
+Wants=network-online.target
+After=system-flatpak-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bluebuild/default-flatpaks/user-flatpak-setup
