@@ -3,22 +3,22 @@
 # Tell build process to exit if there are any errors.
 set -euo pipefail
 
-NO_RECOMMENDS=$(echo "${1}" | jq "try .no-recommends")
+NO_RECOMMENDS=$(echo "${1}" | jq 'try .["no-recommends"]')
 if [[ -z "${NO_RECOMMENDS}" || "${NO_RECOMMENDS}" == "null" ]]; then
     NO_RECOMMENDS=false
 fi
 
-INSTALL_SUGGESTS=$(echo "${1}" | jq "try .install-suggests")
+INSTALL_SUGGESTS=$(echo "${1}" | jq 'try .["install-suggests"]')
 if [[ -z "${INSTALL_SUGGESTS}" || "${INSTALL_SUGGESTS}" == "null" ]]; then
     INSTALL_SUGGESTS=false
 fi
 
-FIX_MISSING=$(echo "${1}" | jq "try .fix-missing")
+FIX_MISSING=$(echo "${1}" | jq 'try .["fix-missing"]')
 if [[ -z "${FIX_MISSING}" || "${FIX_MISSING}" == "null" ]]; then
     FIX_MISSING=false
 fi
 
-FIX_BROKEN=$(echo "${1}" | jq "try .fix-broken")
+FIX_BROKEN=$(echo "${1}" | jq 'try .["fix-broken"]')
 if [[ -z "${FIX_BROKEN}" || "${FIX_BROKEN}" == "null" ]]; then
     FIX_BROKEN=false
 fi
