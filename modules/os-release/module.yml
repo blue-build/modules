@@ -1,5 +1,5 @@
 name: os-release
-shortdesc: The `os-release` module offers a way to declare values in your `/etc/os-release`.
+shortdesc: The `os-release` module offers a way to modify and set values in the /etc/os-release file in your image.
 example: |
   type: os-release
   properties:
