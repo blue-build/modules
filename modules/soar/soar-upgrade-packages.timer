@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for upgrading 'soar' packages
+
+[Timer]
+RandomizedDelaySec=10m
+OnBootSec=2min
+OnUnitInactiveSec=8h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
