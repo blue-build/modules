@@ -32,6 +32,7 @@ def main [] {
 
     for config in ($configFile | where scope == user) {
         flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
+        flatpak remote-modify --user --enable $config.repo.name
 
         if ($config.notify) {
             (notify-send
