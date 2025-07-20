@@ -3,7 +3,7 @@
 The `os-release` module offers a way to modify and set values in the [`/etc/os-release`](https://www.freedesktop.org/software/systemd/man/latest/os-release.html) file in your image. This file contains metadata about the running Linux operating system and is read by various programs. 
 
 :::note
-Modifying the `ID` value within `/etc/os-release` can cause COPR package identification and installation failure during the build process. Therefore, it is recommended to place thie `os-release` module at the end of your recipe, such as before the `signing` module.
+Modifying the `ID` value within `/etc/os-release` can cause COPR package identification and installation failures during the build process. Therefore, it is recommended to place thie `os-release` module at the end of your build, if you are planning to modify that value.
 :::
  
 ## Example
