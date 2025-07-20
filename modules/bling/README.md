@@ -16,3 +16,12 @@ Take a note that this documentation is for local-users, not for custom image mai
 Ignore the advice about creating the `user` profile, as it's already present & just place dconfs in `/etc/dconf/db/distro.d/`, not in `local.d` folder ([Thinking like a distribution](https://blue-build.org/learn/mindset/) mindset).
 
 **Unlike the `gschema-overrides` module, dconf keyfiles are not checked at compile time for errors.**
+
+### `ublue-update`
+
+This was the default system & applications updater for Universal Blue images.
+
+However, it's deprecated & Universal Blue migrated to `uupd`:  
+https://github.com/ublue-os/uupd
+
+Use it with a caution, knowing it's an unmaintained program.
