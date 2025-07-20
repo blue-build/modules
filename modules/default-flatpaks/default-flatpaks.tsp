@@ -2,6 +2,7 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/default-flatpaks.json")
+@oneOf
 union DefaultFlatpaksModule {
     DefaultFlatpaksV1;
     DefaultFlatpaksV2;
