@@ -2,7 +2,10 @@
 set -euo pipefail
 
 ENABLE_AKMODS_REPO() {
-  sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
+  akmods_repo="$(find /etc/yum.repos.d -type f -exec grep -l '\[copr:copr.fedorainfracloud.org:ublue-os:akmods\]' {} +)"
+  if [[ -n "${akmods_repo}" ]]; then
+    sed -i 's@enabled=0@enabled=1@g' "${akmods_repo}"
+  fi
 }
 
 INSTALL_RPM_FUSION() {
