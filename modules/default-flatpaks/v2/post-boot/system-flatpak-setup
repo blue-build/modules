@@ -15,7 +15,7 @@ def main [] {
         /usr/bin/gnome-software --quit
         /usr/lib/fedora-third-party/fedora-third-party-opt-out
         /usr/bin/fedora-third-party disable
-        
+
         if ($systemRemotes | any {|remote| $remote == "fedora"}) {
             flatpak remote-delete --system fedora --force
         }
@@ -44,7 +44,7 @@ def main [] {
             )
         }
 
-        flatpak install --system $config.repo.name ...$config.install
+        flatpak install --system --noninteractive $config.repo.name ...$config.install
 
         if ($config.notify) {
             (notify-send-as-user

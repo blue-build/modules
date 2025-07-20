@@ -34,16 +34,16 @@ def main [] {
         flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
 
         if ($config.notify) {
-            (notify-send 
+            (notify-send
                 --app-name "Automatic Flatpak Installation Service"
                 $"Starting automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)..."
             )
         }
 
-        flatpak install --user $config.repo.name ...$config.install
+        flatpak install --user --noninteractive $config.repo.name ...$config.install
 
         if ($config.notify) {
-            (notify-send 
+            (notify-send
                 --app-name "Automatic Flatpak Installation Service"
                 $"Finished automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)!"
                 ($config.install | str join ', ')
