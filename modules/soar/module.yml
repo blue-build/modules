@@ -2,6 +2,6 @@ name: soar
 shortdesc: The soar module installs & integrates soar package manager, as an alternative to Homebrew / Linuxbrew.
 example: |
   type: soar
-  unlock-repos: true
+  additional-repos: true
   auto-upgrade: true
   upgrade-interval: '3h'

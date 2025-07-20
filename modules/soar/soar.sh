@@ -22,11 +22,11 @@ if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-# Configuration for unlocking all default & external repos (outside of 'bincache')
-UNLOCK_REPOS=$(echo "${1}" | jq -r 'try .["unlock-repos"]')
+# Configuration for enabling additional repos (outside of 'bincache')
+ADDITIONAL_REPOS=$(echo "${1}" | jq -r 'try .["additional-repos"]')
 mkdir -p "/usr/share/bluebuild/soar"
-if [[ "${UNLOCK_REPOS}" == "true" ]]; then
-  echo "Unlocking all available 'soar' repos in config"
+if [[ "${ADDITIONAL_REPOS}" == "true" ]]; then
+  echo "Enabling all additional 'soar' repos in config, including external ones"
   soar defconfig --external -c "/usr/share/bluebuild/soar/config.toml"
 else
   echo "Using the default 'bincache' repository in config"

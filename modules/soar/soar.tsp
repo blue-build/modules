@@ -19,7 +19,7 @@ model SoarModuleV1 {
   /** Defines how often the `soar` upgrade service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']). */
   `upgrade-interval`?: string = "8h";
 
-  /** Whether to unlock all official `sour` & external repos, including `pkgcache`, for installing portable AppImages & other similar formats. */
-  `unlock-repos`?: boolean = false;
+  /** Whether to enable all additional repos, including official `sour` & external repos like `AM`, for installing portable AppImages & other similar formats. */
+  `additional-repos`?: boolean = false;
 
 }

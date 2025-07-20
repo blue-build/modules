@@ -23,6 +23,12 @@ https://soar.qaidvoid.dev/
 - Sets up systemd timer for auto-upgrading `soar` packages.
 - Sets up shell profile for automatic directory export of `soar` packages to `PATH`.
 
+## Repos
+
+To see the useful information about source, reliability, trust & security of all `soar` repos, including external ones, you can open the links below:  
+- https://docs.pkgforge.dev/repositories
+- https://docs.pkgforge.dev/repositories/external
+
 ## Local modification
 
 By default, `soar` utilizes BlueBuild's config (`/usr/share/bluebuild/soar/config.toml`).
