@@ -29,8 +29,8 @@ if [[ "${ADDITIONAL_REPOS}" == "true" ]]; then
   echo "Enabling all additional 'soar' repos in config, including external ones"
   soar defconfig --external -c "/usr/share/bluebuild/soar/config.toml"
 else
-  echo "Using the default 'bincache' repository in config"
-  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache
+  echo "Using the default 'bincache', 'pkgforge-cargo' & 'pkgforge-go' repositories in config"
+  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache -r pkgforge-cargo -r pkgforge-go
 fi
 # Fix /root being ${HOME}
 sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"

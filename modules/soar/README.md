@@ -3,8 +3,8 @@
 The `soar` module installs & integrates [`soar`](https://github.com/pkgforge/soar) package manager, as an alternative to [Homebrew / Linuxbrew](https://brew.sh/).
 
 [`soar`](https://github.com/pkgforge/soar) is a package manager, which manages the installation of portable & static binaries.  
-[PkgForge's](https://github.com/pkgforge) `bincache` repo is used by default for the binaries.  
-Other default & external repos which contain AppImages & other similar formats are removed, to make `soar` focused on CLI binaries only.  
+[PkgForge's](https://github.com/pkgforge) `bincache`, `pkgforge-cargo` & `pkgforge-go` repos are used by default for the binaries.  
+Other default & external repos which contain AppImages & other similar formats are disabled, to make `soar` focused on CLI binaries only.  
 This is configurable if you wish to have a package manager for GUI applications also in `Configuration options` section of the docs.
 
 Those binaries are built from the GitHub's cloud registry.
