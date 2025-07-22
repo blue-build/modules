@@ -5,6 +5,5 @@ example: |
   base: asus # if not specified, classic "main" base is used by default
   install:
     - openrazer
-    - openrgb
     - v4l2loopback
-    - winesync
+    - xone
