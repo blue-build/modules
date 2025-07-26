@@ -7,7 +7,7 @@ The `soar` module installs & integrates the [`soar`](https://github.com/pkgforge
 Other default & external repos that contain AppImages & other similar formats are disabled to make `soar` focused on CLI binaries only.
 This is configurable if you wish to have a package manager for GUI applications, see [`Configuration options`](#configuration-options).
 
-Those binaries are built from the GitHub's cloud registry.
+The repositories with prebuilt binaries use the GitHub Container registry as their backend and all their packages are published there.
 
 Compared to [Homebrew / Linuxbrew](https://brew.sh/):
 - there are no managed dependencies for packages by design (single package = single binary).
