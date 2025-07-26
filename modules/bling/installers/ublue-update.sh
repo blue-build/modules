@@ -31,12 +31,6 @@ if [[ -f "$RPM_OSTREE_CONFIG" ]]; then
 fi
 systemctl disable rpm-ostreed-automatic.timer
 
-# Fetch ublue COPR
-RPM_URL="https://github.com/ublue-os/ublue-update/releases/download/v1.3.0/ublue-update-1.0.0+2e65a65-1.fc38.noarch.rpm"
-echo "Downloading RPM ${RPM_URL}"
-curl -fLs --create-dirs "${RPM_URL}" -o "/tmp/ublue-update-1.0.0+2e65a65-1.fc38.noarch.rpm"
-echo "Downloaded RPM ${RPM_URL}"
-
 # topgrade is REQUIRED by ublue-update to install
 # we have to rely on 3rd party COPR repo for topgrade & on clunky skopeo + file workaround for ublue-update ghcr container,
 # because Universal Blue removed them in their copr repo
