@@ -13,13 +13,13 @@ model SoarModuleV1 {
    */
   type: "soar" | "soar@v1" | "soar@latest";
 
-  /** Whether to auto-upgrade all installed `sour` packages using a systemd service. */
+  /** Whether to auto-upgrade all installed `soar` packages using a systemd service. */
   `auto-upgrade`?: boolean = true;
 
   /** Defines how often the `soar` upgrade service should run. The string is passed directly to `OnUnitInactiveSec` in systemd timer. (Syntax: ['1d', '6h', '10m']). */
   `upgrade-interval`?: string = "8h";
 
-  /** Whether to enable all additional repos, including official `sour` & external repos like `AM`, for installing portable AppImages & other similar formats. */
+  /** Whether to enable all additional repos, including official `soar` & external repos like `AM`, for installing portable AppImages & other similar formats. */
   `additional-repos`?: boolean = false;
 
 }
