@@ -1,0 +1,97 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+def main [] {
+    print "A CLI tool to manage the installation and setup of Flatpaks by the default-flatpaks BlueBuild module"
+    print
+    print $"(ansi default_underline)(ansi default_bold)Usage:(ansi reset) bluebuild-flatpak-manager [command] <args>"
+    print
+    print $"(ansi default_underline)(ansi default_bold)Commands:(ansi reset)"
+    print $"    (ansi default_bold)show:(ansi reset)                       Print out all changes configured to be done by the default-flatpaks module"
+    print $"    (ansi default_bold)apply <all|user|system>:(ansi reset)    Manually initiate the setup of Flatpaks"
+    print $"    (ansi default_bold)disable <all|user|system>:(ansi reset)  Disable the automatic setup of Flatpaks"
+    print $"    (ansi default_bold)enable <all|user|system>:(ansi reset)   Enable the automatic setup of Flatpaks"
+}
+
+def "main show" [] {
+    let configurations = open "/usr/share/bluebuild/default-flatpaks/configuration.yaml"
+    print $"Found (ansi default_italic)($configurations | length)(ansi reset) configuration\(s)"
+
+    for config in $configurations {
+        print
+        print $"    ($config.install | length) (ansi default_italic)($config.scope)(ansi reset) Flatpak\(s\) from (ansi default_italic)($config.repo.title)(ansi reset) \((ansi default_italic)($config.repo.url)(ansi reset)\)"
+        if ($config.notify) {
+            print $"    (ansi default_italic)Installer will notify user(ansi reset)"
+        } else {
+            print $"    (ansi default_italic)Installer will not notify user(ansi reset)"
+        }
+                print $"    Flatpak\(s) to be installed:"
+        $config.install | each {|package|
+            print $"        ($package)"
+        }
+
+    }
+}
+
+def "main apply" [] {
+    print $"(ansi default_underline)(ansi default_bold)Usage:(ansi reset)"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager apply all(ansi reset):    install and setup both system and user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager apply user(ansi reset):   install and setup user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager apply system(ansi reset): install and setup system Flatpaks"
+}
+
+def "main apply user" [] {
+    /usr/libexec/bluebuild/default-flatpaks/user-flatpak-setup
+}
+
+def "main apply system" [] {
+    /usr/libexec/bluebuild/default-flatpaks/system-flatpak-setup
+}
+
+def "main apply all" [] {
+    main apply user
+    main apply system
+}
+
+def "main disable" [] {
+    print $"(ansi default_underline)(ansi default_bold)Usage:(ansi reset)"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager disable all(ansi reset):    disable automatic setup for both system Flatpaks and user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager disable user(ansi reset):   disable automatic setup for user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager disable system(ansi reset): disable automatic setup for system Flatpaks"
+}
+
+def "main disable user" [] {
+    print $"Running: (ansi default_italic)run0 systemctl disable --global user-flatpak-setup.timer(ansi reset)"
+    run0 systemctl disable --global user-flatpak-setup.timer
+}
+
+def "main disable system" [] {
+    print $"Running: (ansi default_italic)systemctl disable --now system-flatpak-setup.timer(ansi reset)"
+    systemctl disable --now system-flatpak-setup.timer
+}
+
+def "main disable all" [] {
+    main disable system
+    main disable user
+}
+
+def "main enable" [] {
+    print $"(ansi default_underline)(ansi default_bold)Usage:(ansi reset)"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager enable all(ansi reset):    enable automatic setup for both system Flatpaks and user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager enable user(ansi reset):   enable automatic setup for user Flatpaks"
+    print $"    (ansi default_italic)bluebuild-flatpak-manager enable system(ansi reset): enable automatic setup for system Flatpaks"
+}
+
+def "main enable user" [] {
+    print $"Running: (ansi default_italic)run0 systemctl enable --global user-flatpak-setup.timer(ansi reset)"
+    run0 systemctl enable --global user-flatpak-setup.timer
+}
+
+def "main enable system" [] {
+    print $"Running: (ansi default_italic)systemctl enable --now system-flatpak-setup.timer(ansi reset)"
+    systemctl enable --now system-flatpak-setup.timer
+}
+
+def "main enable all" [] {
+    main enable system
+    main enable user
+}

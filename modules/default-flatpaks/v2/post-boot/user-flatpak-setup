@@ -1,0 +1,54 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+const usrSharePath = "/usr/share/bluebuild/default-flatpaks"
+const configPath = $"($usrSharePath)/configuration.yaml"
+
+def main [] {
+    let configFile = open $configPath
+
+    let keepFedora = $configFile | where scope == user | any {|config|
+        $config.repo.url == "oci+https://registry.fedoraproject.org"
+    }
+
+    let userRemotes = (flatpak remotes --user --columns name | split row "\n")
+    if (not $keepFedora) {
+        if ($userRemotes | any {|remote| $remote == "fedora"}) {
+            flatpak remote-delete --user fedora --force
+        }
+        if ($userRemotes | any {|remote| $remote == "fedora-testing"}) {
+            flatpak remote-delete --user fedora-testing --force
+        }
+
+        let fedoraApps = flatpak list --user --app --columns=origin,application | detect columns --no-headers | where column0 == fedora | get column1
+        if (($fedoraApps | length) > 0) {
+            flatpak remove --user --noninteractive ...$fedoraApps
+        }
+
+        let fedoraRuntimes = flatpak list --user --runtime --columns=origin,application,arch,branch | detect columns --no-headers | where column0 == fedora | each {|i| $"($i.column1)/($i.column2)/($i.column3)" }
+        if (($fedoraRuntimes | length) > 0) {
+            flatpak remove --user --noninteractive ...$fedoraRuntimes
+        }
+    }
+
+    for config in ($configFile | where scope == user) {
+        flatpak remote-add --user --if-not-exists $config.repo.name $config.repo.url --title $config.repo.title
+        flatpak remote-modify --user --enable $config.repo.name
+
+        if ($config.notify) {
+            (notify-send
+                --app-name "Automatic Flatpak Installation Service"
+                $"Starting automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)..."
+            )
+        }
+
+        flatpak install --user --noninteractive $config.repo.name ...$config.install
+
+        if ($config.notify) {
+            (notify-send
+                --app-name "Automatic Flatpak Installation Service"
+                $"Finished automated installation of ($config.install | length) user Flatpak\(s) from ($config.repo.title)!"
+                ($config.install | str join ', ')
+            )
+        }
+    }
+}
