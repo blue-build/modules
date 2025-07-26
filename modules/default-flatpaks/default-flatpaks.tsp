@@ -10,7 +10,7 @@ union DefaultFlatpaksModule {
 
 @jsonSchema("/modules/default-flatpaks-latest.json")
 model DefaultFlatpaksModuleLatest {
-  ...DefaultFlatpaksModuleV2;
+  ...DefaultFlatpaksV2;
 }
 
 @jsonSchema("/modules/default-flatpaks-v1.json")
