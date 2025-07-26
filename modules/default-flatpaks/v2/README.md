@@ -1,5 +1,9 @@
 # `default-flatpaks`
 
+:::note
+For instructions on migration from v1 to v2, see the [announcement blog post](/blog/default-flatpaks-v2).
+:::
+
 The `default-flatpaks` module can be used to install Flatpaks from a configurable remote on every boot. By default the module will remove the Fedora Flatpak remote and install the Flathub remote, but you can also configure it to install other Flatpaks from other remotes.
 
 ## Features
@@ -16,7 +20,7 @@ The `default-flatpaks` module can be used to install Flatpaks from a configurabl
 
 ## Configuration
 
-The `default-flatpaks` module configuration is based on a list of `configurations:` that each set a scope to install in (`system` or `user`), a Flatpak repository to set up, and a list of Flatpaks to install from the repository. 
+The `default-flatpaks` module configuration is based on a list of `configurations:` that each set a scope to install in (`system` or `user`), a Flatpak repository to set up, and a list of Flatpaks to install from the repository.
 
 Multiple configurations are supported and subsequent module calls will append new configurations to the list. Overriding previous configurations is currently not supported.
 
