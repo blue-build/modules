@@ -19,15 +19,17 @@ def main [] {
             flatpak remote-delete --user fedora-testing --force
         }
 
-        let fedoraApps = flatpak list --user --app --columns=origin,application | detect columns --no-headers | where column0 == fedora | get column1
-        if (($fedoraApps | length) > 0) {
-            flatpak remove --user --noninteractive ...$fedoraApps
-        }
+	let appList = (flatpak list --user --app --columns=origin,application)
+	if ($appList | is-not-empty) {
+	    let fedoraApps = $appList | detect columns --no-headers | where column0 == fedora | get column1
+	    flatpak remove --user --noninteractive ...$fedoraApps
+	}
 
-        let fedoraRuntimes = flatpak list --user --runtime --columns=origin,application,arch,branch | detect columns --no-headers | where column0 == fedora | each {|i| $"($i.column1)/($i.column2)/($i.column3)" }
-        if (($fedoraRuntimes | length) > 0) {
-            flatpak remove --user --noninteractive ...$fedoraRuntimes
-        }
+	let runtimeList = (flatpak list --user --runtime --columns=origin,application,arch,branch)
+	if ($runtimeList | is-not-empty) {
+	    let fedoraRuntimes = $runtimeList | detect columns --no-headers | where column0 == fedora | each {|i| $"($i.column1)/($i.column2)/($i.column3)" }
+	    flatpak remove --user --noninteractive ...$fedoraRuntimes
+	}
     }
 
     for config in ($configFile | where scope == user) {
