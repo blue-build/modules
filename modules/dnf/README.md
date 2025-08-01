@@ -42,13 +42,15 @@ repos:
 ### Add COPR Repositories
 
 - [COPR](https://copr.fedorainfracloud.org/) contains software repositories maintained by fellow Fedora users
+- The `chroot` can be specified for the repo
 
 ```yaml
 type: dnf
 repos:
   copr:
     - atim/starship
-    - trixieua/mutter-patched
+    - name: trixieua/mutter-patched
+      chroot: epel-6-x86_64
 ```
 
 ### Disable/Enable Repositories
@@ -65,6 +67,8 @@ repos:
   copr:
     enable:
       - ryanabx/cosmic-epoch
+      - name: trixieua/mutter-patched
+        chroot: epel-6-x86_64
     disable:
       - kylegospo/oversteer
 ```
