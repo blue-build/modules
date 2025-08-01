@@ -334,9 +334,9 @@ export def "dnf version" []: nothing -> record {
   let dnf = which dnf4 dnf5
 
   if ("dnf5" in ($dnf | get command)) {
-    $dnf | filter { $in.command == "dnf5" } | first
+    $dnf | where command == "dnf5" | first
   } else if ("dnf4" in ($dnf | get command)) {
-    $dnf | filter { $in.command == "dnf4" } | first
+    $dnf | where command == "dnf4" | first
   } else {
     return (error make {
       msg: $"(ansi red)ERROR: Main dependency '(ansi cyan)dnf5/dnf4(ansi red)' is not installed. Install '(ansi cyan)dnf5/dnf4(ansi red)' before using this module to solve this error.(ansi reset)"
