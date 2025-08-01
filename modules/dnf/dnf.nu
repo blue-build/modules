@@ -240,7 +240,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
 
   # Return the IDs of all repos that were added
   let repo_ids = $repo_info
-    | filter {|repo|
+    | where {|repo|
       $repo.repo_file_path in $repo_files
     }
     | get id
@@ -485,24 +485,24 @@ def install_pkgs [install: record]: nothing -> nothing {
   # Gather lists of the various ways a package is installed
   # to report back to the user.
   let install_list = $install.packages
-    | filter {|pkg|
+    | where {|pkg|
       ($pkg | describe) == 'string'
     }
     | str replace --all '%OS_VERSION%' $env.OS_VERSION
     | str trim
   let http_list = $install_list
-    | filter {|pkg|
+    | where {|pkg|
       ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
     }
   let local_list = $install_list
     | each {|pkg|
       [$env.CONFIG_DIRECTORY dnf $pkg] | path join
     }
-    | filter {|pkg|
+    | where {|pkg|
       ($pkg | path exists)
     }
   let normal_list = $install_list
-    | filter {|pkg|
+    | where {|pkg|
       not (
         ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
       ) and not (
@@ -549,7 +549,7 @@ def install_pkgs [install: record]: nothing -> nothing {
 
   # Get all the entries that have a repo specified.
   let repo_install_list = $install.packages
-    | filter {|pkg|
+    | where {|pkg|
       'repo' in $pkg and 'packages' in $pkg
     }
 
@@ -602,9 +602,9 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
           | get from-repo
 
         let swap_packages = $replacement.packages
-          | filter $check
+          | where $check
         let sync_packages = $replacement.packages
-          | filter {
+          | where {
             not (do $check $in)
           }
 
