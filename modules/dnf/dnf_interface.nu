@@ -421,14 +421,14 @@ def check_dnf_plugins []: nothing -> nothing {
       if (^rpm -q dnf-plugins-core | complete).exit_code != 0 {
         print $'(ansi yellow1)Required dnf4 plugins are not installed. Installing plugins(ansi reset)'
 
-        dnf install [dnf-plugins-core]
+        ^dnf4 -y install dnf-plugins-core
       }
     }
     "dnf5" => {
       if (^rpm -q dnf5-plugins | complete).exit_code != 0 {
         print $'(ansi yellow1)Required dnf5 plugins are not installed. Installing plugins(ansi reset)'
 
-        dnf install [dnf5-plugins]
+        ^dnf5 -y install dnf5-plugins
       }
     }
   }
