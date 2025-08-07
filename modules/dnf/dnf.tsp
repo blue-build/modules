@@ -48,7 +48,7 @@ model Repo {
    * You can also specify 2 lists
    * instead to 'enable' or 'disable' COPR repos.
    */
-  copr?: Array<string> | RepoCopr;
+  copr?: Array<string | RepoCoprEnable> | RepoCopr;
 
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
@@ -77,10 +77,18 @@ model RepoFiles {
 
 model RepoCopr {
   /** List of COPR repos to enable */
-  enable?: Array<string>;
+  enable?: Array<string | RepoCoprEnable>;
 
   /** List of COPR repos to disable */
   disable?: Array<string>;
+}
+
+model RepoCoprEnable {
+  /** The COPR repo's name */
+  name: string;
+
+  /** The chroot for the COPR repo */
+  chroot: string;
 }
 
 model Install {
