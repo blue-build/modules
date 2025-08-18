@@ -12,7 +12,10 @@ def main [] {
 
     let systemRemotes = (flatpak remotes --system --columns name | split row "\n")
     if (not $keepFedora and ($systemRemotes | any {|remote| $remote == "fedora" or $remote == "fedora-testing"})) {
-        /usr/bin/gnome-software --quit
+        let gnomeSoftwareExists = (which /usr/bin/gnome-software)
+        if $gnomeSoftwareExists.exit_code == 0 {
+            /usr/bin/gnome-software --quit
+        }
         /usr/lib/fedora-third-party/fedora-third-party-opt-out
         /usr/bin/fedora-third-party disable
 
