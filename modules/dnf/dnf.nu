@@ -282,19 +282,41 @@ def remove_repos [$repos: list]: nothing -> nothing {
 #
 # This will error if a COPR repo ID is invalid.
 def add_coprs [$copr_repos: list]: nothing -> list<string> {
+  let copr_repos = $copr_repos
+    | each {|copr|
+      let copr = if ($copr | describe) == 'string' {
+        { name: $copr chroot: null }
+      } else if (
+        ('name' in $copr)
+        and ('chroot' in $copr)
+        and ($copr | describe | str starts-with record)
+      ) {
+        $copr
+      } else {
+        return (error make {
+          msg: $"Both (ansi cyan)name(ansi red) and (ansi cyan)chroot(ansi red) must be defined, found:(ansi reset)\n($copr)"
+          label: {
+            span: (metadata $copr).span
+            text: 'COPR Entry'
+          }
+        })
+      }
+      $copr
+    }
   if ($copr_repos | is-not-empty) {
     print $'(ansi green)Adding COPR repositories:(ansi reset)'
     $copr_repos
       | each {
-        print $'- (ansi cyan)($in)(ansi reset)'
+        print $'- (ansi cyan)($in.name)(ansi reset)'
       }
 
     for $copr in $copr_repos {
-      print $"Adding COPR repository: (ansi cyan)'($copr)'(ansi reset)"
-      dnf copr enable $copr
+      print $"Adding COPR repository: (ansi cyan)'($copr.name)'(ansi reset)"
+      dnf copr enable $copr.name $copr.chroot
     }
   }
   $copr_repos
+    | get name
 }
 
 # Disable a list of COPR repos. The COPR repo ID has a '/' in the name.

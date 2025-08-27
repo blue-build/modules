@@ -134,12 +134,21 @@ export def "dnf config-manager setopt" [
   }
 }
 
-export def "dnf copr enable" [copr: string]: nothing -> nothing {
+export def "dnf copr enable" [
+  copr: string
+  chroot?: string
+]: nothing -> nothing {
   check_dnf_plugins
   let dnf = dnf version
   
   try {
-    ^$dnf.path -y copr enable ($copr | check_copr)
+    ^$dnf.path -y copr enable ($copr | check_copr) ...(
+      if $chroot == null {
+        []
+      } else {
+        [$chroot]
+      }
+    )
   } catch {|e|
     print $'($e.msg)'
     exit 1
