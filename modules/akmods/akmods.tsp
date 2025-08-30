@@ -39,8 +39,8 @@ model AkmodsModuleV1 {
   install: Array<string>;
 
   /** Nvidia driver to install
-   * - nvidia : for the old nvidia propietary driver
-   * - nvidia-open : for the new kernel-open driver, to be used in Maxwell and newer cards
+   * - nvidia : for the old nvidia propietary driver, compatible with Maxwell and newer cards (but not Blackwell) 
+   * - nvidia-open : for the new kernel-open driver, to be used in Turing and newer cards
    */
   nvidia-driver: "nvidia" | "nvidia-open";
 }
