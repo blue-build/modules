@@ -14,6 +14,8 @@ jobs:
     name: Trigger deploy hooks
     runs-on: ubuntu-latest
     if: github.repository == 'blue-build/modules'
+    permissions:
+      contents: write
     steps: 
       - run: |
           echo "website:" && \
