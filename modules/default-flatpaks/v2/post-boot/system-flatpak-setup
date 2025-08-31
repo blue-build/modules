@@ -15,8 +15,12 @@ def main [] {
         if ('/usr/bin/gnome-software' | path exists) {
             /usr/bin/gnome-software --quit
         }
-        /usr/lib/fedora-third-party/fedora-third-party-opt-out
-        /usr/bin/fedora-third-party disable
+        if ('/usr/lib/fedora-third-party/fedora-third-party-opt-out' | path exists) {
+            /usr/lib/fedora-third-party/fedora-third-party-opt-out
+        }
+        if ('/usr/bin/fedora-third-party' | path exists) {
+            /usr/bin/fedora-third-party disable
+        }
 
         if ($systemRemotes | any {|remote| $remote == "fedora"}) {
             flatpak remote-delete --system fedora --force
