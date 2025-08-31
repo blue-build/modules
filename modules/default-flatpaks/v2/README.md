@@ -6,6 +6,8 @@ For instructions on migration from v1 to v2, see the [announcement blog post](/b
 
 The `default-flatpaks` module can be used to install Flatpaks from a configurable remote on every boot. By default the module will remove the Fedora Flatpak remote and install the Flathub remote, but you can also configure it to install other Flatpaks from other remotes.
 
+Note that by default Universal Blue images ship with the system Flathub remote included and with Fedora Flatpaks disabled ([source](https://github.com/ublue-os/main/blob/main/sys_files/usr/lib/systemd/system/flatpak-add-flathub-repos.service)), so you don't need to use this module just to configure those repositories.
+
 ## Features
 
 - System and user systemd services that are based on your configuration
