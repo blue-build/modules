@@ -42,5 +42,5 @@ model AkmodsModuleV1 {
    * - nvidia : for the old nvidia propietary driver, compatible with Maxwell and newer cards (but not Blackwell) 
    * - nvidia-open : for the new kernel-open driver, to be used in Turing and newer cards
    */
-  nvidia-driver: "nvidia" | "nvidia-open";
+  `nvidia-driver`: "nvidia" | "nvidia-open";
 }
