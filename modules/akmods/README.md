@@ -20,15 +20,17 @@ If you want to install akmods for `surface` or `asus` images, change `base` entr
 
 See available tags here: https://github.com/ublue-os/akmods/#how-its-organized
 
-## Nvidia modules
+## Nvidia kernel modules
 
-To install Nvidia modules, specify which module version you wish to install in the `nvidia-driver:` section of your recipe/configuration file.
+This module can also install Nvidia drivers and kernel modules from `ublue-os/akmods` with the same installation script used by Universal Blue images.
+
+To install kernel Nvidia modules, specify which module version you wish to install in the `nvidia-driver:` section of your recipe/configuration file.
 
 The available options are:
 - `nvidia-open`: this flavour of the Nvidia drivers uses the open kernel module. This is the preferred option for graphics cards based on the Turing architecture and later, and the only supported version for Blackwell and later. Full list of supported cards here: https://github.com/NVIDIA/open-gpu-kernel-modules
 - `nvidia`: the propietary flavour of the drivers, compatible with cards since Maxwell until, but not including, Blackwell.
 
-Nvidia modules are only compatible with the `main`, `coreos-stable`, `coreos-testing`, and `bazzite` kernels.
+Nvidia kernel modules are only compatible with the `main`, `coreos-stable`, `coreos-testing`, and `bazzite` kernels.
 
 ## Known issues
 
