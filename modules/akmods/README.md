@@ -63,3 +63,19 @@ There is also the information of repo source of the akmod, where you can see whi
 All this information can be seen in [`akmods` repo](https://github.com/ublue-os/akmods#kmod-packages).
 
 The solution to this problem is to add the affected akmod repo to [`rpm-ostree`](https://blue-build.org/reference/modules/rpm-ostree/) module in `repos` section.
+
+### Nvidia module not loaded after rebasing to a new image
+
+If your original installation dates from an image based on Fedora 41 or earlier, you may need to manually add the Nvidia module to the kernel command line. Installations based on Fedora 42 or later should work out of the box due to the fact that they use `bootc` by default.
+
+First, check that the nvidia module is not loaded by running `lsmod | grep nvidia`. If the command does not return any output, you'll need to tweak the kernel command line. There are 2 options to do so:
+
+1. If you are using an image based on Universal Blue, you can simply run `sudo ujust configure-nvidia`.
+2. Manually tweak the kernel command line by running the following snippet from the command line:
+```
+rpm-ostree kargs \
+          --append-if-missing=rd.driver.blacklist=nouveau \
+          --append-if-missing=modprobe.blacklist=nouveau \
+          --append-if-missing=nvidia-drm.modeset=1 \
+          --delete-if-present=nomodeset
+```
