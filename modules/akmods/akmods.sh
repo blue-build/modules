@@ -40,13 +40,13 @@ BASE_IMAGE_NAME=${BASE_IMAGE##*/}
 BASE_IMAGE_NAME=${BASE_IMAGE_NAME%-*}
 
 # Fetch Common AKMODS & Kernel RPMS
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${KERNEL_BASE}"-"$(rpm -E %fedora)"-"$(uname -r)" dir:/tmp/akmods
 AKMODS_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods/manifest.json | cut -d : -f 2)
 tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
 mv /tmp/rpms/* /tmp/akmods/
 
 echo "Pulling akmods nvidia image"
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods-"${NVIDIA_DRIVER}":"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods-rpms
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods-"${NVIDIA_DRIVER}":"${KERNEL_BASE}"-"$(rpm -E %fedora)"-"$(uname -r)" dir:/tmp/akmods-rpms
 
 NVIDIA_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods-rpms/manifest.json | cut -d : -f 2)
 tar -xvzf /tmp/akmods-rpms/"$NVIDIA_TARGZ" -C /tmp/
