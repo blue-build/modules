@@ -150,7 +150,11 @@ Environment=HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 Environment=HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 Environment=HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
 ExecStart=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew upgrade"
-ExecStartPost=/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink systemd dbus || true"
+ExecStartPost=-/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink systemd"
+ExecStartPost=-/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink dbus"
+ExecStartPost=-/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink gsettings"
+ExecStartPost=-/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink bash"
+ExecStartPost=-/usr/bin/bash -c "/home/linuxbrew/.linuxbrew/bin/brew unlink rpm"
 EOF
 
 # Write systemd timer files dynamically
