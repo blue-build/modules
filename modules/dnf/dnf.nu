@@ -577,10 +577,9 @@ def install_pkgs [install: record]: nothing -> nothing {
         $http_list
         $local_list
         $normal_list
-      ] | flatten)
-      ([
+      ] | flatten)  
         $exclude_list
-      ] | flatten))
+    )
   }
 
   # Get all the entries that have a repo specified.
@@ -605,7 +604,9 @@ def install_pkgs [install: record]: nothing -> nothing {
       $repo
       --opts $repo_install
       --global-opts $install
-      $packages)
+      $packages
+      []
+      )
   }
 }
 
