@@ -122,6 +122,19 @@ install:
     - package-2
 ```
 
+#### Optionnaly prevents related packages from being installed
+
+```yaml
+type: dnf
+install:
+  packages:
+    - niri
+  exclude:
+    - alacritty
+    - waybar
+    - fuzzel  
+```
+
 #### Packages from URL or File
 
 - If the OS version is included in the file name or URL, you can substitute it with the `%OS_VERSION%` magic string
