@@ -7,6 +7,8 @@ export def "dnf install" [
 ]: nothing -> nothing {
   let dnf = dnf version
 
+  let exclude_string = $"--exclude=($exclude | str join ',')"
+
   if ($packages | is-empty) {
     return (error make {
       msg: 'At least one package is required'
@@ -27,13 +29,14 @@ export def "dnf install" [
       } else {
         []
       })
-      ...(if $exclude != null {
-        [--exclude $exclude]
+      ...($opts | install_args --global-config $global_opts)
+      ...$packages
+      ...(if ($exclude | is-not-empty) {
+        [$exclude_string]
       } else {
         []
       })
-      ...($opts | install_args --global-config $global_opts)
-      ...$packages)
+      )
   } catch {|e|
     print $'($e.msg)'
     exit 1

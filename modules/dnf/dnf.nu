@@ -506,14 +506,7 @@ def install_pkgs [install: record]: nothing -> nothing {
   let install = $install
     | default [] packages
 
-  let exclude = $install
-    | default [] exclude
-
-  print $exclude
-
-  let exclude_list = $exclude.exclude
-
-  print $exclude_list
+  let exclude_list = $install.exclude
 
   # Gather lists of the various ways a package is installed
   # to report back to the user.
@@ -570,6 +563,14 @@ def install_pkgs [install: record]: nothing -> nothing {
         }
     }
 
+    if ($exclude_list | is-not-empty) {
+      print $'(ansi green)List of packages being excluded:(ansi reset)'
+      $exclude_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+    }
+
     (dnf
       install
       --opts $install
@@ -605,8 +606,8 @@ def install_pkgs [install: record]: nothing -> nothing {
       --opts $repo_install
       --global-opts $install
       $packages
-      []
-      )
+      $exclude_list
+    )
   }
 }
 
