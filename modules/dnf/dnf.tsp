@@ -95,6 +95,8 @@ model Install {
   /** List of RPM packages to install. */
   packages: Array<string | InstallRepo>;
 
+  exclude?: Array<string>;
+
   ...InstallCommon;
 }
 

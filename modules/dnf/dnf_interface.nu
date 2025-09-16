@@ -3,6 +3,7 @@ export def "dnf install" [
   --global-opts: record
   --repoid: string
   packages: list
+  exclude: list
 ]: nothing -> nothing {
   let dnf = dnf version
 
@@ -23,6 +24,11 @@ export def "dnf install" [
       install
       ...(if $repoid != null {
         [--repoid $repoid]
+      } else {
+        []
+      })
+      ...(if $exclude != null {
+        [--exclude $exclude]
       } else {
         []
       })

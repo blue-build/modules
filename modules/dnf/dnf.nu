@@ -500,9 +500,20 @@ def remove_pkgs [remove: record]: nothing -> nothing {
 #
 # You can specify a list of packages to install, and you can
 # specify a list of packages for a specific repo to install.
+# Optionaly, you can specify a list of package to be excluded
+# from installation.
 def install_pkgs [install: record]: nothing -> nothing {
   let install = $install
     | default [] packages
+
+  let exclude = $install
+    | default [] exclude
+
+  print $exclude
+
+  let exclude_list = $exclude.exclude
+
+  print $exclude_list
 
   # Gather lists of the various ways a package is installed
   # to report back to the user.
@@ -567,6 +578,9 @@ def install_pkgs [install: record]: nothing -> nothing {
         $local_list
         $normal_list
       ] | flatten))
+      ([
+        $exclude_list
+      ] | flatten)
   }
 
   # Get all the entries that have a repo specified.
