@@ -27,8 +27,7 @@ export def "dnf install" [
         []
       })
       ...($opts | install_args --global-config $global_opts)
-      ...$packages
-      )
+      ...$packages)
   } catch {|e|
     print $'($e.msg)'
     exit 1
