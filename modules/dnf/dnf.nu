@@ -500,13 +500,11 @@ def remove_pkgs [remove: record]: nothing -> nothing {
 #
 # You can specify a list of packages to install, and you can
 # specify a list of packages for a specific repo to install.
-# Optionaly, you can specify a list of package to be excluded
-# from installation.
 def install_pkgs [install: record]: nothing -> nothing {
   let install = $install
     | default [] packages
 
-  let exclude_list = $install.exclude
+  # let exclude_list = $install.exclude
 
   # Gather lists of the various ways a package is installed
   # to report back to the user.
@@ -563,13 +561,13 @@ def install_pkgs [install: record]: nothing -> nothing {
         }
     }
 
-    if ($exclude_list | is-not-empty) {
-      print $'(ansi green)List of packages being excluded:(ansi reset)'
-      $exclude_list
-        | each {
-          print $'- (ansi cyan)($in)(ansi reset)'
-        }
-    }
+    # if ($exclude_list | is-not-empty) {
+    #   print $'(ansi green)List of packages being excluded:(ansi reset)'
+    #   $exclude_list
+    #     | each {
+    #       print $'- (ansi cyan)($in)(ansi reset)'
+    #     }
+    # }
 
     (dnf
       install
@@ -578,9 +576,7 @@ def install_pkgs [install: record]: nothing -> nothing {
         $http_list
         $local_list
         $normal_list
-      ] | flatten)  
-        $exclude_list
-    )
+      ] | flatten))
   }
 
   # Get all the entries that have a repo specified.
@@ -605,9 +601,7 @@ def install_pkgs [install: record]: nothing -> nothing {
       $repo
       --opts $repo_install
       --global-opts $install
-      $packages
-      $exclude_list
-    )
+      $packages)
   }
 }
 

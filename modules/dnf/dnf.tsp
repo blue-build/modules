@@ -95,8 +95,6 @@ model Install {
   /** List of RPM packages to install. */
   packages: Array<string | InstallRepo>;
 
-  exclude?: Array<string>;
-
   ...InstallCommon;
 }
 
@@ -166,4 +164,7 @@ model InstallCommon {
 
   /** Whether to allow erasing (removal) of packages in case of dependency problems. */
   `allow-erasing`?: boolean = false;
+
+  /** A list of packages to prevent from being installed */
+  exclude?: Array<string>;
 }

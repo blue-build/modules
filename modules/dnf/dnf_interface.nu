@@ -3,11 +3,8 @@ export def "dnf install" [
   --global-opts: record
   --repoid: string
   packages: list
-  exclude: list
 ]: nothing -> nothing {
   let dnf = dnf version
-
-  let exclude_string = $"--exclude=($exclude | str join ',')"
 
   if ($packages | is-empty) {
     return (error make {
@@ -31,11 +28,6 @@ export def "dnf install" [
       })
       ...($opts | install_args --global-config $global_opts)
       ...$packages
-      ...(if ($exclude | is-not-empty) {
-        [$exclude_string]
-      } else {
-        []
-      })
       )
   } catch {|e|
     print $'($e.msg)'
@@ -406,6 +398,18 @@ def install_args [
 
   if (do $check_filter 'allow-erasing') {
     $args = $args | append '--allowerasing'
+  }
+
+  if ('exclude' in $install) {
+    let exclude_list = $install | get 'exclude'
+    if ($exclude_list | is-not-empty) {
+      print $'(ansi green)List of packages being excluded:(ansi reset)'
+      $exclude_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+      $args = $args | append $"--exclude=($exclude_list | str join ',')"
+    }
   }
 
   $args
