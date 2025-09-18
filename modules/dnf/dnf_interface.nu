@@ -399,6 +399,18 @@ def install_args [
     $args = $args | append '--allowerasing'
   }
 
+  if ('exclude' in $install) {
+    let exclude_list = $install | get 'exclude'
+    if ($exclude_list | is-not-empty) {
+      print $'(ansi green)List of packages being excluded:(ansi reset)'
+      $exclude_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+      $args = $args | append $"--exclude=($exclude_list | str join ',')"
+    }
+  }
+
   $args
 }
 
