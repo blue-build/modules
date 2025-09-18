@@ -37,8 +37,8 @@ fi
 # Set dracut log levels using temporary configuration file.
 # This avoids logging messages to the system journal, which can significantly
 # impact performance in the default configuration.
-temp_conf_dir="$(mktemp -d)"
-cat >"${temp_conf_dir}/loglevels.conf" <<'EOF'
+temp_conf_file="$(mktemp '/etc/dracut.conf.d/zzz-loglevels-XXXXXXXXXX.conf')"
+cat >"${temp_conf_file}" <<'EOF'
 stdloglvl=4
 sysloglvl=0
 kmsgloglvl=0
@@ -52,11 +52,10 @@ for qual_kernel in "${QUALIFIED_KERNEL[@]}"; do
     --kver "${qual_kernel}" \
     --force \
     --add 'ostree' \
-    --add-confdir "${temp_conf_dir}" \
     --no-hostonly \
     --reproducible \
     "${INITRAMFS_IMAGE}"
   chmod 0600 "${INITRAMFS_IMAGE}"
 done
 
-rm -rf "${temp_conf_dir}"
+rm -- "${temp_conf_file}"
