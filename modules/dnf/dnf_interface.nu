@@ -377,7 +377,10 @@ def install_args [
       $global_config.allow-erasing?
         | default false
     ) allow-erasing
-    | default [] 'exclude'
+    | default (
+      $global_config.exclude?
+        | default []
+    ) exclude
 
   mut args = []
   let check_filter = {|arg|
