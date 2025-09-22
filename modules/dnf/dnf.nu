@@ -504,8 +504,6 @@ def install_pkgs [install: record]: nothing -> nothing {
   let install = $install
     | default [] packages
 
-  let exclude_list = $install.exclude
-
   # Gather lists of the various ways a package is installed
   # to report back to the user.
   let install_list = $install.packages
@@ -556,14 +554,6 @@ def install_pkgs [install: record]: nothing -> nothing {
     if ($normal_list | is-not-empty) {
       print $'(ansi green)Installing packages:(ansi reset)'
       $normal_list
-        | each {
-          print $'- (ansi cyan)($in)(ansi reset)'
-        }
-    }
-
-    if ($exclude_list | is-not-empty) {
-      print $'(ansi green)List of packages being excluded:(ansi reset)'
-      $exclude_list
         | each {
           print $'- (ansi cyan)($in)(ansi reset)'
         }
