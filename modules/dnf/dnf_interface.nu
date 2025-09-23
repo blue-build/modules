@@ -377,13 +377,24 @@ def install_args [
       $global_config.allow-erasing?
         | default false
     ) allow-erasing
+    | default (
+      $global_config.exclude?
+        | default []
+    ) exclude
+
   mut args = []
   let check_filter = {|arg|
-    let arg_exists = ($arg in $install)
-    if ($filter | is-empty) {
-      $arg_exists and ($install | get $arg)
-    } else {
-      $arg_exists and ($arg in $filter) and ($install | get $arg)
+    if ($arg not-in $install) or (($arg not-in $filter) and ($filter | is-not-empty)) {
+      return false
+    }
+
+    let value = $install | get $arg
+    match ($value | describe | str replace --regex '<.*' '') {
+      "bool" => $value,
+      "list" if ($value | is-not-empty) => true,
+      _ => {
+        error make { msg: $"Unexpected data type or cannot handle value for option '($arg)'" }
+      }
     }
   }
 
@@ -397,6 +408,10 @@ def install_args [
 
   if (do $check_filter 'allow-erasing') {
     $args = $args | append '--allowerasing'
+  }
+
+  if (do $check_filter 'exclude') {
+    $args = $args | append $"--exclude=(($install | get 'exclude') | str join ',')"
   }
 
   $args

@@ -25,6 +25,8 @@ example: |
       - starship
       - https://github.com/Eugeny/tabby/releases/download/v1.0.209/tabby-1.0.209-linux-x64.rpm
       - kubectl.rpm
+    exclude:
+      - alacritty
   remove:
     packages:
       - firefox
