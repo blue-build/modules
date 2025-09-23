@@ -384,33 +384,31 @@ def install_args [
 
   mut args = []
   let check_filter = {|arg|
-    if ($arg not-in $install) or (($arg not-in $filter) and ($filter | is-not-empty)) {
-      return false
+    ($arg in $install) and (($arg in $filter) or ($filter | is-empty))
+  }
+
+  if (do $check_filter 'skip-unavailable') and ($install | get skip-unavailable) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--skip-unavailable'
+  }
+
+  if (do $check_filter 'skip-broken') and ($install | get skip-broken) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--skip-broken'
+  }
+
+  if (do $check_filter 'allow-erasing') and ($install | get allow-erasing) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--allowerasing'
+  }
+
+  if (do $check_filter 'exclude') and ($install | get exclude | is-not-empty) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--exclude(ansi yellow) with values:(ansi reset)'
+    let packages = $install | get exclude
+
+    $packages | each {
+      print $'- (ansi cyan)($in)(ansi reset)'
     }
-
-    let value = $install | get $arg
-    match ($value | describe | str replace --regex '<.*' '') {
-      "bool" => $value,
-      "list" if ($value | is-not-empty) => true,
-      _ => {
-        error make { msg: $"Unexpected data type or cannot handle value for option '($arg)'" }
-      }
-    }
-  }
-
-  if (do $check_filter 'skip-unavailable') {
-    $args = $args | append '--skip-unavailable'
-  }
-
-  if (do $check_filter 'skip-broken') {
-    $args = $args | append '--skip-broken'
-  }
-
-  if (do $check_filter 'allow-erasing') {
-    $args = $args | append '--allowerasing'
-  }
-
-  if (do $check_filter 'exclude') {
     $args = $args | append $"--exclude=(($install | get 'exclude') | str join ',')"
   }
 
