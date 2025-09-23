@@ -217,20 +217,29 @@ The following options can specified in the package installation, group installat
 - `allow-erasing` allows removing packages in case of dependency problems during package installation
   - Disabled by default
   - Corresponds to the [`--allowerasing`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
+- `exclude` allows excluding packages from being installed during package installation
+  - Empty by default
+  - Corresponds to the [`--exclude`](https://dnf5.readthedocs.io/en/latest/dnf5.8.html#options:~:text=Exclude%20packages%20specified,a%20list%20option) flag
 
 ```yaml
 type: dnf
 install:
   skip-unavailable: true
+  exclude:
+    ...
   packages:
     ...
 group-install:
   skip-broken: true
+  exclude:
+    ...
   packages:
     ...
 replace:
   - from-repo: repo-1
     allow-erasing: true
+    exclude:
+      ...
     packages:
       ...
 ```
