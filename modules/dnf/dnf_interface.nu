@@ -384,7 +384,7 @@ def install_args [
 
   mut args = []
   let check_filter = {|arg|
-    if (($arg not-in $install) or ($arg in $filter)) {
+    if ($arg not-in $install) or (($arg not-in $filter) and ($filter | is-not-empty)) {
       return false
     }
 
