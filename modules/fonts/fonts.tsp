@@ -8,7 +8,7 @@ model FontsModuleLatest {
 
 @jsonSchema("/modules/fonts-v1.json")
 model FontsModuleV1 {
-  /** The fonts module can be used to install fonts from Nerd Fonts or Google Fonts.
+  /** The fonts module can be used to install fonts from Nerd Fonts, Google Fonts, or custom URLs.
    * https://blue-build.org/reference/modules/fonts/
    */
   type: "fonts" | "fonts@v1" | "fonts@latest";
@@ -19,5 +19,8 @@ model FontsModuleV1 {
 
     /** List of Google Fonts to install. */
     `google-fonts`?: Array<string>;
+
+    /** List of custom URL fonts to install (format: "Name|URL"). */
+    `url-fonts`?: Array<string>;
   };
 }

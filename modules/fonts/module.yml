@@ -1,5 +1,5 @@
 name: fonts
-shortdesc: The `fonts` module can be used to install fonts from Nerd Fonts or Google Fonts.
+shortdesc: The `fonts` module can be used to install fonts from Nerd Fonts, Google Fonts, or custom URLs.
 example: |
   type: fonts
   fonts:
@@ -13,3 +13,6 @@ example: |
     google-fonts:
       - Roboto
       - Open Sans
+    url-fonts:
+      - "CustomFont|https://example.com/my-font.otf"
+      - "CompanyFonts|https://company.com/fonts.zip"
