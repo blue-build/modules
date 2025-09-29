@@ -9,7 +9,6 @@ The `fonts` module can be used to install fonts from [Nerd Fonts](https://www.ne
 - **URL Fonts**: Install fonts from custom URLs (ZIP archives, individual font files, etc.)
 
 ## Usage
-
 ```yaml
 type: fonts
 fonts:
@@ -25,8 +24,10 @@ fonts:
     - Open Sans
     - Inter
   url-fonts:
-    - "CustomFont|https://example.com/my-font.otf"
-    - "CompanyFonts|https://company.com/fonts.tar.gz"
+    - name: CustomFont
+      url: https://example.com/my-font.otf
+    - name: CompanyFonts
+      url: https://company.com/fonts.tar.gz
 ```
 
 ## Font Sources
@@ -45,21 +46,31 @@ fonts:
 - Download fonts from any public URL
 - Supports multiple archive formats: `.zip`, `.tar.gz`, `.tar.bz2`, `.tgz`
 - Supports individual font files: `.otf`, `.ttf`
-- Format: `"FontName|URL"`
+- Each font is organized in its own subdirectory based on the name you specify
 
 #### URL Fonts Examples
-
 
 **Individual Font File:**
 ```yaml
 url-fonts:
-  - "MyFont|https://example.com/MyFont-Regular.otf"
+  - name: MyFont
+    url: https://example.com/MyFont-Regular.otf
 ```
 
 **Corporate/Licensed Fonts from ZIP Archive:**
 ```yaml
 url-fonts:
-  - "CompanyBrand|https://assets.company.com/fonts/brand-fonts.zip"
+  - name: CompanyBrand
+    url: https://assets.company.com/fonts/brand-fonts.zip
+```
+
+**Multiple Fonts from GitHub Releases:**
+```yaml
+url-fonts:
+  - name: SpecialFont
+    url: https://github.com/user/repo/releases/download/v1.0/font.tar.gz
+  - name: AnotherFont
+    url: https://github.com/user/repo/releases/download/v2.0/font.zip
 ```
 
 ## Installation Locations
@@ -72,7 +83,7 @@ Fonts are installed to:
 ## Notes
 
 - All fonts are automatically registered with the system font cache (`fc-cache`)
-- URL fonts are organized by the name you specify (the part before the `|`)
+- URL fonts are organized by the name you specify
 - Archives are automatically extracted and only font files (`.otf`, `.ttf`) are kept
 - Font downloads are cached during the build process for efficiency
 

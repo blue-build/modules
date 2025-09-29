@@ -20,7 +20,15 @@ model FontsModuleV1 {
     /** List of Google Fonts to install. */
     `google-fonts`?: Array<string>;
 
-    /** List of custom URL fonts to install (format: "Name|URL"). */
-    `url-fonts`?: Array<string>;
+    /** List of custom URL fonts to install. */
+    `url-fonts`?: Array<UrlFont>;
   };
+}
+
+model UrlFont {
+  /** Name for the font (will be used as directory name). */
+  name: string;
+
+  /** URL to download the font from (supports .otf, .ttf files and archives). */
+  url: string;
 }

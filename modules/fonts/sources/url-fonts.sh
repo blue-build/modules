@@ -1,19 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-mapfile -t URLS <<< "$@"
+# Parse JSON input for url-fonts array
+readarray -t FONTS < <(echo "$@" | jq -c '.[]')
 DEST="/usr/share/fonts/url-fonts"
 
 echo "Installation of url-fonts started"
 rm -rf "${DEST}"
 mkdir -p "${DEST}"
 
-for ENTRY in "${URLS[@]}"; do
-    if [ -n "${ENTRY}" ]; then
-        # Format: "Name|https://example.com/fonts.zip"
-        NAME="${ENTRY%%|*}"
-        URL="${ENTRY#*|}"
-
+for FONT_JSON in "${FONTS[@]}"; do
+    if [ -n "${FONT_JSON}" ]; then
+        # Parse name and url from JSON object
+        NAME=$(echo "${FONT_JSON}" | jq -r '.name')
+        URL=$(echo "${FONT_JSON}" | jq -r '.url')
+        
+        # Validate that both name and url exist
+        if [ "${NAME}" == "null" ] || [ "${URL}" == "null" ]; then
+            echo "Error: Each url-font entry must have both 'name' and 'url' properties"
+            exit 1
+        fi
+        
         NAME=$(echo "$NAME" | xargs) # trim whitespace
         mkdir -p "${DEST}/${NAME}"
 
