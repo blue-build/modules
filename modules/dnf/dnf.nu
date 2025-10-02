@@ -375,7 +375,7 @@ def add_keys [$keys: list]: nothing -> nothing {
 # symlinks on boot of the OS.
 def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
   if ($optfix_pkgs | is-not-empty) {
-    print $'(ansi yellow_bold)WARNING:(asni yellow) optfix in this module is deprecated in favor of the built-in functionality of BlueBuild'
+    print $'(ansi yellow_bold)WARNING:(ansi yellow) optfix in this module is deprecated in favor of the built-in functionality of BlueBuild'
   }
 }
 
