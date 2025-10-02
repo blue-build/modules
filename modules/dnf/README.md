@@ -122,7 +122,6 @@ install:
     - package-2
 ```
 
-#### Optionnaly prevents related packages from being installed
 #### Exclude packages
 
 Optionally prevent packages from being installed. This is useful when a package pulls in another package as a dependency that you don't want to install.
