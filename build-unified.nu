@@ -1,6 +1,25 @@
 #!/usr/bin/env nu
 # generates modules-latest directory with only latest versions of modules and builds the Containerfile
 
+const PLATFORMS = [
+  'linux/amd64'
+  'linux/amd64/v2'
+  'linux/arm64'
+  'linux/arm'
+  'linux/arm/v6'
+  'linux/arm/v7'
+  'linux/386'
+  'linux/loong64'
+  'linux/mips'
+  'linux/mipsle'
+  'linux/mips64'
+  'linux/mips64le'
+  'linux/ppc64'
+  'linux/ppc64le'
+  'linux/riscv64'
+  'linux/s390x'
+]
+
 print $"(ansi green_bold)Gathering images(ansi reset)"
 
 rm -rf ./modules-latest
@@ -30,30 +49,37 @@ ls modules | each { |moduleDir|
 
 print $"(ansi green_bold)Starting image build(ansi reset)"
 
-let tags = (
-    if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
-        ["latest"]
-    } else if ($env.GH_EVENT_NAME != "pull_request") {
-        [$env.GH_BRANCH]
-    } else {
-        [$"pr-($env.GH_PR_NUMBER)"]
-    }
-)
+let tag = if ($env.GH_EVENT_NAME != "pull_request" and $env.GH_BRANCH == "main") {
+    "latest"
+} else if ($env.GH_EVENT_NAME != "pull_request") {
+    $env.GH_BRANCH
+} else {
+    $"pr-($env.GH_PR_NUMBER)"
+}
 
-print $"(ansi green_bold)Generated tags for image:(ansi reset) ($tags | str join ' ')"
+
+print $"(ansi green_bold)Generated tags for image:(ansi reset) ($tag)"
 
 (docker build .
     -f ./unified.Containerfile
-    ...($tags | each { |tag| ["-t", $"($env.REGISTRY)/modules:($tag)"] } | flatten) # generate and spread list of tags
+    --push
+    ...($PLATFORMS | each { $'--platform=($in)' })
+    -t $"($env.REGISTRY)/modules:($tag)"
 )
 
-print $"(ansi cyan)Pushing image:(ansi reset) ($env.REGISTRY)/modules"
-let digest = (
-    docker push --all-tags $"($env.REGISTRY)/modules"
-        | split row "\n"  | last | split row " " | get 2 # parse push output to get digest for signing
-)
+let inspect_image = $'($env.REGISTRY)/modules:($tag)'
+print $"(ansi cyan)Inspecting image:(ansi reset) ($inspect_image)"
+let digest = (docker
+    buildx
+    imagetools
+    inspect
+    --format '{{json .}}'
+    $inspect_image)
+    | from json
+    | get manifest.digest
 
-print $"(ansi cyan)Signing image:(ansi reset) ($env.REGISTRY)/modules@($digest)"
-cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules@($digest)"
+let digest_image = $'($env.REGISTRY)/modules@($digest)'
+print $"(ansi cyan)Signing image:(ansi reset) ($digest_image)"
+cosign sign -y --recursive --key env://COSIGN_PRIVATE_KEY $digest_image
 
 print $"(ansi green_bold)DONE!(ansi reset)"

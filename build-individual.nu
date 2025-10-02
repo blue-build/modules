@@ -1,6 +1,25 @@
 #!/usr/bin/env nu
 # build separate images for each module in the repo
 
+const PLATFORMS = [
+  'linux/amd64'
+  'linux/amd64/v2'
+  'linux/arm64'
+  'linux/arm'
+  'linux/arm/v6'
+  'linux/arm/v7'
+  'linux/386'
+  'linux/loong64'
+  'linux/mips'
+  'linux/mipsle'
+  'linux/mips64'
+  'linux/mips64le'
+  'linux/ppc64'
+  'linux/ppc64le'
+  'linux/riscv64'
+  'linux/s390x'
+]
+
 print $"(ansi green_bold)Gathering images"
 
 let images = ls modules | each { |moduleDir|
@@ -79,18 +98,26 @@ $images | par-each { |img|
     print $"(ansi cyan)Building image:(ansi reset) modules/($img.name)"
     (docker build .
         -f ./individual.Containerfile
+        --push
+        ...($PLATFORMS | each { $'--platform=($in)' })
         ...($img.tags | each { |tag| ["-t", $"($env.REGISTRY)/modules/($img.name):($tag)"] } | flatten) # generate and spread list of tags
         --build-arg $"DIRECTORY=($img.directory)"
         --build-arg $"NAME=($img.name)")
 
-    print $"(ansi cyan)Pushing image:(ansi reset) ($env.REGISTRY)/modules/($img.name)"
-    let digest = (
-        docker push --all-tags $"($env.REGISTRY)/modules/($img.name)"
-            | split row "\n"  | last | split row " " | get 2 # parse push output to get digest for signing
-    )
+    let inspect_image = $'($env.REGISTRY)/modules/($img.name):($img.tags | first)'
+    print $"(ansi cyan)Inspecting image:(ansi reset) ($inspect_image)"
+    let digest = (docker
+        buildx
+        imagetools
+        inspect
+        --format '{{json .}}'
+        $inspect_image)
+        | from json
+        | get manifest.digest
 
-    print $"(ansi cyan)Signing image:(ansi reset) ($env.REGISTRY)/modules/($img.name)@($digest)"
-    cosign sign -y --key env://COSIGN_PRIVATE_KEY $"($env.REGISTRY)/modules/($img.name)@($digest)"
+    let digest_image = $'($env.REGISTRY)/modules/($img.name)@($digest)'
+    print $"(ansi cyan)Signing image:(ansi reset) ($digest_image)"
+    cosign sign -y --recursive --key env://COSIGN_PRIVATE_KEY $digest_image
 
 }
 
