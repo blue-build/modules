@@ -19,7 +19,7 @@ model RpmOstreeModuleV1 {
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
 
-  /** DEPRECATED: List of folder names under /opt/ to enable for installing into. */
+  /** List of folder names under /opt/ to enable for installing into. */
   optfix?: Array<string>;
 
   /** List of RPM packages to install. */

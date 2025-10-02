@@ -17,7 +17,7 @@ model DnfModuleV1 {
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
   repos?: Repo;
 
-  /** DEPRECATED: List of folder names under /opt/ to enable for installing into. */
+  /** List of folder names under /opt/ to enable for installing into. */
   optfix?: Array<string>;
 
   /** Configuration of RPM groups removal. */
