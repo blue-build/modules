@@ -1,24 +1,7 @@
 #!/usr/bin/env nu
 # generates modules-latest directory with only latest versions of modules and builds the Containerfile
 
-const PLATFORMS = [
-  'linux/amd64'
-  'linux/amd64/v2'
-  'linux/arm64'
-  'linux/arm'
-  'linux/arm/v6'
-  'linux/arm/v7'
-  'linux/386'
-  'linux/loong64'
-  'linux/mips'
-  'linux/mipsle'
-  'linux/mips64'
-  'linux/mips64le'
-  'linux/ppc64'
-  'linux/ppc64le'
-  'linux/riscv64'
-  'linux/s390x'
-]
+use constants.nu *
 
 print $"(ansi green_bold)Gathering images(ansi reset)"
 
