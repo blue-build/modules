@@ -368,69 +368,14 @@ def add_keys [$keys: list]: nothing -> nothing {
   }
 }
 
-# Setup /opt directory symlinks to allow certain packages to install.
+# DEPRECATED: Setup /opt directory symlinks to allow certain packages to install.
 #
 # Each entry must be the directory name that the application expects
 # to install into /opt. A systemd unit will be installed to setup
 # symlinks on boot of the OS.
 def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
-  const LIB_EXEC_DIR = '/usr/libexec/bluebuild'
-  const SYSTEMD_DIR = '/usr/lib/systemd/system'
-  const MODULE_DIR = '/tmp/modules/dnf'
-  const LIB_OPT_DIR = '/usr/lib/opt'
-  const VAR_OPT_DIR = '/var/opt'
-  const OPTFIX_SCRIPT = 'optfix.sh'
-  const SERV_UNIT = 'bluebuild-optfix.service'
-
   if ($optfix_pkgs | is-not-empty) {
-    if not ($LIB_EXEC_DIR | path join $OPTFIX_SCRIPT | path exists) {
-      mkdir $LIB_EXEC_DIR
-      cp ($MODULE_DIR | path join $OPTFIX_SCRIPT) $'($LIB_EXEC_DIR)/'
-
-      try {
-        ^chmod +x $'($LIB_EXEC_DIR | path join $OPTFIX_SCRIPT)'
-      } catch {
-        exit 1
-      }
-    }
-
-    if not ($SYSTEMD_DIR | path join $SERV_UNIT | path exists) {
-      cp ($MODULE_DIR | path join $SERV_UNIT) $'($SYSTEMD_DIR)/'
-
-      try {
-        ^systemctl --system enable $SERV_UNIT
-      } catch {
-        exit 1
-      }
-    }
-
-    print $"(ansi green)Creating symlinks to fix packages that install to /opt:(ansi reset)"
-    $optfix_pkgs
-      | each {
-        print $'- (ansi cyan)($in)(ansi reset)'
-      }
-
-    mkdir $VAR_OPT_DIR
-    try {
-      ^ln -snf $VAR_OPT_DIR /opt
-    } catch {
-      exit 1
-    }
-
-    for $opt in $optfix_pkgs {
-      let lib_dir = [$LIB_OPT_DIR $opt] | path join
-      let var_opt_dir = [$VAR_OPT_DIR $opt] | path join
-
-      mkdir $lib_dir
-
-      try {
-        ^ln -sf $lib_dir $var_opt_dir
-      } catch {
-        exit 1
-      }
-
-      print $"Created symlinks for '(ansi cyan)($opt)(ansi reset)'"
-    }
+    print $'(ansi yellow_bold)WARNING:(asni yellow) optfix in this module is deprecated in favor of the built-in functionality of BlueBuild'
   }
 }
 
