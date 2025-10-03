@@ -1,0 +1,126 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+const configPath = "/usr/share/bluebuild/quadlets/configuration.yaml"
+const destPath = $"($env.HOME)/.config/containers/systemd"
+
+def main [specificQuadlet: string = ""] {
+    if not ($configPath | path exists) {
+        print "No quadlets configuration found"
+        exit 0
+    }
+    
+    let config = (open $configPath)
+    let userQuadlets = ($config.configurations | where scope == "user")
+    
+    # Filter to specific quadlet if requested
+    let quadletsToUpdate = if ($specificQuadlet | is-empty) {
+        $userQuadlets
+    } else {
+        $userQuadlets | where name == $specificQuadlet
+    }
+    
+    if ($quadletsToUpdate | is-empty) {
+        print "No user quadlets to update"
+        exit 0
+    }
+    
+    print $"Checking for updates to ($quadletsToUpdate | length) user quadlet\(s\)..."
+    
+    for quadlet in $quadletsToUpdate {
+        # Skip externally-managed quadlets (they manage their own updates)
+        if $quadlet.managed-externally {
+            print $"  (ansi blue)ℹ(ansi reset) Skipping externally-managed: ($quadlet.name)"
+            continue
+        }
+        
+        # Skip non-Git sources
+        if not ($quadlet.source | str starts-with "http") {
+            print $"  (ansi blue)ℹ(ansi reset) Skipping non-Git source: ($quadlet.name)"
+            continue
+        }
+        
+        print $"  Checking ($quadlet.name)..."
+        
+        # Download latest version to temp location
+        let tempDir = (mktemp -d -t bluebuild-quadlets-update-XXXXXXXXXX)
+        
+        try {
+            # Use git-source-parser to download
+            let result = (do {
+                nu /usr/share/bluebuild/quadlets/../git-source-parser.nu ($quadlet.source) ($quadlet.branch) ($quadlet.name)
+            } | complete)
+            
+            if $result.exit_code != 0 {
+                print $"    (ansi yellow)⚠(ansi reset) Failed to download updates"
+                continue
+            }
+            
+            let newFiles = $"/tmp/bluebuild-quadlets/($quadlet.name)"
+            let currentPath = $"($destPath)/($quadlet.name)"
+            
+            # Compare with current installation
+            if not ($currentPath | path exists) {
+                print $"    (ansi yellow)⚠(ansi reset) Not currently installed, skipping"
+                continue
+            }
+            
+            # Simple comparison - check if files differ
+            let hasChanges = (do {
+                diff -r $currentPath $newFiles | complete
+            } | get exit_code) != 0
+            
+            if $hasChanges {
+                print $"    (ansi green)↻(ansi reset) Updates available"
+                
+                # Stop services before updating
+                let containerFiles = (ls $currentPath | where type == file | where name =~ "\.container$")
+                for file in $containerFiles {
+                    let fileName = ($file.name | path basename)
+                    let serviceName = ($fileName | str replace ".container" ".service")
+                    print $"      Stopping ($serviceName)..."
+                    systemctl --user stop $serviceName
+                }
+                
+                # Backup current version
+                let backupPath = $"($currentPath).backup"
+                if ($backupPath | path exists) {
+                    rm -rf $backupPath
+                }
+                cp -r $currentPath $backupPath
+                
+                # Update files
+                rm -rf $currentPath
+                mkdir $currentPath
+                cp -r $"($newFiles)/*" $currentPath
+                
+                # Reload systemd
+                systemctl --user daemon-reload
+                
+                # Restart services
+                for file in $containerFiles {
+                    let fileName = ($file.name | path basename)
+                    let serviceName = ($fileName | str replace ".container" ".service")
+                    print $"      Starting ($serviceName)..."
+                    systemctl --user start $serviceName
+                }
+                
+                if $quadlet.notify {
+                    notify-send -a "BlueBuild Quadlets" $"Updated ($quadlet.name)" "Quadlet has been updated successfully"
+                }
+                
+                print $"    (ansi green)✓(ansi reset) Updated successfully"
+            } else {
+                print $"    (ansi green)✓(ansi reset) Already up to date"
+            }
+            
+        } catch {|err|
+            print $"    (ansi red)✗(ansi reset) Update failed: ($err)"
+        } finally {
+            # Cleanup
+            rm -rf $tempDir
+        }
+    }
+    
+    print ""
+    print $"(ansi green)✓(ansi reset) Update check complete"
+}

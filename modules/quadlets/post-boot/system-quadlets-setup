@@ -1,0 +1,83 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+const configPath = "/usr/share/bluebuild/quadlets/configuration.yaml"
+const destPath = "/etc/containers/systemd"
+
+def main [] {
+    if not ($configPath | path exists) {
+        print "No quadlets configuration found"
+        exit 0
+    }
+    
+    let config = (open $configPath)
+    let systemQuadlets = ($config.configurations | where scope == "system")
+    
+    if ($systemQuadlets | is-empty) {
+        print "No system quadlets configured"
+        exit 0
+    }
+    
+    print $"Setting up ($systemQuadlets | length) system quadlet\(s\)..."
+    
+    mkdir $destPath
+    
+    for quadlet in $systemQuadlets {
+        if $quadlet.managed-externally {
+            # Externally managed - just verify it exists
+            if ($quadlet.source | path exists) {
+                print $"  (ansi green)✓(ansi reset) Found externally-managed: ($quadlet.name)"
+            } else {
+                print $"  (ansi yellow)⚠(ansi reset) Externally-managed quadlet not found: ($quadlet.name)"
+                print $"     Expected at: ($quadlet.source)"
+            }
+        } else {
+            # Copy from build-time location
+            let source = $"/tmp/bluebuild-quadlets/($quadlet.name)"
+            let dest = $"($destPath)/($quadlet.name)"
+            
+            if not ($source | path exists) {
+                print $"  (ansi yellow)⚠(ansi reset) Source not found: ($quadlet.name)"
+                continue
+            }
+            
+            if ($dest | path exists) {
+                print $"  (ansi blue)ℹ(ansi reset) Already exists: ($quadlet.name)"
+                continue
+            }
+            
+            mkdir $dest
+            cp -r $"($source)/*" $dest
+            
+            print $"  (ansi green)✓(ansi reset) Installed: ($quadlet.name)"
+        }
+    }
+    
+    # Reload systemd daemon
+    print ""
+    print "Reloading systemd daemon..."
+    systemctl daemon-reload
+    
+    # Start services
+    print "Starting quadlet services..."
+    for quadlet in $systemQuadlets {
+        let quadletPath = $"($destPath)/($quadlet.name)"
+        
+        if not ($quadletPath | path exists) {
+            continue
+        }
+        
+        # Find .container files and start their services
+        let containerFiles = (ls $quadletPath | where type == file | where name =~ "\.container$")
+        
+        for file in $containerFiles {
+            let fileName = ($file.name | path basename)
+            let serviceName = ($fileName | str replace ".container" ".service")
+            
+            print $"  Starting ($serviceName)..."
+            systemctl start $serviceName
+        }
+    }
+    
+    print ""
+    print $"(ansi green)✓(ansi reset) System quadlets setup complete"
+}

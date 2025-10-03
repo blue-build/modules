@@ -1,0 +1,27 @@
+name: quadlets
+shortdesc: The quadlets module manages Podman Quadlet deployments with automatic updates and systemd integration.
+example: |
+  type: quadlets
+  configurations:
+    # Install from Git repository
+    - name: ai-stack
+      source: https://github.com/rgolangh/podman-quadlets/tree/main/ai-stack
+      scope: user
+      notify: true
+    
+    # Externally-managed (e.g., chezmoi with secrets)
+    - name: openwebui
+      source: ~/.config/containers/systemd/openwebui
+      scope: user
+      managed-externally: true
+      setup-delay: 10m
+  
+  # Configure automatic updates
+  auto-update:
+    enabled: true
+    interval: 7d
+  
+  # Enable container image auto-updates
+  container-auto-update:
+    enabled: true
+    interval: daily

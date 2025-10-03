@@ -1,0 +1,93 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+const configPath = "/usr/share/bluebuild/quadlets/configuration.yaml"
+const sourcePath = "/usr/share/bluebuild/quadlets/user"
+const destPath = $"($env.HOME)/.config/containers/systemd"
+
+def main [] {
+    if not ($configPath | path exists) {
+        print "No quadlets configuration found"
+        exit 0
+    }
+    
+    let config = (open $configPath)
+    let userQuadlets = ($config.configurations | where scope == "user")
+    
+    if ($userQuadlets | is-empty) {
+        print "No user quadlets configured"
+        exit 0
+    }
+    
+    print $"Setting up ($userQuadlets | length) user quadlet\(s\)..."
+    
+    mkdir $destPath
+    
+    for quadlet in $userQuadlets {
+        if $quadlet.managed-externally {
+            # Externally managed - just verify it exists
+            let externalPath = ($quadlet.source | str replace "~" $env.HOME)
+            
+            if ($externalPath | path exists) {
+                print $"  (ansi green)✓(ansi reset) Found externally-managed: ($quadlet.name)"
+            } else {
+                if $quadlet.notify {
+                    notify-send -a "BlueBuild Quadlets" $"Waiting for ($quadlet.name)" $"Quadlet not yet available at ($externalPath)"
+                }
+                print $"  (ansi yellow)⚠(ansi reset) Externally-managed quadlet not found: ($quadlet.name)"
+                print $"     Expected at: ($externalPath)"
+            }
+        } else {
+            # Copy from build-time location
+            let source = $"/tmp/bluebuild-quadlets/($quadlet.name)"
+            let dest = $"($destPath)/($quadlet.name)"
+            
+            if not ($source | path exists) {
+                print $"  (ansi yellow)⚠(ansi reset) Source not found: ($quadlet.name)"
+                continue
+            }
+            
+            if ($dest | path exists) {
+                print $"  (ansi blue)ℹ(ansi reset) Already exists: ($quadlet.name)"
+                continue
+            }
+            
+            mkdir $dest
+            cp -r $"($source)/*" $dest
+            
+            if $quadlet.notify {
+                notify-send -a "BlueBuild Quadlets" $"Installed ($quadlet.name)" "Quadlet has been set up successfully"
+            }
+            
+            print $"  (ansi green)✓(ansi reset) Installed: ($quadlet.name)"
+        }
+    }
+    
+    # Reload systemd daemon
+    print ""
+    print "Reloading systemd daemon..."
+    systemctl --user daemon-reload
+    
+    # Start services
+    print "Starting quadlet services..."
+    for quadlet in $userQuadlets {
+        let quadletPath = $"($destPath)/($quadlet.name)"
+        
+        if not ($quadletPath | path exists) {
+            continue
+        }
+        
+        # Find .container files and start their services
+        let containerFiles = (ls $quadletPath | where type == file | where name =~ "\.container$")
+        
+        for file in $containerFiles {
+            let fileName = ($file.name | path basename)
+            let serviceName = ($fileName | str replace ".container" ".service")
+            
+            print $"  Starting ($serviceName)..."
+            systemctl --user start $serviceName
+        }
+    }
+    
+    print ""
+    print $"(ansi green)✓(ansi reset) User quadlets setup complete"
+}

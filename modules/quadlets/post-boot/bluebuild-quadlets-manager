@@ -1,0 +1,264 @@
+#!/usr/libexec/bluebuild/nu/nu
+
+const configPath = "/usr/share/bluebuild/quadlets/configuration.yaml"
+
+def main [] {
+    print "BlueBuild Quadlets Manager - Manage Podman Quadlet deployments"
+    print ""
+    print $"(antml:underline)(antml:bold)Usage:(ansi reset) bluebuild-quadlets-manager [command]"
+    print ""
+    print $"(antml:underline)(antml:bold)Commands:(ansi reset)"
+    print $"    (antml:bold)show(ansi reset)                    Show all configured quadlets and their sources"
+    print $"    (antml:bold)list(ansi reset)                    List installed quadlets"
+    print $"    (antml:bold)status [name](ansi reset)           Show systemd service status for a quadlet"
+    print $"    (antml:bold)logs [name](ansi reset)             View logs for a quadlet's services"
+    print $"    (antml:bold)update [name|all](ansi reset)       Update quadlet(s) from Git sources"
+    print $"    (antml:bold)discover(ansi reset)                Discover externally-managed quadlets"
+    print $"    (antml:bold)validate [name](ansi reset)         Validate quadlet configuration"
+    print $"    (antml:bold)enable updates(ansi reset)          Enable automatic updates"
+    print $"    (antml:bold)disable updates(ansi reset)         Disable automatic updates"
+}
+
+def "main show" [] {
+    if not ($configPath | path exists) {
+        print $"(ansi yellow)No quadlets configuration found(ansi reset)"
+        print "This image was not built with the quadlets module."
+        exit 0
+    }
+    
+    let config = (open $configPath)
+    let configurations = $config.configurations
+    
+    print $"Found (ansi default_italic)($configurations | length)(ansi reset) configured quadlet\(s\)"
+    print ""
+    
+    for quadlet in $configurations {
+        print $"  (antml:bold)($quadlet.name)(ansi reset)"
+        print $"    Source: (ansi default_italic)($quadlet.source)(ansi reset)"
+        print $"    Scope: ($quadlet.scope)"
+        if $quadlet.managed-externally {
+            print $"    (ansi cyan)Managed Externally(ansi reset)"
+        }
+        if ($quadlet.branch != "main") {
+            print $"    Branch: ($quadlet.branch)"
+        }
+        print ""
+    }
+    
+    print $"Auto-update: ($config.auto-update.enabled)"
+    print $"  Interval: ($config.auto-update.interval)"
+    print ""
+    print $"Container auto-update: ($config.container-auto-update.enabled)"
+    print $"  Interval: ($config.container-auto-update.interval)"
+}
+
+def "main list" [] {
+    print $"(antml:bold)User Quadlets:(ansi reset)"
+    let userPath = $"($env.HOME)/.config/containers/systemd"
+    if ($userPath | path exists) {
+        let userQuadlets = (ls $userPath | where type == dir)
+        if ($userQuadlets | is-empty) {
+            print "  (none)"
+        } else {
+            for quadlet in $userQuadlets {
+                let name = ($quadlet.name | path basename)
+                print $"  • ($name)"
+            }
+        }
+    } else {
+        print "  (none)"
+    }
+    
+    print ""
+    print $"(antml:bold)System Quadlets:(ansi reset)"
+    let systemPath = "/etc/containers/systemd"
+    if ($systemPath | path exists) {
+        let systemQuadlets = (ls $systemPath | where type == dir)
+        if ($systemQuadlets | is-empty) {
+            print "  (none)"
+        } else {
+            for quadlet in $systemQuadlets {
+                let name = ($quadlet.name | path basename)
+                print $"  • ($name)"
+            }
+        }
+    } else {
+        print "  (none)"
+    }
+}
+
+def "main status" [name: string] {
+    # Find quadlet files and their corresponding services
+    let userPath = $"($env.HOME)/.config/containers/systemd/($name)"
+    let systemPath = $"/etc/containers/systemd/($name)"
+    
+    mut quadletPath = ""
+    mut scope = ""
+    
+    if ($userPath | path exists) {
+        $quadletPath = $userPath
+        $scope = "user"
+    } else if ($systemPath | path exists) {
+        $quadletPath = $systemPath
+        $scope = "system"
+    } else {
+        print $"(ansi red)Quadlet not found: ($name)(ansi reset)"
+        exit 1
+    }
+    
+    print $"Status for quadlet: (antml:bold)($name)(ansi reset) \(($scope)\)"
+    print ""
+    
+    # Find all .container files
+    let files = (ls $quadletPath | where type == file | where name =~ "\.container$")
+    
+    for file in $files {
+        let fileName = ($file.name | path basename)
+        let serviceName = ($fileName | str replace ".container" ".service")
+        
+        print $"(antml:bold)($serviceName)(ansi reset):"
+        
+        if $scope == "user" {
+            systemctl --user status $serviceName --no-pager --lines=5
+        } else {
+            systemctl status $serviceName --no-pager --lines=5
+        }
+        
+        print ""
+    }
+}
+
+def "main logs" [name: string, --lines: int = 50] {
+    # Find quadlet scope
+    let userPath = $"($env.HOME)/.config/containers/systemd/($name)"
+    let systemPath = $"/etc/containers/systemd/($name)"
+    
+    mut scope = ""
+    mut quadletPath = ""
+    
+    if ($userPath | path exists) {
+        $quadletPath = $userPath
+        $scope = "user"
+    } else if ($systemPath | path exists) {
+        $quadletPath = $systemPath
+        $scope = "system"
+    } else {
+        print $"(ansi red)Quadlet not found: ($name)(ansi reset)"
+        exit 1
+    }
+    
+    # Find all .container files
+    let files = (ls $quadletPath | where type == file | where name =~ "\.container$")
+    
+    for file in $files {
+        let fileName = ($file.name | path basename)
+        let serviceName = ($fileName | str replace ".container" ".service")
+        
+        print $"(antml:bold)Logs for ($serviceName):(ansi reset)"
+        print ""
+        
+        if $scope == "user" {
+            journalctl --user -u $serviceName -n $lines --no-pager
+        } else {
+            journalctl -u $serviceName -n $lines --no-pager
+        }
+        
+        print ""
+    }
+}
+
+def "main update" [target: string = "all"] {
+    if not ($configPath | path exists) {
+        print $"(ansi red)No configuration found(ansi reset)"
+        exit 1
+    }
+    
+    let config = (open $configPath)
+    
+    if $target == "all" {
+        print "Updating all quadlets..."
+        /usr/libexec/bluebuild/quadlets/user-quadlets-update
+        /usr/libexec/bluebuild/quadlets/system-quadlets-update
+    } else {
+        # Find the specific quadlet
+        let quadlet = ($config.configurations | where name == $target | first)
+        
+        if ($quadlet | is-empty) {
+            print $"(ansi red)Quadlet not found: ($target)(ansi reset)"
+            exit 1
+        }
+        
+        if $quadlet.scope == "user" {
+            print "Updating user quadlet..."
+            /usr/libexec/bluebuild/quadlets/user-quadlets-update $target
+        } else {
+            print "Updating system quadlet..."
+            /usr/libexec/bluebuild/quadlets/system-quadlets-update $target
+        }
+    }
+}
+
+def "main discover" [] {
+    print "Discovering externally-managed quadlets..."
+    /usr/libexec/bluebuild/quadlets/user-quadlets-setup
+    /usr/libexec/bluebuild/quadlets/system-quadlets-setup
+}
+
+def "main validate" [name: string] {
+    let userPath = $"($env.HOME)/.config/containers/systemd/($name)"
+    let systemPath = $"/etc/containers/systemd/($name)"
+    
+    mut quadletPath = ""
+    
+    if ($userPath | path exists) {
+        $quadletPath = $userPath
+    } else if ($systemPath | path exists) {
+        $quadletPath = $systemPath
+    } else {
+        print $"(ansi red)Quadlet not found: ($name)(ansi reset)"
+        exit 1
+    }
+    
+    print $"Validating quadlet: (antml:bold)($name)(ansi reset)"
+    
+    # Basic validation
+    let files = (ls $quadletPath | where type == file)
+    
+    for file in $files {
+        let fileName = ($file.name | path basename)
+        let ext = ($fileName | path parse | get extension)
+        
+        if $ext in [".container" ".pod" ".network" ".volume" ".kube"] {
+            print $"  (ansi green)✓(ansi reset) ($fileName)"
+        }
+    }
+    
+    print ""
+    print $"(ansi green)Validation complete(ansi reset)"
+}
+
+def "main enable" [what: string] {
+    if $what != "updates" {
+        print $"(ansi red)Unknown option: ($what)(ansi reset)"
+        print "Usage: bluebuild-quadlets-manager enable updates"
+        exit 1
+    }
+    
+    print "Enabling automatic updates..."
+    systemctl enable --now system-quadlets-update.timer
+    systemctl enable --now --global user-quadlets-update.timer
+    print $"(ansi green)✓(ansi reset) Automatic updates enabled"
+}
+
+def "main disable" [what: string] {
+    if $what != "updates" {
+        print $"(ansi red)Unknown option: ($what)(ansi reset)"
+        print "Usage: bluebuild-quadlets-manager disable updates"
+        exit 1
+    }
+    
+    print "Disabling automatic updates..."
+    systemctl disable --now system-quadlets-update.timer
+    systemctl disable --now --global user-quadlets-update.timer
+    print $"(ansi green)✓(ansi reset) Automatic updates disabled"
+}
