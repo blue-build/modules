@@ -1,0 +1,5 @@
+[Volume]
+VolumeName=nginx-data
+
+[Install]
+WantedBy=default.target

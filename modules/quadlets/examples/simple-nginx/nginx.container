@@ -1,0 +1,30 @@
+[Unit]
+Description=Nginx Web Server
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+ContainerName=nginx
+Image=docker.io/library/nginx:alpine
+
+# Publish on port 8080
+PublishPort=8080:80
+
+# Mount volume for web content
+Volume=nginx-data:/usr/share/nginx/html:Z
+
+# Enable automatic updates when image is updated
+Label=io.containers.autoupdate=registry
+
+# Health check
+HealthCmd=curl -f http://localhost/ || exit 1
+HealthInterval=30s
+HealthTimeout=3s
+HealthRetries=3
+
+[Service]
+Restart=always
+TimeoutStartSec=60
+
+[Install]
+WantedBy=default.target

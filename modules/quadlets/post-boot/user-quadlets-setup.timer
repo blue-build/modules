@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for user quadlets setup
+
+[Timer]
+OnBootSec=5m
+OnUnitInactiveSec=24h
+
+[Install]
+WantedBy=timers.target

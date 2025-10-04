@@ -1,0 +1,11 @@
+[Unit]
+Description=Setup system quadlets
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bluebuild/quadlets/system-quadlets-setup
+
+[Install]
+WantedBy=multi-user.target

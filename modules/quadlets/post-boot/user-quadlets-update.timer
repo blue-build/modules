@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for user quadlets updates
+
+[Timer]
+OnBootSec=5m
+OnUnitInactiveSec=7d
+Persistent=true
+
+[Install]
+WantedBy=timers.target
