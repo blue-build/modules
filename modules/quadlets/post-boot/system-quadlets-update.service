@@ -1,0 +1,11 @@
+[Unit]
+Description=Update system quadlets from Git sources
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bluebuild/quadlets/system-quadlets-update
+
+[Install]
+WantedBy=multi-user.target
