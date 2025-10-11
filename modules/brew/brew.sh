@@ -231,26 +231,33 @@ d /var/cache/homebrew 0755 1000 1000 - -
 d /var/home/linuxbrew 0755 1000 1000 - -
 EOF
 
+# Ensure systemd preset directory exists
+mkdir -p /usr/lib/systemd/system-preset
+SERVICE_PRESET_FILE='/usr/lib/systemd/system-preset/20-brew.preset'
+
 # Enable the setup service
 echo "Enabling brew-setup service to install Brew in run-time"
-systemctl enable brew-setup.service
+echo 'enable brew-setup.service' >> "$SERVICE_PRESET_FILE"
 
 # Always enable or disable update and upgrade services for consistency
 if [[ "${AUTO_UPDATE}" == true ]]; then
     echo "Enabling auto-updates for Brew binary"
-    systemctl enable brew-update.timer
+    echo 'enable brew-update.timer' >> "$SERVICE_PRESET_FILE"
 else
     echo "Disabling auto-updates for Brew binary"
-    systemctl disable brew-update.timer
+    echo 'disable brew-update.timer' >> "$SERVICE_PRESET_FILE"
 fi
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
     echo "Enabling auto-upgrades for Brew packages"
-    systemctl enable brew-upgrade.timer
+    echo 'enable brew-upgrade.timer' >> "$SERVICE_PRESET_FILE"
 else
     echo "Disabling auto-upgrades for Brew packages"
-    systemctl disable brew-upgrade.timer
+    echo 'disable brew-upgrade.timer' >> "$SERVICE_PRESET_FILE"
 fi
+
+# Apply presets defined above
+systemctl preset brew-setup.service brew-update.timer brew-upgrade.timer
 
 # Apply nofile limits if enabled
 if [[ "${NOFILE_LIMITS}" == true ]]; then
