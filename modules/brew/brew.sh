@@ -86,9 +86,9 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
 fi
 
 # Download Brew
-BREW_TARBALL_LINK="$(curl -fLs https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
+BREW_TARBALL_LINK="$(curl -fLs --retry 5 https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
 echo "Downloading Brew tarball..."
-curl -fLs --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
+curl -fLs --retry 5 --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
 echo "Downloaded Brew tarball"
 
 # Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
