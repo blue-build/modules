@@ -7,12 +7,22 @@ on:
       - "**.md"
       - "**.yml"
       - "**.json"
-      - "**.tsp"  
+      - "**.tsp"
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   rebuild-website:
     name: Trigger deploy hooks
     runs-on: ubuntu-latest
     if: github.repository == 'blue-build/modules'
-    steps: 
-      - run: echo "schemas:" && curl -X POST -d {} ${{ secrets.SCHEMAS_DEPLOY_HOOK }}
+    env:
+      SCHEMAS_DEPLOY_HOOK: ${{ secrets.SCHEMAS_DEPLOY_HOOK }}
+    steps:
+      - run: |
+          echo "schemas:"
+          curl -X POST -d {} "${SCHEMAS_DEPLOY_HOOK}"
