@@ -119,12 +119,12 @@ check_and_print() {
         echo "${1}"
     fi
 }
-echo "SSH/TTY soft nofile limit: $(check_and_print ${CURRENT_SSH_TTY_SOFT_VALUE})"
-echo "SSH/TTY hard nofile limit: $(check_and_print ${CURRENT_SSH_TTY_HARD_VALUE})"
-echo "SystemD system soft nofile limit: $(check_and_print ${CURRENT_SYSTEMD_SYSTEM_SOFT_VALUE})"
-echo "SystemD system hard nofile limit: $(check_and_print ${CURRENT_SYSTEMD_SYSTEM_HARD_VALUE})"
-echo "SystemD user soft nofile limit: $(check_and_print ${CURRENT_SYSTEMD_USER_SOFT_VALUE})"
-echo "SystemD user hard nofile limit: $(check_and_print ${CURRENT_SYSTEMD_USER_HARD_VALUE})"
+echo "SSH/TTY soft nofile limit: $(check_and_print "${CURRENT_SSH_TTY_SOFT_VALUE}")"
+echo "SSH/TTY hard nofile limit: $(check_and_print "${CURRENT_SSH_TTY_HARD_VALUE}")"
+echo "SystemD system soft nofile limit: $(check_and_print "${CURRENT_SYSTEMD_SYSTEM_SOFT_VALUE}")"
+echo "SystemD system hard nofile limit: $(check_and_print "${CURRENT_SYSTEMD_SYSTEM_HARD_VALUE}")"
+echo "SystemD user soft nofile limit: $(check_and_print "${CURRENT_SYSTEMD_USER_SOFT_VALUE}")"
+echo "SystemD user hard nofile limit: $(check_and_print "${CURRENT_SYSTEMD_USER_HARD_VALUE}")"
 
 # Write nofile limit values
 # zz1- prefix is used for config, to assure that nofile limit is going to be applied, as it's high in lexical order.

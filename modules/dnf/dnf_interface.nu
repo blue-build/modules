@@ -377,26 +377,39 @@ def install_args [
       $global_config.allow-erasing?
         | default false
     ) allow-erasing
+    | default (
+      $global_config.exclude?
+        | default []
+    ) exclude
+
   mut args = []
   let check_filter = {|arg|
-    let arg_exists = ($arg in $install)
-    if ($filter | is-empty) {
-      $arg_exists and ($install | get $arg)
-    } else {
-      $arg_exists and ($arg in $filter) and ($install | get $arg)
+    ($arg in $install) and (($arg in $filter) or ($filter | is-empty))
+  }
+
+  if (do $check_filter 'skip-unavailable') and ($install | get skip-unavailable) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--skip-unavailable'
+  }
+
+  if (do $check_filter 'skip-broken') and ($install | get skip-broken) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--skip-broken'
+  }
+
+  if (do $check_filter 'allow-erasing') and ($install | get allow-erasing) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    $args = $args | append $'--allowerasing'
+  }
+
+  if (do $check_filter 'exclude') and ($install | get exclude | is-not-empty) {
+    print $'(ansi yellow)Setting arg (ansi cyan)--exclude(ansi yellow) with values:(ansi reset)'
+    let packages = $install | get exclude
+
+    $packages | each {
+      print $'- (ansi cyan)($in)(ansi reset)'
     }
-  }
-
-  if (do $check_filter 'skip-unavailable') {
-    $args = $args | append '--skip-unavailable'
-  }
-
-  if (do $check_filter 'skip-broken') {
-    $args = $args | append '--skip-broken'
-  }
-
-  if (do $check_filter 'allow-erasing') {
-    $args = $args | append '--allowerasing'
+    $args = $args | append $"--exclude=(($install | get 'exclude') | str join ',')"
   }
 
   $args
