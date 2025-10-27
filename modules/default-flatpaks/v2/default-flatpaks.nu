@@ -89,9 +89,10 @@ def main [configStr: string] {
 
 def checkFlathub [packages: list<string>] {
     print "Checking if configured packages exist on Flathub..."
-    let unavailablePackages = $packages | each { |package| 
+    let unavailablePackages = $packages | each { |package|
+        let id = $package | split row "/" | get 0
         try {
-            let _ = http get $"https://flathub.org/api/v2/stats/($package)"
+            let _ = http get $"https://flathub.org/api/v2/stats/($id)"
         } catch {
             $package
         }
