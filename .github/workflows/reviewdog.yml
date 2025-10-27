@@ -1,13 +1,26 @@
 name: reviewdog
-on: 
+on:
   pull_request:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   shellcheck:
     name: runner / shellcheck
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # needed to scan repository contents
+      pull-requests: write # needed to write review comments
+      checks: write # needed to create check run
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
       - name: shellcheck
         uses: reviewdog/action-shellcheck@5ebd09ddbe2ebb471646ce234c6c8dd18663ca7c # v1.30.0
         with:

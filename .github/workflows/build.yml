@@ -1,0 +1,33 @@
+name: build
+on:
+  push:
+    branches:
+      - main
+    paths-ignore: # don't rebuild if only documentation has changed
+      - "**.md"
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    permissions:
+      packages: write # needed to publish packages
+    strategy:
+      fail-fast: false
+      matrix:
+        build_script:
+          - ./build-individual.nu
+          - ./build-unified.nu
+    uses: ./.github/workflows/build-reusable.yml
+    with:
+      build_script: ${{ matrix.build_script }}
+    secrets:
+      SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}
