@@ -86,24 +86,26 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
 fi
 
 DIRECT_PULL=$(echo "${1}" | jq -r 'try .["direct-pull"]')
-if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
+if [[ -z "${DIRECT_PULL}" || "${DIRECT_PULL}" == "null" ]]; then
     DIRECT_PULL=false
 fi
 
-COMMIT=$(echo "$1" | jq -r 'try .["commit"]')
-if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
-    COMMIT="HEAD"
+INSTALLER_COMMIT=$(echo "${1}" | jq -r 'try .["installer-commit"]')
+if [[ -z "${INSTALLER_COMMIT}" || "${INSTALLER_COMMIT}" == "null" ]]; then
+    INSTALLER_COMMIT="HEAD"
 fi
 
 if [[ "${DIRECT_PULL}" == true ]]; then
     echo "Downloading Brew from homebrew..."
-    curl -fLs --retry 5 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${COMMIT}/install.sh" -o /tmp/brew-install
+    curl -fLs --retry 3 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
     echo "Downloaded Brew install script"
     chmod +x /tmp/brew-install
-    /tmp/brew-install
-    
+    touch /.dockerenv
+    env --ignore-environment PATH=/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/linuxbrew NONINTERACTIVE=1 /usr/bin/bash /tmp/brew-install
+    rm /.dockerenv
+
     # pack homebrew
-    tar --zstd -cvf /tmp/homebrew.tar.zst /home/linuxbrew/.linuxbrew
+    tar --zstd -cvf /tmp/homebrew-install.tar.zst /home/linuxbrew/.linuxbrew
     rm -rf /home/linuxbrew/.linuxbrew
 else
     BREW_TARBALL_LINK="$(curl -fLs --retry 5 https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
