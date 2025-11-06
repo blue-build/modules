@@ -13,9 +13,6 @@ example: |
     keys:
       - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
     nonfree: rpmfusion
-  optfix: # performs symlinking for `/opt/` to allow certain packages to install
-    - Tabby # needed because tabby installs into `/opt/Tabby/`
-    - brave.com
   install:
     skip-unavailable: true # skip unavailable packages
     packages:
