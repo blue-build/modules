@@ -1,5 +1,9 @@
 # `rpm-ostree`
 
+:::caution
+`rpm-ostree` used to be the only RPM package manager that worked on Fedora Atomic images. On newer versions and bootc images, **you probably want [dnf](https://blue-build.org/reference/modules/dnf/) instead**. 
+:::
+
 The [`rpm-ostree`](https://coreos.github.io/rpm-ostree/) module offers pseudo-declarative package and repository management using `rpm-ostree`.
 
 The module first downloads the repository files from URLs declared under `repos:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
