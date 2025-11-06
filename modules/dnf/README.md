@@ -271,18 +271,8 @@ group-remove:
 
 ## Optfix
 
-- Optfix is a script used to work around problems with certain packages that install into `/opt/`
-  - These issues are caused by Fedora Atomic storing `/opt/` at the location `/var/opt/` by default, while `/var/` is only writeable on a live system
-  - The script works around these issues by moving the folder to `/usr/lib/opt/` and creating the proper symlinks at runtime
-- Specify a list of folders inside `/opt/`
-
-```yaml
-type: dnf
-optfix:
-  - brave.com
-  - foldername
-```
+Optfix was an option that existed to allow installation of programs into `/opt/` at build-time. With BlueBuild CLI version `v0.9.23` and above, this fix happens automatically. The option is now deprecated and does nothing
 
 ## Note
 
-This documentation page uses the installation of the Brave Browser as an example of a package that required a custom repository, with a custom key, and an optfix configuration to install properly. This is not an official endorsement of the Brave Browser by the BlueBuild project.
+This documentation page uses the installation of the Brave Browser as an example of a package that required a custom repository and a custom key to install properly. This is not an official endorsement of the Brave Browser by the BlueBuild project.
