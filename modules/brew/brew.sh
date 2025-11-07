@@ -97,7 +97,7 @@ fi
 
 if [[ "${DIRECT_PULL}" == true ]]; then
     echo "Downloading Brew from homebrew..."
-    curl -fLs --retry 3 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
+    curl -fLsS --retry 5 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
     echo "Downloaded Brew install script"
     chmod +x /tmp/brew-install
     touch /.dockerenv
@@ -108,10 +108,23 @@ if [[ "${DIRECT_PULL}" == true ]]; then
     tar --zstd -cvf /tmp/homebrew-install.tar.zst /home/linuxbrew/.linuxbrew
     rm -rf /home/linuxbrew/.linuxbrew
 else
-    BREW_TARBALL_LINK="$(curl -fLs --retry 5 https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
+    # Download pre-packaged Brew from uBlue repo
+    asset_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' \
+        | jq -cr '.[0].assets | map({(.name): .browser_download_url}) | add')
+    brew_tarball_url=$(jq -cr '."homebrew-x86_64.tar.zst"' <<< "${asset_urls}")
+    brew_sha256_url=$(jq -cr '."homebrew-x86_64.sha256"' <<< "${asset_urls}")
+
     echo "Downloading Brew tarball..."
-    curl -fLs --retry 5 --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
-    echo "Downloaded Brew tarball"
+    curl -fLsS --retry 5 --create-dirs \
+        -o '/tmp/homebrew-tarball.tar.zst' "${brew_tarball_url}" \
+        -o '/tmp/homebrew-tarball.sha256' "${brew_sha256_url}"
+    echo "Downloaded Brew tarball."
+
+    echo "Verifying Brew tarball checksum..."
+    expected=$(sed 's/ .*//' '/tmp/homebrew-tarball.sha256')
+    actual=$(sha256sum '/tmp/homebrew-tarball.tar.zst' | sed 's/ .*//')
+    [[ "${expected}" == "${actual}" ]]
+    echo "Checksum verified."
 fi
 
 # Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
