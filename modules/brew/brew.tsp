@@ -44,4 +44,14 @@ model BrewModuleV1 {
    * The Homebrew project uses analytics to anonymously collect the information about Brew usage & your system in order to improve the experience of Brew users.
    */
   `brew-analytics`?: boolean = true;
+
+  /** Whether to skip ublue's cache and directly install from Homebrew using the official installer.
+   * Ublue provides a tarball cache of a Homebrew installation.
+   */
+  `direct-pull`?: boolean = false;
+
+  /** The commit to use when directly pulling the Homebrew install script.
+   * Defaults to "HEAD".
+   */
+  `installer-commit`?: string = "HEAD";
 }

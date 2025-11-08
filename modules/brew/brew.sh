@@ -85,11 +85,34 @@ if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
     BREW_ANALYTICS=true
 fi
 
-# Download Brew
-BREW_TARBALL_LINK="$(curl -fLs --retry 5 https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
-echo "Downloading Brew tarball..."
-curl -fLs --retry 5 --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
-echo "Downloaded Brew tarball"
+DIRECT_PULL=$(echo "${1}" | jq -r 'try .["direct-pull"]')
+if [[ -z "${DIRECT_PULL}" || "${DIRECT_PULL}" == "null" ]]; then
+    DIRECT_PULL=false
+fi
+
+INSTALLER_COMMIT=$(echo "${1}" | jq -r 'try .["installer-commit"]')
+if [[ -z "${INSTALLER_COMMIT}" || "${INSTALLER_COMMIT}" == "null" ]]; then
+    INSTALLER_COMMIT="HEAD"
+fi
+
+if [[ "${DIRECT_PULL}" == true ]]; then
+    echo "Downloading Brew from homebrew..."
+    curl -fLs --retry 3 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
+    echo "Downloaded Brew install script"
+    chmod +x /tmp/brew-install
+    touch /.dockerenv
+    env --ignore-environment PATH=/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/linuxbrew NONINTERACTIVE=1 /usr/bin/bash /tmp/brew-install
+    rm /.dockerenv
+
+    # pack homebrew
+    tar --zstd -cvf /tmp/homebrew-install.tar.zst /home/linuxbrew/.linuxbrew
+    rm -rf /home/linuxbrew/.linuxbrew
+else
+    BREW_TARBALL_LINK="$(curl -fLs --retry 5 https://api.github.com/repos/ublue-os/packages/releases | jq -r '.[] | .assets[] | select(.name? | match("homebrew-x86_64.tar.zst")) | .browser_download_url' | head -n 1)"
+    echo "Downloading Brew tarball..."
+    curl -fLs --retry 5 --create-dirs "${BREW_TARBALL_LINK}" -o "/tmp/homebrew-tarball.tar.zst"
+    echo "Downloaded Brew tarball"
+fi
 
 # Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
 echo "Extracting Brew tarball to '/usr/share/homebrew/'"
