@@ -52,7 +52,9 @@ def main [] {
             )
         }
 
-        flatpak install --system --noninteractive $config.repo.name ...$config.install
+        if ($config.install | is-not-empty) {
+            flatpak install --system --noninteractive $config.repo.name ...$config.install
+        }
 
         if ($config.notify) {
             (notify-send-as-user
