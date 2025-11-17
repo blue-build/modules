@@ -1,14 +1,18 @@
 # `justfiles`
 
-:::note
-The module is only compatible with Universal Blue images.
-:::
-
-The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files in Universal Blue -based images. It can be useful for example when utilizing DE-specific justfiles when building multiple images. On the other hand, you likely wont need the module if you're building just one image or need just one justfile for all your images.
+The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files. It can be useful for example when utilizing DE-specific justfiles when building multiple images. On the other hand, you likely wont need the module if you're building just one image or need just one justfile for all your images.
 
 ## What is just ?
 
-Just is a command runner (kind of like make) that can be used to supply arbitrary scripts under a single shell command. Images based on Universal Blue bundle a set of these scripts, called recipes, which can be accessed with the `ujust` command.
+Just is a command runner (kind of like make) that can be used to supply arbitrary scripts under a single shell command.
+
+### `blujust`
+
+The `blujust` command will be installed if `ujust` is not detected. This will allow base image maintainers to take advantage of the pattern popularized by Ublue without having to directly depend on their images.
+
+### `ujust`
+
+Images based on Universal Blue bundle a set of these scripts, called recipes, which can be accessed with the `ujust` command.
 
 For more information, refer to these links:
 
