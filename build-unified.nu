@@ -63,6 +63,14 @@ let digest = (docker
 
 let digest_image = $'($env.REGISTRY)/modules@($digest)'
 print $"(ansi cyan)Signing image:(ansi reset) ($digest_image)"
-cosign sign -y --recursive --key env://COSIGN_PRIVATE_KEY $digest_image
+(cosign sign
+    --new-bundle-format=false
+    --use-signing-config=false 
+    -y --recursive
+    --key env://COSIGN_PRIVATE_KEY
+    $digest_image)
+(cosign verify
+    --key=./cosign.pub
+    $digest_image)
 
 print $"(ansi green_bold)DONE!(ansi reset)"
