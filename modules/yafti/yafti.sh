@@ -21,7 +21,7 @@ FIRSTBOOT_LINK="${PROFILED_DIR}/ublue-firstboot.sh"
 YAFTI_REPO="https://github.com/fiftydinar/Yafti-AppImage"
 ARCH="$(uname -m)"
 VER=$(basename $(curl -Ls -o /dev/null -w %{url_effective} "$YAFTI_REPO"/releases/latest))
-curl -fLs --create-dirs "$YAFTI_REPO/releases/download/${VER}/Android_Tools-${VER%@*}-anylinux-${ARCH}.AppImage" -o /usr/bin/yafti
+curl -fLs --create-dirs "$YAFTI_REPO/releases/download/${VER}/yafti-${VER%@*}-anylinux-${ARCH}.AppImage" -o /usr/bin/yafti
 chmod +x /usr/bin/yafti
 
 # If the profile.d directory doesn't exist, create it
