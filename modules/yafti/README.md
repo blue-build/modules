@@ -1,10 +1,10 @@
 # `yafti`
 
-:::caution `yafti` is unmaintained and deprecated by the upstream (Universal Blue) and it doesn't work since Fedora 43. Therefore, this module is also deprecated. It's just visible here for some time until most people are on Fedora 43+ base images. :::
+:::caution
+`yafti` is unmaintained and deprecated by the upstream (Universal Blue), so take this in mind before using this module. However, module still works well and we are not aware of any viable alternatives that would provide similar or better experience.
+:::
 
 The [`yafti`](https://github.com/ublue-os/yafti) module can be used to install Yafti and set it up to run on first boot. Yafti (Yet Another First Time Installer) is a GTK program by Universal Blue that is used for prompting the user of a custom image before doing some optional configuration such as installing Flatpaks.
-
-Also Yafti's dependencies, `python3-pip` and `libadwaita` are installed.
 
 Optionally, a list of Flatpak names and IDs can be included under `custom-flatpaks:`. These will be enabled by default under their own section on the Flatpak installation screen of `yafti`.
 
