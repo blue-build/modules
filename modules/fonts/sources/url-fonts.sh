@@ -26,7 +26,7 @@ for FONT_JSON in "${FONTS[@]}"; do
 
         TMPFILE=$(mktemp)
         echo "Downloading ${NAME} from ${URL}"
-        curl -fLs "$URL" -o "$TMPFILE"
+        curl -fLsS --retry 5 "$URL" -o "$TMPFILE"
 
         case "$URL" in
             *.zip)

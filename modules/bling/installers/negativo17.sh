@@ -45,7 +45,7 @@ if [[ -n "${NEGATIVO_REPO_FILE}" ]]; then
   sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' "${NEGATIVO_REPO_FILE}"
 else
   echo "Installing Negativo17 repo..."
-  curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.org/repos/fedora-multimedia.repo
+  curl -fLsS --retry 5 -o /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.org/repos/fedora-multimedia.repo
   echo "Setting Negativo17 repo priority to 90..."
   sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi

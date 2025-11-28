@@ -45,7 +45,7 @@ if command -v dnf 1> /dev/null; then
 elif command -v rpm-ostree 1> /dev/null; then
   topgrade_url="https://copr.fedorainfracloud.org/coprs/lilay/topgrade/repo/fedora-${OS_VERSION}/lilay-topgrade-fedora-${OS_VERSION}.repo"
   echo "Downloading topgrade repo ${topgrade_url}"
-  curl -fLs --create-dirs "${topgrade_url}" -o "/etc/yum.repos.d/_copr_topgrade.repo"
+  curl -fLsS --retry 5 --create-dirs "${topgrade_url}" -o "/etc/yum.repos.d/_copr_topgrade.repo"
   echo "Downloaded topgrade repo ${topgrade_url}"
   rpm-ostree install topgrade skopeo
   mkdir -p /tmp/ublue-update

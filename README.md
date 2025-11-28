@@ -26,9 +26,9 @@ These are general guidelines for writing official bash modules and their documen
      -  You can also use `set -euxo pipefail` during debugging, where each executed command is printed. This should not be used in a published module. 
 - For downloading files, we utilize `curl`. Here's the template for what we're using:  
   - Download file with differently specified filename:  
-`curl -fLs --create-dirs "${URL}" -o "${DIR}/${FILENAME.EXT}"`  
+`curl -fLsS --retry 5 --create-dirs "${URL}" -o "${DIR}/${FILENAME.EXT}"`  
   - Download file to directory with no filename changes:  
-`curl -fLs --create-dirs -O "${URL}" --output-dir "${DIR}"`
+`curl -fLsS --retry 5 --create-dirs -O "${URL}" --output-dir "${DIR}"`
 
 Using [Shellcheck](https://www.shellcheck.net/) in your editor is recommended.
 

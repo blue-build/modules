@@ -12,7 +12,7 @@ fi
 REPO_URL="https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${OS_VERSION}/ublue-os-staging-fedora-${OS_VERSION}.repo"
 
 echo "Downloading repo file ${REPO_URL}"
-curl -fLs --create-dirs "${REPO_URL}" -o "/etc/yum.repos.d/ublue-os-staging.repo"
+curl -fLsS --retry 5 --create-dirs "${REPO_URL}" -o "/etc/yum.repos.d/ublue-os-staging.repo"
 echo "Downloaded repo file ${REPO_URL}"
 
 rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging mutter mutter-common gnome-control-center gnome-control-center-filesystem xorg-x11-server-Xwayland

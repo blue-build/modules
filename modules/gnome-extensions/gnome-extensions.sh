@@ -18,7 +18,7 @@ if ! command -v gnome-shell &> /dev/null; then
 fi
 
 echo "Testing connection with https://extensions.gnome.org/..."
-if ! curl --output /dev/null --silent --head --fail "https://extensions.gnome.org/"; then
+if ! curl -fLsS --retry 5 -o /dev/null --head "https://extensions.gnome.org/"; then
   echo "ERROR: Connection unsuccessful."
   echo "       This usually happens when https://extensions.gnome.org/ website is down."
   echo "       Please try again later (or disable the module temporarily)"
@@ -56,7 +56,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
       echo "Installing ${EXTENSION} Gnome extension with version ${VERSION}"
       # Download archive
       echo "Downloading ZIP archive ${URL}"
-      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
+      curl -fLsS --retry 5 --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
       echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
@@ -138,7 +138,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         # Literal-name extension config
         # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace      
         WHITESPACE_HTML="${INSTALL_EXT// /%20}"
-        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        URL_QUERY=$(curl -fLsS --retry 5 "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
         QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${INSTALL_EXT}\")")
         if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
           echo "ERROR: Extension '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -163,7 +163,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
         fi
       else
         # PK ID extension config fallback if specified
-        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
+        URL_QUERY=$(curl -fLsS --retry 5 "https://extensions.gnome.org/extension-info/?pk=${INSTALL_EXT}")
         PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
         if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
           echo "ERROR: Extension with PK ID '${INSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -188,7 +188,7 @@ if [[ ${#INSTALL[@]} -gt 0 ]] && ! "${LEGACY}"; then
       echo "Installing '${EXT_NAME}' Gnome extension with version ${SUITABLE_VERSION}"
       # Download archive
       echo "Downloading ZIP archive ${URL}"
-      curl -fLs --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
+      curl -fLsS --retry 5 --create-dirs "${URL}" -o "${ARCHIVE_DIR}"
       echo "Downloaded ZIP archive ${URL}"
       # Extract archive
       echo "Extracting ZIP archive"
@@ -247,7 +247,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         # Replaces whitespaces with %20 for install entries which contain extension name, since URLs can't contain whitespace
         # Getting json query from the website is useful to intuitively uninstall the extension without need to manually input UUID
         WHITESPACE_HTML="${UNINSTALL_EXT// /%20}"
-        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
+        URL_QUERY=$(curl -fLsS --retry 5 "https://extensions.gnome.org/extension-query/?search=${WHITESPACE_HTML}")
         QUERIED_EXT=$(echo "${URL_QUERY}" | jq ".extensions[] | select(.name == \"${UNINSTALL_EXT}\")")
         if [[ -z "${QUERIED_EXT}" ]] || [[ "${QUERIED_EXT}" == "null" ]]; then
           echo "ERROR: Extension '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
@@ -259,7 +259,7 @@ if [[ ${#UNINSTALL[@]} -gt 0 ]]; then
         EXT_NAME=$(echo "${QUERIED_EXT}" | jq -r '.["name"]')
       else
         # PK ID extension config fallback if specified
-        URL_QUERY=$(curl -sf "https://extensions.gnome.org/extension-info/?pk=${UNINSTALL_EXT}")
+        URL_QUERY=$(curl -fLsS --retry 5 "https://extensions.gnome.org/extension-info/?pk=${UNINSTALL_EXT}")
         PK_EXT=$(echo "${URL_QUERY}" | jq -r '.["pk"]' 2>/dev/null)
         if [[ -z "${PK_EXT}" ]] || [[ "${PK_EXT}" == "null" ]]; then
           echo "ERROR: Extension with PK ID '${UNINSTALL_EXT}' does not exist in https://extensions.gnome.org/ website"
