@@ -15,14 +15,14 @@ if [[ ${#REPOS[@]} -gt 0 ]]; then
         # If it's not, then download the repo with URL in it's filename, to avoid duplicate repo name issue
         if [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           echo "Downloading repo file ${REPO}"
-          curl -fLs --create-dirs -O "${REPO}" --output-dir "/etc/yum.repos.d/"
+          curl -fLsS --retry 5 --create-dirs -O "${REPO}" --output-dir "/etc/yum.repos.d/"
           echo "Downloaded repo file ${REPO}"
         elif [[ "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" != "https://copr.fedorainfracloud.org/coprs/"* ]]; then
           CLEAN_REPO_NAME=$(echo "${REPO}" | sed -E 's|^https?://([^?]+)(\?.*)?$|\1|')
           CLEAN_REPO_NAME="${CLEAN_REPO_NAME//\//.}"
           
           echo "Downloading repo file ${REPO}"
-          curl -fLs --create-dirs "${REPO}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
+          curl -fLsS --retry 5 --create-dirs "${REPO}" -o "/etc/yum.repos.d/${CLEAN_REPO_NAME}"
           echo "Downloaded repo file ${REPO}"
         elif [[ ! "${REPO}" =~ ^https?:\/\/.* ]] && [[ "${REPO}" == *".repo" ]] && [[ -f "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" ]]; then
           cp "${CONFIG_DIRECTORY}/rpm-ostree/${REPO}" "/etc/yum.repos.d/${REPO##*/}"
@@ -169,7 +169,7 @@ if [[ ${#REPLACE[@]} -gt 0 ]]; then
         REPO_URL="${REPO//[$'\t\r\n ']}"
 
         echo "Downloading repo file ${REPO_URL}"
-        curl -fLs --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
+        curl -fLsS --retry 5 --create-dirs -O "${REPO_URL}" --output-dir "/etc/yum.repos.d/"
         echo "Downloaded repo file ${REPO_URL}"
 
         rpm-ostree override replace --experimental --from "repo=copr:copr.fedorainfracloud.org:${MAINTAINER}:${REPO_NAME}" ${REPLACE_STR}

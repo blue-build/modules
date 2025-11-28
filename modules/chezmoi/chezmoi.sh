@@ -99,7 +99,7 @@ else
 	echo "Checking if curl is installed and executable at /usr/bin/curl"
 	if [ -x /usr/bin/curl ]; then
 		echo "Downloading chezmoi binary from the latest Github release"
-		/usr/bin/curl -fLs --create-dirs https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi-linux-amd64 -o /usr/bin/chezmoi
+		/usr/bin/curl -fLsS --retry 5 --create-dirs https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi-linux-amd64 -o /usr/bin/chezmoi
 		echo "Downloaded chezmoi binary and installed into /usr/bin"
 		echo "Ensuring chezmoi is executable"
 		/usr/bin/chmod 755 /usr/bin/chezmoi

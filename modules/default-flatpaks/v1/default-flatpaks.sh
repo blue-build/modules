@@ -128,7 +128,7 @@ check_flatpak_id_validity_from_flathub () {
         fi  
         if [[ ${#INSTALL[@]} -gt 0 ]]; then
           for id in "${INSTALL[@]}"; do
-            if ! curl --retry 3 --retry-all-errors --output /dev/null --silent --fail "${URL}/${id}"; then
+            if ! curl -fLsS --retry 5 --retry-all-errors -o /dev/null "${URL}/${id}"; then
               echo "ERROR: This ${INSTALL_LEVEL} install flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
               exit 1
             fi
@@ -136,7 +136,7 @@ check_flatpak_id_validity_from_flathub () {
         fi
         if [[ ${#REMOVE[@]} -gt 0 ]]; then  
           for id in "${REMOVE[@]}"; do
-            if ! curl --retry 3 --retry-all-errors --output /dev/null --silent --fail "${URL}/${id}"; then
+            if ! curl -fLsS --retry 5 --retry-all-errors -o /dev/null "${URL}/${id}"; then
               echo "ERROR: This ${INSTALL_LEVEL} removal flatpak ID '${id}' doesn't exist in FlatHub repo, please check if you typed it correctly in the recipe."
               exit 1
             fi
