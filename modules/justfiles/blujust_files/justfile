@@ -6,5 +6,5 @@ _default:
     /usr/bin/blujust --list --list-heading $'Available commands:\n' --list-prefix $' - '
 
 # Imports
-import "/usr/share/ublue-os/just/00-default.just"
-import? "/usr/share/ublue-os/just/60-custom.just"
+import "/usr/share/bluebuild/justfiles/00-default.just"
+import? "/usr/share/bluebuild/justfiles/60-custom.just"
