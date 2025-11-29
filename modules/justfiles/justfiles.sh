@@ -65,7 +65,7 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
         echo "Validating justfiles"
         VALIDATION_FAILED=0
         for JUSTFILE in "${JUSTFILES[@]}"; do
-            if ! /usr/bin/just --fmt --check --unstable --justfile "${CONFIG_FOLDER}/${JUSTFILE}" &> /dev/null; then
+            if ! /usr/bin/just --fmt --check --unstable --justfile "${CONFIG_FOLDER}/${JUSTFILE}"; then
                 echo "- The justfile '${JUSTFILE}' FAILED validation."
                 VALIDATION_FAILED=1
             fi
