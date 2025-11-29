@@ -1,6 +1,10 @@
 # `justfiles`
 
-The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files. It can be useful for example when utilizing DE-specific justfiles when building multiple images. On the other hand, you likely wont need the module if you're building just one image or need just one justfile for all your images.
+The `justfiles` module makes it easy to include [just](https://just.systems/) recipes from multiple files into a systemwide justfile.
+
+On images derived from Universal Blue, these recipes will be available under the `ujust` command, while on other images BlueBuild's `blujust` command can be used to access them.
+
+It can be useful for example when utilizing DE-specific justfiles when building multiple images.
 
 ## What is just ?
 
