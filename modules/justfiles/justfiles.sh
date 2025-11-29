@@ -26,7 +26,7 @@ else
         chmod +x /usr/bin/blujust
 
         mkdir -p /usr/share/bluebuild/
-        cp -fr "${MODULE_DIRECTORY}/justfiles/blujust_files/*" /usr/share/bluebuild/
+        cp -fr "${MODULE_DIRECTORY}"/justfiles/blujust_files/* /usr/share/bluebuild/
     fi
     IMPORT_FILE="/usr/share/bluebuild/just/60-custom.just"
 fi
