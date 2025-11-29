@@ -62,5 +62,12 @@ for FONT_JSON in "${FONTS[@]}"; do
     fi
 done
 
+# Normalize permissions so fonts are usable by all users
+# Directories: 755, Files: 644
+if [ -d "${DEST}" ]; then
+    find "${DEST}" -type d -exec chmod 755 {} + || true
+    find "${DEST}" -type f -exec chmod 644 {} + || true
+fi
+
 fc-cache --system-only --really-force "${DEST}"
 echo "Font cache updated"
