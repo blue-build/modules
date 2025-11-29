@@ -8,15 +8,17 @@ It can be useful for example when utilizing DE-specific justfiles when building 
 
 ## What is just ?
 
-Just is a command runner (kind of like make) that can be used to supply arbitrary scripts under a single shell command.
+Just is a command runner (kind of like a simpler make) that can be used to supply arbitrary scripts under a single shell command.
 
-### `blujust`
-
-The `blujust` command will be installed if `ujust` is not detected. This will allow base image maintainers to take advantage of the pattern popularized by Ublue without having to directly depend on their images.
+Usage of Just as a system-wide command runner was popularized by Universal Blue with `ujust`.
 
 ### `ujust`
 
 Images based on Universal Blue bundle a set of these scripts, called recipes, which can be accessed with the `ujust` command.
+
+### `blujust`
+
+The `blujust` command will be installed if `ujust` is not detected. This will allow base image maintainers to take advantage of the pattern popularized by Universal Blue without having to directly depend on their images.
 
 For more information, refer to these links:
 
