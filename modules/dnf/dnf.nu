@@ -585,6 +585,7 @@ def replace_pkgs [replace_list: list]: nothing -> nothing {
           for $pkg_pair in $swap_packages {
             (dnf
               swap
+              --repo $from_repo
               --opts $pkg_pair
               --global-opts $replacement
               $pkg_pair.old

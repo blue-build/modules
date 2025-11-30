@@ -170,18 +170,33 @@ export def "dnf copr disable" [copr: string]: nothing -> nothing {
 export def "dnf swap" [
   --opts: record
   --global-opts: record
+  --repo: string
   old: string
   new: string
 ]: nothing -> nothing {
   let dnf = dnf version
 
   try {
-    (^$dnf.path
-      -y
-      swap
-      ...($opts | install_args --global-config $global_opts 'allow-erasing')
-      $old
-      $new)
+    match $dnf.command {
+      "dnf4" => {
+        (^dnf4
+          -y
+          swap
+          ...($opts | install_args --global-config $global_opts 'allow-erasing')
+          --repo $repo
+          $old
+          $new)
+      }
+      "dnf5" => {
+        (^dnf5
+          -y
+          swap
+          ...($opts | install_args --global-config $global_opts 'allow-erasing')
+          --from-repo $repo
+          $old
+          $new)
+      }
+    }
   } catch {|e|
     print $'($e.msg)'
     exit 1
