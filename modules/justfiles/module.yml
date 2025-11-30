@@ -3,6 +3,7 @@ shortdesc: The justfiles module makes it easy to include just recipes from multi
 example: |
   type: justfiles
   validate: true
+  install: true
   include:
     - common
     - gnome/monitors.just

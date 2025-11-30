@@ -18,4 +18,7 @@ model JustfilesModuleV1 {
 
   /** List of files or subfolders to include into this image. If omitted, all justfiles will be included. */
   include?: Array<string>;
+
+  /** Install `just` via the package manager. * */
+  install?: boolean = false;
 }
