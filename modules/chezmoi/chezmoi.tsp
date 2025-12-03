@@ -1,16 +1,17 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/chezmoi-latest.json")
-model ChezmoiModuleLatest {
-  ...ChezmoiModuleV1;
-}
+// @jsonSchema("/modules/chezmoi-latest.json")
+// model ChezmoiModuleLatest {
+//   ...ChezmoiModuleV1;
+// }
 
 @jsonSchema("/modules/chezmoi-v1.json")
 model ChezmoiModuleV1 {
   /** The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
    * https://blue-build.org/reference/modules/chezmoi/
    */
+  @oneOf
   type: "chezmoi" | "chezmoi@v1" | "chezmoi@latest";
 
   /** Git repository to initialize. */
@@ -35,5 +36,6 @@ model ChezmoiModuleV1 {
   `disable-update`?: boolean = false;
 
   /** What to do when file different that exists on your repo is has been changed or exists locally. Accepts "skip" or "replace". */
+  @oneOf
   `file-conflict-policy`?: "skip" | "replace" = "skip";
 }

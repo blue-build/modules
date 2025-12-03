@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/dnf-latest.json")
-model DnfModuleLatest {
-  ...DnfModuleV1;
-}
+// @jsonSchema("/modules/dnf-latest.json")
+// model DnfModuleLatest {
+//   ...DnfModuleV1;
+// }
 
 @jsonSchema("/modules/dnf-v1.json")
 model DnfModuleV1 {
@@ -12,6 +12,7 @@ model DnfModuleV1 {
    * The dnf module offers pseudo-declarative package and repository management using dnf.
    * https://blue-build.org/reference/modules/dnf/
    */
+  @oneOf
   type: "dnf" | "dnf@v1" | "dnf@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
@@ -39,11 +40,13 @@ model DnfModuleV1 {
   replace?: Array<DnfReplace>;
 }
 
+@extension("additionalProperties", false)
 model DnfRepo {
   /** Cleans up the repos added in the same step after packages are installed. */
   cleanup?: boolean = false;
 
   /** List of paths or URLs to .repo files to import */
+  @oneOf
   files?: Array<string> | DnfRepoFiles;
 
   /**
@@ -51,7 +54,8 @@ model DnfRepo {
    * You can also specify 2 lists
    * instead to 'enable' or 'disable' COPR repos.
    */
-  copr?: Array<string | DnfRepoCoprEnable> | DnfRepoCopr;
+  @oneOf
+  copr?: Array<DnfRepoCoprEnableUnion> | DnfRepoCopr;
 
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
@@ -63,9 +67,11 @@ model DnfRepo {
    * However, only one can be enabled at a time so if one
    * is enabled, the other will be disabled if it is already enabled.
    */
+  @oneOf
   nonfree?: "negativo17" | "rpmfusion";
 }
 
+@extension("additionalProperties", false)
 model DnfRepoFiles {
   /** List of repo files/URLs to add. */
   add?: Array<string>;
@@ -78,14 +84,16 @@ model DnfRepoFiles {
   remove?: Array<string>;
 }
 
+@extension("additionalProperties", false)
 model DnfRepoCopr {
   /** List of COPR repos to enable */
-  enable?: Array<string | DnfRepoCoprEnable>;
+  enable?: Array<DnfRepoCoprEnableUnion>;
 
   /** List of COPR repos to disable */
   disable?: Array<string>;
 }
 
+@extension("additionalProperties", false)
 model DnfRepoCoprEnable {
   /** The COPR repo's name */
   name: string;
@@ -94,13 +102,21 @@ model DnfRepoCoprEnable {
   chroot: string;
 }
 
+@oneOf
+union DnfRepoCoprEnableUnion {
+  string,
+  DnfRepoCoprEnable,
+}
+
+@extension("additionalProperties", false)
 model DnfInstall {
   /** List of RPM packages to install. */
-  packages: Array<string | DnfInstallObject>;
+  packages: Array<DnfInstallObjectUnion>;
 
   ...DnfInstallCommon;
 }
 
+@extension("additionalProperties", false)
 model DnfInstallObject {
   /** The repo to use when installing packages */
   repo?: string;
@@ -111,13 +127,21 @@ model DnfInstallObject {
   ...DnfInstallCommon;
 }
 
+@oneOf
+union DnfInstallObjectUnion {
+  string,
+  DnfInstallObject,
+}
+
+@extension("additionalProperties", false)
 model DnfBuilddep {
   /** List of RPM packages/specs to resolve build dependencies for. */
-  packages: Array<string | DnfBuilddepObject>;
+  packages: Array<DnfBuilddepObjectUnion>;
 
   ...DnfInstallCommon;
 }
 
+@extension("additionalProperties", false)
 model DnfBuilddepObject {
   /** The repo to use when resolving build dependencies */
   repo?: string;
@@ -128,6 +152,13 @@ model DnfBuilddepObject {
   ...DnfInstallCommon;
 }
 
+@oneOf
+union DnfBuilddepObjectUnion {
+  string,
+  DnfBuilddepObject,
+}
+
+@extension("additionalProperties", false)
 model DnfRemove {
   /** List of RPM packages to remove. */
   packages: Array<string>;
@@ -136,16 +167,18 @@ model DnfRemove {
   `auto-remove`?: boolean = true;
 }
 
+@extension("additionalProperties", false)
 model DnfReplace {
   /** URL to the source COPR repo for the new packages. */
   `from-repo`: string;
 
   /** List of packages to replace using packages from the defined repo. */
-  packages: Array<string | DnfSwap>;
+  packages: Array<DnfSwapUnion>;
 
   ...DnfInstallCommon;
 }
 
+@extension("additionalProperties", false)
 model DnfSwap {
   /** The package to be replaced. */
   old: string;
@@ -157,6 +190,13 @@ model DnfSwap {
   `allow-erasing`?: boolean = false;
 }
 
+@oneOf
+union DnfSwapUnion {
+  string,
+  DnfSwap,
+}
+
+@extension("additionalProperties", false)
 model DnfGroupInstall {
   /** List of RPM groups to install. */
   packages: Array<string>;
@@ -167,11 +207,13 @@ model DnfGroupInstall {
   ...DnfInstallCommon;
 }
 
+@extension("additionalProperties", false)
 model DnfGroupRemove {
   /** List of RPM groups to remove. */
   packages: Array<string>;
 }
 
+@extension("additionalProperties", false)
 model DnfInstallCommon {
   /** Whether to install weak dependencies. */
   `install-weak-deps`?: boolean = true;

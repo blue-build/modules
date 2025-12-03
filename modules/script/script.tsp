@@ -1,16 +1,17 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/script-latest.json")
-model ScriptModuleLatest {
-  ...ScriptModuleV2;
-}
+// @jsonSchema("/modules/script-latest.json")
+// model ScriptModuleLatest {
+//   ...ScriptModuleV1;
+// }
 
 @jsonSchema("/modules/script-v2.json")
 model ScriptModuleV2 {
   /** The script module can be used to run arbitrary posix shell snippets and scripts at image build time.
    * https://blue-build.org/reference/modules/script/
    */
+  @oneOf
   type: "script" | "script@v2" | "script@latest";
 
   /** List of bash one-liners to run. */
