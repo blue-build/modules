@@ -134,8 +134,12 @@ update VERB_LEVEL="full":
         esac
     }
 
-    # Run rpm-ostree update
-    update_command "sudo bootc upgrade"
+    # Run bootc upgrade
+    if ! ps aux | grep -v grep | grep -E -q " /sbin/bootc | /bin/bootc | /usr/sbin/bootc | /usr/bin/bootc | bootc "; then
+        update_command "pkexec bootc upgrade"
+    else
+        echo "Bootc update or other related bootc process is already running in the background, skipping."
+    fi
 
     # Run flatpak update
     update_command "flatpak update -y"
