@@ -92,18 +92,18 @@ def retry [
   --count(-c): int = 3 # How many retries should be done
   operation: closure # The closure to retry
 ]: nothing -> any {
-  for $count in $count..0 {
-    try {
-      return (do $operation)
-    } catch {|err|
-      if ($count == 0) {
-        return $err
-      }
+    for $count in $count..0 {
+        try {
+            return (do $operation)
+        } catch {|err|
+            if ($count == 0) {
+                return $err
+            }
 
-      print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($count)(ansi reset) more time\(s\)"
-      sleep $sleep_duration
+            print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($count)(ansi reset) more time\(s\)"
+            sleep $sleep_duration
+        }
     }
-  }
 }
 
 def checkFlathub [packages: list<string>] {
@@ -112,7 +112,8 @@ def checkFlathub [packages: list<string>] {
         let id = $package | split row "/" | get 0
         try {
             let _ = retry -c 5 { http get --max-time 10sec $"https://flathub.org/api/v2/stats/($id)" }
-        } catch {
+        } catch {|err|
+            print -e $"Error checking flatpak:\n($err)"
             $package
         }
     }
