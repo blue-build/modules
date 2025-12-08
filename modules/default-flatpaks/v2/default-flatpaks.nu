@@ -97,7 +97,13 @@ def retry [
             return (do $operation)
         } catch {|err|
             if ($c == 0) {
-                return $err
+                return (error make {
+                    msg: $"Failed to run closure:\n($err.msg)"
+                    label: {
+                        span: (metadata $operation).span
+                        text: 'Failed closure'
+                    }
+                })
             }
 
             print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($c)(ansi reset) more time\(s\)"
