@@ -92,15 +92,15 @@ def retry [
   --count(-c): int = 3 # How many retries should be done
   operation: closure # The closure to retry
 ]: nothing -> any {
-    for $count in $count..0 {
+    for $c in $count..0 {
         try {
             return (do $operation)
         } catch {|err|
-            if ($count == 0) {
+            if ($c == 0) {
                 return $err
             }
 
-            print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($count)(ansi reset) more time\(s\)"
+            print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($c)(ansi reset) more time\(s\)"
             sleep $sleep_duration
         }
     }
