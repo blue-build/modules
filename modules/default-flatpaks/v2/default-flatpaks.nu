@@ -119,7 +119,7 @@ def checkFlathub [packages: list<string>] {
         try {
             let _ = retry -c 5 { http get --max-time 10sec $"https://flathub.org/api/v2/stats/($id)" }
         } catch {|err|
-            print -e $"Error checking flatpak:\n($err)"
+            print -e $"Error checking flatpak:\n($err.msg)"
             $package
         }
     }
