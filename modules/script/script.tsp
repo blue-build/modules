@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/script-latest.json")
-// model ScriptModuleLatest {
-//   ...ScriptModuleV1;
-// }
+@jsonSchema("/modules/script-latest.json")
+model ScriptModuleLatest {
+  ...ScriptModuleV1;
+}
 
 @jsonSchema("/modules/script-v1.json")
 model ScriptModuleV1 {

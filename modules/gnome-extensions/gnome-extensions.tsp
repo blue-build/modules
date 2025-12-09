@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/gnome-extensions-latest.json")
-// model GnomeExtensionsModuleLatest {
-//   ...GnomeExtensionsModuleV1;
-// }
+@jsonSchema("/modules/gnome-extensions-latest.json")
+model GnomeExtensionsModuleLatest {
+  ...GnomeExtensionsModuleV1;
+}
 
 @jsonSchema("/modules/gnome-extensions-v1.json")
 model GnomeExtensionsModuleV1 {

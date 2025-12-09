@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/yafti-latest.json")
-// model YaftiModuleLatest {
-//   ...YaftiModuleV1;
-// }
+@jsonSchema("/modules/yafti-latest.json")
+model YaftiModuleLatest {
+  ...YaftiModuleV1;
+}
 
 @jsonSchema("/modules/yafti-v1.json")
 model YaftiModuleV1 {

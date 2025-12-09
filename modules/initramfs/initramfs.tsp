@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/initramfs-latest.json")
-// model InitramfsModuleLatest {
-//   ...InitramfsModuleV1;
-// }
+@jsonSchema("/modules/initramfs-latest.json")
+model InitramfsModuleLatest {
+  ...InitramfsModuleV1;
+}
 
 @jsonSchema("/modules/initramfs-v1.json")
 model InitramfsModuleV1 {
