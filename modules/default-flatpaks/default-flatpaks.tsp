@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/default-flatpaks-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/default-flatpaks-latest.json")
 model DefaultFlatpaksModuleLatest {
   ...DefaultFlatpaksV2;
 }
 
-@jsonSchema("/modules/default-flatpaks-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/default-flatpaks-v1.json")
 model DefaultFlatpaksV1 {
   /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
    * using version: v1

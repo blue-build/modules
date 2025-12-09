@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/script-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/script-latest.json")
 model ScriptModuleLatest {
   ...ScriptModuleV1;
 }
 
-@jsonSchema("/modules/script-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/script-v1.json")
 model ScriptModuleV1 {
   /** The script module can be used to run arbitrary bash snippets and scripts at image build time.
    * https://blue-build.org/reference/modules/script/

@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/akmods-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/akmods-latest.json")
 model AkmodsModuleLatest {
   ...AkmodsModuleV1;
 }
 
-@jsonSchema("/modules/akmods-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/akmods-v1.json")
 model AkmodsModuleV1 {
   /** The akmods module is a tool used for managing and installing kernel modules built by Universal Blue.
    * https://blue-build.org/reference/modules/akmods/

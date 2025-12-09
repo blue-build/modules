@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/kargs-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/kargs-latest.json")
 model KargsModuleLatest {
   ...KargsModuleV1;
 }
 
-@jsonSchema("/modules/kargs-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/kargs-v1.json")
 model KargsModuleV1 {
   /** The kargs module injects kernel arguments into the image.
    * https://blue-build.org/reference/modules/kargs/

@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/gnome-extensions-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/gnome-extensions-latest.json")
 model GnomeExtensionsModuleLatest {
   ...GnomeExtensionsModuleV1;
 }
 
-@jsonSchema("/modules/gnome-extensions-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/gnome-extensions-v1.json")
 model GnomeExtensionsModuleV1 {
   /** The gnome-extensions module can be used to install GNOME extensions inside system directory.
    * https://blue-build.org/reference/modules/gnome-extensions/

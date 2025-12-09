@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/soar-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/soar-latest.json")
 model SoarModuleLatest {
   ...SoarModuleV1;
 }
 
-@jsonSchema("/modules/soar-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/soar-v1.json")
 model SoarModuleV1 {
   /** The soar module installs & integrates soar package manager, as an alternative to Homebrew / Linuxbrew.
    * https://blue-build.org/reference/modules/soar/

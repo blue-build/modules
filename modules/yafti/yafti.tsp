@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/yafti-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/yafti-latest.json")
 model YaftiModuleLatest {
   ...YaftiModuleV1;
 }
 
-@jsonSchema("/modules/yafti-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/yafti-v1.json")
 model YaftiModuleV1 {
   /** The yafti module can be used to install yafti and set it up to run on first boot.
    * https://blue-build.org/reference/modules/yafti/
