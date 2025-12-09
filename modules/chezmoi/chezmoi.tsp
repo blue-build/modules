@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/chezmoi-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/chezmoi-latest.json")
 model ChezmoiModuleLatest {
   ...ChezmoiModuleV1;
 }
 
-@jsonSchema("/modules/chezmoi-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/chezmoi-v1.json")
 model ChezmoiModuleV1 {
   /** The chezmoi module installs the latest chezmoi release at build time, along with services to clone a dotfile repository and keep it up-to-date.
    * https://blue-build.org/reference/modules/chezmoi/

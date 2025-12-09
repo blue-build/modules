@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/justfiles-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/justfiles-latest.json")
 model JustfilesModuleLatest {
   ...JustfilesModuleV1;
 }
 
-@jsonSchema("/modules/justfiles-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/justfiles-v1.json")
 model JustfilesModuleV1 {
   /** The justfiles module makes it easy to include just recipes from multiple files in Universal Blue -based images.
    * https://blue-build.org/reference/modules/justfiles/

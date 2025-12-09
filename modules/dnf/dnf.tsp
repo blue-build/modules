@@ -1,14 +1,14 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-@jsonSchema("/modules/dnf-latest.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/dnf-latest.json")
 model DnfModuleLatest {
   ...DnfModuleV1;
 }
 
-@jsonSchema("/modules/dnf-v1.json")
 @extension("additionalProperties", false)
+@jsonSchema("/modules/dnf-v1.json")
 model DnfModuleV1 {
   /**
    * The dnf module offers pseudo-declarative package and repository management using dnf.
