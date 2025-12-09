@@ -1,17 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/default-flatpaks.json")
-// @oneOf
-// union DefaultFlatpaksModule {
-//   DefaultFlatpaksV1,
-//   DefaultFlatpaksV2,
-// }
-
-// @jsonSchema("/modules/default-flatpaks-latest.json")
-// model DefaultFlatpaksModuleLatest {
-//   ...DefaultFlatpaksV2;
-// }
+@jsonSchema("/modules/default-flatpaks-latest.json")
+model DefaultFlatpaksModuleLatest {
+  ...DefaultFlatpaksV2;
+}
 
 @jsonSchema("/modules/default-flatpaks-v1.json")
 model DefaultFlatpaksV1 {

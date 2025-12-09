@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/signing-latest.json")
-// model SigningModuleLatest {
-//   ...SigningModuleV1;
-// }
+@jsonSchema("/modules/signing-latest.json")
+model SigningModuleLatest {
+  ...SigningModuleV1;
+}
 
 @jsonSchema("/modules/signing-v1.json")
 model SigningModuleV1 {

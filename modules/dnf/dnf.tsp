@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/dnf-latest.json")
-// model DnfModuleLatest {
-//   ...DnfModuleV1;
-// }
+@jsonSchema("/modules/dnf-latest.json")
+model DnfModuleLatest {
+  ...DnfModuleV1;
+}
 
 @jsonSchema("/modules/dnf-v1.json")
 model DnfModuleV1 {

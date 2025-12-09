@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/kargs-latest.json")
-// model KargsModuleLatest {
-//   ...KargsModuleV1;
-// }
+@jsonSchema("/modules/kargs-latest.json")
+model KargsModuleLatest {
+  ...KargsModuleV1;
+}
 
 @jsonSchema("/modules/kargs-v1.json")
 model KargsModuleV1 {

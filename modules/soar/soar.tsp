@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/soar-latest.json")
-// model SoarModuleLatest {
-//   ...SoarModuleV1;
-// }
+@jsonSchema("/modules/soar-latest.json")
+model SoarModuleLatest {
+  ...SoarModuleV1;
+}
 
 @jsonSchema("/modules/soar-v1.json")
 model SoarModuleV1 {

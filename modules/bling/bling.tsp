@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/bling-latest.json")
-// model BlingModuleLatest {
-//   ...BlingModuleV1;
-// }
+@jsonSchema("/modules/bling-latest.json")
+model BlingModuleLatest {
+  ...BlingModuleV1;
+}
 
 @jsonSchema("/modules/bling-v1.json")
 model BlingModuleV1 {

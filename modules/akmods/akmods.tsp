@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/akmods-latest.json")
-// model AkmodsModuleLatest {
-//   ...AkmodsModuleV1;
-// }
+@jsonSchema("/modules/akmods-latest.json")
+model AkmodsModuleLatest {
+  ...AkmodsModuleV1;
+}
 
 @jsonSchema("/modules/akmods-v1.json")
 model AkmodsModuleV1 {

@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/rpm-ostree-latest.json")
-// model RpmOstreeModuleLatest {
-//   ...RpmOstreeModuleV1;
-// }
+@jsonSchema("/modules/rpm-ostree-latest.json")
+model RpmOstreeModuleLatest {
+  ...RpmOstreeModuleV1;
+}
 
 @jsonSchema("/modules/rpm-ostree-v1.json")
 model RpmOstreeModuleV1 {

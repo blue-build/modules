@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/systemd-latest.json")
-// model SystemdModuleLatest {
-//   ...SystemdModuleV1;
-// }
+@jsonSchema("/modules/systemd-latest.json")
+model SystemdModuleLatest {
+  ...SystemdModuleV1;
+}
 
 @jsonSchema("/modules/systemd-v1.json")
 model SystemdModuleV1 {

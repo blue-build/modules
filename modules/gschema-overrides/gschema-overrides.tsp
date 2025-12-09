@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/gschema-overrides-latest.json")
-// model GschemaOverridesModuleLatest {
-//   ...GschemaOverridesModuleV1;
-// }
+@jsonSchema("/modules/gschema-overrides-latest.json")
+model GschemaOverridesModuleLatest {
+  ...GschemaOverridesModuleV1;
+}
 
 @jsonSchema("/modules/gschema-overrides-v1.json")
 model GschemaOverridesModuleV1 {

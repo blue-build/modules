@@ -1,10 +1,10 @@
 import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
-// @jsonSchema("/modules/brew-latest.json")
-// model BrewModuleLatest {
-//   ...BrewModuleV1;
-// }
+@jsonSchema("/modules/brew-latest.json")
+model BrewModuleLatest {
+  ...BrewModuleV1;
+}
 
 @jsonSchema("/modules/brew-v1.json")
 model BrewModuleV1 {
