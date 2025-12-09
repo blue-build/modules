@@ -2,16 +2,17 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/rpm-ostree-latest.json")
+@extension("additionalProperties", false)
 model RpmOstreeModuleLatest {
   ...RpmOstreeModuleV1;
 }
 
 @jsonSchema("/modules/rpm-ostree-v1.json")
+@extension("additionalProperties", false)
 model RpmOstreeModuleV1 {
   /** The rpm-ostree module offers pseudo-declarative package and repository management using rpm-ostree.
    * https://blue-build.org/reference/modules/rpm-ostree/
    */
-  @oneOf
   type: "rpm-ostree" | "rpm-ostree@v1" | "rpm-ostree@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */

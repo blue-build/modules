@@ -2,16 +2,17 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/systemd-latest.json")
+@extension("additionalProperties", false)
 model SystemdModuleLatest {
   ...SystemdModuleV1;
 }
 
 @jsonSchema("/modules/systemd-v1.json")
+@extension("additionalProperties", false)
 model SystemdModuleV1 {
   /** The systemd module streamlines the management of systemd units during image building.
    * https://blue-build.org/reference/modules/systemd/
    */
-  @oneOf
   type: "systemd" | "systemd@v1" | "systemd@latest";
 
   /** System unit configuration. */

@@ -2,17 +2,18 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/default-flatpaks-latest.json")
+@extension("additionalProperties", false)
 model DefaultFlatpaksModuleLatest {
   ...DefaultFlatpaksV2;
 }
 
 @jsonSchema("/modules/default-flatpaks-v1.json")
+@extension("additionalProperties", false)
 model DefaultFlatpaksV1 {
   /** The default-flatpaks module can be used to install or uninstall flatpaks from a configurable remote on every boot.
    * using version: v1
    * https://blue-build.org/reference/modules/default-flatpaks/
    */
-  @oneOf
   type: "default-flatpaks@v1";
 
   /** Whether to send a notification after the install/uninstall is finished. */
@@ -49,7 +50,6 @@ model DefaultFlatpaksV2 {
    * using version: v2
    * https://blue-build.org/reference/modules/default-flatpaks/
    */
-  @oneOf
   type: "default-flatpaks@v2" | "default-flatpaks@latest" | "default-flatpaks";
 
   configurations: Array<ConfigurationV2>;

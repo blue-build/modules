@@ -2,17 +2,18 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/dnf-latest.json")
+@extension("additionalProperties", false)
 model DnfModuleLatest {
   ...DnfModuleV1;
 }
 
 @jsonSchema("/modules/dnf-v1.json")
+@extension("additionalProperties", false)
 model DnfModuleV1 {
   /**
    * The dnf module offers pseudo-declarative package and repository management using dnf.
    * https://blue-build.org/reference/modules/dnf/
    */
-  @oneOf
   type: "dnf" | "dnf@v1" | "dnf@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
@@ -43,7 +44,6 @@ model DnfRepo {
   cleanup?: boolean = false;
 
   /** List of paths or URLs to .repo files to import */
-  @oneOf
   files?: Array<string> | DnfRepoFiles;
 
   /**
@@ -51,7 +51,6 @@ model DnfRepo {
    * You can also specify 2 lists
    * instead to 'enable' or 'disable' COPR repos.
    */
-  @oneOf
   copr?: Array<string | DnfRepoCoprEnable> | DnfRepoCopr;
 
   /** List of links to key files to import for installing from custom repositories. */
@@ -64,7 +63,6 @@ model DnfRepo {
    * However, only one can be enabled at a time so if one
    * is enabled, the other will be disabled if it is already enabled.
    */
-  @oneOf
   nonfree?: "negativo17" | "rpmfusion";
 }
 

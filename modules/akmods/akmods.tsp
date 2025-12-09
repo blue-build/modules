@@ -2,16 +2,17 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/akmods-latest.json")
+@extension("additionalProperties", false)
 model AkmodsModuleLatest {
   ...AkmodsModuleV1;
 }
 
 @jsonSchema("/modules/akmods-v1.json")
+@extension("additionalProperties", false)
 model AkmodsModuleV1 {
   /** The akmods module is a tool used for managing and installing kernel modules built by Universal Blue.
    * https://blue-build.org/reference/modules/akmods/
    */
-  @oneOf
   type: "akmods" | "akmods@v1" | "akmods@latest";
 
   /** The kernel your images uses.
@@ -24,7 +25,6 @@ model AkmodsModuleV1 {
    * - coreos-testing: stock CoreOS Testing kernel / uCore testing images
    * - bazzite: Bazzite's kernel / bazzite images
    */
-  @oneOf
   base?:
     | "main"
     | "asus"
@@ -44,6 +44,5 @@ model AkmodsModuleV1 {
    * - nvidia : for the old nvidia propietary driver, compatible with Maxwell and newer cards (but not Blackwell)
    * - nvidia-open : for the new kernel-open driver, to be used in Turing and newer cards
    */
-  @oneOf
   `nvidia-driver`?: "nvidia" | "nvidia-open";
 }
