@@ -2,16 +2,17 @@ import "@typespec/json-schema";
 using TypeSpec.JsonSchema;
 
 @jsonSchema("/modules/fonts-latest.json")
+@extension("additionalProperties", false)
 model FontsModuleLatest {
   ...FontsModuleV1;
 }
 
 @jsonSchema("/modules/fonts-v1.json")
+@extension("additionalProperties", false)
 model FontsModuleV1 {
   /** The fonts module can be used to install fonts from Nerd Fonts, Google Fonts, or custom URLs.
    * https://blue-build.org/reference/modules/fonts/
    */
-  @oneOf
   type: "fonts" | "fonts@v1" | "fonts@latest";
 
   fonts: Fonts;
