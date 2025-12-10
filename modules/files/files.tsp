@@ -16,7 +16,6 @@ model FilesModuleV1 {
   type: "files" | "files@v1" | "files@latest";
 
   /** List of files / folders to copy. */
-  @oneOf
   files: Array<Record<string>> | Array<SrcDest>;
 }
 
