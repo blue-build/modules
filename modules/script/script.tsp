@@ -13,7 +13,6 @@ model ScriptModuleV2 {
   /** The script module can be used to run arbitrary posix shell snippets and scripts at image build time.
    * https://blue-build.org/reference/modules/script/
    */
-  @oneOf
   type: "script" | "script@v2" | "script@latest";
 
   /** List of bash one-liners to run. */
