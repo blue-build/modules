@@ -79,6 +79,15 @@ fi
 NVIDIA_DRIVER=$(echo "$1" | jq -r 'try .["nvidia-driver"]')
 if [[ $NVIDIA_DRIVER == "nvidia" || $NVIDIA_DRIVER == "nvidia-open" ]]; then
     INSTALL_NVIDIA=true
+
+    if [[ "$NVIDIA_DRIVER" == *"open"* ]]; then
+        echo "nvidia-open kernel driver selected"
+    else
+        echo "nvidia-lts kernel driver selected"
+        curl -fLsS --retry 5 -o /etc/yum.repos.d/fedora-nvidia-580.repo https://negativo17.org/repos/fedora-nvidia-580.repo
+        sed -i '/^enabled=1/a\priority=90' /etc/yum.repos.d/fedora-nvidia-580.repo
+        NVIDIA_DRIVER="nvidia-lts"
+    fi
 fi
 
 
