@@ -5,12 +5,12 @@ mapfile -t FONTS <<< "$@"
 DEST="/usr/share/fonts/google-fonts"
 
 echo "Installation of google-fonts started"
-rm -rf "${DEST}"
 
 for FONT in "${FONTS[@]}"; do
     if [ -n "${FONT}" ]; then
         FONT="${FONT#"${FONT%%[![:space:]]*}"}" # Trim leading whitespace
         FONT="${FONT%"${FONT##*[![:space:]]}"}" # Trim trailing whitespace
+        rm -rf "${DEST}/${FONT}"
         mkdir -p "${DEST}/${FONT}"
 
         readarray -t "FILE_REFS" < <(

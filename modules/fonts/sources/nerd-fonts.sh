@@ -12,6 +12,7 @@ mkdir -p /tmp/fonts
 for FONT in "${FONTS[@]}"; do
     FONT=${FONT// /} # remove spaces
     if [ ${#FONT} -gt 0 ]; then
+        rm -rf "${DEST}/${FONT}"
         mkdir -p "${DEST}/${FONT}"
 
         echo "Downloading ${FONT} from ${URL}/${FONT}.tar.xz"
