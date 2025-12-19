@@ -22,7 +22,7 @@ for FONT_JSON in "${FONTS[@]}"; do
         fi
         
         NAME=$(echo "$NAME" | xargs) # trim whitespace
-        rm -rf "${DEST}/${FONT}"
+        rm -rf "${DEST}/${NAME}"
         mkdir -p "${DEST}/${NAME}"
 
         TMPFILE=$(mktemp)
