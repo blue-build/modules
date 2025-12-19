@@ -6,7 +6,6 @@ URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
 DEST="/usr/share/fonts/nerd-fonts"
 
 echo "Installation of nerd-fonts started"
-rm -rf "${DEST}"
 
 mkdir -p /tmp/fonts
 for FONT in "${FONTS[@]}"; do
