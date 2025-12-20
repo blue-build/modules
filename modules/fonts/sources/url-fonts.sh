@@ -6,8 +6,6 @@ readarray -t FONTS < <(echo "$@" | jq -c '.[]')
 DEST="/usr/share/fonts/url-fonts"
 
 echo "Installation of url-fonts started"
-rm -rf "${DEST}"
-mkdir -p "${DEST}"
 
 for FONT_JSON in "${FONTS[@]}"; do
     if [ -n "${FONT_JSON}" ]; then
