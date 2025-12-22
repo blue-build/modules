@@ -1,0 +1,11 @@
+name: zypper
+shortdesc: The zypper module offers pseudo-declarative package and repository management using apt.
+example: |
+  type: zypper
+  install:
+    packages:
+      - git
+  remove:
+    packages:
+      - firefox
+      - firefox-langpacks
