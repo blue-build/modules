@@ -1,0 +1,10 @@
+set allow-duplicate-recipes := true
+set ignore-comments := true
+
+_default:
+    #!/usr/bin/bash
+    /usr/bin/blujust --list --list-heading $'Available commands:\n' --list-prefix $' - '
+
+# Imports
+import "/usr/share/bluebuild/justfiles/00-default.just"
+import? "/usr/share/bluebuild/justfiles/60-custom.just"

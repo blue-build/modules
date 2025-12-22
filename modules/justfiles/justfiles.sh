@@ -4,8 +4,32 @@ set -euo pipefail
 
 get_json_array CONFIG_SELECTION 'try .["include"][]' "$1"
 VALIDATE="$(echo "$1" | jq -r 'try .["validate"]')"
+INSTALL="$(echo "$1" | jq -r 'try .["install"]')"
 
-IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
+if [ "${INSTALL}" = "true" ] && ! rpm -q just > /dev/null; then
+    if command -v dnf5 > /dev/null; then
+        dnf5 -y install just
+    elif command -v dnf4 > /dev/null; then
+        dnf4 -y install just
+    else
+        echo "No recognizable package manager! Expected dnf4 or dnf5."
+        exit 1
+    fi
+fi
+
+if [ -x /usr/bin/ujust ]; then
+    IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
+else
+    # Install blujust files
+    if ! [ -f /usr/bin/blujust ]; then
+        cp -f "${MODULE_DIRECTORY}/justfiles/blujust" /usr/bin/blujust
+        chmod +x /usr/bin/blujust
+
+        mkdir -p /usr/share/bluebuild/
+        cp -fr "${MODULE_DIRECTORY}"/justfiles/blujust_files/* /usr/share/bluebuild/
+    fi
+    IMPORT_FILE="/usr/share/bluebuild/justfiles/60-custom.just"
+fi
 CONFIG_FOLDER="${CONFIG_DIRECTORY}/justfiles"
 DEST_FOLDER="/usr/share/bluebuild/justfiles"
 
@@ -41,7 +65,7 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
         echo "Validating justfiles"
         VALIDATION_FAILED=0
         for JUSTFILE in "${JUSTFILES[@]}"; do
-            if ! /usr/bin/just --fmt --check --unstable --justfile "${CONFIG_FOLDER}/${JUSTFILE}" &> /dev/null; then
+            if ! /usr/bin/just --fmt --check --unstable --justfile "${CONFIG_FOLDER}/${JUSTFILE}"; then
                 echo "- The justfile '${JUSTFILE}' FAILED validation."
                 VALIDATION_FAILED=1
             fi
