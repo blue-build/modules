@@ -8,7 +8,7 @@ model ScriptModuleLatest {
 
 @jsonSchema("/modules/script-v2.json")
 model ScriptModuleV2 {
-  /** The script module can be used to run arbitrary bash snippets and scripts at image build time.
+  /** The script module can be used to run arbitrary posix shell snippets and scripts at image build time.
    * https://blue-build.org/reference/modules/script/
    */
   type: "script" | "script@v2" | "script@latest";
