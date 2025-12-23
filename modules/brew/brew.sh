@@ -113,8 +113,15 @@ else
     # Download pre-packaged Brew from uBlue repo
     asset_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' \
         | jq -cr '.[0].assets | map({(.name): .browser_download_url}) | add')
-    brew_tarball_url=$(jq -cr '."homebrew-x86_64.tar.zst"' <<< "${asset_urls}")
-    brew_sha256_url=$(jq -cr '."homebrew-x86_64.sha256"' <<< "${asset_urls}")
+    case "$OS_ARCH" in
+        x86_64|aarch64)
+            brew_tarball_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".tar.zst"]' <<< "${asset_urls}")
+            brew_sha256_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".sha256"]' <<< "${asset_urls}")
+            ;;
+        *)
+            echo "ERROR: Pre-packaged Brew tarball is not available for architecture ${OS_ARCH}."
+            exit 1
+    esac
 
     echo "Downloading Brew tarball..."
     curl -fLsS --retry 5 --create-dirs \
