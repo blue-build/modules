@@ -6,15 +6,17 @@ def main [config: string]: nothing -> nothing {
     | default [] scripts
     | default [] snippets
 
+  cd $'($env.CONFIG_DIRECTORY)/scripts'
+  ^find . -type f -execdir chmod +x '{}' +
 
   $config.scripts
     | each {|script|
-      cd $'($env.CONFIG_DIRECTORY)/scripts'
       let script = $'($env.PWD)/($script)'
-      chmod +x $script
       print -e $'(ansi green)Running script: (ansi cyan)($script)(ansi reset)'
       ^$script
     }
+
+  cd -
 
   $config.snippets
     | each {|snippet|
