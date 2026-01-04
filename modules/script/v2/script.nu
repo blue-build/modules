@@ -7,9 +7,7 @@ def main [config: string]: nothing -> nothing {
     | default [] snippets
 
   cd $'($env.CONFIG_DIRECTORY)/scripts'
-  ls
-    | where { ($in | path type) == 'file' }
-    | each { chmod +x $in }
+  ^find . -type f -execdir chmod +x '{}' +
 
   $config.scripts
     | each {|script|
