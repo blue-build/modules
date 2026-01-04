@@ -1,0 +1,11 @@
+name: apk
+shortdesc: The apk module offers pseudo-declarative package and repository management using apt.
+example: |
+  type: apk
+  install:
+    packages:
+      - git
+  remove:
+    packages:
+      - firefox
+      - firefox-langpacks
