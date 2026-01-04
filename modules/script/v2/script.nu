@@ -7,7 +7,8 @@ def main [config: string]: nothing -> nothing {
     | default [] snippets
 
   cd $'($env.CONFIG_DIRECTORY)/scripts'
-  ^find . -type f -execdir chmod +x '{}' +
+  glob ./**/*{.sh,.nu}
+    | each { chmod +x $in }
 
   $config.scripts
     | each {|script|
@@ -23,4 +24,6 @@ def main [config: string]: nothing -> nothing {
       print -e $"(ansi green)Running snippet:\n(ansi cyan)($snippet)(ansi reset)"
       /bin/sh -c $'($snippet)'
     }
+
+  print -e $'(ansi green)Done(ansi reset)'
 }
