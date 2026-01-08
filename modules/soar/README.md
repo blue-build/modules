@@ -4,7 +4,7 @@ The `soar` module installs & integrates the [`soar`](https://github.com/pkgforge
 
 [`soar`](https://github.com/pkgforge/soar) is a package manager, which manages the installation of portable & static binaries.
 [PkgForge's](https://github.com/pkgforge) `bincache`, repo is used by default for the binaries.
-Other repos that contain AppImages & other similar formats are disabled to make `soar` focused on CLI binaries only.
+Other repos that contain GUI applications are disabled to make `soar` focused on CLI binaries only.
 This is configurable if you wish to have a package manager for GUI applications, see [`Configuration options`](#configuration-options).
 
 The repositories with prebuilt binaries use the GitHub Container registry as their backend and all their packages are published there.
