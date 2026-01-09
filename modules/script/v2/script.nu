@@ -6,13 +6,17 @@ def main [config: string]: nothing -> nothing {
     | default [] scripts
     | default [] snippets
 
-  cd $'($env.CONFIG_DIRECTORY)/scripts'
-  ^find . -type f -execdir chmod +x '{}' +
+  let script_dir = [$env.CONFIG_DIRECTORY scripts] | path join
+  cd $script_dir
+  glob ./**/*{.sh,.nu,.py}
+    | each { chmod +x $in }
 
   $config.scripts
     | each {|script|
-      let script = $'($env.PWD)/($script)'
       print -e $'(ansi green)Running script: (ansi cyan)($script)(ansi reset)'
+
+      let script = [$script_dir $script] | path join
+      chmod +x $script
       ^$script
     }
 
@@ -23,4 +27,6 @@ def main [config: string]: nothing -> nothing {
       print -e $"(ansi green)Running snippet:\n(ansi cyan)($snippet)(ansi reset)"
       /bin/sh -c $'($snippet)'
     }
+
+  print -e $'(ansi green)Done(ansi reset)'
 }
