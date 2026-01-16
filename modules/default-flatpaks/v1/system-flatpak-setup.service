@@ -5,5 +5,5 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStartPre=/bin/sh -c 'until [ $(id -u) -ge 1000 ]; do sleep 2; done'
+ExecStartPre=/bin/bash -c 'until ps -eao uid= | grep -qE "^\s*[1-9][0-9]{3,}"; do sleep 2; done'
 ExecStart=/usr/bin/system-flatpak-setup
