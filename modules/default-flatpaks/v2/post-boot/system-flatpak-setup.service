@@ -5,4 +5,5 @@ After=network-online.target
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sh -c 'until ps -eao uid= | grep -qE "^\s*[1-9][0-9]{3,}"; do sleep 2; done'
 ExecStart=/usr/libexec/bluebuild/default-flatpaks/system-flatpak-setup

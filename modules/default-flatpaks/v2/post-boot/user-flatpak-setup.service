@@ -2,6 +2,8 @@
 Description=Configure Flatpaks for current user
 Wants=network-online.target
 After=system-flatpak-setup.service
+ConditionUser=!@system
+ConditionPathIsDirectory=/var/home/%u
 
 [Service]
 Type=oneshot
