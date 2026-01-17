@@ -1,0 +1,11 @@
+name: pacman
+shortdesc: The pacman module offers pseudo-declarative package and repository management using apt.
+example: |
+  type: pacman
+  install:
+    packages:
+      - git
+  remove:
+    packages:
+      - firefox
+      - firefox-langpacks

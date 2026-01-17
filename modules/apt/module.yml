@@ -1,0 +1,11 @@
+name: apt
+shortdesc: The apt module offers pseudo-declarative package and repository management using apt.
+example: |
+  type: apt
+  install:
+    packages:
+      - git
+  remove:
+    packages:
+      - firefox
+      - firefox-langpacks
