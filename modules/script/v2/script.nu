@@ -7,9 +7,12 @@ def main [config: string]: nothing -> nothing {
     | default [] snippets
 
   let script_dir = [$env.CONFIG_DIRECTORY scripts] | path join
-  cd $script_dir
-  glob ./**/*{.sh,.nu,.py}
-    | each { chmod +x $in }
+  if ($script_dir | path exists) {
+    cd $script_dir
+    glob ./**/*{.sh,.nu,.py} | each { chmod +x $in }
+  } else {
+      print $'(ansi yellow)Script directory not found, skipping...(ansi reset)'
+  }
 
   $config.scripts
     | each {|script|
