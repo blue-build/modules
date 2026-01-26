@@ -87,13 +87,39 @@ def main [configStr: string] {
     chmod +x "/usr/bin/bluebuild-flatpak-manager"
 }
 
+def retry [
+  --sleep-duration(-d): duration = 2sec # The duration to sleep until another retry
+  --count(-c): int = 3 # How many retries should be done
+  operation: closure # The closure to retry
+]: nothing -> any {
+    for $c in $count..0 {
+        try {
+            return (do $operation)
+        } catch {|err|
+            if ($c == 0) {
+                return (error make {
+                    msg: $"Failed to run closure:\n($err.msg)"
+                    label: {
+                        span: (metadata $operation).span
+                        text: 'Failed closure'
+                    }
+                })
+            }
+
+            print $"Retrying closure in (ansi green)($sleep_duration)(ansi reset) (ansi cyan)($c)(ansi reset) more time\(s\)"
+            sleep $sleep_duration
+        }
+    }
+}
+
 def checkFlathub [packages: list<string>] {
     print "Checking if configured packages exist on Flathub..."
     let unavailablePackages = $packages | each { |package|
         let id = $package | split row "/" | get 0
         try {
-            let _ = http get $"https://flathub.org/api/v2/stats/($id)"
-        } catch {
+            let _ = retry -c 5 { http get --max-time 10sec $"https://flathub.org/api/v2/stats/($id)" }
+        } catch {|err|
+            print -e $"Error checking flatpak:\n($err.msg)"
             $package
         }
     }

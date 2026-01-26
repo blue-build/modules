@@ -1,9 +1,20 @@
 name: script
 shortdesc: The script module can be used to run arbitrary bash snippets and scripts at image build time.
-example: |
-  type: script
-  snippets:
-    - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
-    - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
-  scripts:
-    - myscript.sh # example: run files/scripts/myscript.sh
+versions:
+  - version: v1
+    example: |
+      type: script
+      snippets:
+        - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
+        - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
+      scripts:
+        - myscript.sh # example: run files/scripts/myscript.sh
+  - version: v2
+    example: |
+      type: script
+      snippets:
+        - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
+        - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
+      scripts:
+        - myscript.sh # example: run files/scripts/myscript.sh
+        - myscript.nu # example: run files/scripts/myscript.nu

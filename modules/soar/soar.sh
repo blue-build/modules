@@ -26,11 +26,11 @@ fi
 ADDITIONAL_REPOS=$(echo "${1}" | jq -r 'try .["additional-repos"]')
 mkdir -p "/usr/share/bluebuild/soar"
 if [[ "${ADDITIONAL_REPOS}" == "true" ]]; then
-  echo "Enabling all additional 'soar' repos in config, including external ones"
-  soar defconfig --external -c "/usr/share/bluebuild/soar/config.toml"
+  echo "Enabling the 'pkgcache' repo in config, for GUI applications support"
+  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache -r pkgcache
 else
-  echo "Using the default 'bincache', 'pkgforge-cargo' & 'pkgforge-go' repositories in config"
-  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache -r pkgforge-cargo -r pkgforge-go
+  echo "Using the default 'bincache', repository for CLI applications in config"
+  soar -c /usr/share/bluebuild/soar/config.toml defconfig -r bincache
 fi
 # Fix /root being ${HOME}
 sed -i 's|/root|~|g' "/usr/share/bluebuild/soar/config.toml"
