@@ -15,18 +15,18 @@ model ZypperModuleV1 {
   type: "zypper" | "zypper@v1" | "zypper@latest";
 
   /** Configuration of packages removal. */
-  remove?: Remove;
+  remove?: ZypperRemove;
 
   /** Configuration of packages install. */
-  install?: Install;
+  install?: ZypperInstall;
 }
 
-model Install {
+model ZypperInstall {
   /** List of packages to install. */
   packages: Array<string>;
 }
 
-model Remove {
+model ZypperRemove {
   /** List of packages to remove. */
   packages: Array<string>;
 }

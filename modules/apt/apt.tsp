@@ -15,18 +15,18 @@ model AptModuleV1 {
   type: "apt" | "apt@v1" | "apt@latest";
 
   /** Configuration of packages removal. */
-  remove?: Remove;
+  remove?: AptRemove;
 
   /** Configuration of packages install. */
-  install?: Install;
+  install?: AptInstall;
 }
 
-model Install {
+model AptInstall {
   /** List of packages to install. */
   packages: Array<string>;
 }
 
-model Remove {
+model AptRemove {
   /** List of packages to remove. */
   packages: Array<string>;
 }

@@ -15,40 +15,40 @@ model DnfModuleV1 {
   type: "dnf" | "dnf@v1" | "dnf@latest";
 
   /** List of links to .repo files to download into /etc/yum.repos.d/. */
-  repos?: Repo;
+  repos?: DnfRepo;
 
   /** DEPRECATED: List of folder names under /opt/ to enable for installing into. */
   optfix?: Array<string>;
 
   /** Configuration of RPM groups removal. */
-  `group-remove`?: GroupRemove;
+  `group-remove`?: DnfGroupRemove;
 
   /** Configuration of RPM groups install. */
-  `group-install`?: GroupInstall;
+  `group-install`?: DnfGroupInstall;
 
   /** Configuration of RPM packages removal. */
-  remove?: Remove;
+  remove?: DnfRemove;
 
   /** Configuration of RPM packages install. */
-  install?: Install;
+  install?: DnfInstall;
 
   /** List of configurations for replacing packages from another repo. */
-  replace?: Array<Replace>;
+  replace?: Array<DnfReplace>;
 }
 
-model Repo {
+model DnfRepo {
   /** Cleans up the repos added in the same step after packages are installed. */
   cleanup?: boolean = false;
 
   /** List of paths or URLs to .repo files to import */
-  files?: Array<string> | RepoFiles;
+  files?: Array<string> | DnfRepoFiles;
 
   /**
    * List of COPR project repos to add.
    * You can also specify 2 lists
    * instead to 'enable' or 'disable' COPR repos.
    */
-  copr?: Array<string | RepoCoprEnable> | RepoCopr;
+  copr?: Array<string | DnfRepoCoprEnable> | DnfRepoCopr;
 
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
@@ -63,7 +63,7 @@ model Repo {
   nonfree?: "negativo17" | "rpmfusion";
 }
 
-model RepoFiles {
+model DnfRepoFiles {
   /** List of repo files/URLs to add. */
   add?: Array<string>;
 
@@ -75,15 +75,15 @@ model RepoFiles {
   remove?: Array<string>;
 }
 
-model RepoCopr {
+model DnfRepoCopr {
   /** List of COPR repos to enable */
-  enable?: Array<string | RepoCoprEnable>;
+  enable?: Array<string | DnfRepoCoprEnable>;
 
   /** List of COPR repos to disable */
   disable?: Array<string>;
 }
 
-model RepoCoprEnable {
+model DnfRepoCoprEnable {
   /** The COPR repo's name */
   name: string;
 
@@ -91,24 +91,24 @@ model RepoCoprEnable {
   chroot: string;
 }
 
-model Install {
+model DnfInstall {
   /** List of RPM packages to install. */
-  packages: Array<string | InstallRepo>;
+  packages: Array<string | DnfInstallRepo>;
 
-  ...InstallCommon;
+  ...DnfInstallCommon;
 }
 
-model InstallRepo {
+model DnfInstallRepo {
   /** The repo to use when installing packages */
   repo: string;
 
   /** List of RPM packages to install. */
   packages: Array<string>;
 
-  ...InstallCommon;
+  ...DnfInstallCommon;
 }
 
-model Remove {
+model DnfRemove {
   /** List of RPM packages to remove. */
   packages: Array<string>;
 
@@ -116,17 +116,17 @@ model Remove {
   `auto-remove`?: boolean = true;
 }
 
-model Replace {
+model DnfReplace {
   /** URL to the source COPR repo for the new packages. */
   `from-repo`: string;
 
   /** List of packages to replace using packages from the defined repo. */
-  packages: Array<string | Swap>;
+  packages: Array<string | DnfSwap>;
 
-  ...InstallCommon;
+  ...DnfInstallCommon;
 }
 
-model Swap {
+model DnfSwap {
   /** The package to be replaced. */
   old: string;
 
@@ -137,22 +137,22 @@ model Swap {
   `allow-erasing`?: boolean = false;
 }
 
-model GroupInstall {
+model DnfGroupInstall {
   /** List of RPM groups to install. */
   packages: Array<string>;
 
   /** Include optional packages from group. */
   `with-optional`?: boolean = false;
 
-  ...InstallCommon;
+  ...DnfInstallCommon;
 }
 
-model GroupRemove {
+model DnfGroupRemove {
   /** List of RPM groups to remove. */
   packages: Array<string>;
 }
 
-model InstallCommon {
+model DnfInstallCommon {
   /** Whether to install weak dependencies. */
   `install-weak-deps`?: boolean = true;
 

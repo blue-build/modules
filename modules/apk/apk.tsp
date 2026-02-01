@@ -15,18 +15,18 @@ model ApkModuleV1 {
   type: "apk" | "apk@v1" | "apk@latest";
 
   /** Configuration of packages removal. */
-  remove?: Remove;
+  remove?: ApkRemove;
 
   /** Configuration of packages install. */
-  install?: Install;
+  install?: ApkInstall;
 }
 
-model Install {
+model ApkInstall {
   /** List of packages to install. */
   packages: Array<string>;
 }
 
-model Remove {
+model ApkRemove {
   /** List of packages to remove. */
   packages: Array<string>;
 }
