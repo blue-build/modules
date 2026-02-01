@@ -15,18 +15,18 @@ model PacmanModuleV1 {
   type: "pacman" | "pacman@v1" | "pacman@latest";
 
   /** Configuration of packages removal. */
-  remove?: Remove;
+  remove?: PacmanRemove;
 
   /** Configuration of packages install. */
-  install?: Install;
+  install?: PacmanInstall;
 }
 
-model Install {
+model PacmanInstall {
   /** List of packages to install. */
   packages: Array<string>;
 }
 
-model Remove {
+model PacmanRemove {
   /** List of packages to remove. */
   packages: Array<string>;
 }
