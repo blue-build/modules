@@ -15,9 +15,17 @@ def main [config: string]: nothing -> nothing {
     | each {|script|
       print -e $'(ansi green)Running script: (ansi cyan)($script)(ansi reset)'
 
-      let script = [$script_dir $script] | path join
-      chmod +x $script
-      ^$script
+      let script_path = [$script_dir $script] | path join
+      chmod +x $script_path
+
+      try {
+        ^$script_path
+        print -e $'(ansi green)Finished running script (ansi cyan)($script)(ansi reset)'
+      } catch {
+        return (error make {
+          msg: $'(ansi red)Failed to run (ansi cyan)($script)(ansi reset)'
+        })
+      }
     }
 
   cd -
@@ -25,7 +33,15 @@ def main [config: string]: nothing -> nothing {
   $config.snippets
     | each {|snippet|
       print -e $"(ansi green)Running snippet:\n(ansi cyan)($snippet)(ansi reset)"
-      /bin/sh -c $'($snippet)'
+
+      try {
+        /bin/sh -c $'($snippet)'
+        print -e $"(ansi green)Finished running snippet:\n(ansi cyan)($snippet)(ansi reset)"
+      } catch {
+        return (error make {
+          msg: $"(ansi red)Failed to run snippet:\n(ansi cyan)($snippet)(ansi reset)"
+        })
+      }
     }
 
   print -e $'(ansi green)Done(ansi reset)'
