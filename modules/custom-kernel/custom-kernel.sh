@@ -232,9 +232,26 @@ if [[ ${NVIDIA} == true ]]; then
     dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=noscripts \
         akmod-nvidia \
         nvidia-kmod-common \
-        nvidia-modprobe
+        nvidia-modprobe \
+        gcc-c++
     akmods --force --verbose --kernels "${KERNEL_VERSION}" --kmod "nvidia"
     
+    # akmods always fails with exit 0 so we have to check explicitly
+    FAIL_LOG_GLOB=/var/cache/akmods/nvidia/*-for-${KERNEL_VERSION}.failed.log
+
+    shopt -s nullglob
+    FAIL_LOGS=( ${FAIL_LOG_GLOB} )
+    shopt -u nullglob
+
+    if (( ${#FAIL_LOGS[@]} )); then
+        error "Nvidia akmod build failed"
+        for f in "${FAIL_LOGS[@]}"; do
+            cat "${f}" || log "Failed to read ${f}"
+            log "--------------"
+        done
+        exit 1
+    fi
+
     log "Restoring akmodsbuild script."
     restore_akmodsbuild
 
