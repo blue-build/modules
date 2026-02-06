@@ -365,22 +365,22 @@ sign_kernel_modules() {
             "${SIGN_FILE}" sha256 "${SIGNING_KEY}" "${SIGNING_CERT}" "${mod}" || return 1
             ;;
         *.ko.xz)
-            xz -d "${mod}"
+            xz -d -q "${mod}"
             raw="${mod%.xz}"
             "${SIGN_FILE}" sha256 "${SIGNING_KEY}" "${SIGNING_CERT}" "${raw}" || return 1
-            xz -z "${raw}"
+            xz -z -q "${raw}"
             ;;
         *.ko.zst)
-            zstd -d --rm "${mod}"
+            zstd -d -q --rm "${mod}"
             raw="${mod%.zst}"
             "${SIGN_FILE}" sha256 "${SIGNING_KEY}" "${SIGNING_CERT}" "${raw}" || return 1
             zstd -q "${raw}"
             ;;
         *.ko.gz)
-            gunzip "${mod}"
+            gunzip -q "${mod}"
             raw="${mod%.gz}"
             "${SIGN_FILE}" sha256 "${SIGNING_KEY}" "${SIGNING_CERT}" "${raw}" || return 1
-            gzip "${raw}"
+            gzip -q "${raw}"
             ;;
         esac
     done < <(find "${MODULE_ROOT}" -type f \( -name "*.ko" -o -name "*.ko.xz" -o -name "*.ko.zst" -o -name "*.ko.gz" \) -print0)
