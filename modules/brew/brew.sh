@@ -5,16 +5,16 @@ set -euo pipefail
 # Debugging
 DEBUG="${DEBUG:-false}"
 if [[ "${DEBUG}" == true ]]; then
-    set -x
+  set -x
 fi
 
 # Check if gcc is installed & install it if it's not
 # (add VanillaOS package manager in the future when it gets supported)
-if ! command -v gcc &> /dev/null; then
-  if command -v dnf5 &> /dev/null; then
+if ! command -v gcc &>/dev/null; then
+  if command -v dnf5 &>/dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     dnf5 -y install gcc
-  elif command -v rpm-ostree &> /dev/null; then
+  elif command -v rpm-ostree &>/dev/null; then
     echo "Installing \"gcc\" package, which is necessary for Brew to function"
     rpm-ostree install gcc
   else
@@ -26,11 +26,11 @@ if ! command -v gcc &> /dev/null; then
 fi
 
 # Check if zstd is installed & install it if it's not
-if ! command -v zstd &> /dev/null; then
-  if command -v dnf5 &> /dev/null; then
+if ! command -v zstd &>/dev/null; then
+  if command -v dnf5 &>/dev/null; then
     echo "Installing \"zstd\" package, which is necessary for Brew to function"
     dnf5 -y install zstd
-  elif command -v rpm-ostree &> /dev/null; then
+  elif command -v rpm-ostree &>/dev/null; then
     echo "Installing \"zstd\" package, which is necessary for Brew to function"
     rpm-ostree install zstd
   else
@@ -47,93 +47,96 @@ MODULE_DIRECTORY="${MODULE_DIRECTORY:-/tmp/modules}"
 # Configuration values
 AUTO_UPDATE=$(echo "${1}" | jq -r 'try .["auto-update"]')
 if [[ -z "${AUTO_UPDATE}" || "${AUTO_UPDATE}" == "null" ]]; then
-    AUTO_UPDATE=true
+  AUTO_UPDATE=true
 fi
 
 UPDATE_INTERVAL=$(echo "${1}" | jq -r 'try .["update-interval"]')
 if [[ -z "${UPDATE_INTERVAL}" || "${UPDATE_INTERVAL}" == "null" ]]; then
-    UPDATE_INTERVAL="6h"
+  UPDATE_INTERVAL="6h"
 fi
 
 UPDATE_WAIT_AFTER_BOOT=$(echo "${1}" | jq -r 'try .["update-wait-after-boot"]')
 if [[ -z "${UPDATE_WAIT_AFTER_BOOT}" || "${UPDATE_WAIT_AFTER_BOOT}" == "null" ]]; then
-    UPDATE_WAIT_AFTER_BOOT="10min"
+  UPDATE_WAIT_AFTER_BOOT="10min"
 fi
 
 AUTO_UPGRADE=$(echo "${1}" | jq -r 'try .["auto-upgrade"]')
 if [[ -z "${AUTO_UPGRADE}" || "${AUTO_UPGRADE}" == "null" ]]; then
-    AUTO_UPGRADE=true
+  AUTO_UPGRADE=true
 fi
 
 UPGRADE_INTERVAL=$(echo "$1" | jq -r 'try .["upgrade-interval"]')
 if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
-    UPGRADE_INTERVAL="8h"
+  UPGRADE_INTERVAL="8h"
 fi
 
 UPGRADE_WAIT_AFTER_BOOT=$(echo "${1}" | jq -r 'try .["upgrade-wait-after-boot"]')
 if [[ -z "${UPGRADE_WAIT_AFTER_BOOT}" || "${UPGRADE_WAIT_AFTER_BOOT}" == "null" ]]; then
-    UPGRADE_WAIT_AFTER_BOOT="30min"
+  UPGRADE_WAIT_AFTER_BOOT="30min"
 fi
 
 NOFILE_LIMITS=$(echo "${1}" | jq -r 'try .["nofile-limits"]')
 if [[ -z "${NOFILE_LIMITS}" || "${NOFILE_LIMITS}" == "null" ]]; then
-    NOFILE_LIMITS=false
+  NOFILE_LIMITS=false
 fi
 
 BREW_ANALYTICS=$(echo "${1}" | jq -r 'try .["brew-analytics"]')
 if [[ -z "${BREW_ANALYTICS}" || "${BREW_ANALYTICS}" == "null" ]]; then
-    BREW_ANALYTICS=true
+  BREW_ANALYTICS=true
 fi
 
 DIRECT_PULL=$(echo "${1}" | jq -r 'try .["direct-pull"]')
 if [[ -z "${DIRECT_PULL}" || "${DIRECT_PULL}" == "null" ]]; then
-    DIRECT_PULL=false
+  DIRECT_PULL=false
 fi
 
 INSTALLER_COMMIT=$(echo "${1}" | jq -r 'try .["installer-commit"]')
 if [[ -z "${INSTALLER_COMMIT}" || "${INSTALLER_COMMIT}" == "null" ]]; then
-    INSTALLER_COMMIT="HEAD"
+  INSTALLER_COMMIT="HEAD"
 fi
 
 if [[ "${DIRECT_PULL}" == true ]]; then
-    echo "Downloading Brew from homebrew..."
-    curl -fLsS --retry 5 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
-    echo "Downloaded Brew install script"
-    mkdir -p /var/home
-    mkdir -p /var/roothome
-    chmod +x /tmp/brew-install
-    touch /.dockerenv
-    env --ignore-environment PATH=/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/linuxbrew NONINTERACTIVE=1 /usr/bin/bash /tmp/brew-install
-    rm /.dockerenv
+  echo "Downloading Brew from homebrew..."
+  curl -fLsS --retry 5 --create-dirs "https://raw.githubusercontent.com/Homebrew/install/${INSTALLER_COMMIT}/install.sh" -o /tmp/brew-install
+  echo "Downloaded Brew install script"
+  mkdir -p /var/home
+  mkdir -p /var/roothome
+  chmod +x /tmp/brew-install
+  touch /.dockerenv
+  env --ignore-environment PATH=/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/linuxbrew NONINTERACTIVE=1 /usr/bin/bash /tmp/brew-install
+  rm /.dockerenv
 
-    # pack homebrew
-    tar --zstd -cf /tmp/homebrew-tarball.tar.zst /home/linuxbrew/.linuxbrew
-    rm -rf /home/linuxbrew/.linuxbrew
+  # pack homebrew
+  tar --zstd -cf /tmp/homebrew-tarball.tar.zst /home/linuxbrew/.linuxbrew
+  rm -rf /home/linuxbrew/.linuxbrew
 else
-    # Download pre-packaged Brew from uBlue repo
-    asset_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' \
-        | jq -cr '.[0].assets | map({(.name): .browser_download_url}) | add')
-    case "$OS_ARCH" in
-        x86_64|aarch64)
-            brew_tarball_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".tar.zst"]' <<< "${asset_urls}")
-            brew_sha256_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".sha256"]' <<< "${asset_urls}")
-            ;;
-        *)
-            echo "ERROR: Pre-packaged Brew tarball is not available for architecture ${OS_ARCH}."
-            exit 1
-    esac
+  # Download pre-packaged Brew from uBlue repo
+  assets_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' |
+    jq -cr '[.[] | .assets[]] 
+    | map({(.name): .browser_download_url}) 
+    | add')
+  case "$OS_ARCH" in
+  x86_64 | aarch64)
+    brew_tarball_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".tar.zst"]' <<<"${asset_urls}")
+    brew_sha256_url=$(jq -cr --arg arch "$OS_ARCH" '.["homebrew-" + $arch + ".sha256"]' <<<"${asset_urls}")
+    ;;
+  *)
+    echo "ERROR: Pre-packaged Brew tarball is not available for architecture ${OS_ARCH}."
+    exit 1
+    ;;
+  esac
 
-    echo "Downloading Brew tarball..."
-    curl -fLsS --retry 5 --create-dirs \
-        -o '/tmp/homebrew-tarball.tar.zst' "${brew_tarball_url}" \
-        -o '/tmp/homebrew-tarball.sha256' "${brew_sha256_url}"
-    echo "Downloaded Brew tarball."
+  echo "Downloading Brew tarball..."
+  curl -fLsS --retry 5 --create-dirs \
+    -o '/tmp/homebrew-tarball.tar.zst' "${brew_tarball_url}" \
+    -o '/tmp/homebrew-tarball.sha256' "${brew_sha256_url}"
+  echo "Downloaded Brew tarball."
 
-    echo "Verifying Brew tarball checksum..."
-    expected=$(sed 's/ .*//' '/tmp/homebrew-tarball.sha256')
-    actual=$(sha256sum '/tmp/homebrew-tarball.tar.zst' | sed 's/ .*//')
-    [[ "${expected}" == "${actual}" ]]
-    echo "Checksum verified."
+  echo "Verifying Brew tarball checksum..."
+  expected=$(sed 's/ .*//' '/tmp/homebrew-tarball.sha256')
+  actual=$(sha256sum '/tmp/homebrew-tarball.tar.zst' | sed 's/ .*//')
+  [[ "${expected}" == "${actual}" ]]
+  echo "Checksum verified."
 fi
 
 # Extract Brew tarball to /usr/share/homebrew/ and set ownership to default user (UID 1000)
@@ -254,7 +257,7 @@ if [[ ! -d "/etc/profile.d/" ]]; then
 fi
 if [[ ! -f "/etc/profile.d/brew.sh" ]]; then
   echo "Apply brew path export fix, to solve path conflicts between system & brew programs with same name"
-  cat > /etc/profile.d/brew.sh <<EOF
+  cat >/etc/profile.d/brew.sh <<EOF
 #!/usr/bin/env bash
 if [[ -d /home/linuxbrew/.linuxbrew && \$- == *i* && "\$(/usr/bin/id -u)" != 0 ]]; then
   eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -282,23 +285,23 @@ SERVICE_PRESET_FILE='/usr/lib/systemd/system-preset/20-brew.preset'
 
 # Enable the setup service
 echo "Enabling brew-setup service to install Brew in run-time"
-echo 'enable brew-setup.service' >> "$SERVICE_PRESET_FILE"
+echo 'enable brew-setup.service' >>"$SERVICE_PRESET_FILE"
 
 # Always enable or disable update and upgrade services for consistency
 if [[ "${AUTO_UPDATE}" == true ]]; then
-    echo "Enabling auto-updates for Brew binary"
-    echo 'enable brew-update.timer' >> "$SERVICE_PRESET_FILE"
+  echo "Enabling auto-updates for Brew binary"
+  echo 'enable brew-update.timer' >>"$SERVICE_PRESET_FILE"
 else
-    echo "Disabling auto-updates for Brew binary"
-    echo 'disable brew-update.timer' >> "$SERVICE_PRESET_FILE"
+  echo "Disabling auto-updates for Brew binary"
+  echo 'disable brew-update.timer' >>"$SERVICE_PRESET_FILE"
 fi
 
 if [[ "${AUTO_UPGRADE}" == true ]]; then
-    echo "Enabling auto-upgrades for Brew packages"
-    echo 'enable brew-upgrade.timer' >> "$SERVICE_PRESET_FILE"
+  echo "Enabling auto-upgrades for Brew packages"
+  echo 'enable brew-upgrade.timer' >>"$SERVICE_PRESET_FILE"
 else
-    echo "Disabling auto-upgrades for Brew packages"
-    echo 'disable brew-upgrade.timer' >> "$SERVICE_PRESET_FILE"
+  echo "Disabling auto-upgrades for Brew packages"
+  echo 'disable brew-upgrade.timer' >>"$SERVICE_PRESET_FILE"
 fi
 
 # Apply presets defined above
@@ -313,7 +316,7 @@ fi
 # like secureblue: https://github.com/secureblue/secureblue/blob/live/config/scripts/homebrewanalyticsoptout.sh
 if [[ "${BREW_ANALYTICS}" == false ]]; then
   if [[ ! -f "/etc/environment" ]]; then
-    echo "" > "/etc/environment" # touch fails for some reason, probably a bug with it
+    echo "" >"/etc/environment" # touch fails for some reason, probably a bug with it
   fi
   CURRENT_ENVIRONMENT=$(cat "/etc/environment")
   CURRENT_HOMEBREW_CONFIG=$(awk -F= '/HOMEBREW_NO_ANALYTICS/ {print $0}' "/etc/environment")
@@ -323,13 +326,13 @@ if [[ "${BREW_ANALYTICS}" == false ]]; then
       sed -i 's/HOMEBREW_NO_ANALYTICS=0/HOMEBREW_NO_ANALYTICS=1/' "/etc/environment"
     elif [[ -z "${CURRENT_HOMEBREW_CONFIG}" ]]; then
       echo "Disabling Brew analytics"
-      echo "HOMEBREW_NO_ANALYTICS=1" >> "/etc/environment"
+      echo "HOMEBREW_NO_ANALYTICS=1" >>"/etc/environment"
     elif [[ "${CURRENT_HOMEBREW_CONFIG}" == "HOMEBREW_NO_ANALYTICS=1" ]]; then
       echo "Brew analytics are already disabled!"
     fi
   elif [[ -z "${CURRENT_ENVIRONMENT}" ]]; then
     echo "Disabling Brew analytics"
-    echo "HOMEBREW_NO_ANALYTICS=1" > "/etc/environment"
+    echo "HOMEBREW_NO_ANALYTICS=1" >"/etc/environment"
   fi
 fi
 
