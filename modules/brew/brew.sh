@@ -111,7 +111,7 @@ if [[ "${DIRECT_PULL}" == true ]]; then
   rm -rf /home/linuxbrew/.linuxbrew
 else
   # Download pre-packaged Brew from uBlue repo
-  assets_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' |
+  asset_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' |
     jq -cr '[.[] | .assets[]] 
     | map({(.name): .browser_download_url}) 
     | add')
