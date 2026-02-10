@@ -12,9 +12,6 @@ def main [] {
 
     let systemRemotes = (flatpak remotes --system --columns name | split row "\n")
     if (not $keepFedora and ($systemRemotes | any {|remote| $remote == "fedora" or $remote == "fedora-testing"})) {
-        if ('/usr/lib/fedora-third-party/fedora-third-party-opt-out' | path exists) {
-            /usr/lib/fedora-third-party/fedora-third-party-opt-out
-        }
         if ('/usr/bin/fedora-third-party' | path exists) {
             /usr/bin/fedora-third-party disable
         }
