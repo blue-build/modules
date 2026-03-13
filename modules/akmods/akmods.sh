@@ -53,9 +53,7 @@ tar -xvzf /tmp/akmods-rpms/"$NVIDIA_TARGZ" -C /tmp/
 mv /tmp/rpms/* /tmp/akmods-rpms/
 
 # Install Nvidia RPMs
-curl -fLsS --retry 5 -o /tmp/nvidia-install.sh https://raw.githubusercontent.com/ublue-os/main/main/build_files/nvidia-install.sh
-chmod +x /tmp/nvidia-install.sh
-IMAGE_NAME="${BASE_IMAGE_NAME}" RPMFUSION_MIRROR="" /tmp/nvidia-install.sh
+IMAGE_NAME="${BASE_IMAGE_NAME}" RPMFUSION_MIRROR="" /tmp/akmods-rpms/ublue-os/nvidia-install.sh
 rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json
 ln -sf libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
 
