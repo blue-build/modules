@@ -20,7 +20,7 @@ if [[ -z "${UPGRADE_INTERVAL}" || "${UPGRADE_INTERVAL}" == "null" ]]; then
     UPGRADE_INTERVAL="8h"
 fi
 
-# Configuration for enabling additional repos (outside of 'bincache')
+# Configuration for enabling additional repos (outside of 'soarpkgs')
 ADDITIONAL_REPOS=$(echo "${1}" | jq -r 'try .["additional-repos"]')
 mkdir -p "/usr/share/bluebuild/soar"
 if [[ "${ADDITIONAL_REPOS}" == "true" ]]; then
