@@ -2,12 +2,8 @@
 
 The `soar` module installs & integrates the [`soar`](https://github.com/pkgforge/soar) package manager as an alternative to [Homebrew / Linuxbrew](https://brew.sh/).
 
-[`soar`](https://github.com/pkgforge/soar) is a package manager, which manages the installation of portable & static binaries.
-[PkgForge's](https://github.com/pkgforge) `bincache` repo is used by default for the binaries.
-Other repos that contain GUI applications are disabled to make `soar` focused on CLI binaries only.
-This is configurable if you wish to have a package manager for GUI applications, see [`Configuration options`](#configuration-options).
-
-The repositories with prebuilt binaries use the GitHub Container registry as their backend and all their packages are published there.
+[`soar`](https://github.com/pkgforge/soar) is a package manager, which manages the installation of portable & static binaries & applications.
+[PkgForge's](https://github.com/pkgforge) `soarpkgs` repo is used by default for the packages.
 
 Compared to [Homebrew / Linuxbrew](https://brew.sh/):
 - there are no managed dependencies for packages by design (single package = single binary).
@@ -24,9 +20,11 @@ For more information, please see the [official documentation of `soar`](https://
 
 ## Repos
 
-To see the useful information about source, reliability, trust & security of all `soar` repos, including external ones, you can open the links below:
-- https://docs.pkgforge.dev/repositories
-- https://docs.pkgforge.dev/repositories/external
+Currently, only the default `soarpkgs` repo exists.  
+Third-party repos are possible to be made and used, but not by default in this module.
+
+Historically, when this module was initially introduced, a good number of `pkgforge` repos existed.  
+However, the previous maintainer of `pkgforge` repos Azathothas (also known as Ajam) quit and its maintainership was handled to the `soar` developer QaidVoid, who decided to remove all these repos and focus on the default repo `soarpkgs`.
 
 ## Local modification
 
