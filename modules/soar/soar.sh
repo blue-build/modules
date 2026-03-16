@@ -6,9 +6,7 @@ set -euo pipefail
 echo "Downloading & installing 'soar' package manager"
 REPO="pkgforge/soar"
 LATEST_VER="$(basename $(curl -fLsS --retry 5 -o /dev/null -w '%{url_effective}' https://github.com/${REPO}/releases/latest))"
-# Assuming that ARM64 custom images will be built from ARM64 runners for this working detection
-ARCH="$(uname -m)"
-curl -fLsS --retry 5 --create-dirs "https://github.com/${REPO}/releases/download/${LATEST_VER}/soar-${ARCH}-linux" -o "/usr/bin/soar"
+curl -fLsS --retry 5 --create-dirs "https://github.com/${REPO}/releases/download/${LATEST_VER}/soar-${OS_ARCH}-linux" -o "/usr/bin/soar"
 chmod +x "/usr/bin/soar"
 
 # Configuration values for package auto-upgrades (using upgrade term here from brew)
