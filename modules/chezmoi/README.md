@@ -40,7 +40,7 @@ systemctl enable --user chezmoi-init.service chezmoi-update.timer
 To manually enable the services for all users, run the following command with sudo:
 
 ```bash
-sudo systemctl enable --user chesmoi-init.service chezmoi-update.timer
+sudo systemctl enable --global chezmoi-init.service chezmoi-update.timer
 ```
 
 To turn on lingering for a given user, run the following command with sudo:
