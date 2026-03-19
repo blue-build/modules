@@ -46,9 +46,15 @@ jobs:
 
       - uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
+      - name: Lowercase container registry name
+        id: registry
+        shell: bash
+        run: |
+          echo "registry=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >>"${GITHUB_OUTPUT}"
+
       - name: Run build and push script
         env:
-          REGISTRY: ghcr.io/${{ github.repository_owner }}
+          REGISTRY: ${{ steps.registry.outputs.registry }}
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
           GH_EVENT_NAME: ${{ github.event_name }}
           GH_PR_NUMBER: ${{ github.event.number }}
