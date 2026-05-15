@@ -49,7 +49,7 @@ def main [config: string]: nothing -> nothing {
       print -e $"(ansi green)Running snippet:\n(ansi cyan)($snippet)(ansi reset)"
 
       try {
-        /bin/sh -c $'($snippet)'
+        /bin/sh -c $'set -eu; ($snippet)'
         print -e $"(ansi green)Finished running snippet:\n(ansi cyan)($snippet)(ansi reset)"
       } catch {
         return (error make {
