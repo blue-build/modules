@@ -1,0 +1,17 @@
+name: custom-kernel
+shortdesc: Install a custom kernel on Fedora-based images.
+example: |
+  type: custom-kernel
+  kernel: cachyos-lto   # Default: cachyos-lto, can be: cachyos, cachyos-lts, cachyos-rt, cachyos-lts-lto
+  initramfs: true       # Default: false
+  nvidia: true          # Default: false
+  sign:                 # Optional
+    key: /tmp/certs/MOK.key
+    cert: /path/to/MOK.pem
+    mok-password: BlueBuild
+  secrets:
+  - type: file
+    source: ./MOK.key
+    mount: 
+      type: file
+      destination: /tmp/certs/MOK.key
