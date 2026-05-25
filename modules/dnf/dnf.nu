@@ -514,17 +514,21 @@ def install_pkgs [install: record]: nothing -> nothing {
       ] | flatten))
   }
 
-  # Get all the entries that have a repo specified.
-  let repo_install_list = $install.packages
+  # Get all the entries that have a repo and/or packages specified as an object.
+  let object_install_list = $install.packages
     | where {|pkg|
-      'repo' in $pkg and 'packages' in $pkg
+      ($pkg | describe) == 'record'
     }
 
-  for $repo_install in $repo_install_list {
-    let repo = $repo_install.repo
-    let packages = $repo_install.packages
+  for $object_install in $object_install_list {
+    let repo = $object_install.repo
+    let packages = $object_install.packages
 
-    print $'(ansi green)Installing packages from repo (ansi cyan)($repo)(ansi green):(ansi reset)'
+    if $repo != null {
+      print $'(ansi green)Installing packages from repo (ansi cyan)($repo)(ansi green):(ansi reset)'
+    } else {
+      print $'(ansi green)Installing packages:(ansi reset)'
+    }
     $packages
       | each {
         print $'- (ansi cyan)($in)(ansi reset)'
@@ -532,9 +536,8 @@ def install_pkgs [install: record]: nothing -> nothing {
 
     (dnf
       install
-      --repoid
-      $repo
-      --opts $repo_install
+      --repoid $repo
+      --opts $object_install
       --global-opts $install
       $packages)
   }

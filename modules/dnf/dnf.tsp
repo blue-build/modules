@@ -93,14 +93,14 @@ model DnfRepoCoprEnable {
 
 model DnfInstall {
   /** List of RPM packages to install. */
-  packages: Array<string | DnfInstallRepo>;
+  packages: Array<string | DnfInstallObject>;
 
   ...DnfInstallCommon;
 }
 
-model DnfInstallRepo {
+model DnfInstallObject {
   /** The repo to use when installing packages */
-  repo: string;
+  repo?: string;
 
   /** List of RPM packages to install. */
   packages: Array<string>;
@@ -164,6 +164,9 @@ model DnfInstallCommon {
 
   /** Whether to allow erasing (removal) of packages in case of dependency problems. */
   `allow-erasing`?: boolean = false;
+
+  /** Disable OpenPGP signature checking, incase a package has faulty signatures (not secure, only set when needed). */
+  `no-gpgchecks`?: boolean = false;
 
   /** A list of packages to prevent from being installed */
   exclude?: Array<string>;
