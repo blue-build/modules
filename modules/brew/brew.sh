@@ -87,7 +87,7 @@ fi
 
 DIRECT_PULL=$(echo "${1}" | jq -r 'try .["direct-pull"]')
 if [[ -z "${DIRECT_PULL}" || "${DIRECT_PULL}" == "null" ]]; then
-  DIRECT_PULL=false
+  DIRECT_PULL=true
 fi
 
 INSTALLER_COMMIT=$(echo "${1}" | jq -r 'try .["installer-commit"]')
@@ -112,8 +112,8 @@ if [[ "${DIRECT_PULL}" == true ]]; then
 else
   # Download pre-packaged Brew from uBlue repo
   asset_urls=$(curl -fLsS --retry 5 'https://api.github.com/repos/ublue-os/packages/releases' |
-    jq -cr '[.[] | .assets[]] 
-    | map({(.name): .browser_download_url}) 
+    jq -cr '[.[] | .assets[]]
+    | map({(.name): .browser_download_url})
     | add')
   case "$OS_ARCH" in
   x86_64 | aarch64)
