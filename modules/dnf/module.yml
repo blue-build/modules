@@ -24,6 +24,9 @@ example: |
       - kubectl.rpm
     exclude:
       - alacritty
+  builddep:
+    packages:
+      - python3
   remove:
     packages:
       - firefox

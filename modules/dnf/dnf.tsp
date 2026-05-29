@@ -32,6 +32,9 @@ model DnfModuleV1 {
   /** Configuration of RPM packages install. */
   install?: DnfInstall;
 
+  /** Configuration of RPM build dependencies install. */
+  builddep?: DnfBuilddep;
+
   /** List of configurations for replacing packages from another repo. */
   replace?: Array<DnfReplace>;
 }
@@ -94,6 +97,13 @@ model DnfRepoCoprEnable {
 model DnfInstall {
   /** List of RPM packages to install. */
   packages: Array<string | DnfInstallRepo>;
+
+  ...DnfInstallCommon;
+}
+
+model DnfBuilddep {
+  /** List of RPM source package names to install build dependencies for. */
+  packages: Array<string>;
 
   ...DnfInstallCommon;
 }

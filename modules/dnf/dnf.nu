@@ -540,6 +540,28 @@ def install_pkgs [install: record]: nothing -> nothing {
   }
 }
 
+# Install build dependencies.
+def builddep_pkgs [builddep: record]: nothing -> nothing {
+  let builddep = $builddep
+    | default [] packages
+  let builddep_list = $builddep
+    | get packages
+    | each { str trim }
+
+  if ($builddep_list | is-not-empty) {
+    print $'(ansi green)Installing build dependencies:(ansi reset)'
+    $builddep_list
+      | each {
+        print $'- (ansi cyan)($in)(ansi reset)'
+      }
+
+    (dnf
+      builddep
+      --opts $builddep
+      $builddep_list)
+  }
+}
+
 # Perform a replace operation for a list of packages that
 # you want to replace from a specific repo.
 def replace_pkgs [replace_list: list]: nothing -> nothing {
@@ -619,6 +641,7 @@ def main [config: string]: nothing -> nothing {
     | default {} group-install
     | default {} remove
     | default {} install
+    | default {} builddep
     | default [] optfix
     | default [] replace
   let should_cleanup = $config.repos
@@ -636,6 +659,7 @@ def main [config: string]: nothing -> nothing {
   group_install $config.group-install
   remove_pkgs $config.remove
   install_pkgs $config.install
+  builddep_pkgs $config.builddep
   replace_pkgs $config.replace
 
   if $should_cleanup {

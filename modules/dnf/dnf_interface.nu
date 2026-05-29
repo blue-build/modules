@@ -34,6 +34,36 @@ export def "dnf install" [
   }
 }
 
+export def "dnf builddep" [
+  --opts: record
+  packages: list
+]: nothing -> nothing {
+  check_dnf_plugins
+  let dnf = dnf version
+
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
+  try {
+    (^$dnf.path
+      -y
+      ($opts | weak_arg)
+      builddep
+      ...($opts | install_args)
+      ...$packages)
+  } catch {|e|
+    print $'($e.msg)'
+    exit 1
+  }
+}
+
 export def "dnf remove" [
   --opts: record
   packages: list
@@ -488,4 +518,3 @@ def check_copr []: string -> string {
 
   $in
 }
-

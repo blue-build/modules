@@ -16,6 +16,7 @@ This module is capable of:
 - Package Management
   - Installing packages from RPM urls, local RPM files, or package repositories
   - Installing packages from a specific repository
+  - Installing build dependencies for source packages
   - Removing packages
   - Replacing installed packages with versions from another repository
 - Optfix
@@ -177,6 +178,18 @@ group-install:
     - wm-package-2
 ```
 
+#### Build Dependencies
+
+- Installs package build dependencies using `dnf builddep`
+
+```yaml
+type: dnf
+builddep:
+  packages:
+    - podman
+    - python3
+```
+
 #### Replace Packages
 - You can specify one or more packages that will be swapped from another repo
 - This process uses `distro-sync` to perform this operation
@@ -205,7 +218,7 @@ replace:
 
 #### Options
 
-The following options can specified in the package installation, group installation, and package replacement sections.
+The following options can specified in the package installation, build dependency installation, group installation, and package replacement sections.
 
 - `install-weak-deps` enables installation of the weak dependencies of RPMs
   - Enabled by default
@@ -244,6 +257,10 @@ replace:
       ...
     packages:
       ...
+builddep:
+  skip-unavailable: true
+  packages:
+    - podman
 ```
 
 ### Removing
