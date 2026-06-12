@@ -48,7 +48,7 @@ model BrewModuleV1 {
   /** Whether to skip ublue's cache and directly install from Homebrew using the official installer.
    * Ublue provides a tarball cache of a Homebrew installation.
    */
-  `direct-pull`?: boolean = false;
+  `direct-pull`?: boolean = true;
 
   /** The commit to use when directly pulling the Homebrew install script.
    * Defaults to "HEAD".
