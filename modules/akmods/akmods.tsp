@@ -31,7 +31,8 @@ model AkmodsModuleV1 {
     | "surface"
     | "coreos-stable"
     | "coreos-testing"
-    | "bazzite" = "main";
+    | "bazzite"
+    | "ogc" = "main";
 
   /** List of akmods to install.
    * See all available akmods here: https://github.com/ublue-os/akmods#kmod-packages
