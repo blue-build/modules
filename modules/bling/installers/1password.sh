@@ -15,14 +15,6 @@ GID_ONEPASSWORDCLI="${GID_ONEPASSWORDCLI:-1600}"
 
 echo "Installing 1Password"
 
-# On libostree systems, /opt is a symlink to /var/opt,
-# which actually only exists on the live system. /var is
-# a separate mutable, stateful FS that's overlaid onto
-# the ostree rootfs. Therefore we need to install it into
-# /usr/lib/1Password instead, and dynamically create a
-# symbolic link /opt/1Password => /usr/lib/1Password upon
-# boot.
-
 # Prepare staging directory
 mkdir -p /var/opt # -p just in case it exists
 # for some reason...
@@ -47,23 +39,16 @@ rpm-ostree install 1password 1password-cli
 # Clean up the yum repo (updates are baked into new images)
 rm /etc/yum.repos.d/1password.repo -f
 
-# And then we do the hacky dance!
-mv /opt/1Password /usr/lib/1Password # move this over here
-
-# Create a symlink /usr/bin/1password => /usr/lib/1Password/1password
-rm /usr/bin/1password
-ln -s /usr/lib/1Password/1password /usr/bin/1password
-
 #####
 # The following is a bastardization of "after-install.sh"
 # which is normally packaged with 1password. You can compare with
-# /usr/lib/1Password/after-install.sh if you want to see.
+# /opt/1Password/after-install.sh if you want to see.
 
-cd /usr/lib/1Password
+cd /opt/1Password
 
 # chrome-sandbox requires the setuid bit to be specifically set.
 # See https://github.com/electron/electron/issues/17972
-chmod 4755 /usr/lib/1Password/chrome-sandbox
+chmod 4755 /opt/1Password/chrome-sandbox
 
 # Normally, after-install.sh would create a group,
 # "onepassword", right about now. But if we do that during
@@ -81,21 +66,21 @@ chmod 4755 /usr/lib/1Password/chrome-sandbox
 
 # BrowserSupport binary needs setgid. This gives no extra permissions to the binary.
 # It only hardens it against environmental tampering.
-BROWSER_SUPPORT_PATH="/usr/lib/1Password/1Password-BrowserSupport"
+BROWSER_SUPPORT_PATH="/opt/1Password/1Password-BrowserSupport"
 
 
 # Add .desktop file and icons
 if [ -d /usr/share/applications ]; then
   # xdg-desktop-menu will only be available if xdg-utils is installed, which is likely but not guaranteed
   if [ -n "$(which xdg-desktop-menu)" ]; then
-    xdg-desktop-menu install --mode system --novendor /usr/lib/1Password/resources/1password.desktop
+    xdg-desktop-menu install --mode system --novendor /opt/1Password/resources/1password.desktop
     xdg-desktop-menu forceupdate
   else
-    install -m0644 /usr/lib/1Password/resources/1password.desktop /usr/share/applications
+    install -m0644 /opt/1Password/resources/1password.desktop /usr/share/applications
   fi
 fi
 if [ -d /usr/share/icons ]; then
-  cp -rf /usr/lib/1Password/resources/icons/* /usr/share/icons/
+  cp -rf /opt/1Password/resources/icons/* /usr/share/icons/
   # Update icon cache
   gtk-update-icon-cache -f -t /usr/share/icons/hicolor/
 fi
@@ -120,9 +105,3 @@ EOF
 # They don't magically set the GID like we need them to.
 rm -f /usr/lib/sysusers.d/30-rpmostree-pkg-group-onepassword.conf
 rm -f /usr/lib/sysusers.d/30-rpmostree-pkg-group-onepassword-cli.conf
-
-# Register path symlink
-# We do this via tmpfiles.d so that it is created by the live system.
-cat >/usr/lib/tmpfiles.d/onepassword.conf <<EOF
-L  /opt/1Password  -  -  -  -  /usr/lib/1Password
-EOF
