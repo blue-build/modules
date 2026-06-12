@@ -19,7 +19,7 @@ export def "dnf install" [
   try {
     (^$dnf.path
       -y
-      ($opts | weak_arg --global-config $global_opts)
+      ...($opts | pre_args --global-config $global_opts)
       install
       ...(if $repoid != null {
         [--repoid $repoid]
@@ -223,7 +223,7 @@ export def "dnf distro-sync" [
   try {
     (^$dnf.path
       -y
-      ($opts | weak_arg)
+      ...($opts | pre_args)
       distro-sync
       ...($opts | install_args)
       --repo $repo
@@ -259,7 +259,7 @@ export def "dnf group install" [
   try {
     (^$dnf.path
       -y
-      ($opts | weak_arg)
+      ...($opts | pre_args)
       group
       install
       ...($args)
@@ -408,12 +408,12 @@ def install_args [
   }
 
   if (do $check_filter 'skip-broken') and ($install | get skip-broken) {
-    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    print $'(ansi yellow)Setting arg (ansi cyan)--skip-broken(ansi reset)'
     $args = $args | append $'--skip-broken'
   }
 
   if (do $check_filter 'allow-erasing') and ($install | get allow-erasing) {
-    print $'(ansi yellow)Setting arg (ansi cyan)--skip-unavailable(ansi reset)'
+    print $'(ansi yellow)Setting arg (ansi cyan)--allowerasing(ansi reset)'
     $args = $args | append $'--allowerasing'
   }
 
@@ -430,10 +430,10 @@ def install_args [
   $args
 }
 
-# Generate a weak deps argument
-def weak_arg [
+# Generate pre-subcommand arguments (global options like weak-deps, no-gpgchecks)
+def pre_args [
   --global-config: record
-]: record -> string {
+]: record -> list<string> {
   let opts = $in | default {}
   let global_config = $global_config | default {}
   let install = $opts
@@ -441,12 +441,25 @@ def weak_arg [
       $global_config.install-weak-deps?
         | default true
     ) install-weak-deps
+    | default (
+      $global_config.no-gpgchecks?
+        | default false
+    ) no-gpgchecks
+
+  mut args = []
 
   if $install.install-weak-deps {
-    '--setopt=install_weak_deps=True'
+    $args = $args | append '--setopt=install_weak_deps=True'
   } else {
-    '--setopt=install_weak_deps=False'
+    $args = $args | append '--setopt=install_weak_deps=False'
   }
+
+  if $install.no-gpgchecks {
+    print $'(ansi yellow)Setting arg (ansi cyan)--no-gpgchecks(ansi reset)'
+    $args = $args | append '--no-gpgchecks'
+  }
+
+  $args
 }
 
 # Handles installing necessary plugins for repo management.
@@ -488,4 +501,3 @@ def check_copr []: string -> string {
 
   $in
 }
-
