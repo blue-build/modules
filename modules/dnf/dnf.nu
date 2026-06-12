@@ -517,7 +517,7 @@ def install_pkgs [install: record]: nothing -> nothing {
   # Get all the entries that have a repo and/or packages specified as an object.
   let object_install_list = $install.packages
     | where {|pkg|
-      ($pkg | describe) == 'record'
+      ($pkg | describe) | str starts-with 'record'
     }
 
   for $object_install in $object_install_list {
