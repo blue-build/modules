@@ -618,9 +618,7 @@ def builddep_pkgs [builddep: record]: nothing -> nothing {
 
   # Get all the entries that have a repo and/or packages specified as an object.
   let object_builddep_list = $builddep.packages
-    | where {|pkg|
-      ($pkg | describe) | str starts-with 'record'
-    }
+    | where { describe | str starts-with 'record' }
 
   for $object_builddep in $object_builddep_list {
     let repo = $object_builddep.repo
