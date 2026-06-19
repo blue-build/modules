@@ -567,9 +567,7 @@ def builddep_pkgs [builddep: record]: nothing -> nothing {
     | each {|pkg|
       [$env.CONFIG_DIRECTORY dnf $pkg] | path join
     }
-    | where {|pkg|
-      ($pkg | path exists)
-    }
+    | where { path exists }
   let normal_list = $builddep_list
     | where {|pkg|
       not (
