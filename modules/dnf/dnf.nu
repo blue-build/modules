@@ -7,7 +7,7 @@ const NEGATIVO_URL = 'https://negativo17.org/repos/fedora-negativo17.repo'
 const RPMFUSION = 'rpmfusion'
 
 # Handle adding/removing repo files and COPR repos.
-# 
+#
 # This command returns an object containing the repos
 # that were added to allow for cleaning up afterwards.
 def repos [$repos: record]: nothing -> record {
@@ -227,7 +227,7 @@ def add_repos [$repos: list]: nothing -> list<string> {
   # Get a list of paths of all new repo files added
   let repo_files = $repos
     | each {|repo|
-      [/ etc yum.repos.d ($repo | path basename)] | path join 
+      [/ etc yum.repos.d ($repo | path basename)] | path join
     }
 
   # Get a list of info for every repo installed
