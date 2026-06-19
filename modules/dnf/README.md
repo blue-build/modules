@@ -16,6 +16,7 @@ This module is capable of:
 - Package Management
   - Installing packages from RPM urls, local RPM files, or package repositories
   - Installing packages from a specific repository
+  - Installing build dependencies via `dnf builddep`
   - Removing packages
   - Replacing installed packages with versions from another repository
 - Optfix
@@ -120,6 +121,18 @@ install:
   packages:
     - package-1
     - package-2
+```
+
+#### Build Dependencies (`builddep`)
+
+Use `builddep` to install build requirements for source packages/specs. The example below installs build-time dependencies for `nano` and skips unavailable packages.
+
+```yaml
+type: dnf
+builddep:
+  skip-unavailable: true
+  packages:
+    - nano
 ```
 
 #### Exclude packages

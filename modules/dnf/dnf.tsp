@@ -32,6 +32,9 @@ model DnfModuleV1 {
   /** Configuration of RPM packages install. */
   install?: DnfInstall;
 
+  /** Configuration of RPM build dependency installation. */
+  builddep?: DnfBuilddep;
+
   /** List of configurations for replacing packages from another repo. */
   replace?: Array<DnfReplace>;
 }
@@ -103,6 +106,23 @@ model DnfInstallObject {
   repo?: string;
 
   /** List of RPM packages to install. */
+  packages: Array<string>;
+
+  ...DnfInstallCommon;
+}
+
+model DnfBuilddep {
+  /** List of RPM packages/specs to resolve build dependencies for. */
+  packages: Array<string | DnfBuilddepObject>;
+
+  ...DnfInstallCommon;
+}
+
+model DnfBuilddepObject {
+  /** The repo to use when resolving build dependencies */
+  repo?: string;
+
+  /** List of RPM packages/specs to resolve build dependencies for. */
   packages: Array<string>;
 
   ...DnfInstallCommon;

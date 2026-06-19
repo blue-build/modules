@@ -543,6 +543,108 @@ def install_pkgs [install: record]: nothing -> nothing {
   }
 }
 
+# Install build dependencies.
+#
+# You can specify a list of packages/specs to resolve build dependencies for,
+# and you can specify a list of packages/specs for a specific repo.
+def builddep_pkgs [builddep: record]: nothing -> nothing {
+  let builddep = $builddep
+    | default [] packages
+
+  # Gather lists of the various ways a package is resolved
+  # to report back to the user.
+  let builddep_list = $builddep.packages
+    | where {|pkg|
+      ($pkg | describe) == 'string'
+    }
+    | str replace --all '%OS_VERSION%' $env.OS_VERSION
+    | str trim
+  let http_list = $builddep_list
+    | where {|pkg|
+      ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
+    }
+  let local_list = $builddep_list
+    | each {|pkg|
+      [$env.CONFIG_DIRECTORY dnf $pkg] | path join
+    }
+    | where {|pkg|
+      ($pkg | path exists)
+    }
+  let normal_list = $builddep_list
+    | where {|pkg|
+      not (
+        ($pkg | str starts-with 'https://') or ($pkg | str starts-with 'http://')
+      ) and not (
+        [$env.CONFIG_DIRECTORY dnf $pkg]
+          | path join
+          | path exists
+      )
+    }
+
+  if ($builddep_list | is-not-empty) {
+    if ($http_list | is-not-empty) {
+      print $'(ansi green)Installing build dependencies for packages found directly from URL:(ansi reset)'
+      $http_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+    }
+
+    if ($local_list | is-not-empty) {
+      print $'(ansi green)Installing build dependencies for local packages:(ansi reset)'
+      $local_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+    }
+
+    if ($normal_list | is-not-empty) {
+      print $'(ansi green)Installing build dependencies:(ansi reset)'
+      $normal_list
+        | each {
+          print $'- (ansi cyan)($in)(ansi reset)'
+        }
+    }
+
+    (dnf
+      builddep
+      --opts $builddep
+      ([
+        $http_list
+        $local_list
+        $normal_list
+      ] | flatten))
+  }
+
+  # Get all the entries that have a repo and/or packages specified as an object.
+  let object_builddep_list = $builddep.packages
+    | where {|pkg|
+      ($pkg | describe) | str starts-with 'record'
+    }
+
+  for $object_builddep in $object_builddep_list {
+    let repo = $object_builddep.repo
+    let packages = $object_builddep.packages
+
+    if $repo != null {
+      print $'(ansi green)Installing build dependencies from repo (ansi cyan)($repo)(ansi green):(ansi reset)'
+    } else {
+      print $'(ansi green)Installing build dependencies:(ansi reset)'
+    }
+    $packages
+      | each {
+        print $'- (ansi cyan)($in)(ansi reset)'
+      }
+
+    (dnf
+      builddep
+      --repoid $repo
+      --opts $object_builddep
+      --global-opts $builddep
+      $packages)
+  }
+}
+
 # Perform a replace operation for a list of packages that
 # you want to replace from a specific repo.
 def replace_pkgs [replace_list: list]: nothing -> nothing {
@@ -622,6 +724,7 @@ def main [config: string]: nothing -> nothing {
     | default {} group-install
     | default {} remove
     | default {} install
+    | default {} builddep
     | default [] optfix
     | default [] replace
   let should_cleanup = $config.repos
@@ -638,6 +741,7 @@ def main [config: string]: nothing -> nothing {
   group_remove $config.group-remove
   group_install $config.group-install
   remove_pkgs $config.remove
+  builddep_pkgs $config.builddep
   install_pkgs $config.install
   replace_pkgs $config.replace
 

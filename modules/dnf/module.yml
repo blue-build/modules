@@ -24,6 +24,12 @@ example: |
       - kubectl.rpm
     exclude:
       - alacritty
+  builddep:
+    packages:
+      - meson
+      - repo: fedora
+        packages:
+          - ffmpeg
   remove:
     packages:
       - firefox

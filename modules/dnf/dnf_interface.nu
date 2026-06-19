@@ -34,12 +34,49 @@ export def "dnf install" [
   }
 }
 
+export def "dnf builddep" [
+  --opts: record
+  --global-opts: record
+  --repoid: string
+  packages: list
+]: nothing -> nothing {
+  let dnf = dnf version
+  check_dnf_plugins
+
+  if ($packages | is-empty) {
+    return (error make {
+      msg: 'At least one package is required'
+      label: {
+        text: 'Packages'
+        span: (metadata $packages).span
+      }
+    })
+  }
+
+  try {
+    (^$dnf.path
+      -y
+      ...($opts | pre_args --global-config $global_opts)
+      builddep
+      ...(if $repoid != null {
+        [--repoid $repoid]
+      } else {
+        []
+      })
+      ...($opts | install_args --global-config $global_opts)
+      ...$packages)
+  } catch {|e|
+    print $'($e.msg)'
+    exit 1
+  }
+}
+
 export def "dnf remove" [
   --opts: record
   packages: list
 ]: nothing -> nothing {
   let dnf = dnf version
-  
+
   if ($packages | is-empty) {
     return (error make {
       msg: 'At least one package is required'
@@ -73,7 +110,7 @@ export def "dnf config-manager addrepo" [
 ]: nothing -> nothing {
   check_dnf_plugins
   let dnf = dnf version
-  
+
   try {
     match $dnf.command {
       "dnf4" => {
@@ -100,7 +137,7 @@ export def "dnf config-manager setopt" [
 ]: nothing -> nothing {
   check_dnf_plugins
   let dnf = dnf version
-  
+
   if ($opts | is-empty) {
     return (error make {
       msg: 'At least one option is required'
@@ -140,7 +177,7 @@ export def "dnf copr enable" [
 ]: nothing -> nothing {
   check_dnf_plugins
   let dnf = dnf version
-  
+
   try {
     ^$dnf.path -y copr enable ($copr | check_copr) ...(
       if $chroot == null {
@@ -158,7 +195,7 @@ export def "dnf copr enable" [
 export def "dnf copr disable" [copr: string]: nothing -> nothing {
   check_dnf_plugins
   let dnf = dnf version
-  
+
   try {
     ^$dnf.path -y copr disable ($copr | check_copr)
   } catch {|e|
@@ -209,7 +246,7 @@ export def "dnf distro-sync" [
   packages: list
 ]: nothing -> nothing {
   let dnf = dnf version
-  
+
   if ($packages | is-empty) {
     return (error make {
       msg: 'At least one package is required'
@@ -239,7 +276,7 @@ export def "dnf group install" [
   packages: list
 ]: nothing -> nothing {
   let dnf = dnf version
-  
+
   if ($packages | is-empty) {
     return (error make {
       msg: 'At least one package is required'
@@ -274,7 +311,7 @@ export def "dnf group remove" [
   packages: list
 ]: nothing -> nothing {
   let dnf = dnf version
-  
+
   if ($packages | is-empty) {
     return (error make {
       msg: 'At least one package is required'
