@@ -1,0 +1,18 @@
+name: bootc-hooks
+shortdesc: The bootc-hooks module allows to run scripts on boot, when image updated or switched
+example: |
+  type: bootc-hooks
+  system:
+    boot:
+      - script-to-run-on-boot.sh
+    update:
+      - script-to-run-on-update.sh
+    switch:
+      - script-to-run-on-switch.sh
+  user:
+    boot:
+      - user-script-on-boot.sh
+    update:
+      - user-script-on-update.sh
+    switch:
+      - user-script-on-switch.sh
