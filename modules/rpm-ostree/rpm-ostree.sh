@@ -39,12 +39,6 @@ if [[ ${#KEYS[@]} -gt 0 ]]; then
     done
 fi
 
-# Create symlinks to fix packages that create directories in /opt
-get_json_array OPTFIX 'try .["optfix"][]' "$1"
-if [[ ${#OPTFIX[@]} -gt 0 ]]; then
-  echo "WARNING: optfix in this module is deprecated in favor of the built-in functionality of BlueBuild"
-fi
-
 get_json_array INSTALL_PKGS 'try .["install"][]' "$1"
 get_json_array REMOVE_PKGS 'try .["remove"][]' "$1"
 

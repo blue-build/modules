@@ -19,7 +19,11 @@ model RpmOstreeModuleV1 {
   /** List of links to key files to import for installing from custom repositories. */
   keys?: Array<string>;
 
-  /** DEPRECATED: List of folder names under /opt/ to enable for installing into. */
+  /** DEPRECATED: This does nothing.
+   *
+   * Optfix procedures are done automatically by the CLI.
+   * This option will be removed in the future.
+   */
   optfix?: Array<string>;
 
   /** List of RPM packages to install. */
