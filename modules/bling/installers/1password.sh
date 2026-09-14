@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ouex pipefail
+set -euxo pipefail
 
 #### Variables
 
@@ -16,8 +16,7 @@ GID_ONEPASSWORDCLI="${GID_ONEPASSWORDCLI:-1600}"
 echo "Installing 1Password"
 
 # Prepare staging directory
-mkdir -p /var/opt # -p just in case it exists
-# for some reason...
+mkdir -p /var/opt 
 
 # Setup repo
 cat << EOF > /etc/yum.repos.d/1password.repo
@@ -70,13 +69,24 @@ BROWSER_SUPPORT_PATH="/opt/1Password/1Password-BrowserSupport"
 
 
 # Add .desktop file and icons
-if [ -d /usr/share/applications ]; then
+# The RPM ships .desktop files and icons directly to /usr/share/applications
+# and /usr/share/icons, so nothing is needed on recent releases. The desktop
+# file is only installed from /opt/1Password/resources when it is present (the
+# .tar.gz install layout); it was renamed from 1password.desktop to
+# com.onepassword.OnePassword.desktop in 8.12, so handle both names.
+DESKTOP_FILE=""
+if [ -f /opt/1Password/resources/com.onepassword.OnePassword.desktop ]; then
+  DESKTOP_FILE="/opt/1Password/resources/com.onepassword.OnePassword.desktop"
+elif [ -f /opt/1Password/resources/1password.desktop ]; then
+  DESKTOP_FILE="/opt/1Password/resources/1password.desktop"
+fi
+if [ -n "${DESKTOP_FILE}" ] && [ -d /usr/share/applications ]; then
   # xdg-desktop-menu will only be available if xdg-utils is installed, which is likely but not guaranteed
   if [ -n "$(which xdg-desktop-menu)" ]; then
-    xdg-desktop-menu install --mode system --novendor /opt/1Password/resources/1password.desktop
+    xdg-desktop-menu install --mode system --novendor "${DESKTOP_FILE}"
     xdg-desktop-menu forceupdate
   else
-    install -m0644 /opt/1Password/resources/1password.desktop /usr/share/applications
+    install -m0644 "${DESKTOP_FILE}" /usr/share/applications
   fi
 fi
 if [ -d /usr/share/icons ]; then
