@@ -28,6 +28,7 @@ jobs:
 
       - uses: hustcer/setup-nu@ccd5bb5426b05a32009c2ba967946231f3919c97 # v3.25
         with:
+          # renovate: datasource=github-releases depName=nushell/nushell
           version: v0.113.1
 
       - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
