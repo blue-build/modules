@@ -368,17 +368,6 @@ def add_keys [$keys: list]: nothing -> nothing {
   }
 }
 
-# DEPRECATED: Setup /opt directory symlinks to allow certain packages to install.
-#
-# Each entry must be the directory name that the application expects
-# to install into /opt. A systemd unit will be installed to setup
-# symlinks on boot of the OS.
-def run_optfix [$optfix_pkgs: list]: nothing -> nothing {
-  if ($optfix_pkgs | is-not-empty) {
-    print $'(ansi yellow_bold)WARNING:(ansi yellow) optfix in this module is deprecated in favor of the built-in functionality of BlueBuild'
-  }
-}
-
 # Remove group packages.
 def group_remove [remove: record]: nothing -> nothing {
   let remove_list = $remove
@@ -721,7 +710,6 @@ def main [config: string]: nothing -> nothing {
     | default {} remove
     | default {} install
     | default {} builddep
-    | default [] optfix
     | default [] replace
   let should_cleanup = $config.repos
     | default false cleanup
@@ -733,7 +721,6 @@ def main [config: string]: nothing -> nothing {
 
   dnf makecache
 
-  run_optfix $config.optfix
   group_remove $config.group-remove
   group_install $config.group-install
   remove_pkgs $config.remove

@@ -19,8 +19,6 @@ This module is capable of:
   - Installing build dependencies via `dnf builddep`
   - Removing packages
   - Replacing installed packages with versions from another repository
-- Optfix
-  - Setup symlinks to `/opt/` to allow certain packages to install
 
 ## Repository Management
 
@@ -285,10 +283,6 @@ group-remove:
   packages:
     - de-package-2
 ```
-
-## Optfix
-
-Optfix was an option that existed to allow installation of programs into `/opt/` at build-time. With BlueBuild CLI version `v0.9.23` and above, this fix happens automatically. The option is now deprecated and does nothing
 
 ## Note
 
