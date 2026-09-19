@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update the Nushell version used by the reusable build workflow",
+      "managerFilePatterns": ["/^\\.github\\/workflows\\/build-reusable\\.yml$/"],
+      "matchStrings": [
+        "# renovate: datasource=github-releases depName=nushell/nushell\\s+version:\\s*(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "nushell/nushell",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "versioningTemplate": "semver"
+    }
+  ]
+}
