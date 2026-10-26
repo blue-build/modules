@@ -232,7 +232,7 @@ The following options can specified in the package installation, group installat
 - `allow-erasing` allows removing packages in case of dependency problems during package installation
   - Disabled by default
   - Corresponds to the [`--allowerasing`](https://dnf5.readthedocs.io/en/latest/commands/install.8.html#options) flag
-- `no-gpgpchecks` disables OpenPGP signature checking, incase a package has faulty signatures
+- `no-gpgchecks` disables OpenPGP signature checking, incase a package has faulty signatures
   - Disabled by default
   - Decreases security, only enable if needed
   - Corresponds to the [`--no-gpgchecks`](https://dnf5.readthedocs.io/en/latest/dnf5.8.html#options) flag
