@@ -65,13 +65,6 @@ repos:
       - repo2
     remove:
       - repo3
-  copr:
-    enable:
-      - ryanabx/cosmic-epoch
-      - name: trixieua/mutter-patched
-        chroot: fedora-42-x86_64
-    disable:
-      - kylegospo/oversteer
 ```
 
 ### Disable/Enable Installed Repositories
@@ -86,6 +79,13 @@ repos:
     - repo2
   disable:
     - repo3
+  copr:
+    enable:
+      - ryanabx/cosmic-epoch
+      - name: trixieua/mutter-patched
+        chroot: fedora-42-x86_64
+    disable:
+      - kylegospo/oversteer
 ```
 
 ### Add Repository Keys
