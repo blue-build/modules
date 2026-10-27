@@ -4,6 +4,8 @@ example: |
   type: dnf
   repos:
     cleanup: true # clean up added repos after module is done
+    enable:
+      - fedora-cisco-openh264
     files:
       - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
       - fury.repo

@@ -65,6 +65,20 @@ repos:
       - repo2
     remove:
       - repo3
+```
+
+### Disable/Enable Installed Repositories
+
+This allows you to enable/disable already installed repositories by their `dnf repolist` ID.
+
+```yaml
+type: dnf
+repos:
+  enable:
+    - repo1
+    - repo2
+  disable:
+    - repo3
   copr:
     enable:
       - ryanabx/cosmic-epoch

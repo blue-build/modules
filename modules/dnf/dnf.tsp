@@ -43,6 +43,11 @@ model DnfRepo {
   /** Cleans up the repos added in the same step after packages are installed. */
   cleanup?: boolean = false;
 
+  /** List of local repositories ID to enable */
+  enable?: Array<string>
+  /** List of local repositories ID to disable */
+  disable?: Array<string>
+
   /** List of paths or URLs to .repo files to import */
   files?: Array<string> | DnfRepoFiles;
 

@@ -69,6 +69,26 @@ def repos [$repos: record]: nothing -> record {
   nonfree_repos $repos.nonfree?
   add_keys $repos.keys
 
+  # Enable and disable repos
+  match $repos {
+    {
+      enable: [..$enable]
+      disable: [..$disable]
+    } => {
+      enable_repos ($enable | default [])
+      disable_repos ($disable | default [])
+    }
+    # Enable repos
+    { enable: [..$enable] } => {
+      enable_repos ($enable | default [])
+    }
+    # Disable repos
+    { disable: [..$disable] } => {
+      disable_repos ($disable | default [])
+    }
+    _ => {}
+  }
+
   {
     copr: $cleanup_coprs
     files: $cleanup_repos
@@ -277,6 +297,58 @@ def remove_repos [$repos: list]: nothing -> nothing {
       }
   }
 }
+
+
+# Enable repo files for `dnf` to use for installing packages.
+def enable_repos [$repos: list]: nothing -> nothing {
+  if ($repos | is-not-empty) {
+    print $'(ansi green)Enabling repositories:(ansi reset)'
+    # Substitute %OS_VERSION% & remove newlines/whitespaces from all repo entries
+    let repos = $repos
+      | each {
+        str replace --all '%OS_VERSION%' $env.OS_VERSION
+          | str trim
+      }
+    $repos
+      | each {
+        print $'- (ansi cyan)($in)(ansi reset)'
+      }
+    for $repo in $repos {
+      if ($repo | str starts-with 'https://') or ($repo | str starts-with 'http://') {
+          return (error make {
+            msg: $"(ansi red)The 'enable' feature only works with installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
+          })
+      }
+      dnf config-manager setopt [$'($repo).enabled=1']
+    }
+  }
+}
+
+# Disable a list of installed repos.
+def disable_repos [$repos: list]: nothing -> nothing {
+  if ($repos | is-not-empty) {
+    print $'(ansi green)Disabling repositories:(ansi reset)'
+    # Substitute %OS_VERSION% & remove newlines/whitespaces from all repo entries
+    let repos = $repos
+      | each {
+        str replace --all '%OS_VERSION%' $env.OS_VERSION
+          | str trim
+      }
+    $repos
+      | each {
+        print $'- (ansi cyan)($in)(ansi reset)'
+      }
+    for $repo in $repos {
+      if ($repo | str starts-with 'https://') or ($repo | str starts-with 'http://') {
+        return (error make {
+          msg: $"(ansi red)The 'disable' feature only works with installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
+        })
+      }
+      dnf config-manager setopt [$'($repo).enabled=0']
+    }
+  }
+}
+
 
 # Enable a list of COPR repos. The COPR repo ID has a '/' in the name.
 #
