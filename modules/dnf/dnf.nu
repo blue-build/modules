@@ -13,25 +13,6 @@ const RPMFUSION = 'rpmfusion'
 def repos [$repos: record]: nothing -> record {
   let repos = $repos
     | default [] keys
-  # Enable and disable repos
-  match $repos {
-    {
-      enable: [..$enable]
-      disable: [..$disable]
-    } => {
-      enable_repos ($enable | default [])
-      disable_repos ($disable | default [])
-    }
-    # Enable repos
-    { enable: [..$enable] } => {
-      enable_repos ($enable | default [])
-    }
-    # Disable repos
-    { disable: [..$disable] } => {
-      disable_repos ($disable | default [])
-    }
-    _ => {}
-  }
 
   let cleanup_repos = match $repos.files? {
     # Add repos if it's a list
@@ -87,6 +68,26 @@ def repos [$repos: record]: nothing -> record {
 
   nonfree_repos $repos.nonfree?
   add_keys $repos.keys
+
+  # Enable and disable repos
+  match $repos {
+    {
+      enable: [..$enable]
+      disable: [..$disable]
+    } => {
+      enable_repos ($enable | default [])
+      disable_repos ($disable | default [])
+    }
+    # Enable repos
+    { enable: [..$enable] } => {
+      enable_repos ($enable | default [])
+    }
+    # Disable repos
+    { disable: [..$disable] } => {
+      disable_repos ($disable | default [])
+    }
+    _ => {}
+  }
 
   {
     copr: $cleanup_coprs
