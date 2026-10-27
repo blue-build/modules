@@ -316,7 +316,7 @@ def enable_repos [$repos: list]: nothing -> nothing {
     for $repo in $repos {
       if ($repo | str starts-with 'https://') or ($repo | str starts-with 'http://') {
           return (error make {
-            msg: $"(ansi red)This module only support installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
+            msg: $"(ansi red)The 'enable' feature only works with installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
           })
       }
       dnf config-manager setopt [$'($repo).enabled=1']
@@ -341,7 +341,7 @@ def disable_repos [$repos: list]: nothing -> nothing {
     for $repo in $repos {
       if ($repo | str starts-with 'https://') or ($repo | str starts-with 'http://') {
         return (error make {
-          msg: $"(ansi red)This module only support installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
+          msg: $"(ansi red)The 'disable' feature only works with installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
         })
       }
       dnf config-manager setopt [$'($repo).enabled=0']
