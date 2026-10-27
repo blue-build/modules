@@ -19,9 +19,8 @@ def repos [$repos: record]: nothing -> record {
       enable: [..$enable]
       disable: [..$disable]
     } => {
-      let repos = enable_repos ($enable | default [])
+      enable_repos ($enable | default [])
       disable_repos ($disable | default [])
-      $repos
     }
     # Enable repos
     { enable: [..$enable] } => {
@@ -30,7 +29,6 @@ def repos [$repos: record]: nothing -> record {
     # Disable repos
     { disable: [..$disable] } => {
       disable_repos ($disable | default [])
-      []
     }
     _ => {}
   }
@@ -319,8 +317,8 @@ def enable_repos [$repos: list]: nothing -> nothing {
           return (error make {
             msg: $"(ansi red)This module only support installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
           })
-        dnf config-manager setopt [$'($repo).enabled=1']
       }
+      dnf config-manager setopt [$'($repo).enabled=1']
     }
   }
 }
@@ -344,8 +342,8 @@ def disable_repos [$repos: list]: nothing -> nothing {
         return (error make {
           msg: $"(ansi red)This module only support installed repos, not online repos: (ansi cyan)'($repo)'(ansi reset)"
         })
-        dnf config-manager setopt [$'($repo).enabled=0']
       }
+      dnf config-manager setopt [$'($repo).enabled=0']
     }
   }
 }
