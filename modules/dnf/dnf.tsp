@@ -44,9 +44,10 @@ model DnfRepo {
   cleanup?: boolean = false;
 
   /** List of local repositories ID to enable */
-  enable?: Array<string>
+  enable?: Array<string>;
+
   /** List of local repositories ID to disable */
-  disable?: Array<string>
+  disable?: Array<string>;
 
   /** List of paths or URLs to .repo files to import */
   files?: Array<string> | DnfRepoFiles;
