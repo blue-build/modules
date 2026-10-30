@@ -26,7 +26,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: hustcer/setup-nu@ccd5bb5426b05a32009c2ba967946231f3919c97 # v3.25
+      - uses: hustcer/setup-nu@eacad52a4634c4f8d17a94916f93be6856861b9c # v3.29
         with:
           # renovate: datasource=github-releases depName=nushell/nushell
           version: v0.113.1
