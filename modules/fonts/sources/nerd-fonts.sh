@@ -19,6 +19,12 @@ for FONT in "${FONTS[@]}"; do
         echo "Downloaded ${FONT}"
 
         tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
+
+        if [[ "${FONT}" == "NerdFontsSymbolsOnly" ]]; then
+            FONTCONFIG="/usr/share/fontconfig/conf.avail"
+            mv "${DEST}/${FONT}/10-nerd-font-symbols.conf" "${FONTCONFIG}"
+            ln -s "${FONTCONFIG}" "/etc/fonts/conf.d/10-nerd-font-symbols.conf"
+        fi
     fi
 done
 rm -rf /tmp/fonts
