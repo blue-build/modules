@@ -20,7 +20,7 @@ for FONT in "${FONTS[@]}"; do
 
         tar -xf "/tmp/fonts/${FONT}.tar.xz" -C "${DEST}/${FONT}"
 
-        if [[ ${FONT} == NerdFontsSymbolsOnly ]]; then
+        if [[ "${FONT}" == "NerdFontsSymbolsOnly" ]]; then
             FONTCONFIG="/usr/share/fontconfig/conf.avail"
             mv "${DEST}/${FONT}/10-nerd-font-symbols.conf" "${FONTCONFIG}"
             ln -s "${FONTCONFIG}" "/etc/fonts/conf.d/10-nerd-font-symbols.conf"
