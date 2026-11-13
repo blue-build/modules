@@ -23,7 +23,7 @@ for FONT in "${FONTS[@]}"; do
         if [[ "${FONT}" == "NerdFontsSymbolsOnly" ]]; then
             FONTCONFIG="/usr/share/fontconfig/conf.avail"
             mv "${DEST}/${FONT}/10-nerd-font-symbols.conf" "${FONTCONFIG}"
-            ln -s "${FONTCONFIG}" "/etc/fonts/conf.d/10-nerd-font-symbols.conf"
+            ln -s "${FONTCONFIG}/10-nerd-font-symbols.conf" "/etc/fonts/conf.d/10-nerd-font-symbols.conf"
         fi
     fi
 done
