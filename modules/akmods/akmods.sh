@@ -108,7 +108,12 @@ if [[ ${#INSTALL[@]} -gt 0 ]]; then
     echo "Installing: $(echo "${INSTALL[*]}" | tr -d '\n')"
     ENABLE_AKMODS_REPO
     INSTALL_RPM_FUSION
-    rpm-ostree install ${INSTALL_STR}
+
+    if command -v dnf5; then
+      dnf5 -y install ${INSTALL_STR}
+    else
+      rpm-ostree install ${INSTALL_STR}
+    fi
     UNINSTALL_RPM_FUSION
 fi
 
