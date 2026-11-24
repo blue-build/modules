@@ -33,7 +33,11 @@ EOF
 rpm --import https://downloads.1password.com/linux/keys/1password.asc
 
 # Now let's install the packages.
-rpm-ostree install 1password 1password-cli
+if command -v dnf5; then
+  dnf5 -y install 1password 1password-cli
+else
+  rpm-ostree install 1password 1password-cli
+fi
 
 # Clean up the yum repo (updates are baked into new images)
 rm /etc/yum.repos.d/1password.repo -f
