@@ -37,10 +37,10 @@ model AkmodsModuleV1 {
   /** List of akmods to install.
    * See all available akmods here: https://github.com/ublue-os/akmods#kmod-packages
    */
-  install: Array<string>;
+  install?: Array<string>;
 
   /** Nvidia driver to install
-   * - nvidia : for the old nvidia propietary driver, compatible with Maxwell and newer cards (but not Blackwell) 
+   * - nvidia : for the old nvidia propietary driver, compatible with Maxwell and newer cards (but not Blackwell)
    * - nvidia-open : for the new kernel-open driver, to be used in Turing and newer cards
    */
   `nvidia-driver`?: "nvidia" | "nvidia-open";
